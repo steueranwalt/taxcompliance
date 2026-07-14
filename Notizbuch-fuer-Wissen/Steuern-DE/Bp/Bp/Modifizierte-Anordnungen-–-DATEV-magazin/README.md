@@ -1,0 +1,46 @@
+# Modifizierte Anordnungen – DATEV magazin
+
+Ausgeschnitten aus: <https://www.datev-magazin.de/praxis/wirtschaftspruefer/modifizierte-anordnungen-27514>
+
+![](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-bb5d0531846d4df88285aeea2999d4dc!1-40dce34d-27e9-4884-b59f-9612d4f3dd22/$value)
+
+Der Einspruch gegen die Außenprufung kann zur Folge haben, dass die ursprungliche Prufungsanordnung sachlich und auch in zeitlicher Hinsicht modifiziert oder gar erweitert wird.
+
+Ist der Prufer im Unternehmen angekommen, darf er die Prufung gemaß einer Absprache mit dem Steuerpflichtigen beginnen. Nun stellt sich die Frage, ob das Einfluss auf einen bereits eingelegten Einspruch hat. Ist ein solcher damit konkludent zuruckgenommen? Nein! Denn der Steuerpflichtige, der sich rugelos auf eine einspruchsbefangene Betriebsprufung einlasst oder erst spater, aber innerhalb der Rechtsbehelfsfrist, Einspruch gegen die Prufungsanordnung einlegt, hat sein Anfechtungsrecht nicht verwirkt. Er darf die Einspruchsfrist von einem Monat immer bis zum Ende des letzten Tags voll ausnutzen. Allerdings sind die bereits gewonnenen Prufungsergebnisse dann nicht zwingend unwirksam. 
+
+## Fallbeispiel
+
+Ein Steuerpflichtiger erhalt am 12. Juli eine Prufungsanordnung, datiert vom 9. Juli. Diese kann er folglich bis zum 12. August anfechten. Der Prufer befindet sich seit dem 2. August im Unternehmen und hat dort schon einige Prufungstage verbracht. Am 12. August wirft der Steuerpflichtige den Einspruch dann nachweisbar um 23:59 Uhr in den Nachtbriefkasten des Finanzamts. Der Prufer halt dem Steuerpflichtigen entgegen, er hatte ihm das doch gleich sagen konnen oder mussen, daher habe er (der Steuerpflichtige) sich treuwidrig beziehungsweise arglistig verhalten. Ergebnis: Da dem Steuerpflichtigen das Recht zusteht, die Rechtsbehelfsfrist voll auszunutzen, kann er bis zum Ablauf der Frist Einspruch gegen die Prufungsanordnung einlegen. Das gilt selbst dann, wenn ein Prufer vor Ablauf der Monatsfrist kommt und sofort mit der Prufung beginnt und der Steuerpflichtige dabei kooperativ mitwirkt, dem Prufer alle Unterlagen freiwillig zur Verfugung stellt und auch alle erbetenen Auskunfte erteilt. Ob der Prufer in diesem Fall dann die Prufung fortsetzt oder auf eine Begrundung und Entscheidung des Rechtsbehelfs drangt, liegt in seinem Ermessen. Er kann die Prufung aussetzen oder einfach weiter prufen. Da er meistens sowieso mehrere Prufungen gleichzeitig hat (bis zu acht Stuck), wird der Prufer vermutlich einfach in einem anderen Unternehmen weiter prufen und im konkreten Fall darauf drangen, dass die Rechtsbehelfsstelle schnell uber die Rechtmaßigkeit der Prufungsanordnung entscheidet. 
+
+## Erganzungsanordnung
+
+Wahrend das Finanzamt (FA) einerseits pruft und andererseits uber die Begrundetheit des eingelegten Einspruchs entscheidet, kann es naturlich den Verwaltungsakt der Prufungs-  
+anordnung erganzen, berichtigen, erweitern oder aufheben. Dem Steuerpflichtigen muss daher klar sein, dass die ursprungliche Prufungsanordnung ihre letzte Fassung erst in Gestalt der Einspruchsentscheidung enthalt. Eine eventuelle Klage gegen die Prufungsanordnung geht also gegen die Prufungsanordnung in Gestalt der Einspruchsentscheidung. Eine wirksame Prufungsanordnung kann sachlich, etwa auf neue Steuerarten, oder zeitlich erganzt werden, also auf ­weitere Besteuerungsabschnitte ausgedehnt werden. Eine derartige Erganzungs- beziehungsweise Erweiterungsanordnung ist laut Bundesfinanzhof (BFH) ein selbststandiger ­Verwaltungsakt und demnach als eine selbststandige Prufungs­anordnung nach den Regeln zu beurteilen, die fur Prufungsanordnungen gelten (BFH/NV 1990, 548). Daher musste die modifizierte, erganzte oder erweiterte Prufungs­anordnung angegriffen werden, wenn sie auf denselben oder anderen rechtlichen Fehlern beruht. Auch hier gilt naturlich die Monatsfrist, eine ordnungsgemaße Rechtsbehelfsbelehrung vorausgesetzt. Das Recht zur Erweiterung der Prufung (sachlich, zeitlich) folgt aus § 5 Abs. 2 Satz 5 Betriebsprufungsordnung (BpO 2000). Danach ist eine erganzende Prufungsanordnung zu erlassen, wenn der Umfang der Außenprufung nachtraglich erweitert werden soll (BFH vom 02.09.2008 – X R 9/08).
+
+## Verjahrung
+
+Nach standiger Rechtsprechung des BFH (vgl. dazu grundlegend Urteil vom 23.07.1985 VIII R 48/85, BFHE 145, 3, BStBl. II 1986, 433) handelt das FA nicht ermessensfehlerhaft, wenn es die Außenprufung auf Zeitraume erstreckt, fur die Steuerfestsetzungen moglicherweise wegen Verjahrung nicht mehr durchgefuhrt werden konnen. Die Frage, ob Verjahrung eingetreten ist oder andere Hindernisse dem Erlass von Steuerbescheiden entgegenstehen, lasst sich vielfach erst dann zuverlassig beurteilen, wenn der Sachverhalt durch die Außenprufung geklart ist. Über den Eintritt der Festsetzungsverjahrung kann verbindlich erst im Veranlagungsverfahren befunden werden. Anders zu entscheiden ist jedoch, wenn der Eintritt der Festsetzungsverjahrung auf der Hand liegt und sich daraus Anhaltspunkte fur eine sachwidrige Ausubung des Ermessens ergeben (BFH vom 02.09.2008 – X R 9/08).
+
+Über den Eintritt der Festsetzungsverjahrung kann verbindlich erst im Veranlagungsverfahren entschieden werden.
+
+## Rechtmaßigkeit der Prufungsanordnung
+
+Wird die Außenprufung trotz Anfechtung der Prufungsanordnung durchgefuhrt, tritt mit dem Abschluss der Außenprufung keine Erledigung der Hauptsache ein. Der Einspruch ist ja noch nicht erledigt. Über den muss irgendwie entschieden werden. Kam es zu keinen oder keinen nennenswerten Festsetzungen, hat niemand ein Interesse am Ausgang dieses Rechtsstreits. Dies durfte stets so sein, wenn es da zu einem Nullbericht kommt. Vielleicht aber wird das Finanzamt den Steuerpflichtigen fragen, ob er den Einspruch nicht zurucknehmen will. Bei einem großen Mehrergebnis hingegen oder in dem Fall, dass die Betriebsprufung gar in ein Steuerstrafverfahren ubergeht, kommt es moglicherweise auf die Frage der Rechtmaßigkeit der Prufungsanordnung entscheidend an. Sollten zum Beispiel in der Prufungsanordnung Zeitraume erfasst sein, fur die eine Festsetzungsverjahrung greift, kann die Finanzverwaltung ein Interesse daran haben, eine leichtfertige oder vorsatzliche Steuerhinterziehung zu behaupten, um die Rechtmaßigkeit der Änderungen auch fur Zeitraume zu begrunden, die eigentlich der Festsetzungsverjahrung unterliegen, und damit diese Zeitraume wieder zu offnen. Daraus folgt, dass sich die Entscheidung uber die Rechtmaßigkeit der Außenprufung zum Nachteil des Steuerpflichtigen auf die Festsetzungsfrist auswirken kann. 
+
+## Verwertungsverbot 
+
+Ob im Falle einer rechtswidrigen Maßnahme ein etwaiges Verwertungsverbot in Betracht kommt, ist umstritten. Der Meinungsstand lasst sich in etwa wie folgt umreißen: Die Folgen der Verletzung von Beweisermittlungsvorschriften, die man bei einer Außenprufung zu beachten hat, sind unterschiedlich. Es hangt davon ab, ob einfache verfahrensrechtliche Mangel vorliegen, die nicht zu einem endgultigen Verwertungsgebot fuhren, oder ob qualifizierte materiell-rechtliche Verstoße gegeben sind, die nicht durch zulassige, erneute Ermittlungsmaßnahmen geheilt werden konnen (BFH BStBl. II 2007, 227; 02, 328; 01, 464; 98, 461; BFH/NV 11, 182; 10, 5; 09, 1396; 05, 58; 02, 1279; 98, 1192; 89, 416). Das zeigt aber auch, wie wichtig es ist, sich seine Rechte vorzubehalten, etwa durch einen prophylaktischen Einspruch gegen die Prufungsanordnung oder andere Maßnahmen wahrend der Betriebsprufung.
+
+## Einspruch bei mehreren Verwaltungsakten 
+
+Die Prufungsanordnung beinhaltet meistens mehrere Verwaltungsakte, die den Steuerpflichtigen, die Steuerarten und die Veranlagungszeitraume betreffen, ferner den Prufungsort und -beginn, den Prufer und gegebenenfalls weitere Verwaltungsakte. Daher ist genau zu prufen, wogegen man Einspruch einlegen will beziehungsweise welcher Verwaltungsakt anzugreifen ist. Sofern es sich um alle Verwaltungsakte handelt, die in der Prufungsanordnung enthalten sind, muss das im Einspruchsschreiben deutlich gemacht werden. Beim eingangs skizzierten Fallbeispiel in etwa so: „Hiermit lege ich Einspruch ein gegen alle Verwaltungsakte in der Prufungsanordnung vom 9. Juli.“ Sofern es sich um eine Auftragsprufung gemaß § 195 Abgabenordnung (AO) handelt, sollte man zudem uberlegen, ob die noch nicht bekannte interne Beauftragung gleich vorsorglich mit angefochten wird. Insoweit sollte man sich diese zuschicken lassen beziehungsweise den gesamten Beauftragungsvorgang. Schließlich ist jedes Vorlage- und jedes Mitwirkungsverlangen sowie jedes Auskunftsverlangen ein Verwaltungsakt. Bei lediglich mundlich erlassenen Verwaltungsakten ist zu empfehlen, um deren schriftliche Abfassung zu bitten (§ 119 II 2 AO). Mundliche Verwaltungsakte enthalten keine Rechtsbehelfsbelehrung, da § 356 AO insoweit keine Anwendung findet. Bei mundlichen Verwaltungsakten beginnt die Frist zur Anfechtung des § 155 AO, also die Monatsfrist, auch ohne schriftliche Rechtsbehelfsbelehrung (BFH/NV 05, 1180).
+
+### Zum Autor 
+
+JB
+
+Dr. Jorg Burkhard 
+
+Rechtsanwalt, Fachanwalt fur Steuerrecht, Fachanwalt fur Strafrecht, Wiesbaden
+
+Weitere Artikel des Autors
