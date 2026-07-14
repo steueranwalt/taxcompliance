@@ -75,9 +75,10 @@ Export des SharePoint-Notizbuchs **Notizbuch für Wissen** (Site `Wissen`). Pro 
 
 | Abschnitt | Status |
 |---|---|
-| [`Diverses/`](Notizbuch-fuer-Wissen/Diverses/) | exportiert |
-| [`International/`](Notizbuch-fuer-Wissen/International/) | DBA-DE-CH, Internationales Steuerrecht, Transferpricing (weitgehend) |
+| [`Diverses/`](Notizbuch-fuer-Wissen/Diverses/) | fertig |
+| [`International/`](Notizbuch-fuer-Wissen/International/) | DBA-DE-CH + Internationales Steuerrecht fertig; Transferpricing weitgehend |
+| [`Recht-allgemein/`](Notizbuch-fuer-Wissen/Recht-allgemein/) | Datenschutz, Diverse, Schwarzarbeit, Steuerstrafrecht (läuft) |
 | [`Jagen_Sammeln/`](Notizbuch-fuer-Wissen/Jagen_Sammeln/) | leer / ohne Seiten |
-| Recht allgemein, Steuern CH, Steuern DE | Export läuft nach (Graph-Throttling) |
+| Steuern CH, Steuern DE | ausstehend (Graph-Throttling) |
 
-Details: [`Notizbuch-fuer-Wissen/README.md`](Notizbuch-fuer-Wissen/README.md)
+Details: [`Notizbuch-fuer-Wissen/README.md`](Notizbuch-fuer-Wissen/README.md) — bislang ~1300 Markdown-Seiten.
