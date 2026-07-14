@@ -1,0 +1,68 @@
+# Gesamtindex – Tax Compliance Wissensbasis
+
+> Dieser Index wird laufend ergänzt, wenn neue Materialien eingestellt werden.
+
+## Deutsches Steuerrecht (`DE/`)
+
+### Abgabenordnung (AO)
+_noch keine Dokumente_
+
+### Einkommensteuer (EStG)
+_noch keine Dokumente_
+
+### Körperschaftsteuer (KStG)
+_noch keine Dokumente_
+
+### Gewerbesteuer (GewStG)
+_noch keine Dokumente_
+
+### Umsatzsteuer (UStG)
+_noch keine Dokumente_
+
+### Erbschaft- und Schenkungsteuer (ErbStG)
+_noch keine Dokumente_
+
+### Außensteuergesetz (AStG)
+_noch keine Dokumente_
+
+---
+
+## Schweizer Steuerrecht (`CH/`)
+
+### Direkte Bundessteuer (DBG)
+_noch keine Dokumente_
+
+### Steuerharmonisierungsgesetz (StHG)
+_noch keine Dokumente_
+
+### Mehrwertsteuer (MWSTG)
+_noch keine Dokumente_
+
+### Verrechnungssteuer (VStG)
+_noch keine Dokumente_
+
+### Stempelabgaben (StG)
+_noch keine Dokumente_
+
+---
+
+## Grenzüberschreitend DE–CH (`DE-CH/`)
+
+### Doppelbesteuerungsabkommen DE–CH
+_noch keine Dokumente_
+
+### Wegzug / Zuzug
+_noch keine Dokumente_
+
+---
+
+## Arbeitsmaterialien (`Arbeitsmaterialien/`)
+
+### Checklisten
+_noch keine Dokumente_
+
+### Muster / Vorlagen
+_noch keine Dokumente_
+
+### Rechtsprechungsübersichten
+_noch keine Dokumente_
