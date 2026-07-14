@@ -1,0 +1,13 @@
+# 3-Tages-Frist: Keine Zugangsvermutung bei regelmäßig zustellungsfreien Tagen
+
+Ausgeschnitten aus: <https://rsw.beck.de/aktuell/daily/meldung/detail/fg-berlin-brandenburg-keine-zugangsvermutung-waehrend-regelmaessig-zustellungsfreier-tage>
+
+Die Zu­gangs­ver­mu­tung des § [122](<http://beck-online.beck.de/Default.aspx?typ=reference&y=100&G=AO&P=122>) Abs. [2](<http://beck-online.beck.de/Default.aspx?typ=reference&y=100&G=AO&P=122&X=2>) Nr. 1 AO ent­fallt, wenn in­ner­halb der 3-Tages-Frist plan­ma­ßig an zwei auf­ein­an­der­fol­gen­den Tagen keine Zu­stel­lung er­folgt. Dies hat das Fi­nanz­ge­richt Ber­lin-Bran­den­burg unter Zu­las­sung der Re­vi­si­on ent­schie­den.
+
+## Einspruchsfrist wegen Zugangsfiktion nicht gewahrt
+
+Der Beklagte erließ aufgrund der durch die Klagerin erstellten Einkommensteuererklarung einen Einkommensteuerbescheid fur 2017 am Freitag, dem 15.06.2018 und ubersandte ihn unmittelbar an die Klagerin. Diese war vom 02.05.2018 bis 19.06.2018 beruflich von ihrer Wohnung abwesend. Sie ubersandte den Steuerbescheid am 19.06.2018 per Telefax an eine Steuerberatungsgesellschaft, der Einspruch wurde am 19.07.2018 eingelegt. Der Einspruch des Bevollmachtigten wurde vom Finanzamt als unzulassig verworfen, da die Zugangsvermutung innerhalb der 3-Tages-Frist des am 15.06.2018 im Wege des Zentralversands ubergebenen Bescheides durch den Vortrag der Klagerin nicht erschuttert werde und die Einspruchsfrist daher am 18.07.2018 abgelaufen sei.
+
+## FG gibt Klage statt – Keine Zugangsvermutung bei unregelmaßiger Postzustellung
+
+Das Finanzgericht hat der Klage stattgegeben. Die Zugangsvermutung des § [122](<http://beck-online.beck.de/Default.aspx?typ=reference&y=100&G=AO&P=122>) Abs. [2](<http://beck-online.beck.de/Default.aspx?typ=reference&y=100&G=AO&P=122&X=2>) Nr. 1 AO sei vorliegend nicht anzuwenden, weil die Post an der Wohnung der Klagerin innerhalb der 3-Tages-Frist nicht an allen Werktagen von dem Postdienstleistungsunternehmen zugestellt worden sei. Zwar finde die Zugangsvermutung auch Anwendung, wenn, etwa wegen mehrerer arbeitsfreier Tage oder Personalausfall, innerhalb der 3-Tages-Frist an zwei Tagen keine Zustellung stattfinde (z.B. werde bei Aufgabe zur Post am Freitag, dem 30. April trotz des Feiertags am 1. Mai der Zugang am Montag, dem 3. Mai grundsatzlich vermutet). Insoweit handele es sich um Sonderkonstellationen, die die grundsatzliche Anwendung der Zugangsvermutung nicht in Frage stellen wurden. Anders sei dies jedoch, wenn innerhalb der 3-Tages-Frist planmaßig an zwei aufeinanderfolgenden Tagen keine Zustellung erfolge. Das Finanzgericht hat die Revision zugelassen.
