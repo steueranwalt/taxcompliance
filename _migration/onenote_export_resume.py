@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resume export of remaining Notizbuch-für-Wissen sections using known Graph IDs."""
+"""Resume incomplete Notizbuch-für-Wissen sections (skips already exported pages)."""
 
 from __future__ import annotations
 
@@ -21,12 +21,13 @@ BASE = f"https://graph.microsoft.com/v1.0/sites/{SITE}/onenote"
 ROOT = Path(__file__).resolve().parent.parent / "Notizbuch-fuer-Wissen"
 MAX_NAME = 80
 
+# Prioritize missing section groups first
 TARGETS = [
-    ("section", "1-05410596-c034-43e9-a8cd-407264aae1df", "Jagen_Sammeln"),
-    ("group", "1-aebecd89-5ece-429b-9eed-87165b6cc068", "International"),
     ("group", "1-dff58a0f-fa10-4433-a47e-6b98b7d34d20", "Recht allgemein"),
     ("group", "1-7b76a4f5-41e4-41db-8e00-bd82a3483527", "Steuern CH"),
     ("group", "1-034faf24-4faa-40d6-88f2-1119a5f267db", "Steuern DE"),
+    ("group", "1-aebecd89-5ece-429b-9eed-87165b6cc068", "International"),
+    ("section", "1-05410596-c034-43e9-a8cd-407264aae1df", "Jagen_Sammeln"),
 ]
 
 
@@ -50,19 +51,26 @@ def get_session() -> requests.Session:
     )
     result = app.acquire_token_silent(SCOPES, account=app.get_accounts()[0])
     if not result or "access_token" not in result:
-        raise RuntimeError("Token abgelaufen – bitte erneut mit onenote_export.py anmelden.")
+        raise RuntimeError("Token abgelaufen – erneut anmelden.")
+    if cache.has_state_changed:
+        CACHE.write_text(cache.serialize())
     sess = requests.Session()
     sess.headers["Authorization"] = f"Bearer {result['access_token']}"
     return sess
 
 
-def req(sess: requests.Session, url: str, tries: int = 20) -> requests.Response:
+def req(sess: requests.Session, url: str, tries: int = 25) -> requests.Response:
     for i in range(tries):
         r = sess.get(url, timeout=120)
+        if r.status_code == 401:
+            # refresh once
+            global_sess = get_session()
+            sess.headers["Authorization"] = global_sess.headers["Authorization"]
+            r = sess.get(url, timeout=120)
         if r.status_code != 429 and r.status_code < 500:
             r.raise_for_status()
             return r
-        wait = int(r.headers.get("Retry-After") or min(60 * (i + 1), 300))
+        wait = int(r.headers.get("Retry-After") or min(90 * (i + 1), 300))
         print(f"429 wait {wait}s", flush=True)
         time.sleep(wait)
     r.raise_for_status()
@@ -75,7 +83,7 @@ def get_list(sess: requests.Session, url: str) -> list:
         data = req(sess, url).json()
         items.extend(data.get("value", []))
         url = data.get("@odata.nextLink")
-        time.sleep(0.8)
+        time.sleep(1.0)
     return items
 
 
@@ -134,7 +142,7 @@ def export_section(sess: requests.Session, section: dict, parent: Path) -> tuple
         readme.write_text(html_to_md(html, title), encoding="utf-8")
         index.append(f"- [{title}]({pslug}/README.md)")
         print(f"Exported: {name} / {title}", flush=True)
-        time.sleep(1.2)
+        time.sleep(1.5)
     (sdir / "README.md").write_text("\n".join(index) + "\n", encoding="utf-8")
     return slug, name
 
@@ -154,10 +162,8 @@ def export_group(sess: requests.Session, group_id: str, name: str, parent: Path)
     return slug, name
 
 
-def main() -> int:
-    sess = get_session()
-    ROOT.mkdir(parents=True, exist_ok=True)
-    root_index = [
+def write_root_index() -> None:
+    lines = [
         "# Notizbuch für Wissen",
         "",
         "Quelle: SharePoint Wissen (`obenhaus.sharepoint.com/sites/Wissen`)",
@@ -165,21 +171,31 @@ def main() -> int:
         "",
         "## Abschnitte",
         "",
-        "- [Diverses](Diverses/README.md)",
     ]
+    for child in sorted(ROOT.iterdir()):
+        if child.is_dir() and (child / "README.md").exists():
+            label = child.name.replace("-", " ")
+            lines.append(f"- [{child.name}]({child.name}/README.md)")
+    (ROOT / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def main() -> int:
+    print("Waiting 3 minutes for Graph cool-down…", flush=True)
+    time.sleep(180)
+    sess = get_session()
+    ROOT.mkdir(parents=True, exist_ok=True)
     for kind, sid, name in TARGETS:
         print(f"=== {kind}: {name}", flush=True)
         try:
             if kind == "section":
                 sec = req(sess, f"{BASE}/sections/{sid}").json()
-                slug, nm = export_section(sess, sec, ROOT)
+                export_section(sess, sec, ROOT)
             else:
-                slug, nm = export_group(sess, sid, name, ROOT)
-            root_index.append(f"- [{nm}/]({slug}/README.md)" if kind == "group" else f"- [{nm}]({slug}/README.md)")
+                export_group(sess, sid, name, ROOT)
         except Exception as e:
             print(f"ERROR {name}: {e}", flush=True)
-            root_index.append(f"- [{name}]({slugify(name)}/README.md) _(unvollständig)_")
-    (ROOT / "README.md").write_text("\n".join(root_index) + "\n", encoding="utf-8")
+            sess = get_session()
+    write_root_index()
     print(f"DONE. README files: {len(list(ROOT.rglob('README.md')))}", flush=True)
     return 0
 

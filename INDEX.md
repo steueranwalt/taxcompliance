@@ -76,8 +76,8 @@ Export des SharePoint-Notizbuchs **Notizbuch für Wissen** (Site `Wissen`). Pro 
 | Abschnitt | Status |
 |---|---|
 | [`Diverses/`](Notizbuch-fuer-Wissen/Diverses/) | exportiert |
-| [`International/`](Notizbuch-fuer-Wissen/International/) | teilweise (DBA-DE-CH weitgehend) |
+| [`International/`](Notizbuch-fuer-Wissen/International/) | DBA-DE-CH, Internationales Steuerrecht, Transferpricing (weitgehend) |
 | [`Jagen_Sammeln/`](Notizbuch-fuer-Wissen/Jagen_Sammeln/) | leer / ohne Seiten |
-| Recht allgemein, Steuern CH, Steuern DE | folgt (Graph-API-Throttling) |
+| Recht allgemein, Steuern CH, Steuern DE | Export läuft nach (Graph-Throttling) |
 
 Details: [`Notizbuch-fuer-Wissen/README.md`](Notizbuch-fuer-Wissen/README.md)
