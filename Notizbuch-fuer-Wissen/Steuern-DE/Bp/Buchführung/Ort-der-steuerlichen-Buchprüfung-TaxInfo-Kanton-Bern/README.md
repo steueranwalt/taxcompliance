@@ -1,0 +1,23 @@
+# Ort der steuerlichen Buchprüfung - TaxInfo - Kanton Bern
+
+Ausgeschnitten aus: <http://www.taxinfo.sv.fin.be.ch/taxinfo/display/taxinfo/Ort+der+steuerlichen+Buchpr%C3%BCfung>
+
+Gemass dem Steuergesetz des Kantons Bern (StG) bzw. dem Bundesgesetzes uber die direkte Bundessteuer (DBG) kann die kantonale Steuerverwaltung im Rahmen des Veranlagungsverfahrens „Augenscheine durchfuhren sowie Geschaftsbucher und Belege an Ort und Stelle einsehen“ ([Art. 166 StG Abs. 3](<https://www.belex.sites.be.ch/data/661.11/de/art166>), [Art. 123 Abs. 2 DBG](<https://www.admin.ch/opc/de/classified-compilation/19900329/index.html#a123>)). Dementsprechend muss die steuerpflichtige Person aufgrund ihrer Mitwirkungspflichten im Veranlagungsverfahren „auf Verlangen der Steuerverwaltung insbesondere mundlich oder schriftlich Auskunft erteilen, Geschaftsbucher, Belege und weitere Bescheinigungen sowie Urkunden uber den Geschaftsverkehr vorlegen“ ([Art. 167 Abs. 2 StG](<http://www.belex.sites.be.ch/data/661.11/de/art167>), [Art. 126 Abs. 2 DBG](<https://www.admin.ch/opc/de/classified-compilation/19900329/index.html#a126>)).
+
+Wird eine steuerliche Buchprufung durchgefuhrt, bildet diese somit einen Bestanteil des Veranlagungsverfahrens. Sie dient dazu, die Beweiskraft der Jahresrechnung und die Vollstandigkeit der Steuerdeklaration zu uberprufen. Erfahrungsgemass sind die hierfur notwendigen Unterlagen, wie z.B. bei Ärzten die Patientenrechnungen nur am Geschaftsdomizil uneingeschrankt verfugbar. Zudem sind betriebliche Gegebenheiten und Ablaufe naturgemass nur vor Ort zuverlassig uberprufbar und der Betriebsinhaber oder eine im Betrieb angestellte Person kann diesbezuglich besser Auskunft geben als eine Drittperson. Eine Buchprufung wird daher in Übereinstimmung mit den erwahnten gesetzlichen Grundlagen und branchenunabhangig grundsatzlich am Geschaftsdomizil der buchfuhrungspflichtigen Person durchgefuhrt. Entsprechend wird die Buchprufung auch der buchfuhrungspflichtigen Person personlich angekundigt.
+
+Vom Grundsatz sollte nur in begrundeten Ausnahmefallen abgewichen werden. Eine Buchprufung in den Geschaftsraumlichkeiten der Treuhandgesellschaft der buchfuhrungspflichtigen Person kann ausnahmsweise in Betracht kommen, falls folgende Voraussetzungen kumulativ erfullt sind:
+
+  * Die Infrastruktur am Geschaftsdomizil der buchfuhrungspflichtigen Person eignet sich nicht fur die Durchfuhrung der Buchprufung wahrend der ublichen Arbeitszeiten.
+  * Die Durchfuhrung eines Augenscheins vor Ort am Geschaftsdomizil der buchfuhrungspflichtigen Person zur Überprufung der betrieblichen Gegebenheiten und Ablaufe muss auf Verlangen des Mitarbeiters der Steuerverwaltung moglich sein.
+  * Die prufungsrelevanten Unterlagen stehen an der Prufstelle bei der Treuhandgesellschaft vollstandig zur Verfugung oder lassen sich bei Bedarf unverzuglich beschaffen. Die Verfolgung der Geschaftsvorfalle sowohl vom Einzelbeleg uber die Buchhaltung als auch in umgekehrter Richtung muss grundsatzlich jederzeit und ohne Zeitverlust oder Mehraufwand gewahrleistet sein. Falls die Distanz zwischen der Treuhandgesellschaft und dem Geschaftsdomizil der buchfuhrungspflichtigen Person gering ist, kann nach Absprache mit der zustandigen Region die Aufwandprufung bei der Treuhandgesellschaft und die Umsatzprufung am Geschaftsdomizil stattfinden.
+  * Die buchfuhrungspflichtige Person ist wahrend der Durchfuhrung der Buchprufung im Bedarfsfall zur Fuhrung eines Gesprachs und zur Erteilung von Auskunften erreichbar.
+
+
+
+Da die steuerliche Buchprufung einen Bestandteil eines Veranlagungsverfahrens darstellt, liegt es in der Zustandigkeit der jeweiligen Region zu beurteilen, ob die vorgenannten Voraussetzungen fur die Vornahme einer Buchprufung in den Geschaftsraumlichkeiten der Treuhandgesellschaft im konkreten Fall erfullt sind. Gegebenenfalls obliegt es sodann der Treuhandgesellschaft sich in Absprache mit ihrem Kunden so zu organisieren, dass die Voraussetzungen auch eingehalten werden. Werden sie nicht eingehalten und resultiert aus der Buchprufung in den Geschaftsraumlichkeiten der Treuhandgesellschaft ein Zeitverlust oder Mehraufwand, werden die Kosten fur die Buchprufung aufgrund der vorgenannten Gesetzesbestimmungen der steuerpflichtigen Person nachtraglich ganz oder teilweise in Rechnung gestellt (i. d. R. CHF 120 / Stunde gemass [Art. 8 der Gebuhrenverordnung, GebV](<https://www.belex.sites.be.ch/frontend/versions/1393/art8?/locale=de>)).
+
+____________________  
+Fassung vom 13.03.2018
+
+[Nach oben](<http://www.taxinfo.sv.fin.be.ch/taxinfo/display/taxinfo/Ort%20der%20steuerlichen%20Buchpr%C3%BCfung#top>)

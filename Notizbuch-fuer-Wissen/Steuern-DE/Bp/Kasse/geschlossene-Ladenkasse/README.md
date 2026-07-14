@@ -1,0 +1,3 @@
+# geschlossene Ladenkasse
+
+

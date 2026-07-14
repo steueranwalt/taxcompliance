@@ -1,0 +1,26 @@
+# Kapitalvermögen
+
+## Seiten
+
+- [laufende Erträge](laufende-Erträge/README.md)
+- [Währungsgeschäfte](Währungsgeschäfte/README.md)
+- [Retrozessionen](Retrozessionen/README.md)
+- [GmbH-Anteile / Aktien](GmbH-Anteile-Aktien/README.md)
+- [Die Abgeltungsteuer](Die-Abgeltungsteuer/README.md)
+- [Investmentsteuer](Investmentsteuer/README.md)
+- [Kapitallebensversicherung](Kapitallebensversicherung/README.md)
+- [Unbenannte Seite](Unbenannte-Seite/README.md)
+- [Stückzinsen](Stückzinsen/README.md)
+- [Unentgeltliche Depotüberträge (§ 43 Abs. 1 Satz 5 und 6 EStG)](Unentgeltliche-Depotüberträge-(§-43-Abs.-1-Satz-5-und-6-EStG)/README.md)
+- [Steuertarif](Steuertarif/README.md)
+- [KapESt: Ausnahmen für Unternehmen (§ 43 Abs. 2 Satz 3 bis 8 EStG)](KapESt-Ausnahmen-für-Unternehmen-(§-43-Abs.-2-Satz-3-bis-8-EStG)/README.md)
+- [Kapitalertragsteuerabzug bei beschränkt steuerpflichtigen Einkünften aus Kapitalvermögen (§ 49 Abs. 1 Nr. 5 EStG)](Kapitalertragsteuerabzug-bei-beschränkt-steuerpflichtigen-Einkünften-au-6fdca558/README.md)
+- [Verlustverrechnung, § 20 Abs. 6 EStG](Verlustverrechnung,-§-20-Abs.-6-EStG/README.md)
+- [KapESt Dividenden](KapESt-Dividenden/README.md)
+- [KapESt Veräusserungsgewinne](KapESt-Veräusserungsgewinne/README.md)
+- [KapESt Zins](KapESt-Zins/README.md)
+- [KapESt - benötigte Informationen](KapESt-benötigte-Informationen/README.md)
+- [Prompt Gutachten zu Dividende + Veräusserungsgewinn / Zins ](Prompt-Gutachten-zu-Dividende-+-Veräusserungsgewinn-Zins/README.md)
+- [Prompt Gutachten zu Kapitalforderungen mit typischerweise gewinnabhängiger Verzinsung](Prompt-Gutachten-zu-Kapitalforderungen-mit-typischerweise-gewinnabhängi-12b022f5/README.md)
+- [Vielen Dank für den Hinweis! Ich habe mich in der Begrifflichkeit vertan. Die Normen § 20 Abs. 1 Nr. 4 EStG und § 20 Abs. 2 Nr. 4 EStG beziehen sich nicht auf "Genussrechte", sondern auf Kapitalforderungen mit typischerweise gewinnabhängiger Verzinsung (N](Vielen-Dank-für-den-Hinweis!-Ich-habe-mich-in-der-Begrifflichkeit-verta-36bfa34e/README.md)
+- [Gewinnrealisierung](Gewinnrealisierung/README.md)

@@ -1,0 +1,3 @@
+# Formerfordernis
+
+Ist der begunstigte Gesellschafter ein beherrschender, so kann eine vGA auch dann anzunehmen sein, wenn die Kapitalgesellschaft eine Leistung an ihn oder an eine ihm nahe stehende Person erbringt, fur die es an einer klaren und eindeutigen, im Voraus getroffenen, zivilrechtlich wirksamen und tatsachlich durchgefuhrten Vereinbarung fehlt (standige Rechtsprechung, zB BFH vom 23.2.2005 - I R 70/04, BFHE 209, 252; vom 17.1.2018 - I R 74/15, BFH/NV 2018, 836; vom 17.12.1997 - I R 70/97, BFHE 185, 224, jew. m.w.N.). In diesen Fallen indiziert das vom Fremdvergleich abweichende Verhalten der Kapitalgesellschaft und ihres Gesellschafters oder der diesem nahe stehenden Person die Veranlassung im Gesellschaftsverhaltnis (BFH vom 18.09.2007 – I R 73/06).

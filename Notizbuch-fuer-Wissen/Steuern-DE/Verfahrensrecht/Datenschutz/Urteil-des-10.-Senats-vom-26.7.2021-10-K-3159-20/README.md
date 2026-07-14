@@ -1,0 +1,302 @@
+# Urteil des 10. Senats vom 26.7.2021 - 10 K 3159/20 -
+
+Ausgeschnitten aus: [http://lrbw.juris.de/cgi-bin/laender_rechtsprechung/document.py?Gericht=bw&nr=35692](<http://lrbw.juris.de/cgi-bin/laender_rechtsprechung/document.py?Gericht=bw&nr=35692>)
+
+Kein Anspruch des Steuerpflichtigen auf Einsicht in die Prufer-Handakte wahrend einer laufenden Betriebsprufung - Sachlicher Anwendungsbereich der DSGVO
+
+Tenor
+
+1\. Die Klage wird abgewiesen.
+
+2\. Die Kosten des Verfahrens werden dem Klager auferlegt.
+
+3\. Die Revision wird nicht zugelassen.
+
+Tatbestand
+
+|  |   
+  
+---  
+| 1  
+---  
+| Streitig ist, ob dem Klager aufgrund von Art. 15 Abs. 1 der Verordnung (EU) 2016/679 des Europaischen Parlaments und des Rates vom 27. April 2016 zum Schutz naturlicher Personen bei der Verarbeitung personenbezogener Daten, zum freien Datenverkehr und zur Aufhebung der Richtlinie 95/46/EG (Datenschutz-Grundverordnung -DSGVO-, Amtsblatt der Europaischen Union -ABlEU- Nr. L 119/1) ein Anspruch auf Akteneinsicht in die Handakten der Betriebsprufung zusteht.  
+---  
+| 2  
+---  
+| Der Klager ist selbststandiger Apotheker.  
+---  
+| 3  
+---  
+| Der Beklagte fuhrte im Jahr 2020 eine Betriebsprufung (§ 193 Abs. 1 Abgabenordnung -AO-) fur die Jahre 2015 bis 2017 durch. Die Prufungsanordnung vom 18. November 2019 umfasste die gesonderte Feststellung von Besteuerungsgrundlagen, Gewerbesteuer und Umsatzsteuer.  
+---  
+| 4  
+---  
+| Am 14. Juli 2020 fand eine Besprechung zwischen der Steuerberaterin des Klagers und der Betriebspruferin statt, in dem die nach Auffassung der Betriebsprufung fehlende Ordnungsmaßigkeit der Buchfuhrung thematisiert wurde.  
+---  
+| 5  
+---  
+| Der vom Klager daraufhin beauftragte weitere Bevollmachtigte, der Prozessvertreter des Klageverfahrens, beantragte am 21. August 2020 im Rahmen der laufenden Betriebsprufung Akteneinsicht in die Unterlagen der Pruferin, die die angebliche fehlende Ordnungsmaßigkeit der Buchfuhrung betrafen. Zu diesem Zweck sollten ihm Kopien der Unterlagen ubersandt werden.  
+---  
+| 6  
+---  
+| Der Beklagte lehnte den Antrag mit Schreiben vom 23. Oktober 2020 ab.  
+---  
+| 7  
+---  
+| Den hiergegen am 11. November 2020 eingelegten Einspruch verwarf er mit Einspruchsentscheidung vom 26. November 2020 als unzulassig. Zur Begrundung fuhrte er im Wesentlichen aus, es bestehe kein Rechtsschutzbedurfnis. Die in Kopie angeforderten Unterlagen seien der Pruferin durch den Klager bzw. dessen Steuerberaterin zur Verfugung gestellt worden. Der Antrag sei aber auch unbegrundet, da wahrend der laufenden Betriebsprufung kein Anspruch auf Überlassung von Kopien aus der Handakte, sondern lediglich ein Auskunftsanspruch uber die Grund- und E-Datenubersicht sowie eine Bescheidauskunft fur die letzten Jahre bestehe. Dies sei aber vom Klager weder beantragt worden noch gehe sein Interesse dahin, sodass von einer Weitergabe dieser Daten abgesehen werde.  
+---  
+| 8  
+---  
+| Am 10. Dezember 2020 fand zwischen dem Prozessbevollmachtigten des Klagers, der Steuerberaterin und der Betriebspruferin eine weitere Besprechung statt.  
+---  
+| 9  
+---  
+| Am 18. Dezember 2020 reichte der Klager durch seinen Prozessbevollmachtigten Klage beim Finanzgericht Baden-Wurttemberg ein. Zur Begrundung fuhrt er im Wesentlichen aus, die Klage richte sich gegen die Ablehnung der Akteneinsicht in die Handakte der Betriebsprufung. Aus Art. 15 Abs. 1 DSGVO folge ein gebundener Anspruch auf Übersendung der Akten an den Prozessbevollmachtigten des Klagers, der nicht zeitlich eingeschrankt sei und damit auch im laufenden Betriebsprufungsverfahren bestehe. Die DSGVO sei nicht auf den Bereich der harmonisierten Steuern beschrankt. Dies ergebe sich aus dem Schreiben des Bundesministeriums der Finanzen (BMF) vom 13. Januar 2020, Bundessteuerblatt (BStBl) I, 2020, 143. Hieran sei der Beklagte aufgrund der Selbstbindung der Verwaltung gebunden.  
+---  
+| 10  
+---  
+| Zur Begrundung des Anspruchs auf Akteneinsicht werde auf den Beschluss des Finanzgerichts (FG) des Saarlandes vom 3. April 2019 - 2 K 1002/16 -, Entscheidungen der FG (EFG) 2019, 1217 verwiesen. Danach bestehe grundsatzlich seit dem Inkrafttreten der DSGVO fur alle Steuerpflichtigen ein gebundener Anspruch auf Akteneinsicht bei der Finanzbehorde.Ein Akteneinsichtsrecht sei zwar nicht ausdrucklich in der DSGVO geregelt. Nach Art. 15 Abs. 1 Halbsatz 2, Abs. 2 DSGVO bestehe aber ein Auskunftsanspruch uber samtliche verarbeiteten personenbezogenen Daten. Dies gelte auch fur Papierakten mit Informationen zu einer Zeit vor dem 25. Mai 2018 (vgl. Art. 99 Abs. 2 DSGVO). Soweit die Finanzverwaltung beim Akteneinsichtsrecht weiterhin von einem Ermessensanspruch ausgehe, widerspreche dies sowohl vorrangigem Unionsrecht als auch nationalem Recht. Denn nach § 32d Abs. 1 AO bestehe ein behordliches Ermessen nur, soweit es an Regelungen in der DSGVO fehle. Dies sei vorliegend gerade nicht der Fall.  
+---  
+| 11  
+---  
+| Die dem Finanzgericht vom Beklagten vorgelegte Akte sei nicht die Handakte der Betriebspruferin. Daher konne der Rechtsstreit nach Einsicht in die vorgelegte Akte nicht fur erledigt erklart werden.  
+---  
+| 12  
+---  
+| Der Klager habe ein Interesse daran, die personenbezogenen Daten, Auswertungen, Berechnungen und sonstigen Unterlagen fur die Abwehr unberechtigter steuerlicher Anspruche, insbesondere gegen eine willkurliche Schatzung, zu erlangen, um sich gegen die Änderungsbescheide entsprechend wehren zu konnen. Deswegen sei die Akteneinsicht in die Handakte der Betriebspruferin vorgreiflich. Wurde der Klager die ablehnende Entscheidung des Beklagten bestandskraftig werden lassen, kame er moglicherweise auch im Hauptsacheverfahren nicht mehr zur Akteneinsicht.  
+---  
+| 13  
+---  
+| Der Rechtsstreit habe grundsatzliche Bedeutung, da er fur eine Vielzahl anderer Falle allgemeine Bedeutung habe. Zudem fehle es bislang an einer Positionierung des Bundesfinanzhofs (BFH) zur Frage der Akteneinsicht aufgrund der DSGVO. Bei ablehnender Entscheidung ergebe sich zudem eine Divergenz zur Entscheidung des FG des Saarlandes.  
+---  
+| 14  
+---  
+| Der Klager beantragt,  
+---  
+| 15  
+---  
+| 1\. Der Beklagte wird unter Aufhebung des ablehnenden Verwaltungsaktes und der Einspruchsentscheidung verpflichtet, das vollstandige Fall-Heft sowohl papiermaßig als auch elektronisch mit allen Berechnungen, E-Mails und Dateien, die fur oder wahrend des Betriebsprufungsverfahrens betreffend den Klager fur die Veranlagungszeitraume 2015 bis 2017 entstanden sind, dem Klager oder dem Prozessbevollmachtigten des Klagers unverzuglich papiermaßig und elektronisch auszuhandigen, oder das Fall-Heft dem Klager oder dem Prozessbevollmachtigten des Klagers vollstandig und in einwandfrei lesbaren Kopien sowohl elektronisch als auch auf CD nachweisbar zu ubergeben.  
+---  
+| 16  
+---  
+| 2\. Die Kosten des Rechtsstreits hat der Beklagte zu tragen.  
+---  
+| 17  
+---  
+| 3\. Hilfsweise, die Revision wird wegen grundsatzlicher Bedeutung zugelassen.  
+---  
+| 18  
+---  
+| 4\. Die Hinzuziehung eines Bevollmachtigten auch fur das Vorverfahren wird fur notwendig erklart.  
+---  
+| 19  
+---  
+| Der Beklagte beantragt,  
+---  
+| 20  
+---  
+| die Klage abzuweisen,  
+---  
+| 21  
+---  
+| hilfsweise die Revision zuzulassen.  
+---  
+| 22  
+---  
+| Zur Begrundung fuhrt er im Wesentlichen aus, fur eine Akteneinsicht fehle das Rechtsschutzbedurfnis. Die Feststellung der fehlenden Ordnungsmaßigkeit der Buchhaltung sei aufgrund der von der Steuerberaterin vorgelegten elektronischen Daten und Excel-Listen erfolgt. Sie seien Gegenstand von Besprechungen mit der Steuerberaterin am 14. Juli 2020 und mit der Steuerberaterin und dem Prozessbevollmachtigten des Klagers am 10. Dezember 2020 gewesen. Es lagen keine Daten vor, die von der Betriebsprufung generiert worden seien und dem Klager bzw. dessen Beratern nicht vorlagen.  
+---  
+| 23  
+---  
+| Zudem sei die DSGVO wegen Art. 2 Abs. 2 Buchst. a DSGVO auf nicht harmonisierte Steuern wie die Einkommensteuer nicht anwendbar. Der sachliche Anwendungsbereich werde nicht durch § 2a Abgabenordnung (AO) erweitert. Der Finanzverwaltung stehe es entgegen dem Schreiben des BMF vom 13. Januar 2020, BStBl I, 2020, 143 nicht zu, den Anwendungsbereich der DSGVO auszudehnen.  
+---  
+| 24  
+---  
+| Schließlich lasse sich aus Art. 15 DSGVO kein allgemeines Akteneinsichtsrecht ableiten.  
+---  
+| 25  
+---  
+| Die Betriebsprufung ist nach dem ubereinstimmenden Vortrag der Beteiligten in der mundlichen Verhandlung zwischenzeitlich nach Abhaltung einer Schlussbesprechung am 19. Marz 2021 sowie Zustellung des Betriebsprufungsberichts mit Postzustellungsurkunde am 12. Juni 2021 abgeschlossen. Gegen die bereits ergangenen Änderungsbescheide wurden Einspruche eingelegt.  
+---  
+| 26  
+---  
+| Der Senat fuhrte am 26. Juli 2021 eine mundliche Verhandlung durch. Wegen der Einzelheiten wird auf das Sitzungsprotokoll verwiesen.  
+---  
+| 27  
+---  
+| Dem Senat lag bei seiner Entscheidung die den Streitfall betreffenden Akte des Beklagten vor (1 Bd. Betriebsprufungsakte).  
+---  
+  
+Entscheidungsgrunde
+
+|  |   
+  
+---  
+I.  
+---  
+| 28  
+---  
+| Die Klage ist zulassig.  
+---  
+| 29  
+---  
+| 1\. Nach § 32i Abs. 2 AO ist fur Klagen der betroffenen Person hinsichtlich der Verarbeitung personenbezogener Daten gegen Finanzbehorden wegen eines Verstoßes gegen datenschutzrechtliche Bestimmungen im Anwendungsbereich der DSGVO oder der darin enthaltenen Rechte der betroffenen Person, zu denen auch der Auskunftsanspruch gemaß Art. 15 DSGVO gehort, der Finanzrechtsweg gegeben. Die Finanzgerichtsordnung (FGO) ist nach Maßgabe des § 32i Abs. 5 bis 10 AO anzuwenden (§ 32i Abs. 4 AO).  
+---  
+| 30  
+---  
+| 2\. Statthafte Klageart fur die gerichtliche Geltendmachung eines gegen eine Behorde gerichteten Auskunftsanspruchs aus Art. 15 Abs. 1 DSGVO ist die Verpflichtungsklage (§ 40 Abs. 1 FGO). Denn bei der Entscheidung uber einen datenschutzrechtlichen Auskunftsanspruch durch eine Behorde handelt es sich um einen Verwaltungsakt. Der Erteilung der Auskunft geht eine behordliche Entscheidung voraus, die auf der Grundlage eines gesetzlichen Prufprogramms (vgl. Art. 15 Abs. 4 DSGVO) zu treffen ist und bei der die Behorde besondere verfahrensrechtliche Vorkehrungen wie Begrundungs- oder Anhorungspflichten zu beachten hat. Daher geht der Auskunftserteilung durch eine Behorde auf der Grundlage des Art. 15 Abs. 1 DSGVO stets eine Prufung moglicher Ausschluss- und Beschrankungstatbestande voraus (vgl. hierzu Urteil des Bundesverwaltungsgerichts -BVerwG- vom 16. September 2020 – 6 C 10/19 –, Rn. 12, Hochstrichterliche Finanzrechtsprechung -HFR- 2021, 287, mit Anm. Treiber; vgl. auch BFH-Beschluss vom 28. Mai 2003 VII B 119/01, Deutsches Steuerrecht Entscheidungsdienst -DStRE- 2004, 112).  
+---  
+| 31  
+---  
+| 3\. Der Klager ist durch den ablehnenden Verwaltungsakt vom 23. Oktober 2020 und die Einspruchsentscheidung vom 26. November 2020 beschwert und damit klagebefugt (§ 40 Abs. 2 FGO).  
+---  
+| 32  
+---  
+| Durch die im Laufe des Klageverfahrens vorgelegte Akte des Beklagten fur Zwecke der Akteneinsicht gemaß § 78 FGO ist keine Erledigung der Hauptsache eingetreten und das Rechtsschutzinteresse nicht entfallen (vgl. hierzu BFH-Beschluss vom 2. Oktober 1992 VI B 105/91, Sammlung der Entscheidungen des BFH -BFHE- 169, 20, BStBl II 1993, 57). Denn bei der vorgelegten Akte handelt es sich gerade nicht um die Handakte der Betriebspruferin, in die der Klager Einsicht begehrt.  
+---  
+| 33  
+---  
+| Dies ist zwischen den Beteiligten unstreitig.  
+---  
+| 34  
+---  
+| Daher bedurfte es nicht der vom Klager beantragten Vernehmung des Vorstehers und der Sachgebietsleiterin der Betriebsprufung des Beklagten als Zeugen.  
+---  
+| 35  
+---  
+  
+| Im Übrigen besteht nach der Rechtsprechung des BFH zu § 78 FGO kein Anspruch auf Einsicht in diejenigen Akten, um deren Kenntnisgabe gerade gestritten wird (vgl. BFH-Beschluss vom 27. Marz 2014 II B 68/13, Sammlung amtlich nicht veroffentlichter Entscheidungen des BFH -BFH/NV- 2014, 1072).Der beantragten Beiziehung der Handakten zum Klageverfahren konnte daher nicht entsprochen werden.  
+---  
+  * II.  
+---  
+
+  
+| 36  
+---  
+| Die Klage ist unbegrundet.  
+---  
+| 37  
+---  
+| Der Verwaltungsakt vom 23. Oktober 2020 ist rechtmaßig und verletzt den Klager daher nicht in seinen Rechten (§ 101 Satz 1 FGO). Der Beklagte hat es zurecht abgelehnt, dem Klager Einsicht in die Handakten der Betriebsprufung wahrend der laufenden Betriebsprufung zu gewahren.  
+---  
+| 38  
+---  
+| 1\. Ein gebundener Anspruch auf Akteneinsicht wird nicht durch das Recht auf Auskunft uber personenbezogene Daten nach Art. 15 Abs. 1 DSGVO begrundet.  
+---  
+| 39  
+---  
+| a) Es kann im vorliegenden Streitfall dahinstehen, ob die Vorschriften der DSGVO im Bereich des Steuerrechts nur auf harmonisierte Steuern wie etwa die Umsatzsteuer anwendbar sind, nicht dagegen auf dem Gebiet der Einkommensteuer naturlicher Personen (so das Niedersachsisches FG, Urteil vom 28. Januar 2020 - 12 K 213/19 -, EFG 2020, 665; Az. BFH: II R 15/20). Denn ausweislich der Prufungsanordnung vom 18. November 2019 war auch die Umsatzsteuer 2015 bis 2017 Gegenstand der Prufung. Die DSGVO ist jedenfalls bei einer Betriebsprufung, die sich neben anderen Steuerarten auch auf die Umsatzsteuer erstreckt, insgesamt anwendbar. Es ist daher fur den vorliegenden Streitfall auch nicht daruber zu befinden, ob sich aus dem BMF-Schreiben vom 13. Januar 2020, BStBl I, 2020, 143 eine Selbstbindung der Finanzverwaltung in Bezug auf die Anwendbarkeit der DSGVO auch auf nicht harmonisierte Steuern ergibt.  
+---  
+| 40  
+---  
+| Hinzu kommt, dass auch bei Anwendbarkeit der DSGVO im vorliegenden Streitfall hieraus kein Anspruch auf Akteneinsicht besteht.  
+---  
+| 41  
+---  
+| b) Nach Art. 15 Abs. 1 DSGVO hat die betroffene Person das Recht, von dem Verantwortlichen eine Bestatigung daruber zu verlangen, ob sie betreffende personenbezogene Daten verarbeitet werden; ist dies der Fall, so hat sie ein Recht auf Auskunft uber diese personenbezogenen Daten und auf weitere Informationen wie z.B. dem Zweck der Verarbeitung, der Dauer der Speicherung, der Herkunft der personenbezogenen Daten oder uber Empfanger bzw. Kategorien von Empfangern (Baum, Neue Wirtschaftsbriefe -NWB- 2017, 3281, 3284 f.).  
+---  
+| 42  
+---  
+| c) Anlass und Regelungsziel der DSGVO ist der in Art. 8 Abs. 1 Charta der Grundrechte der Europaischen Union (GRC) und Art. 16 Abs. 1 Vertrag uber die Arbeitsweise der Europaischen Union (AEUV) gewahrleistete Schutz naturlicher Personen bei der Verarbeitung der sie betreffenden personenbezogenen Daten (Art. 1 Abs. 2 DSGVO und Erwagungsgrund 1 zur DSGVO). Bereits auf der Ebene der Grundrechtecharta ist das Recht jeder Person verankert, Auskunft uber die sie betreffenden erhobenen Daten zu erhalten und die Berichtigung der Daten zu erwirken (Art. 8 Abs. 2 Satz 2 GRC). Die Betroffenenrechte der DSGVO wurzeln in der Erwagung des europaischen Normgebers, dass der Einzelne selbst uber die Preisgabe und Verwendung seiner personlichen Daten bestimmen konnen muss. Naturliche Personen sollen daher grundsatzlich die Kontrolle uber ihre eigenen Daten besitzen (Erwagungsgrund 7 Satz 2 zur DSGVO). Zu diesem Zweck raumen Art. 8 Abs. 2 GRC und Art. 15 Abs. 1 DSGVO der betroffenen Person ein Auskunftsrecht daruber ein, welche personenbezogenen Daten von Dritten erhoben worden sind. Ziel ist es, dass sich der Betroffene der Verarbeitung bewusst ist und auf dieser Grundlage deren Rechtmaßigkeit uberprufen kann (Erwagungsgrund 63 Satz 1 zur DSGVO). Das Auskunftsrecht aus Art. 15 Abs. 1 DSGVO und das Recht auf Erhalt einer Kopie gemaß Absatz 3 der Vorschrift erweisen sich damit als elementare subjektive Datenschutzrechte, da erst die Kenntnis daruber, ob und in welchem Umfang ein Verantwortlicher personenbezogene Daten verarbeitet, die betroffene Person in die Lage versetzt, weitere Rechte auszuuben. Der Auskunftsanspruch soll fur den Betroffenen Transparenz schaffen und ihm das fur die Durchsetzung dieses Grundrechts notwendige Wissensfundament an die Hand geben. Er ist seiner Natur nach ein Instrument zur Durchsetzung der weiteren Betroffenenrechte wie Berichtigung (Art. 16 DSGVO), Loschung (Art. 17 DSGVO) oder Schadensersatz (Art. 82 DSGVO; vgl. BVerwG-Urteil in HFR 2021, 287; Schober, Finanz-Rundschau -FR- 2020, 558, 562).  
+---  
+| 43  
+---  
+| d) Dieses Verstandnis lasst sich durch die Rechtsprechung des Gerichtshofs der Europaischen Union (EuGH) zur fruheren Rechtslage nach Art. 12 Buchst. a der Richtlinie 95/46/EG des Europaischen Parlaments und des Rates vom 24. Oktober 1995 zum Schutz naturlicher Personen bei der Verarbeitung personenbezogener Daten und zum freien Datenverkehr (ABl. L 281 S. 31) - Datenschutzrichtlinie - belegen. Der europaische Gesetzgeber will mit der DSGVO an die Ziele und Grundsatze der Datenschutzrichtlinie anknupfen (Erwagungsgrund 9 zur DSGVO) und kunftig ein unionsweit gleichmaßiges und hohes Datenschutzniveau fur naturliche Personen gewahrleisten (Erwagungsgrund 10 zur DSGVO). Daher bietet die in der Rechtsprechung vorgenommene Charakterisierung des Auskunftsanspruchs aus Art. 12 Buchst. a Datenschutzrichtlinie auch Hinweise auf das Verstandnis des Auskunftsanspruchs aus Art. 15 Abs. 1 DSGVO. So hat der EuGH in seinen Urteilen vom 7. Mai 2009 - C-553/07 [ECLI:EU:C:2009:293], Rijkeboer - (Rn. 49 ff.), vom 17. Juli 2014 - C 141/12 [ECLI:EU:C:2014:2081], YS u.a. - (Rn. 44) und vom 20. Dezember 2017 - C-434/16 [ECLI:EU:C:2017:994], Nowak - (Rn. 57) jeweils den instrumentellen Charakter des Auskunftsrechts fur das Begehren der betroffenen Person hervorgehoben, von dem fur die Verarbeitung Verantwortlichen die Berichtigung, Loschung oder Sperrung ihrer Daten zu verlangen. Dagegen dient das Auskunftsrecht nicht der Schaffung eines Zugangs zu Verwaltungsdokumenten, weil dies nicht die Zielrichtung des europaischen Datenschutzrechts ist (EuGH-Urteil vom 17. Juli 2014 - C-141/12 - Rn. 46; BVerwG-Urteil in HFR 2021, 287).  
+---  
+| 44  
+---  
+| e) Art. 15 Abs. 1 DSGVO gewahrt dem Betroffenen grundsatzlich ein „Recht auf Auskunft“. Die Erfullung dieses Anspruchs („Ob“ der Auskunftserteilung) steht nicht im Ermessen der Finanzbehorde. Das „Wie“ der Auskunftserteilung wird durch Art. 15 Abs. 1 Halbsatz 2 DSGVO jedoch nicht geregelt, so dass hieraus allein kein Akteneinsichtsrecht abgeleitet werden kann (Druen in: Tipke/Kruse, AO/FGO, 166. Lieferung 05.2021, § 32c AO, Rn. 12a).  
+---  
+| 45  
+---  
+| Einem gebundenen Anspruch auf Akteneinsicht bei der Finanzbehorde ist schon aus sprachlichen Grunden zu widersprechen, da sich Art. 15 DSGVO dem Wortlaut nach nur auf bestimmte personenbezogene Daten bezieht und nicht auf eine allgemeine Einsicht in die Akten (Koenig/Gercke, 4. Auflage 2021, AO § 32c Rn. 2; Poschenrieder, DStR 2020, 21; Erkis, DStR 2018, 161).  
+---  
+| 46  
+---  
+| Das Auskunftsrecht nach Art. 15 Abs. 1 DSGVO ist auch nicht mit einem Akteneinsichtsrecht identisch. Das Akteneinsichtsrecht beruht vornehmlich auf dem Grundsatz des rechtlichen Gehors (Art. 103 Abs. 1 Grundgesetz) und soll den Anspruchsteller in die Lage versetzen, die Grundlagen einer Verwaltungsentscheidung nachzuvollziehen (vgl. Bundesverfassungsgericht, Beschluss vom 13. April 2010 – 1 BvR 3515/08, HFR 2010, 862).  
+---  
+| 47  
+---  
+| Ein Akteneinsichtsrecht geht stets uber ein bloßes Auskunftsrecht hinsichtlich der verarbeiteten personenbezogenen Daten hinaus; so ergeben sich aus einer Akteneinsicht regelmaßig auch rechtliche Stellungnahmen, Entscheidungsentwurfe und Berechnungen der Amtstrager, Dienstanweisungen oder Ermittlungsergebnisse, die schon dem Grunde nach nicht unter den Schutzbereich der DSGVO und des § 32c AO fallen. Der Anspruch aus Art. 15 DSGVO umfasst auch nicht die von der Betriebsprufung selbst, etwa im Wege der Schatzung, geschaffenen Daten. Angewandte Schatzmethoden oder Schlussfolgerungen der Betriebsprufung aus den erhobenen Daten stellen keine Verarbeitung i.S. des Art. 4 Nr. 2 DSGVO dar (vgl. FG Sachsen, Urteil vom 8. Mai 2019 - 5 K 337/19 -, EFG 2020, 661).  
+---  
+| 48  
+---  
+| Es ist nicht davon auszugehen, dass der Verordnungsgeber der DSGVO einen nach inlandischen Normen nicht geregelten gebundenen Anspruch auf Akteneinsicht schaffen wollte. Vielmehr kann ein datenschutzrechtlicher Anspruch auch ohne Akteneinsicht erfullt werden, indem dem Betroffenen im Fall der Verarbeitung personenbezogener Daten die konkreten Daten sowie die Einzelangaben i.S. von Art. 15 Abs. 1 Halbsatz 2 DSGVO mitgeteilt werden (Klein/Ratke, AO, 15. Auflage 2020, § 91 Rn. 26; von Armansperg, Deutsches Steuerrecht -DStR- 2021, 453; BeckOK AO/Kobor, 15. Ed. 15.1.2021, AO § 91 Rn. 39-40.1; Poschenrieder, DStR 2020, 21; Schober FR 2020, 558, 560 f.; Karg NWB 2020, 931, 933; BMF-Schreiben vom 13. Januar 2020, BStBl I 2020, 143, Rn. 32; vgl. dagegen aber auch Krumm Der Betrieb 2017, 2182; Bareither/Großmann/Uterhark Betriebs-Berater 2019, 1111; Myßen/Kraus FR 2019, 58).  
+---  
+| 49  
+---  
+| f) Finanzbehorden durfen Verfahren und Form der Auskunftserteilung gem. § 32d Abs. 1 AO nach pflichtgemaßem Ermessen selbst bestimmen, soweit die DSGVO keine Regelungen hierzu enthalt (Gola/Franck, 2. Auflage 2018, DSGVO Art. 15 Rn. 30, 31).  
+---  
+| 50  
+---  
+| Die DSGVO enthalt keine Regelung uber die Gewahrung von Akteneinsicht, sondern lediglich uber punktuelle datenschutzrechtliche Auskunftsrechte wie z.B. uber die Zwecke der Verarbeitung, die Empfanger, gegenuber denen die personenbezogenen Daten offengelegt worden sind oder noch offengelegt werden, insbesondere Empfanger in Drittlandern oder internationale Organisationen sowie falls moglich die geplante Dauer, fur die die personenbezogenen Daten gespeichert werden, oder, falls dies nicht moglich ist, die Kriterien fur die Festlegung dieser Dauer (vgl. BVerwG-Urteil in HFR 2021, 287). Der BFH fuhrt im Beschluss vom 29. August 2019 X S 6/19, BFH/NV 2020, 25 aus, das Akteneinsichtsrecht stelle lediglich eine besondere Form der Auskunftserteilung nach Art. 15 DSGVO dar.  
+---  
+| 51  
+---  
+| Damit kann der im Kostenbeschluss des FG Saarland vom 3. April 2019 - 2 K 1002/16 -, EFG 2019, 1217 geaußerten Auffassung, es bestehe aufgrund von Art. 15 DSGVO ein gebundener Anspruch auf Akteneinsicht, nicht gefolgt werden. Hinzu kommt, dass dort wohl nicht der Anspruch auf Einsicht in die Handakten der Betriebsprufung streitig war (so in einer Anmerkung zum FG-Beschluss Haverkamp/Meinert, Der AO-Steuerberater 2019, 276).  
+---  
+| 52  
+---  
+| g) Nach § 102 Satz 1 FGO konnen Ermessensentscheidungen durch das FG nur darauf uberpruft werden, ob die gesetzlichen Grenzen des Ermessens eingehalten wurden und ob das Finanzamt das ihm eingeraumte Ermessen unter Beachtung des Gesetzeszwecks fehlerfrei ausgeubt hat. Dabei muss das Gericht auf die Sach- und Rechtslage im Zeitpunkt der letzten Verwaltungsentscheidung abstellen (BFH-Urteil vom 19. Marz 2013 II R 17/11, BFHE 240, 497, BStBl II 2013, 639).  
+---  
+| 53  
+---  
+| Der Klager hat im Verwaltungsverfahren keine datenschutzrechtlichen Anspruche geltend gemacht. Der das Interesse des Klagers an einer Akteneinsicht konkretisierende Vortrag im Klageverfahren macht dies noch deutlicher. Danach habe der Klager ein Interesse daran, die personenbezogenen Daten, Auswertungen, Berechnungen und sonstigen Unterlagen fur die Abwehr unberechtigter steuerliche Anspruche, insbesondere gegen eine willkurliche Schatzung, zu erlangen, um sich gegen die Änderungsbescheide entsprechend wehren zu konnen. Dieses Interesse ist jedoch nicht datenschutzrechtlicher, sondern steuerverfahrensrechtlicher Natur. Die Vernehmung der Steuerberaterin des Klagers und deren Steuerfachangestellten als Zeugen bedurfte es daher mangels Entscheidungserheblichkeit nicht. Hinzu kommt, dass ein derartiges Interesse als wahr unterstellt werden kann.  
+---  
+| 54  
+---  
+| Es ist daher nicht zu beanstanden, dass der Beklagte die auf Art. 15 Abs. 1 DSGVO begehrte Auskunft abgelehnt und auch davon abgesehen hat, dem Klager die Angaben i.S. von Art. 15 Abs. 1 Halbsatz 2 DSGVO mitzuteilen.  
+---  
+| 55  
+---  
+| Soweit der Prozessbevollmachtigte vortragt, bei einer ablehnenden Entscheidung ware dem Klager eine spatere Geltendmachung eines Anspruchs verwehrt, wird darauf hingewiesen, dass bei Verpflichtungsklagen im Zusammenhang mit Ermessenentscheidungen in die Bestimmung des Umfangs der Rechtskraft (§ 110 FGO) nur diejenigen Tatsachen einzubeziehen sind, die das Finanzgericht seiner Entscheidung zugrunde gelegt hat und daruber hinaus auch diejenigen Tatsachen, die unter Berucksichtigung von § 102 Satz 2 FGO in den Prozess hatten eingebracht werden konnen und deshalb durch die Rechtskraft prakludiert sind, weil sie bei naturlichem Verstandnis zum Entscheidungsgegenstand gehoren (Graber/Ratschow, 9. Auflage 2019, FGO § 110 Rn. 50).  
+---  
+| 56  
+---  
+| 2\. Auch die AO sieht kein Recht auf Akteneinsicht vor.  
+---  
+| 57  
+---  
+| Wie der BFH in standiger Rechtsprechung entschieden hat, ist ein solches Einsichtsrecht weder aus § 91 Abs. 1 AO und dem hierzu ergangenen Anwendungserlass zur Abgabenordnung (AEAO) noch aus § 364 AO und dem dazu ergangenen AEAO abzuleiten. Allerdings geht der BFH in standiger Rechtsprechung - ebenso wie die Finanzverwaltung in Nr. 4 AEAO zu § 91 AO - davon aus, dass dem wahrend eines Verwaltungsverfahrens um Akteneinsicht nachsuchenden Steuerpflichtigen oder seinem Vertreter ein Anspruch auf eine pflichtgemaße Ermessensentscheidung der Behorde zusteht (z.B. BFH-Urteil vom 23. Februar 2010 VII R 19/09, BFHE 228, 139, BStBl II 2010, 729).  
+---  
+| 58  
+---  
+| Vorliegend sind keine Ermessensfehler erkennbar. Der Beklagte fuhrt in der Einspruchsentscheidung aus, die Annahme der Pruferin, die Buchfuhrung sei nicht ordnungsgemaß, beruhe auf der Sichtung von Daten und Kopien von Unterlagen, die ihr vom Klager selbst bzw. seiner Steuerberaterin ausgehandigt worden seien. Diese lagen dem Klager bzw. seiner Steuerberaterin im Original vor. Unter Betrachtung dieser Ausfuhrungen ist bis zum Abschluss des Verwaltungsverfahrens nicht deutlich geworden, worin das berechtigte Interesse des Klagers an der Einsicht in die Handakte der Betriebsprufung bestehen sollte. Ein solches hatte von ihm dargelegt werden mussen (vgl. Klein/Ratke, a.a.O., § 91 Rn. 25).  
+---  
+| 59  
+---  
+| Soweit der Bevollmachtigte des Klagers erstmals im Klageverfahren vortragt, die Handakten der Betriebspruferin enthielten auch Auswertungen, Berechnungen und sonstigen Unterlagen, kann er hiermit nicht gehort werden. Denn entscheidender Zeitpunkt fur die Beurteilung der Rechtmaßigkeit ist derjenige der letzten Verwaltungsentscheidung. Zu diesem Zeitpunkt war vom Bevollmachtigten jedoch noch nicht zum angeblichen Umfang der Handakte der Betriebspruferin vorgetragen worden. Vielmehr blieb der Vortrag der Betriebspruferin gegenuber der Steuerberaterin des Klagers unwidersprochen, wonach die Handakte zum damaligen Zeitpunkt zum Streitpunkt der fehlenden Ordnungsmaßigkeit der Buchfuhrung nur von Klagerseite ubergebene Unterlagen enthalte. In einem solchen Fall besteht kein berechtigtes Interesse an einer Akteneinsicht. Ein weiteres Anwachsen des Umfangs der Handakte nach Ergehen der letzten Verwaltungsentscheidung bis zur Schlussbesprechung am 19. Marz 2021 ist zu vermuten, aber fur die Überprufung der ablehnenden Entscheidung des Beklagten unerheblich.  
+---  
+| 60  
+---  
+| Hinzu kommt, dass der Antrag auf Akteneinsicht in die Handakten wahrend der laufenden Betriebsprufung gestellt wurde. Zu diesem Zeitpunkt kann jedoch der Zweck einer Akteneinsicht, den Anspruchsteller in die Lage versetzen, die Grundlagen einer Verwaltungsentscheidung nachzuvollziehen, noch nicht erreicht werden.  
+---  
+| 61  
+---  
+| 3\. Schließlich besteht auch kein Anspruch auf Akteneinsicht nach dem Gesetz zur Regelung des Zugangs zu Informationen in Baden-Wurttemberg (LIFG). Nach § 2 Abs. 3 Nr. 4 LIFG gilt das Gesetz nicht gegenuber den Landesfinanzbehorden im Sinne des § 2 des Finanzverwaltungsgesetzes, soweit sie in Verfahren in Steuersachen tatig werden.  
+---  
+III.  
+---  
+| 62  
+---  
+| Die Durchfuhrung eines Vorabentscheidungsverfahrens nach Art. 267 AEUV zur Klarung der Form der Auskunftserteilung i.S. des Art. 15 Abs. 1 DSGVO ist nicht geboten. Die Richtigkeit der Auslegung und Anwendung dieses unionsrechtlichen Begriffs erweist sich angesichts des eindeutigen Auslegungsergebnisses und der in der Rechtsprechung des EuGH erreichten Klarung des Zwecks des Auskunftsrechts nach der Datenschutzrichtlinie (vgl. EuGH-Urteile vom 7. Mai 2009 - C-553/07 - Rn. 49 ff., vom 17. Juli 2014 - C-141/12 - Rn. 44 und vom 20. Dezember 2017 - C-434/16 - Rn. 57) als derart offenkundig, dass fur vernunftige Zweifel kein Raum bleibt (acte-clair-Doktrin, vgl. EuGH-Urteile vom 6. Oktober 1982 - C 283/81 [ECLI:EU:C:1982:335], CILFIT - und vom 15. September 2005 - C-495/03 [ECLI:EU:C:2005:552], Intermodal Transports -).  
+---  
+IV.  
+---  
+| 63  
+---  
+| Die Kostenentscheidung beruht auf § 135 Abs. 1 FGO.  
+---  
+V.  
+---  
+| 64  
+---  
+| Die Revision war nicht zuzulassen, da die Voraussetzungen des § 115 Abs. 2 FGO nicht gegeben waren. Eine Divergenz zur Entscheidung des FG des Saarlandes in EFG, 2019, 1217 ist nicht moglich, da es sich hierbei um eine Kostenentscheidung und somit nicht um eine Entscheidung in der Hauptsache handelt (vgl. BFH-Beschluss vom 20. Mai 2016 III B 62/15, BFH/NV 2016, 1293).  
+---  
+| 65  
+---  
+| Zudem hat der BFH mit Beschluss in BFH/NV 2020, 25 bereits geklart, dass das Akteneinsichtsrecht lediglich eine besondere Form der Auskunftserteilung nach Art. 15 DSGVO darstellt und demzufolge nicht von einem gebundenen Anspruch auszugehen ist. Daruber hinaus hat das BVerwG mit Urteil in HFR 2021, 287 unter Bezugnahme auf die Rechtsprechung des EuGH ausgefuhrt, dass das Auskunftsrecht nach Art. 15 Abs. 1 DSGVO nicht der Schaffung eines Zugangs zu Verwaltungsdokumenten dient.  
+---  
+| 66  
+---  
+| Die Rechtssache weist daher als Einzelfallentscheidung auch vor dem Hintergrund, dass der Klager keine datenschutzrechtlichen Anspruche geltend gemacht hat, sondern lediglich Akteneinsicht beantragte, keine grundsatzliche Bedeutung auf.  
+---

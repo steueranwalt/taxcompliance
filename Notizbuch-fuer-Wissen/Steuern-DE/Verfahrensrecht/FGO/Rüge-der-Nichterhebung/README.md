@@ -1,0 +1,5 @@
+# Rüge der Nichterhebung
+
+Gibt das FG ausdrucklich oder konkludent (Der Vorsitzende kundigt in der mundlichen Verhandlung an, die Beweisaufnahme oder die mundliche Verhandlung schließen zu wollen, ohne dass der beantragte Beweis erhoben worden ist) zu erkennen, dass es den Beweis nicht erheben will, muss der Klager die Nichterhebung schriftlich oder zu Protokoll rugen (§ 155 FGO iVm § 295 ZPO). Danach darf er sich nicht mehr rugelos einlassen. Davon spricht man, wenn er in der mundlichen Verhandlung zur Sache verhandelt, also einen Sachantrag stellt, ohne zuvor das Übergehen seines Beweisantrags (ggf. erneut) gerugt zu haben. 
+
+Der Klager muss gegenuber dem FG darauf bestehen, dass die Ruge als wesentlicher Vorgang in das Protokoll aufgenommen wird (§ 94 FGO iVm § 160 Abs. 2 ZPO). Weigert sich das Gericht, die Ruge zu protokollieren, muss der Klager insoweit (bis zum Schluss der mundlichen Verhandlung) die Erganzung des Protokolls (§ 94 FGO iVm § 160 Abs. 4 ZPO) oder (danach) dessen Berichtigung (§ 94 FGO iVm § 164 ZPO) beantragen. Die Fristen fur die Einlegung und Begrundung der Nichtzulassungsbeschwerde werden dadurch nicht hinausgeschoben.
