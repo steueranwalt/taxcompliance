@@ -1,0 +1,3 @@
+# Abgrenzung zur Berichtigung
+
+Erkennt der Steuerpflichtige erst im Nachhinein die Fehlerhaftigkeit der Steuererklarung, die er abgegeben hat, und kommt er sodann unverzuglich – also ohne schuldhaftes Zogern – seiner Pflicht nach § 153 AO nach, liegt keine Steuerhinterziehung oder eine leichtfertige Steuerverkurzung vor, wenn es an Vorsatz oder Leichtfertigkeit fehlt (Tz. 2.2.). An dieser Stelle zeigt sich der wesentliche Unterschied zwischen einer Selbstanzeige und der Berichtigung nach § 153 AO. Bei einer Selbstanzeige ist eine Steuerhinterziehung vorausgegangen, bei einer Berichtigungspflicht hat der Steuerpflichtige bei Abgabe der Steuererklarung nicht gewusst, dass diese falsch war.
