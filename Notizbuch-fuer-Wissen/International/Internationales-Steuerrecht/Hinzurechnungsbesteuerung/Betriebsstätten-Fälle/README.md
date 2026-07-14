@@ -1,0 +1,10 @@
+# Betriebsstätten-Fälle
+
+Die Bestimmung des § 20 Absatz 2 S. 1 AStG enthalt eine Fiktion. Dies kommt sprachlich im Passus „falls diese Betriebsstatte eine auslandische Gesellschaft ware“ zum Ausdruck. Eine Fiktion wird in der Rechtslehre eine im Gesetz festgelegte Annahme eines Sachverhalts genannt, der in Wirklichkeit nicht besteht. Zweck der Fiktion ist es, in besonderen Fallen die Ableitung einer sonst nicht gegebenen Rechtsfolge zu ermoglichen. Mithin bedingt § 20 Absatz 2 S. 1 AStG eine hypothetische Prufung der Steuerpflicht der auslandischen Betriebsstatteneinkunfte als Zwischeneinkunfte, wobei fur Zwecke dieser Prufung die auslandische Betriebsstatte als auslandische Gesellschaft iSd § 7 Absatz 1 AStG fingiert wird. Demnach mussen unter Zugrundelegung dieser Fiktion samtliche Tatbestandsvoraussetzungen der Hinzurechnungsbesteuerung hypothetisch erfullt sein. Diese Fiktion des § 20 Absatz 2 S. 1 AStG, insbesondere deren Reichweite, ist zwar im Einzelnen umstritten und im Detail noch ungeklart. Gleichwohl kommt in ihrem Wortlaut klar zum Ausdruck, dass die real existierende Betriebsstatte durch eine gedanklich an ihre Stelle tretende Kapitalgesellschaft ersetzt werden muss. Soll die Fiktion inhaltlichen Sinn ergeben, kann dies nur bedeuten, dass neben der Passivitatsvoraussetzung und der Niedrigsteuervoraussetzung eben gerade auch die Beherrschungsvoraussetzung als drittes zentrales Momentum des Tatbestandskatalogs der Hinzurechnungsbesteuerung auf Ebene der Betriebsstatte erfullt sein muss (Kraft/Kempf, IStR 2016, 220).
+
+  
+
+
+§ 14 gilt fur im Ausl. zwischengeschaltete PersGes nicht. § 7 Abs. 3 fullt diese Gesetzeslucke aus: Danach sind die von PersGes (inl. und ausl. PersGes) an der ausl. Ges gehaltenen Anteile den hinter ihr stehenden SteuerInl. zuzurechnen. Zu im Ausland errichteten Ges zahlen hierzu solche GesFormen, die nach dt. Recht nicht als subjektfahige Korperschaften zu qualifizieren sind (s. Rz. 15), mogen sie auch nach ausl. Recht jur. Personen sein (Blumich/Vogt, § 7 AStG, Rn. 41).
+
+.

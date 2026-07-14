@@ -1,0 +1,4 @@
+# Pillar 2: Mindestbesteuerung
+
+* Hintergrund von Pillar Two: Pillar Two fuhrt eine globale Mindestbesteuerung ein, um sicherzustellen, dass Unternehmen weltweit einen bestimmten Mindeststeuersatz zahlen. Dies soll verhindern, dass Unternehmen durch Gewinnverlagerung in Niedrigsteuerlander ihre Steuerlast minimieren.
+  * Verbindung zu BEPS: Pillar Two ist eine direkte Fortsetzung der BEPS-Bemuhungen zur Bekampfung der Gewinnverlagerung und der Steuervermeidung. BEPS-Initiativen, insbesondere Aktion 4 (Beschrankung der Abzugsfahigkeit von Zinsen) und Aktion 8-10 (Sicherstellung der korrekten Verrechnungspreisfestlegung), zielen darauf ab, Steuervermeidung zu verhindern. Pillar Two erweitert diese Ansatze durch die Einfuhrung eines globalen Mindeststeuersatzes, der als zusatzliche Schutzmaßnahme dient, um sicherzustellen, dass multinationalen Unternehmen in allen Landern eine angemessene Steuerlast auferlegt wird.

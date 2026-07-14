@@ -1,0 +1,5 @@
+# Problematisch ist schließlich auch das Verhältnis zum verfassungsrechtlich geschützten Grundsatz, sich nicht selbst zu belasten (nemo tenetur se ipsum accusare). Sofern die fragliche Gestaltung strafrechtlich relevant sein könnte, kollidiert die Mitteilun
+
+Problematisch ist schließlich auch das Verhaltnis zum verfassungsrechtlich geschutzten Grundsatz, sich nicht selbst zu belasten (nemo tenetur se ipsum accusare). Sofern die fragliche Gestaltung strafrechtlich relevant sein konnte, kollidiert die Mitteilungspflicht mit diesem Grundsatz und wirkt faktisch wie eine Pflicht zur Selbstanzeige, allerdings ohne die mit einer Selbstanzeige verbundene Straffreiheit. In diesem Fall kann die Mitteilungspflicht nicht mit Grunden des Allgemeinwohls (Aufdeckung von Gestaltungen zur Erosion des Steuersubstrats) gerechtfertigt werden (so aber BR-Drs 489/19, 30). Das Problem stellt sich nur dann nicht, wenn es sich um eine zweifelsfrei legale StGestaltung handelt, die nach dem Gesetz zulassig ist, aber materiell moglicherweise nicht dem Regelungsziel des Gesetzgebers entspricht.
+
+Klein / Ratke, AO, § 138d Rz. 8

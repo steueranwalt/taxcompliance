@@ -1,0 +1,8 @@
+# Vermögensverwaltung
+
+Betatigt sich zB eine Kapitalgesellschaft nur vermogensverwaltend, so kann der Mittelpunkt ihrer geschaftlichen Oberleitung auch dort liegen, wo die Kapitalgesellschaft die laufende Kontrolle uber ihr Vermogen ausubt, wo sie ihre Wertpapiere verwahrt oder wo sie ihre Steuererklarungen anfertigt bzw. unterschreibt, wenn sie nur an keinem anderen Ort gewichtigere Entscheidungen trifft. Wird eine Kapitalgesellschaft an verschiedenen Orten geschaftsfuhrend tatig, so sind die an den verschiedenen Orten ausgeubten Tatigkeiten nach ihrer Bedeutung fur die Kapitalgesellschaft zu gewichten, um auf diese Weise den Ort der Geschaftsleitung zu bestimmen. Die in diesem Sinne wesentlichen Maßnahmen von einiger Wichtigkeit lassen sich deshalb nicht abstrakt oder absolut umschreiben. Sie konnen nur fur den Einzelfall bestimmt werden. Maßnahmen, die fur die eine Kapitalgesellschaft von untergeordneter Bedeutung sind, konnen fur eine andere Kapitalgesellschaft den Ort der Geschaftsleitung begrunden (BFH v. 7.12.1994 – I K 1/93, BStBl. II 1995, 175, IStR 1995, 186, unter B.6a).
+
+  
+
+
+„Bei einer uberwiegend vermogensverwaltend tatigen nicht-naturlichen Person kann sich die Geschaftsleitung in der Aufbewahrung von Wertpapieren, in der Vereinnahmung von Dividenden und Zinsen, in der Auskehrung von Gewinnen und in der Abgabe von Steuererklarungen erschopfen. Abstrakt gesehen gehoren zur Geschaftsleitung nur die Aufgaben der sog. laufenden Geschaftsfuhrung, das heißt die Sorge fur das rechtmaßige Verhalten der nicht-naturlichen Person im Außenverhaltnis …“ (Wassermeyer/Kaeser Art. 4 MA Rn. 97; Tipke/Kruse/Druen , § 10 AO Rn. 2a.
