@@ -66,3 +66,18 @@ _noch keine Dokumente_
 
 ### Rechtsprechungsübersichten
 _noch keine Dokumente_
+
+---
+
+## OneNote-Export (`Notizbuch-fuer-Wissen/`)
+
+Export des SharePoint-Notizbuchs **Notizbuch für Wissen** (Site `Wissen`). Pro Abschnitt ein Ordner.
+
+| Abschnitt | Status |
+|---|---|
+| [`Diverses/`](Notizbuch-fuer-Wissen/Diverses/) | exportiert |
+| [`International/`](Notizbuch-fuer-Wissen/International/) | teilweise (DBA-DE-CH weitgehend) |
+| [`Jagen_Sammeln/`](Notizbuch-fuer-Wissen/Jagen_Sammeln/) | leer / ohne Seiten |
+| Recht allgemein, Steuern CH, Steuern DE | folgt (Graph-API-Throttling) |
+
+Details: [`Notizbuch-fuer-Wissen/README.md`](Notizbuch-fuer-Wissen/README.md)

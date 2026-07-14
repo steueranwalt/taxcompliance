@@ -1,0 +1,25 @@
+# DE-CH
+
+## Seiten
+
+- [Schema](Schema/README.md)
+- [Besteuerungsrechte nach DBA](Besteuerungsrechte-nach-DBA/README.md)
+- [Doppelbesteuerungsabkommen Schweiz - Deutschland 1971 und 1978 - Locher, Kurt; Meier, Walter; von Siebenthal, Rudolf; Kolb, Andreas - Helbing Lichtenhahn Verlag](Doppelbesteuerungsabkommen-Schweiz-Deutschland-1971-und-1978-Locher,-Ku-454f9516/README.md)
+- [Flick/Wassermeyer/Kempermann | DBA Deutschland - Schweiz - Verlag Dr. Otto Schmidt KG](Flick-Wassermeyer-Kempermann-DBA-Deutschland-Schweiz-Verlag-Dr.-Otto-Schmidt-KG/README.md)
+- [DBA Schweiz Protokoll 1989](DBA-Schweiz-Protokoll-1989/README.md)
+- [BMF: Schreiben betr. Abkommen zwischen der Bundesrepublik Deutschland und der Schweizerischen Eidgenossenschaft zur Vermeidung der Doppelbesteuerung auf dem Gebiete der Steuern vom Einkommen und vom Vermögen vom 11. August 1971 (BGBl. 1972 II S. 1022, BGBl. 1972 I S. 519) - beck-online](BMF-Schreiben-betr.-Abkommen-zwischen-der-Bundesrepublik-Deutschland-un-39a1ab17/README.md)
+- [Steuerplanung | Atypisch stille Beteiligung an Schweizer Kapitalgesellschaft sichert attraktive Steuerquote](Steuerplanung-Atypisch-stille-Beteiligung-an-Schweizer-Kapitalgesellsch-4a4babb0/README.md)
+- [Deutsch-Schweizer Nachfolgeplanung - beck-online](Deutsch-Schweizer-Nachfolgeplanung-beck-online/README.md)
+- [Schweiz/Liechtenstein: Architekturdienstleistungen in der MwSt | Steuern | Haufe](Schweiz-Liechtenstein-Architekturdienstleistungen-in-der-MwSt-Steuern-Haufe/README.md)
+- [Heckschen/Hilser: Grenzüberschreitender Gesellschaftszuzug aus Drittstaaten nach Deutschland am Praxisbeispiel einer Schweizer Aktiengesellschaft – Teil I, DStR 2022, 1005 ](Heckschen-Hilser-Grenzüberschreitender-Gesellschaftszuzug-aus-Drittstaa-44ac5968/README.md)
+- [Heckschen/Hilser: Grenzüberschreitender Gesellschaftszuzug aus Drittstaaten nach Deutschland am Praxisbeispiel einer Schweizer Aktiengesellschaft – Teil II, DStR 2022, 1053](Heckschen-Hilser-Grenzüberschreitender-Gesellschaftszuzug-aus-Drittstaa-c72617ea/README.md)
+- [Schweizer Verrechnungssteuer und Meldeverfahren bei Ausschüttungen an eine deutsche Personengesellschaft](Schweizer-Verrechnungssteuer-und-Meldeverfahren-bei-Ausschüttungen-an-e-82b48052/README.md)
+- [Doppelte Nichtbesteuerung und deutsches Sondervergütungskonzept (§ 50d Abs. 10 EStG) IStR 2018, 102 - beck-online](Doppelte-Nichtbesteuerung-und-deutsches-Sondervergütungskonzept-(§-50d-cb1338f7/README.md)
+- [BeckOK AStG | AStG § 2 Rn. 484-514 - beck-online](BeckOK-AStG-AStG-§-2-Rn.-484-514-beck-online/README.md)
+- [IStR 2013, 909 - beck-online](IStR-2013,-909-beck-online/README.md)
+- [Änderungsprotokoll vom 21.8.2023](Änderungsprotokoll-vom-21.8.2023/README.md)
+- [Änderungsprotokoll](Änderungsprotokoll/README.md)
+- [Steuerdeklaration DE bei zeitweiser unbeschränkter Steuerpflicht](Steuerdeklaration-DE-bei-zeitweiser-unbeschränkter-Steuerpflicht/README.md)
+- [Revision des DBA Deutschland-Schweiz - ADB](Revision-des-DBA-Deutschland-Schweiz-ADB/README.md)
+- [Um die Änderungen durch das Änderungsprotokoll vom 21. August 2023 im Vergleich zur bisherigen Fassung und unter Berücksichtigung des OECD-Musterabkommens sowie des OECD-Kommentars zu analysieren, werde ich die wichtigsten Änderungen identifizieren und pr](Um-die-Änderungen-durch-das-Änderungsprotokoll-vom-21.-August-2023-im-V-82b955a9/README.md)
+- [MLI](MLI/README.md)

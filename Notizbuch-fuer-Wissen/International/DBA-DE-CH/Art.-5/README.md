@@ -1,0 +1,28 @@
+# Art. 5
+
+## Seiten
+
+- [Art. 5 DBA - Betriebsstätte](Art.-5-DBA-Betriebsstätte/README.md)
+- [Schrifttum](Schrifttum/README.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
+- [Verwaltungsvorschriften / -anweisungen DE](Verwaltungsvorschriften-anweisungen-DE/README.md)
+- [Konsultationsvereinbarung wg Covid 19](Konsultationsvereinbarung-wg-Covid-19/README.md)
+- [wesentliche Divergenzen](wesentliche-Divergenzen/README.md)
+- [Rechtsprechung](Rechtsprechung/README.md)
+- [Checkliste Betriebsstätte](Checkliste-Betriebsstätte/README.md)
+- [Abs. 1 Definition](Abs.-1-Definition/README.md)
+- [Betriebsstätten nach Schweizer Recht](Betriebsstätten-nach-Schweizer-Recht/README.md)
+- [Abs. 2 Katalog](Abs.-2-Katalog/README.md)
+- [Baustelle als Betriebsstätte CH](Baustelle-als-Betriebsstätte-CH/README.md)
+- [Bau- und Montagebetriebsstätten](Bau-und-Montagebetriebsstätten/README.md)
+- [Abs. 3 Hilfs- und Vorbereitungstätigkeiten](Abs.-3-Hilfs-und-Vorbereitungstätigkeiten/README.md)
+- [Vorbereitungstätigkeiten](Vorbereitungstätigkeiten/README.md)
+- [Abs. 4 abhängiger Vertreter](Abs.-4-abhängiger-Vertreter/README.md)
+- [Vertreterbetriebsstätte](Vertreterbetriebsstätte/README.md)
+- [Abs. 5 unabhängiger Vertreter - Independent Agent Exception](Abs.-5-unabhängiger-Vertreter-Independent-Agent-Exception/README.md)
+- [Die Begriffe "abhängiger Vertreter" nach Artikel 5 Absatz 4 und "unabhängiger Vertreter" nach Artikel 5 Absatz 5 des DBA Deutschland-Schweiz beziehen sich auf verschiedene Arten von Vertretern eines Unternehmens, die in einem anderen Vertragsstaat tätig s](Die-Begriffe-abhängiger-Vertreter-nach-Artikel-5-Absatz-4-und-unabhängi-99ecf2f3/README.md)
+- [Abs. 6 Beherrschung „Anti-Organ-Klausel“](Abs.-6-Beherrschung-„Anti-Organ-Klausel“/README.md)
+- [steuerrechtliche Ausscheidung](steuerrechtliche-Ausscheidung/README.md)
+- [OECD-MA-Änderungen ](OECD-MA-Änderungen/README.md)
+- [Änderungsprotoll 2023](Änderungsprotoll-2023/README.md)
+- [Home Office](Home-Office/README.md)

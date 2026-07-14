@@ -1,0 +1,6 @@
+# (7) Dieser Artikel gilt auch für Einkünfte aus der Beteiligung an einer Personengesellschaft. Er erstreckt sich auch auf Vergütungen, die ein Gesellschafter einer Personengesellschaft von der Gesellschaft für seine Tätigkeit im Dienst der Gesellschaft, fü
+
+|   
+  
+---|---  
+(7) Dieser Artikel gilt auch fur Einkunfte aus der Beteiligung an einer Personengesellschaft. Er erstreckt sich auch auf Vergutungen, die ein Gesellschafter einer Personengesellschaft von der Gesellschaft fur seine Tatigkeit im Dienst der Gesellschaft, fur die Gewahrung von Darlehen oder fur die Überlassung von Wirtschaftsgutern bezieht, wenn diese Vergutungen nach dem Steuerrecht des Vertragsstaates, in dem die Betriebsstatte gelegen ist, den Einkunften des Gesellschafters aus dieser Betriebsstatte zugerechnet werden. | (4) Dieser Artikel gilt auch fur Einkunfte aus der Beteiligung an einer Personengesellschaft. Er erstreckt sich auch auf Vergutungen, die ein Gesellschaf- ter einer Personengesellschaft von der Gesellschaft fur seine Tatigkeit im Dienst der Gesellschaft, fur die Gewahrung von Darlehen oder fur die Überlassung von Wirtschaftsgutern bezieht, wenn diese Vergutungen nach dem Steuerrecht des Vertragsstaats, in dem die Betriebsstatte gelegen ist, den Einkunften des Gesellschafters aus dieser Beteiligung zugerechnet werden.

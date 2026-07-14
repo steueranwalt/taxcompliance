@@ -1,0 +1,26 @@
+# Art. 23
+
+## Seiten
+
+- [Art. 23 Missbrauchsvorbehalt](Art.-23-Missbrauchsvorbehalt/README.md)
+- [Protokoll](Protokoll/README.md)
+- [Schrifttum](Schrifttum/README.md)
+- [Rechtsprechung](Rechtsprechung/README.md)
+- [BVG 30.10.2008 A-2163/2007](BVG-30.10.2008-A-2163-2007/README.md)
+- [Schrifttum](Schrifttum-2/README.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
+- [Missbrauch](Missbrauch/README.md)
+- [Abkommensvergünstigungen](Abkommensvergünstigungen/README.md)
+- [Abkommensmissbräuche nach BEPS Action 6](Abkommensmissbräuche-nach-BEPS-Action-6/README.md)
+- [Conduit Arrangements (Durchlaufgesellschaften)](Conduit-Arrangements-(Durchlaufgesellschaften)/README.md)
+- [Hiring-out von Arbeitskräften](Hiring-out-von-Arbeitskräften/README.md)
+- [Transaktionen zur Umgehung der Dividendenklassifizierung](Transaktionen-zur-Umgehung-der-Dividendenklassifizierung/README.md)
+- [Treaty Shopping](Treaty-Shopping/README.md)
+- [MLI](MLI/README.md)
+- [Auslegungsfragen zum „Principal Purpose Test“ (PPT) – DBA-Missbrauchsverhinderung 4.0 - beck-online](Auslegungsfragen-zum-„Principal-Purpose-Test“-(PPT)-–-DBA-Missbrauchsve-faee4d38/README.md)
+- [Änderungsprotokoll](Änderungsprotokoll/README.md)
+- [Principal Purpose Test (PPT) Abs. 3 neu](Principal-Purpose-Test-(PPT)-Abs.-3-neu/README.md)
+- [Principal Purpose Test - Praktische Auswirkungen auf Bestandsfälle](Principal-Purpose-Test-Praktische-Auswirkungen-auf-Bestandsfälle/README.md)
+- [Hybride Gestaltungen](Hybride-Gestaltungen/README.md)
+- [Hybrid Entities](Hybrid-Entities/README.md)
+- [Art. 6 ATAD](Art.-6-ATAD/README.md)
