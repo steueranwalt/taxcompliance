@@ -1,0 +1,3 @@
+# Schätzung des Gewinnaufschlagssatzes
+
+
