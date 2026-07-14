@@ -1,0 +1,3 @@
+# erhöhte Mitwirkungspflicht bei Auslandssachverhalten
+
+Leitet die steuerpflichtige Person aus einem internationalen Verhaltnis etwas zu ihren Gunsten ab, treffen sie schliesslich erhohte Beweisanforderungen und Auskunftspflichten. Bei Zahlungen ins Ausland ist somit nicht nur der Empfanger zu nennen, sondern es sind die gesamten Umstande darzulegen, die im konkreten Fall zu deren Ausrichtung gefuhrt haben. Von der steuerpflichtigen Person wird verlangt, dass sie die Vertrage, die Korrespondenz und die Bankbelege vorlegt (BGer 2C_1113/2018 vom 8.1.2019 E. 2.2.3 mit weiteren Hinweisen; VerwGE B 2018/155, 156 vom 16.11.2018 E. 3.1).

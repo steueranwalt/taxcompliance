@@ -1,0 +1,3 @@
+# Abgrenzung zur Vermögensverwaltung
+
+Der selbstandig Erwerbstatige nimmtregelmassig durch Einsatz von Arbeitsleistung und Kapital in frei bestimmter Selbstorganisation planmassig, anhaltend und nach aussen sichtbar zum Zweck der Gewinnerzielung am wirtschaftlichen Verkehr teil. Die Verwaltung eigenen Vermogens ist dagegen keine Erwerbstatigkeit, auch dann nicht, wenn das Vermogen gross sei und der Steuerpflichtige zu seiner fortlaufenden Orientierung eine kaufmannische Buchhaltung fuhre oder fuhren lasse. Kapitalgewinne aus der Verausserung von Privatvermogen seien nach Art. 16 Abs. 3 DBG steuerfrei.

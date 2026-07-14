@@ -1,0 +1,15 @@
+# Aufsichtsbeschwerde
+
+Nach § 111 des Steuergesetzes vom 8. Juni 1997 (StG) kann gegen pflichtwidrige Amtsfuhrung, Rechtsverweigerung oder Rechtsverzogerung durch Verwaltungs- und Einschatzungsbehorden innert 30 Tagen nach Entdeckung des Grundes Beschwerde bei der Finanzdirektion erhoben werden (Abs. 1). Gegen den Entscheid der Finanzdirektion kann innert 30 Tagen nach Zustellung Beschwerde beim Regierungsrat erhoben werden (Abs. 2). Wird die Beschwerde durch die Finanzdirektion oder den Regierungsrat abgewiesen, konnen den Beschwerdefuhrern Kosten auferlegt werden (Abs. 3).
+
+Der Sache nach handelt es sich bei der Beschwerde gemass § 111 StG um eine Aufsichtsbeschwerde, mit der faktisch jede Handlung der in Steuersachen tatigen erstinstanzlichen Verwaltungsbehorden bei der jeweils ubergeordneten Verwaltungsbehorde beanstandet werden kann.
+
+1.2 Zu unterscheiden ist bei Aufsichtsbeschwerden zwischen der blossen Anzeige an die ubergeordnete Verwaltungsbehorde (sogenannte reine Aufsichtsbeschwerde; vgl. VGr, 20. August 2009, VB.2009.00409, E. 1.2) und einem gesetzlich vorgesehenen Aufsichtsbeschwerdeverfahren. 
+
+1.2.1 Die Moglichkeit, Missstande in der Amtsfuhrung bei der ubergeordneten Verwaltungsbehorde anzuzeigen, ergibt sich aus dem hierarchischen Aufbau der Verwaltung und ist auch ohne ausdruckliche gesetzliche Grundlage moglich. Im Gegensatz zu einem formlichen Rechtsmittel kommt dem Anzeiger indessen keine Parteistellung zu (so ausdrucklich Art. 71 Abs. 2 des Verwaltungsverfahrensgesetzes vom 20. Dezember 1968 [VwVG]). Er besitzt dadurch auch keinen Anspruch auf Erledigung noch kann er die Nichtanhandnahme der Anzeige mit einem Rechtsmittel anfechten (vgl. VGr, 20. August 2009, VB.2009.00409, E. 1.2; BGE 102 Ib 81 E. 3).
+
+1.2.2 Im Gegensatz dazu sind gesetzlich vorgesehene Aufsichtsbeschwerdeverfahren formliche Rechtsmittel. Der potenzielle Missstand muss wie bei jedem anderen Rechtsmittel innert Frist beanstandet werden, dem Betroffenen kommt Parteistellung zu und er besitzt sowohl einen Anspruch auf Erledigung des Verfahrens wie auch die Moglichkeit der Ergreifung von Rechtsmitteln gegen den Aufsichtsentscheid. Beispiel ist etwa das Aufsichtsbeschwerdeverfahren nach Art. 17 ff. des Bundesgesetzes vom 11. April 1889 uber Schuldbetreibung und Konkurs [SchKG]).
+
+1.2.3 Im Lichte dieser Erwagungen ist das Aufsichtsbeschwerdeverfahren nach § 111 StG als formliches Rechtsmittel zu qualifizieren. § 111 Abs. 1 StG sieht ausdrucklich eine Frist von 30 Tagen vor, innert der Beschwerde an die Finanzdirektion erhoben werden muss. Weiter raumt § 111 Abs. 2 StG dem Betroffenen ausdrucklich die Befugnis ein, den Aufsichtsentscheid der Finanzdirektion innert 30 Tagen beim Regierungsrat anzufechten, womit im Gegensatz zur blossen Aufsichtsanzeige die formelle Parteistellung des Betroffenen und ein Anspruch auf Behandlung der Aufsichtsbeschwerde einhergeht (vgl. auch Felix Richner/Walter Frei/Stefan Kaufmann/Hans Ulrich Meuter, Kommentar zum Zurcher Steuergesetz, 3. A., Zurich 2013, § 111 N. 15 ff.).
+
+Zurich Verwaltungsgericht 12.3.2014 SB.2013.00062
