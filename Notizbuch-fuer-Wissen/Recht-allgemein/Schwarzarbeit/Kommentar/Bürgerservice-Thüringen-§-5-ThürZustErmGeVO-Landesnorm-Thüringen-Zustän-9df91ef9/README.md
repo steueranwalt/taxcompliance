@@ -1,0 +1,7 @@
+# Bürgerservice Thüringen - § 5 ThürZustErmGeVO | Landesnorm Thüringen | Zuständigkeiten nach der Handwerksordnung und dem Gesetz zur Bekämpfung der Schwarzarbeit | § 5 - Zuständigkeiten nach der Handwerksordnung und dem Gesetz zur Bekämpfung der Schwarzarbeit | gültig ab: 01.04.2006 | gültig bis: 30.12.2010
+
+Ausgeschnitten aus: <https://landesrecht.thueringen.de/bsth/document/jlr-GewRZustReglVTHV3P5>
+
+(1) Die Landkreise und die kreisfreien Stadte sind als untere Gewerbebehorden zustandig fur die Ausfuhrung des § 16 Abs. 3 und 4 der Handwerksordnung. Im Übrigen ist die obere Gewerbebehorde sowohl zustandige als auch hohere Verwaltungsbehorde nach der Handwerksordnung, soweit in anderen Rechtsvorschriften nichts anderes bestimmt ist. Das gilt nicht fur die Entscheidungen uber die Amtsenthebung von Mitgliedern der Vollversammlung einer Handwerkskammer und fur das Ausstellen von Bescheinigungen zum Ausweis des Vorstandes der Vollversammlung einer Handwerkskammer. Die Zustandigkeiten nach den §§ 7a, 7b, 8, 9, 22b, 23, 24 und 42q der Handwerksordnung werden auf die Handwerkskammern ubertragen.
+
+(2) Die Landkreise und die kreisfreien Stadte als untere Gewerbebehorden sind zustandig fur die Verfolgung und Ahndung von Ordnungswidrigkeiten nach den §§ 117 und 118 der Handwerksordnung und nach dem Gesetz zur Bekampfung der Schwarzarbeit in der Fassung vom 29. Januar 1982 (BGBl. I S. 109) in der jeweils geltenden Fassung, soweit in anderen Rechtsvorschriften nichts anderes bestimmt ist.
