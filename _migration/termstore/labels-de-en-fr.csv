@@ -1,0 +1,66 @@
+TermSet;TermPath;DE;EN;FR
+Rechtsgebiet;Öffentliches Recht;Öffentliches Recht;Public law;Droit public
+Rechtsgebiet;Öffentliches Recht|Verwaltungsrecht;Verwaltungsrecht;Administrative law;Droit administratif
+Rechtsgebiet;Öffentliches Recht|Verfassungsrecht;Verfassungsrecht;Constitutional law;Droit constitutionnel
+Rechtsgebiet;Öffentliches Recht|Sozialversicherungsrecht (AHV / IV / ALV / KVG);Sozialversicherungsrecht (AHV / IV / ALV / KVG);Social security law;Droit des assurances sociales
+Rechtsgebiet;Öffentliches Recht|Ausländer- und Asylrecht;Ausländer- und Asylrecht;Immigration and asylum law;Droit des étrangers et d'asile
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH);Steuerrecht (CH);Tax law (CH);Droit fiscal (CH)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Direkte Bundessteuer (DBSt);Direkte Bundessteuer (DBSt);Federal direct tax (FIT);Impôt fédéral direct (IFD)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Kantonale Steuern;Kantonale Steuern;Cantonal taxes;Impôts cantonaux
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|MWST;MWST;VAT (CH);TVA
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Verrechnungssteuer (VSt);Verrechnungssteuer (VSt);Withholding tax (CH);Impôt anticipé
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Stempelabgaben;Stempelabgaben;Stamp duties;Droits de timbre
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Grundstückgewinnsteuer;Grundstückgewinnsteuer;Real estate capital gains tax;Impôt sur les gains immobiliers
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Internationales Steuerrecht (CH);Internationales Steuerrecht (CH);International tax law (CH);Droit fiscal international (CH)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Steuerverfahren (CH);Steuerverfahren (CH);Tax procedure (CH);Procédure fiscale (CH)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Steuerstrafrecht (CH);Steuerstrafrecht (CH);Tax criminal law (CH);Droit pénal fiscal (CH)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE);Steuerrecht (DE);Tax law (DE);Droit fiscal (DE)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Einkommensteuer (EStG);Einkommensteuer (EStG);Income tax (EStG);Impôt sur le revenu
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Körperschaftsteuer (KStG);Körperschaftsteuer (KStG);Corporate income tax (KStG);Impôt sur les sociétés
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Gewerbesteuer (GewStG);Gewerbesteuer (GewStG);Trade tax (GewStG);Taxe professionnelle
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Umsatzsteuer (UStG);Umsatzsteuer (UStG);VAT (DE);TVA (DE)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung / Verfahren (AO);Abgabenordnung / Verfahren (AO);Fiscal code / procedure (AO);Code fiscal / procédure (AO)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung / Verfahren (AO)|Außenprüfung / Betriebsprüfung;Außenprüfung / Betriebsprüfung;Tax audit;Contrôle fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Nebenleistungen / Säumnis;Nebenleistungen / Säumnis;Ancillary charges / late payment;Intérêts et majorations
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Zollrecht (DE / Unionszollkodex);Zollrecht (DE / Unionszollkodex);Customs law (DE / UCC);Droit douanier
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE);Internationales Steuerrecht (DE);International tax law (DE);Droit fiscal international (DE)
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE)|DBA / Abkommensrecht;DBA / Abkommensrecht;Tax treaties;Conventions fiscales
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE)|Außensteuergesetz (AStG);Außensteuergesetz (AStG);Foreign Tax Act (AStG);Loi sur la fiscalité étrangère
+Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Steuerstrafrecht (DE);Steuerstrafrecht (DE);Tax criminal law (DE);Droit pénal fiscal (DE)
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht;Internationales Steuerrecht;International tax law;Droit fiscal international
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise;Verrechnungspreise;Transfer pricing;Prix de transfert
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Methoden / Arm’s Length;Methoden / Arm’s Length;Methods / Arm’s length;Méthodes / Pleine concurrence
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Funktions- und Risikoanalyse;Funktions- und Risikoanalyse;Functional and risk analysis;Analyse fonctionnelle et des risques
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Dokumentation (Master / Local / CbCR);Dokumentation (Master / Local / CbCR);Documentation (Master / Local / CbCR);Documentation (Master / Local / CbCR)
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Vergleichbarkeitsanalyse;Vergleichbarkeitsanalyse;Comparability analysis;Analyse de comparabilité
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|ICAs / Kostenumlagen;ICAs / Kostenumlagen;ICAs / Cost contribution;ACC / Répartition des coûts
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Korrekturen / Secondary Adjustments;Korrekturen / Secondary Adjustments;Adjustments / Secondary adjustments;Ajustements / Ajustements secondaires
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Vorabverständigung (APA / MAP);Vorabverständigung (APA / MAP);APA / MAP;APA / MAP
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Nahestehende Personen / Beteiligung;Nahestehende Personen / Beteiligung;Related parties / Ownership;Personnes liées / Participation
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Betriebsstättengewinnabgrenzung;Betriebsstättengewinnabgrenzung;PE profit attribution;Attribution des bénéfices aux ES
+Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Amtshilfe / Informationsaustausch (AIA, DAC6/7/8);Amtshilfe / Informationsaustausch (AIA, DAC6/7/8);Mutual assistance / EOI;Assistance administrative / Échange de renseignements
+Rechtsgebiet;Privatrecht (Vertrag / Haftpflicht / Familie / Erb / Gesellschaft);Privatrecht (Vertrag / Haftpflicht / Familie / Erb / Gesellschaft);Private law;Droit privé
+Rechtsgebiet;Strafrecht (Allgemein / Wirtschaft);Strafrecht (Allgemein / Wirtschaft);Criminal law;Droit pénal
+Rechtsgebiet;Verfahrensrecht (ZPO / StPO / VwVG);Verfahrensrecht (ZPO / StPO / VwVG);Procedural law;Droit procédural
+Rechtsordnung;Schweiz (CH);Schweiz (CH);Switzerland (CH);Suisse (CH)
+Rechtsordnung;Schweiz (CH)|Bund;Bund;Federal;Confédération
+Rechtsordnung;Schweiz (CH)|Kantonal;Kantonal;Cantonal;Cantonal
+Rechtsordnung;Deutschland (DE);Deutschland (DE);Germany (DE);Allemagne (DE)
+Rechtsordnung;Deutschland (DE)|Bundesrecht;Bundesrecht;Federal law;Droit fédéral
+Rechtsordnung;Deutschland (DE)|Landesrecht;Landesrecht;State law;Droit des Länder
+Rechtsordnung;Österreich (AT);Österreich (AT);Austria (AT);Autriche (AT)
+Rechtsordnung;Europäische Union (EU);Europäische Union (EU);European Union (EU);Union européenne (UE)
+Rechtsordnung;OECD;OECD;OECD;OCDE
+Rechtsordnung;International / Bilateral;International / Bilateral;International / Bilateral;International / Bilatéral
+Dokumenttyp;Urteil / Rechtsprechung;Urteil / Rechtsprechung;Case law / Judgment;Jurisprudence
+Dokumenttyp;Verwaltungsanweisung;Verwaltungsanweisung;Administrative guidance;Instruction administrative
+Dokumenttyp;Gesetz / Verordnung;Gesetz / Verordnung;Statute / Regulation;Loi / Ordonnance
+Dokumenttyp;Gesetzesmaterialien;Gesetzesmaterialien;Legislative materials;Travaux préparatoires
+Dokumenttyp;Fachaufsatz;Fachaufsatz;Article;Article de doctrine
+Dokumenttyp;Kommentar (Werk);Kommentar (Werk);Treatise / Commentary;Commentaire
+Dokumenttyp;Merkblatt / Leitfaden;Merkblatt / Leitfaden;Guidance note;Guide / Fiche
+Dokumenttyp;Arbeitshilfe / Checkliste;Arbeitshilfe / Checkliste;Checklist / Work aid;Aide-mémoire
+Dokumenttyp;Präsentation;Präsentation;Presentation;Présentation
+Dokumenttyp;Vertrag / Vereinbarung;Vertrag / Vereinbarung;Contract / Agreement;Contrat / Accord
+Dokumenttyp;Internes Memo;Internes Memo;Internal memo;Note interne
+Dokumenttyp;Datensatz / Grounds;Datensatz / Grounds;Dataset / Grounds;Jeu de données
