@@ -2,6 +2,6 @@
 
 ## Seiten
 
-- [Unbenannte Seite](Unbenannte-Seite/README.md)
-- [Mitverschulden](Mitverschulden/README.md)
-- [Fehler eines Folgeberaters](Fehler-eines-Folgeberaters/README.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)
+- [Mitverschulden](Mitverschulden.md)
+- [Fehler eines Folgeberaters](Fehler-eines-Folgeberaters.md)

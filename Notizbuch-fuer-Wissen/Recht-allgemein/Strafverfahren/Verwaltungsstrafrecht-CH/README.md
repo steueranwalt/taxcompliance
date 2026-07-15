@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Verwaltungsstrafverfahren](Verwaltungsstrafverfahren/README.md)
-- [Unbenannte Seite](Unbenannte-Seite/README.md)
+- [Verwaltungsstrafverfahren](Verwaltungsstrafverfahren.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)

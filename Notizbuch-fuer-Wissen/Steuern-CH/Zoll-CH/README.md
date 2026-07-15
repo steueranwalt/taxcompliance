@@ -2,4 +2,4 @@
 
 ## Abschnitte
 
-- [Zoll CH](Zoll-CH/README.md)
+- [Zoll CH](Zoll-CH.md)

@@ -2,6 +2,6 @@
 
 ## Abschnitte
 
-- [Grundsätze](Grundsätze/README.md)
-- [Steuerrecht CH/](Steuerrecht-CH/README.md)
-- [Zoll CH/](Zoll-CH/README.md)
+- [Grundsätze](Grundsätze.md)
+- [Steuerrecht CH/](Steuerrecht-CH.md)
+- [Zoll CH/](Zoll-CH.md)

@@ -2,9 +2,9 @@
 
 ## Abschnitte
 
-- [Auslandsbezug](Auslandsbezug/README.md)
-- [Organschaft](Organschaft/README.md)
-- [Rechnung](Rechnung/README.md)
-- [Reverse Charge](Reverse-Charge/README.md)
-- [USt](USt/README.md)
-- [USt-Betrug](USt-Betrug/README.md)
+- [Auslandsbezug](Auslandsbezug.md)
+- [Organschaft](Organschaft.md)
+- [Rechnung](Rechnung.md)
+- [Reverse Charge](Reverse-Charge.md)
+- [USt](USt.md)
+- [USt-Betrug](USt-Betrug.md)

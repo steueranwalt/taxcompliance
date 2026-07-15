@@ -2,5 +2,5 @@
 
 ## Abschnitte
 
-- [Firmengründung DE](Firmengründung-DE/README.md)
-- [Neuer Abschnitt 1](Neuer-Abschnitt-1/README.md)
+- [Firmengründung DE](Firmengründung-DE.md)
+- [Neuer Abschnitt 1](Neuer-Abschnitt-1.md)

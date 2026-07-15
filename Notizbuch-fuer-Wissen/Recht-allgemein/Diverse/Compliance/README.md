@@ -2,4 +2,4 @@
 
 ## Abschnitte
 
-- [Compliance](Compliance/README.md)
+- [Compliance](Compliance.md)

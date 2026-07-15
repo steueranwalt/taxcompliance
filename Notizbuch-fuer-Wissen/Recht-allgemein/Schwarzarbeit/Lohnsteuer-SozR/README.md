@@ -2,10 +2,10 @@
 
 ## Seiten
 
-- [Abfindungen](Abfindungen/README.md)
-- [--](unbenannt/README.md)
-- [A1 – Bescheinigungsverfahren](A1-–-Bescheinigungsverfahren/README.md)
-- [Rechtsbehelfsbelehrung SozR](Rechtsbehelfsbelehrung-SozR/README.md)
-- [Lohnversicht von G'ter-GF](Lohnversicht-von-G'ter-GF/README.md)
-- [Aus Compliance-Sicht vernachlässigt – DATEV magazin](Aus-Compliance-Sicht-vernachlässigt-–-DATEV-magazin/README.md)
-- [Vierhaus Lohnkostenmanagement GmbH ::  - Vierhaus Lohnkostenmanagement](Vierhaus-Lohnkostenmanagement-GmbH-Vierhaus-Lohnkostenmanagement/README.md)
+- [Abfindungen](Abfindungen.md)
+- [--](unbenannt.md)
+- [A1 – Bescheinigungsverfahren](A1-–-Bescheinigungsverfahren.md)
+- [Rechtsbehelfsbelehrung SozR](Rechtsbehelfsbelehrung-SozR.md)
+- [Lohnversicht von G'ter-GF](Lohnversicht-von-G'ter-GF.md)
+- [Aus Compliance-Sicht vernachlässigt – DATEV magazin](Aus-Compliance-Sicht-vernachlässigt-–-DATEV-magazin.md)
+- [Vierhaus Lohnkostenmanagement GmbH ::  - Vierhaus Lohnkostenmanagement](Vierhaus-Lohnkostenmanagement-GmbH-Vierhaus-Lohnkostenmanagement.md)

@@ -2,4 +2,4 @@
 
 ## Seiten
 
-- [bisherige Fassung](bisherige-Fassung/README.md)
+- [bisherige Fassung](bisherige-Fassung.md)

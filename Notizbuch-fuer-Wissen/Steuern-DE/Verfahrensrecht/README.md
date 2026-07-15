@@ -2,9 +2,9 @@
 
 ## Abschnitte
 
-- [Datenschutz](Datenschutz/README.md)
-- [FGO](FGO/README.md)
-- [Rechtsschutz](Rechtsschutz/README.md)
-- [Revision](Revision/README.md)
-- [Tax Compliance](Tax-Compliance/README.md)
-- [Verfahrensrecht DE](Verfahrensrecht-DE/README.md)
+- [Datenschutz](Datenschutz.md)
+- [FGO](FGO.md)
+- [Rechtsschutz](Rechtsschutz.md)
+- [Revision](Revision.md)
+- [Tax Compliance](Tax-Compliance.md)
+- [Verfahrensrecht DE](Verfahrensrecht-DE.md)

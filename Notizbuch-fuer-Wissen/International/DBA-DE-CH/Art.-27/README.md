@@ -2,8 +2,8 @@
 
 ## Seiten
 
-- [Art. 27 Informationsaustausch](Art.-27-Informationsaustausch/README.md)
-- [Informationsaustausch CH](Informationsaustausch-CH/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Erfassung Grunddaten beim Verständigungsverfahren](Erfassung-Grunddaten-beim-Verständigungsverfahren/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
+- [Art. 27 Informationsaustausch](Art.-27-Informationsaustausch.md)
+- [Informationsaustausch CH](Informationsaustausch-CH.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Erfassung Grunddaten beim Verständigungsverfahren](Erfassung-Grunddaten-beim-Verständigungsverfahren.md)
+- [Rechtsprechung](Rechtsprechung.md)

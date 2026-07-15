@@ -2,7 +2,7 @@
 
 ## Seiten
 
-- [Art. 14 Selbständige Tätigkeit](Art.-14-Selbständige-Tätigkeit/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Schrifttum](Schrifttum/README.md)
+- [Art. 14 Selbständige Tätigkeit](Art.-14-Selbständige-Tätigkeit.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Schrifttum](Schrifttum.md)

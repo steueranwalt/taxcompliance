@@ -2,7 +2,7 @@
 
 ## Abschnitte
 
-- [Einkünfteermittlung](Einkünfteermittlung/README.md)
-- [Kapitalvermögen](Kapitalvermögen/README.md)
-- [Lohnsteuer](Lohnsteuer/README.md)
-- [Steuervollstreckung](Steuervollstreckung/README.md)
+- [Einkünfteermittlung](Einkünfteermittlung.md)
+- [Kapitalvermögen](Kapitalvermögen.md)
+- [Lohnsteuer](Lohnsteuer.md)
+- [Steuervollstreckung](Steuervollstreckung.md)

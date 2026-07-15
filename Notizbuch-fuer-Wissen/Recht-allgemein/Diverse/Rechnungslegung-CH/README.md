@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Rechnungslegung nach Obligationenrecht](Rechnungslegung-nach-Obligationenrecht/README.md)
-- [Buchführung](Buchführung/README.md)
+- [Rechnungslegung nach Obligationenrecht](Rechnungslegung-nach-Obligationenrecht.md)
+- [Buchführung](Buchführung.md)

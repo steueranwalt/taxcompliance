@@ -2,8 +2,8 @@
 
 ## Seiten
 
-- [Art. 18 Ruhegehälter](Art.-18-Ruhegehälter/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Schrifttum](Schrifttum/README.md)
-- [Art. 18 DBA - Ruhegehälter](Art.-18-DBA-Ruhegehälter/README.md)
+- [Art. 18 Ruhegehälter](Art.-18-Ruhegehälter.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Schrifttum](Schrifttum.md)
+- [Art. 18 DBA - Ruhegehälter](Art.-18-DBA-Ruhegehälter.md)

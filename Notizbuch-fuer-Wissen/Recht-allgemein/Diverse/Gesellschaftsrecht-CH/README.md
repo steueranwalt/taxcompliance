@@ -2,4 +2,4 @@
 
 ## Seiten
 
-- [Statuten CH ](Statuten-CH/README.md)
+- [Statuten CH ](Statuten-CH.md)

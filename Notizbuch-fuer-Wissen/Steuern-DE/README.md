@@ -2,9 +2,9 @@
 
 ## Abschnitte
 
-- [Nebenleistungen](Nebenleistungen/README.md)
-- [Bp/](Bp/README.md)
-- [ESt KSt DE/](ESt-KSt-DE/README.md)
-- [USt DE/](USt-DE/README.md)
-- [Verfahrensrecht/](Verfahrensrecht/README.md)
-- [Zoll DE/](Zoll-DE/README.md)
+- [Nebenleistungen](Nebenleistungen.md)
+- [Bp/](Bp.md)
+- [ESt KSt DE/](ESt-KSt-DE.md)
+- [USt DE/](USt-DE.md)
+- [Verfahrensrecht/](Verfahrensrecht.md)
+- [Zoll DE/](Zoll-DE.md)

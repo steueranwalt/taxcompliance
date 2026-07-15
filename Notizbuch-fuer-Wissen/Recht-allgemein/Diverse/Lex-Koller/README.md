@@ -2,10 +2,10 @@
 
 ## Seiten
 
-- [Bewilligung](Bewilligung/README.md)
-- [Betriebsstätte: bewilligungsfrei](Betriebsstätte-bewilligungsfrei/README.md)
-- [Erwerb durch Grenzgänger](Erwerb-durch-Grenzgänger/README.md)
-- [Hauptwohnsitznahme](Hauptwohnsitznahme/README.md)
-- [Zweitwohnung](Zweitwohnung/README.md)
-- [For-profit-Stiftung](For-profit-Stiftung/README.md)
-- [juristische Personen](juristische-Personen/README.md)
+- [Bewilligung](Bewilligung.md)
+- [Betriebsstätte: bewilligungsfrei](Betriebsstätte-bewilligungsfrei.md)
+- [Erwerb durch Grenzgänger](Erwerb-durch-Grenzgänger.md)
+- [Hauptwohnsitznahme](Hauptwohnsitznahme.md)
+- [Zweitwohnung](Zweitwohnung.md)
+- [For-profit-Stiftung](For-profit-Stiftung.md)
+- [juristische Personen](juristische-Personen.md)

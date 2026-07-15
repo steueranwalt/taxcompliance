@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Gerichtskosten](Gerichtskosten/README.md)
-- [Notargebühren](Notargebühren/README.md)
+- [Gerichtskosten](Gerichtskosten.md)
+- [Notargebühren](Notargebühren.md)

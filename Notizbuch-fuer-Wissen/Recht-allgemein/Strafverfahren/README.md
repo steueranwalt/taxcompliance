@@ -2,10 +2,10 @@
 
 ## Abschnitte
 
-- [Ermittlungsakte](Ermittlungsakte/README.md)
-- [StPO](StPO/README.md)
-- [StPO-CH](StPO-CH/README.md)
-- [Strafzumessung](Strafzumessung/README.md)
-- [Verjährung](Verjährung/README.md)
-- [Verwaltungsstrafrecht-CH](Verwaltungsstrafrecht-CH/README.md)
-- [weitere Folgen](weitere-Folgen/README.md)
+- [Ermittlungsakte](Ermittlungsakte.md)
+- [StPO](StPO.md)
+- [StPO-CH](StPO-CH.md)
+- [Strafzumessung](Strafzumessung.md)
+- [Verjährung](Verjährung.md)
+- [Verwaltungsstrafrecht-CH](Verwaltungsstrafrecht-CH.md)
+- [weitere Folgen](weitere-Folgen.md)

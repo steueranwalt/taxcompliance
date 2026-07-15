@@ -2,7 +2,7 @@
 
 ## Seiten
 
-- [Art. 6 Einkünfte aus unbeweglichem Vermögen](Art.-6-Einkünfte-aus-unbeweglichem-Vermögen/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Schrifttum](Schrifttum/README.md)
+- [Art. 6 Einkünfte aus unbeweglichem Vermögen](Art.-6-Einkünfte-aus-unbeweglichem-Vermögen.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Schrifttum](Schrifttum.md)

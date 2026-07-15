@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Unbenannte Seite](Unbenannte-Seite/README.md)
-- [Studierende und Praktikanten | Kanton Zürich](Studierende-und-Praktikanten-Kanton-Zürich/README.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)
+- [Studierende und Praktikanten | Kanton Zürich](Studierende-und-Praktikanten-Kanton-Zürich.md)

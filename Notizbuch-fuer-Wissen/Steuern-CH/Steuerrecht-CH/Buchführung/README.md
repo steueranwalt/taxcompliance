@@ -2,6 +2,6 @@
 
 ## Seiten
 
-- [Unbenannte Seite](Unbenannte-Seite/README.md)
-- [Geschäftsvermögen ](Geschäftsvermögen/README.md)
-- [Zuordnung einer Beteiligung](Zuordnung-einer-Beteiligung/README.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)
+- [Geschäftsvermögen ](Geschäftsvermögen.md)
+- [Zuordnung einer Beteiligung](Zuordnung-einer-Beteiligung.md)

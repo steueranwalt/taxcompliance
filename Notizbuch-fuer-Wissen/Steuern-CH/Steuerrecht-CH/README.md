@@ -2,8 +2,8 @@
 
 ## Abschnitte
 
-- [Buchführung](Buchführung/README.md)
-- [MWST-CH](MWST-CH/README.md)
-- [Steuerrecht CH](Steuerrecht-CH/README.md)
-- [Steuerverfahrensrecht CH](Steuerverfahrensrecht-CH/README.md)
-- [Verrechnungssteuer](Verrechnungssteuer/README.md)
+- [Buchführung](Buchführung.md)
+- [MWST-CH](MWST-CH.md)
+- [Steuerrecht CH](Steuerrecht-CH.md)
+- [Steuerverfahrensrecht CH](Steuerverfahrensrecht-CH.md)
+- [Verrechnungssteuer](Verrechnungssteuer.md)

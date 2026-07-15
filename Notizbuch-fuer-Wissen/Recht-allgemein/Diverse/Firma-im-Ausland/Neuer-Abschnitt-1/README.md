@@ -2,4 +2,4 @@
 
 ## Seiten
 
-- [Sozialversicherung Verwaltungsrat CH](Sozialversicherung-Verwaltungsrat-CH/README.md)
+- [Sozialversicherung Verwaltungsrat CH](Sozialversicherung-Verwaltungsrat-CH.md)

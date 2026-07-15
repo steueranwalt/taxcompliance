@@ -2,5 +2,5 @@
 
 ## Abschnitte
 
-- [Berufsrecht CH](Berufsrecht-CH/README.md)
-- [Berufsrecht DE](Berufsrecht-DE/README.md)
+- [Berufsrecht CH](Berufsrecht-CH.md)
+- [Berufsrecht DE](Berufsrecht-DE.md)

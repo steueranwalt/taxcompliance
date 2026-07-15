@@ -2,7 +2,7 @@
 
 ## Seiten
 
-- [Zinsen](Zinsen/README.md)
-- [Verfassungsmäßigkeit der Höhe der Säumniszuschläge | Steuern | Haufe](Verfassungsmäßigkeit-der-Höhe-der-Säumniszuschläge-Steuern-Haufe/README.md)
-- [Verzögerungsgeld](Verzögerungsgeld/README.md)
-- [Grundsteuer](Grundsteuer/README.md)
+- [Zinsen](Zinsen.md)
+- [Verfassungsmäßigkeit der Höhe der Säumniszuschläge | Steuern | Haufe](Verfassungsmäßigkeit-der-Höhe-der-Säumniszuschläge-Steuern-Haufe.md)
+- [Verzögerungsgeld](Verzögerungsgeld.md)
+- [Grundsteuer](Grundsteuer.md)

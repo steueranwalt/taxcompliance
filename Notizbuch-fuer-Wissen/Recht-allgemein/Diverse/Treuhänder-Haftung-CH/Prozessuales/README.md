@@ -2,10 +2,10 @@
 
 ## Seiten
 
-- [Beweislast](Beweislast/README.md)
-- [Substantiierungslast](Substantiierungslast/README.md)
-- [Bestreitungslast](Bestreitungslast/README.md)
-- [Beweiserleichterung ](Beweiserleichterung/README.md)
-- [Noven](Noven/README.md)
-- [gerichtliche Fragepflicht](gerichtliche-Fragepflicht/README.md)
-- [Substantiierung](Substantiierung/README.md)
+- [Beweislast](Beweislast.md)
+- [Substantiierungslast](Substantiierungslast.md)
+- [Bestreitungslast](Bestreitungslast.md)
+- [Beweiserleichterung ](Beweiserleichterung.md)
+- [Noven](Noven.md)
+- [gerichtliche Fragepflicht](gerichtliche-Fragepflicht.md)
+- [Substantiierung](Substantiierung.md)

@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Gleichwertigkeit von Auslandsbeurkundungen Basel](Gleichwertigkeit-von-Auslandsbeurkundungen-Basel/README.md)
-- [Notargebühren ZH](Notargebühren-ZH/README.md)
+- [Gleichwertigkeit von Auslandsbeurkundungen Basel](Gleichwertigkeit-von-Auslandsbeurkundungen-Basel.md)
+- [Notargebühren ZH](Notargebühren-ZH.md)

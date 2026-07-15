@@ -2,10 +2,10 @@
 
 ## Abschnitte
 
-- [Handakte](Handakte/README.md)
-- [Kausalität](Kausalität/README.md)
-- [Pflichten](Pflichten/README.md)
-- [Prozessuales](Prozessuales/README.md)
-- [Schaden](Schaden/README.md)
-- [Steuerberaterhaftung und Berufsrecht](Steuerberaterhaftung-und-Berufsrecht/README.md)
-- [Verschulden](Verschulden/README.md)
+- [Handakte](Handakte.md)
+- [Kausalität](Kausalität.md)
+- [Pflichten](Pflichten.md)
+- [Prozessuales](Prozessuales.md)
+- [Schaden](Schaden.md)
+- [Steuerberaterhaftung und Berufsrecht](Steuerberaterhaftung-und-Berufsrecht.md)
+- [Verschulden](Verschulden.md)

@@ -2,10 +2,10 @@
 
 ## Seiten
 
-- [Art. 21 Andere Einkünfte](Art.-21-Andere-Einkünfte/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Schrifttum](Schrifttum/README.md)
-- [Vgl. zum MA](Vgl.-zum-MA/README.md)
-- [Besteuerungsrecht](Besteuerungsrecht/README.md)
-- [Beispiele](Beispiele/README.md)
+- [Art. 21 Andere Einkünfte](Art.-21-Andere-Einkünfte.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Schrifttum](Schrifttum.md)
+- [Vgl. zum MA](Vgl.-zum-MA.md)
+- [Besteuerungsrecht](Besteuerungsrecht.md)
+- [Beispiele](Beispiele.md)

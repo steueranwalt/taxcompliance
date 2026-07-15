@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Auftrag in CH](Auftrag-in-CH/README.md)
-- [Selbständigerwerbend](Selbständigerwerbend/README.md)
+- [Auftrag in CH](Auftrag-in-CH.md)
+- [Selbständigerwerbend](Selbständigerwerbend.md)

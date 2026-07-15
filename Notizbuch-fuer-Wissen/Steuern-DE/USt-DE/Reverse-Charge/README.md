@@ -2,5 +2,5 @@
 
 ## Seiten
 
-- [Unbenannte Seite](Unbenannte-Seite/README.md)
-- [Bauträger-Fälle](Bauträger-Fälle/README.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)
+- [Bauträger-Fälle](Bauträger-Fälle.md)

@@ -2,7 +2,7 @@
 
 ## Seiten
 
-- [Art. 12 Lizenzgebühren](Art.-12-Lizenzgebühren/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Schrifttum](Schrifttum/README.md)
+- [Art. 12 Lizenzgebühren](Art.-12-Lizenzgebühren.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Schrifttum](Schrifttum.md)

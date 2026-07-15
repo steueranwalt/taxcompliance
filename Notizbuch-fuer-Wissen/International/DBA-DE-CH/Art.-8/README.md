@@ -2,7 +2,7 @@
 
 ## Seiten
 
-- [Art. 8 Seeschiffahrt, Binnenschiffahrt und Luftfahrt](Art.-8-Seeschiffahrt,-Binnenschiffahrt-und-Luftfahrt/README.md)
-- [Rechtsprechung](Rechtsprechung/README.md)
-- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen/README.md)
-- [Schrifttum](Schrifttum/README.md)
+- [Art. 8 Seeschiffahrt, Binnenschiffahrt und Luftfahrt](Art.-8-Seeschiffahrt,-Binnenschiffahrt-und-Luftfahrt.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Schrifttum](Schrifttum.md)

@@ -2,10 +2,10 @@
 
 ## Abschnitte
 
-- [Bp](Bp/README.md)
-- [Bp-International](Bp-International/README.md)
-- [Buchführung](Buchführung/README.md)
-- [Datenschutz](Datenschutz/README.md)
-- [Datenzugriff](Datenzugriff/README.md)
-- [Kasse](Kasse/README.md)
-- [Schätzung](Schätzung/README.md)
+- [Bp](Bp.md)
+- [Bp-International](Bp-International.md)
+- [Buchführung](Buchführung.md)
+- [Datenschutz](Datenschutz.md)
+- [Datenzugriff](Datenzugriff.md)
+- [Kasse](Kasse.md)
+- [Schätzung](Schätzung.md)

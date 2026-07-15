@@ -2,4 +2,4 @@
 
 ## Seiten
 
-- [Unbenannte Seite](Unbenannte-Seite/README.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)
