@@ -35,24 +35,37 @@ Ordnerstruktur in der Bibliothek bleibt navigativ; Tags sind die abfragbare Face
 ### Öffentliches Recht → Steuerrecht (CH)
 Wie bisher (DBSt, Kantonal, MWST, VSt, Stempel, Grundstückgewinn, Int. Steuerrecht CH, Verfahren CH, Steuerstrafrecht CH).
 
-### Öffentliches Recht → Steuerrecht (DE)  ← neu
+### Öffentliches Recht → Steuerrecht (DE)
+Abgestimmt auf die Dokumentstruktur (ESt/KSt/USt/Bp/AStG/Verfahren):
+
 ```
 Steuerrecht (DE)
 ├── Einkommensteuer (EStG)
 ├── Körperschaftsteuer (KStG)
 ├── Gewerbesteuer (GewStG)
 ├── Umsatzsteuer (UStG)
-├── Abgabenordnung / Verfahren (AO)
+├── Abgabenordnung (AO)
 │     └── Außenprüfung / Betriebsprüfung
+├── Steuerverfahrensrecht (DE)
+├── Steuervollstreckung
 ├── Nebenleistungen / Säumnis
-├── Zollrecht (DE / Unionszollkodex)
+├── Außensteuerrecht (AStG)          ← eigener Ast (nicht nur unter Int. Steuerrecht)
 ├── Internationales Steuerrecht (DE)
-│     ├── DBA / Abkommensrecht
-│     └── Außensteuergesetz (AStG)
+│     └── DBA / Abkommensrecht
+├── Zollrecht (DE / Unionszollkodex)
 └── Steuerstrafrecht (DE)
 ```
 
-### Öffentliches Recht → Internationales Steuerrecht → Verrechnungspreise  ← neu
+### Öffentliches Recht → Datenschutz  ← neu
+```
+Datenschutz
+├── DSGVO / EU
+├── BDSG (DE)
+├── DSG (CH)
+└── Steuerdatenschutz
+```
+
+### Öffentliches Recht → Internationales Steuerrecht → Verrechnungspreise
 Fachbereich Transfer Pricing als **eigener Ast** (nicht nur Schlagwort):
 
 ```
@@ -70,11 +83,21 @@ Internationales Steuerrecht
 └── Amtshilfe / Informationsaustausch (AIA, DAC6/7/8)
 ```
 
-> Schlagworte `TP – …` bleiben für Querschnittsthemen (z. B. `TP – DEMPE`, `TP – Cost Plus`).  
-> Der **Rechtsgebiet**-Ast steuert Ablage und Primärfilter.
+> Schlagworte `TP – …` bleiben für Querschnittsthemen. Der **Rechtsgebiet**-Ast steuert Ablage und Primärfilter.
 
-### Übrige Äste
-Privatrecht, Strafrecht, Verfahrensrecht, Verwaltungs-/Verfassungs-/Sozialversicherungs-/Asylrecht – unverändert.
+### Verfahrensrecht  ← erweitert
+```
+Verfahrensrecht
+├── Zivilprozess (ZPO)
+├── Strafprozess (StPO)
+├── Verwaltungsverfahren (VwVG / VwVfG)
+└── Verfahrensrecht (DE)
+      ├── FGO (Finanzgerichtsordnung)
+      ├── Revisionsverfahren
+      └── Rechtsschutz im Steuerverfahren
+```
+
+> Abgrenzung: materielles/verfahrensrechtliches Steuerrecht DE (`Steuerverfahrensrecht (DE)`, AO) vs. gerichtliches Verfahren (FGO unter Verfahrensrecht).
 
 ---
 
@@ -100,6 +123,7 @@ Präfix-Konvention (Sortierung + Autocomplete):
 | `Verfassung –` | Verfassungsfragen |
 | `Verfahren –` | Verfahrens-/Prozess-Stichworte |
 | `TP –` | Transfer-Pricing-Feintags |
+| `Tax Compliance –` | Tax-CMS, GoBD, Kontrollen, Mitteilungspflichten |
 | `Allgemein –` | Rest |
 
 Listen: siehe `schlagworte.csv` (ersetzbar durch eure fertigen Import-CSVs).

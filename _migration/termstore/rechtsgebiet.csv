@@ -3,6 +3,11 @@ Wissen|Rechtsgebiet|Öffentliches Recht|Verwaltungsrecht
 Wissen|Rechtsgebiet|Öffentliches Recht|Verfassungsrecht
 Wissen|Rechtsgebiet|Öffentliches Recht|Sozialversicherungsrecht (AHV / IV / ALV / KVG)
 Wissen|Rechtsgebiet|Öffentliches Recht|Ausländer- und Asylrecht
+Wissen|Rechtsgebiet|Öffentliches Recht|Datenschutz
+Wissen|Rechtsgebiet|Öffentliches Recht|Datenschutz|DSGVO / EU
+Wissen|Rechtsgebiet|Öffentliches Recht|Datenschutz|BDSG (DE)
+Wissen|Rechtsgebiet|Öffentliches Recht|Datenschutz|DSG (CH)
+Wissen|Rechtsgebiet|Öffentliches Recht|Datenschutz|Steuerdatenschutz
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (CH)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (CH)|Direkte Bundessteuer (DBSt)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (CH)|Kantonale Steuern
@@ -18,13 +23,15 @@ Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Einkommensteuer (EStG)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Körperschaftsteuer (KStG)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Gewerbesteuer (GewStG)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Umsatzsteuer (UStG)
-Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung / Verfahren (AO)
-Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung / Verfahren (AO)|Außenprüfung / Betriebsprüfung
+Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung (AO)
+Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung (AO)|Außenprüfung / Betriebsprüfung
+Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Steuerverfahrensrecht (DE)
+Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Steuervollstreckung
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Nebenleistungen / Säumnis
-Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Zollrecht (DE / Unionszollkodex)
+Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Außensteuerrecht (AStG)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE)|DBA / Abkommensrecht
-Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE)|Außensteuergesetz (AStG)
+Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Zollrecht (DE / Unionszollkodex)
 Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht (DE)|Steuerstrafrecht (DE)
 Wissen|Rechtsgebiet|Öffentliches Recht|Internationales Steuerrecht
 Wissen|Rechtsgebiet|Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise
@@ -40,4 +47,11 @@ Wissen|Rechtsgebiet|Öffentliches Recht|Internationales Steuerrecht|Betriebsstä
 Wissen|Rechtsgebiet|Öffentliches Recht|Internationales Steuerrecht|Amtshilfe / Informationsaustausch (AIA, DAC6/7/8)
 Wissen|Rechtsgebiet|Privatrecht (Vertrag / Haftpflicht / Familie / Erb / Gesellschaft)
 Wissen|Rechtsgebiet|Strafrecht (Allgemein / Wirtschaft)
-Wissen|Rechtsgebiet|Verfahrensrecht (ZPO / StPO / VwVG)
+Wissen|Rechtsgebiet|Verfahrensrecht
+Wissen|Rechtsgebiet|Verfahrensrecht|Zivilprozess (ZPO)
+Wissen|Rechtsgebiet|Verfahrensrecht|Strafprozess (StPO)
+Wissen|Rechtsgebiet|Verfahrensrecht|Verwaltungsverfahren (VwVG / VwVfG)
+Wissen|Rechtsgebiet|Verfahrensrecht|Verfahrensrecht (DE)
+Wissen|Rechtsgebiet|Verfahrensrecht|Verfahrensrecht (DE)|FGO (Finanzgerichtsordnung)
+Wissen|Rechtsgebiet|Verfahrensrecht|Verfahrensrecht (DE)|Revisionsverfahren
+Wissen|Rechtsgebiet|Verfahrensrecht|Verfahrensrecht (DE)|Rechtsschutz im Steuerverfahren
