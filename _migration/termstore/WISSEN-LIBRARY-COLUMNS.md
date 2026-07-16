@@ -88,3 +88,39 @@ Bedingte Formularanzeige (Felder nur bei Fundstellen-Typen sichtbar) ist ein Fol
 1. Ansicht **Alle Dokumente** → Spalten einblenden: Jahr, Autor, Werk, Seite (Fundstelle optional)
 2. Optional indizieren: Jahr, Dokumenttyp
 3. Filteransicht z. B. „Urteile“: Dokumenttyp = Urteil / Rechtsprechung
+
+---
+
+## 5. Metadaten aus Dateien extrahieren und befüllen
+
+### Extraktion (lokal / Repo)
+
+```powershell
+# Python 3
+cd <repo>
+python _migration\termstore\extract_wissen_metadata.py
+# schreibt: _migration\termstore\wissen-metadata-extract.csv
+```
+
+Aus Dateiname + Dateikopf werden u. a. erkannt:
+- Fundstelle `NJW 2024, 2092` / `DStR 2018, 2284`
+- Autor aus Beck-Tabelle `TitelFundstelle`
+- Dokumenttyp / Rechtsordnung / Rechtsgebiet heuristisch aus Pfad
+
+### Auf SharePoint schreiben
+
+```powershell
+cd "$env:TEMP\wissen-termstore"
+# CSV + Apply-Skript vom Branch laden
+$base = "https://raw.githubusercontent.com/steueranwalt/taxcompliance/cursor/onenote-md-export-06a0/_migration/termstore"
+Invoke-WebRequest "$base/Apply-WissenMetadata.ps1" -OutFile .\Apply-WissenMetadata.ps1
+Invoke-WebRequest "$base/wissen-metadata-extract.csv" -OutFile .\wissen-metadata-extract.csv
+
+Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen" -Interactive -ClientId "c77bfeb7-7624-497f-85d7-e509c5ec9dbc" -Tenant "transferpricingdocs.onmicrosoft.com"
+
+# Test mit 20 Dateien:
+.\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -Limit 20
+
+# Vollauf (nur leere Felder überschreiben nicht, wenn schon gesetzt: -OnlyEmpty)
+.\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -OnlyEmpty
+```

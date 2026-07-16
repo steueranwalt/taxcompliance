@@ -137,6 +137,9 @@ Kontrolliertes Vokabular (ersetzt „nur Ordnername“):
 | `Apply-Termstore.ps1` | Produktions-Runner (Retry, Delta-Import, optional Synonyme) |
 | `Add-WissenLibraryColumns.ps1` | Managed-Metadata-Spalten in Bibliothek Dokumente |
 | `Add-WissenExtraColumns.ps1` | Jahr, Autor, Werk, Seite, Fundstelle |
+| `extract_wissen_metadata.py` | Extraktion aus Markdown → CSV |
+| `Apply-WissenMetadata.ps1` | CSV-Werte in Bibliotheksspalten schreiben |
+| `wissen-metadata-extract.csv` | Extraktionsergebnis (Notizbuch) |
 | `WISSEN-LIBRARY-COLUMNS.md` | Anleitung Spalten (PnP + UI) |
 | `ARCHITECTURE.md` | Dieses Dokument |
 
