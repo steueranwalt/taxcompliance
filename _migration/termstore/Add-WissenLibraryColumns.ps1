@@ -23,7 +23,7 @@
 [CmdletBinding()]
 param(
     [string]$SiteUrl = "https://transferpricingdocs.sharepoint.com/sites/wissen",
-    [string]$LibraryName = "Wissen",
+    [string]$LibraryName = "Dokumente",
     [string]$TermGroupName = "Wissen",
     [string]$FieldGroup = "Wissen Metadaten",
     [switch]$Connect,
@@ -78,9 +78,41 @@ function Connect-Wissen {
 
 function Get-ListOrThrow {
     param([string]$Name)
-    $list = Get-PnPList -Identity $Name -ErrorAction SilentlyContinue
-    if ($list) { return $list }
-    throw "Bibliothek '$Name' nicht gefunden. Prüfe Listentitel (z. B. 'Wissen' oder 'Freigegebene Dokumente') und -LibraryName."
+
+    # 1) Direktversuch (Titel, Id oder ServerRelativeUrl)
+    foreach ($candidate in @(
+            $Name,
+            "Shared Documents",
+            "/sites/wissen/Shared Documents",
+            "Dokumente",
+            "Documents",
+            "Freigegebene Dokumente"
+        )) {
+        $list = Get-PnPList -Identity $candidate -ErrorAction SilentlyContinue
+        if ($list) {
+            # Nur Alias-Fallback, wenn der User Shared-Docs/Dokumente/Wissen meint
+            $aliases = @("dokumente", "documents", "freigegebene dokumente", "shared documents", "wissen")
+            if ($candidate -eq $Name -or $Name.Trim().ToLowerInvariant() -in $aliases) {
+                return $list
+            }
+        }
+    }
+
+    # 2) Fuzzy über alle Dokumentbibliotheken (Titel-Match)
+    $libs = @(Get-PnPList | Where-Object { $_.BaseTemplate -eq 101 })
+    $needle = $Name.Trim().ToLowerInvariant()
+    $match = $libs | Where-Object { $_.Title.ToLowerInvariant() -eq $needle } | Select-Object -First 1
+    if (-not $match -and $needle -in @("dokumente", "documents", "freigegebene dokumente", "shared documents", "wissen")) {
+        $match = $libs | Where-Object { $_.Title -eq "Dokumente" -or $_.Title -eq "Documents" } | Select-Object -First 1
+    }
+    if ($match) {
+        $resolved = Get-PnPList -Identity $match.Id -ErrorAction SilentlyContinue
+        if ($resolved) { return $resolved }
+        return $match
+    }
+
+    $available = ($libs | ForEach-Object { $_.Title }) -join ", "
+    throw "Bibliothek '$Name' nicht gefunden. Verfügbare Dokumentbibliotheken: $available"
 }
 
 function Ensure-TaxonomyColumn {
