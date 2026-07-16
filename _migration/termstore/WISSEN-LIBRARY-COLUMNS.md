@@ -1,11 +1,13 @@
-# Bibliothek Wissen – Managed Metadata Spalten
+# Bibliothek Dokumente – Wissen-Metadaten
 
 **Site:** `https://transferpricingdocs.sharepoint.com/sites/wissen`  
-**Termstore-Gruppe:** `Wissen`
+**Bibliothek:** `Shared Documents` (Anzeigename **Dokumente**)  
+**Termstore-Gruppe:** `Wissen`  
+**Spaltengruppe:** `Wissen Metadaten`
 
 ---
 
-## Ziel-Spalten
+## 1. Taxonomie-Spalten (bereits angelegt)
 
 | Anzeigename | Interner Name | Termset | Mehrfach |
 |---|---|---|---|
@@ -14,76 +16,75 @@
 | Dokumenttyp | `WissenDokumenttyp` | Dokumenttyp | Nein |
 | Schlagworte | `WissenSchlagworte` | Schlagworte | Ja |
 
-**Spaltengruppe:** `Wissen Metadaten`
+Skript: `Add-WissenLibraryColumns.ps1`
 
 ---
 
-## Variante A – automatisch (PnP, empfohlen)
+## 2. Zusatzspalten (Jahr / Autor / Fundstelle)
+
+| Anzeigename | Interner Name | Typ | Gilt für |
+|---|---|---|---|
+| Jahr | `WissenJahr` | Zahl | **alle** Dokumente |
+| Autor | `WissenAutor` | Text | **alle** Dokumente |
+| Werk | `WissenWerk` | Text | Fundstellen-Typen* |
+| Seite | `WissenSeite` | Text | Fundstellen-Typen* |
+| Fundstelle | `WissenFundstelle` | Mehrzeilig | optional, vollständige Zitation |
+
+\*Fundstellen-Typen (Wert in **Dokumenttyp**):
+
+- Verwaltungsanweisung  
+- Kommentar (Werk)  
+- Fachaufsatz  
+- Urteil / Rechtsprechung  
+- Gesetzesmaterialien  
+
+**Fundstelle strukturiert** = `Werk` + `Jahr` + `Seite`  
+(Beispiel: *DStR* / *2024* / *143*)
+
+`Autor` ist **nicht** der SharePoint-Ersteller (Created By), sondern Verfasser/Herausgeber.
+
+### Anlegen
 
 ```powershell
 cd "$env:TEMP\wissen-termstore"
-# oder: cd <repo>\_migration\termstore
 
-$clientId = "c77bfeb7-7624-497f-85d7-e509c5ec9dbc"
-$tenant   = "transferpricingdocs.onmicrosoft.com"
+# Skript laden
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/steueranwalt/taxcompliance/cursor/onenote-md-export-06a0/_migration/termstore/Add-WissenExtraColumns.ps1" -OutFile ".\Add-WissenExtraColumns.ps1"
 
-Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen" -Interactive -ClientId $clientId -Tenant $tenant
+Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen" -Interactive -ClientId "c77bfeb7-7624-497f-85d7-e509c5ec9dbc" -Tenant "transferpricingdocs.onmicrosoft.com"
 
-.\Add-WissenLibraryColumns.ps1
+.\Add-WissenExtraColumns.ps1 -LibraryName "Shared Documents"
 ```
 
-Falls die Bibliothek nicht `Wissen` heißt, sondern die Standard-Dokumentenbibliothek:
-
-```powershell
-.\Add-WissenLibraryColumns.ps1 -LibraryName "Freigegebene Dokumente"
-```
-
-Dry-run:
-
-```powershell
-.\Add-WissenLibraryColumns.ps1 -WhatIf
-```
+Voraussetzung: `DenyAddAndCustomizePages` auf der Site = **Disabled** (Custom Script erlaubt).
 
 ---
 
-## Variante B – manuell (UI)
+## 3. Nutzungshinweis (Dokumenttyp → Felder)
 
-1. Site **Wissen** → Bibliothek **Wissen** (oder **Freigegebene Dokumente**)
-2. **Bibliothekseinstellungen** → **Spalten erstellen**
-3. Typ: **Verwaltete Metadaten**
-4. Termset jeweils aus Gruppe **Wissen** wählen
-5. Mehrfachauswahl nur bei Rechtsgebiet, Rechtsordnung, Schlagworte
+SharePoint zeigt Spalten technisch immer; die **inhaltliche Pflicht** hängt vom Dokumenttyp ab:
 
----
+| Dokumenttyp | Jahr | Autor | Werk | Seite | Fundstelle (Text) |
+|---|---|---|---|---|---|
+| Urteil / Rechtsprechung | ja | ja | ja | ja | optional |
+| Verwaltungsanweisung | ja | ja | ja | ja | optional |
+| Kommentar (Werk) | ja | ja | ja | ja | optional |
+| Fachaufsatz | ja | ja | ja | ja | optional |
+| Gesetzesmaterialien | ja | ja | ja | ja | optional |
+| Merkblatt / Leitfaden | ja | ja | – | – | – |
+| Arbeitshilfe / Checkliste | ja | ja | – | – | – |
+| Präsentation | ja | ja | – | – | – |
+| Vertrag / Vereinbarung | ja | ja | – | – | – |
+| Internes Memo | ja | ja | – | – | – |
+| Datensatz / Grounds | ja | ja | – | – | – |
+| Gesetz / Verordnung | ja | ja | – | – | – |
 
-## Nach dem Anlegen
-
-1. **Standardansicht** erweitern (alle 4 Spalten sichtbar)
-2. Optional gefilterte Ansichten:
-   - `Nach Rechtsgebiet`
-   - `Nach Dokumenttyp`
-   - `TP-Inhalte` (Rechtsgebiet enthält Verrechnungspreise)
-3. Spalten **indizieren** (Bibliothekseinstellungen → indizierte Spalten), wenn Filter/Suche darauf basieren soll
-
----
-
-## Berechtigungen (Entra App)
-
-Delegated Graph (bereits für Termstore genutzt):
-
-- `TermStore.ReadWrite.All`
-- `Sites.ReadWrite.All`
-
-Zusätzlich SharePoint: Listenverwaltung auf der Zielbibliothek.
+Bedingte Formularanzeige (Felder nur bei Fundstellen-Typen sichtbar) ist ein Folgeschritt (Power Apps oder JSON-Form).
 
 ---
 
-## Abgrenzung Termstore vs. Bibliothek
+## 4. Nach dem Anlegen
 
-| Ebene | Zweck |
-|---|---|
-| Termstore | Kontrolliertes Vokabular (Taxonomie) |
-| Bibliotheksspalten | Metadaten an jedem Dokument |
-| Ordnerstruktur | Navigation/Ablage (bleibt bestehen) |
-
-Dokumente werden über **Rechtsgebiet + Rechtsordnung + Dokumenttyp + Schlagworte** auffindbar, unabhängig vom Ordnerpfad.
+1. Ansicht **Alle Dokumente** → Spalten einblenden: Jahr, Autor, Werk, Seite (Fundstelle optional)
+2. Optional indizieren: Jahr, Dokumenttyp
+3. Filteransicht z. B. „Urteile“: Dokumenttyp = Urteil / Rechtsprechung

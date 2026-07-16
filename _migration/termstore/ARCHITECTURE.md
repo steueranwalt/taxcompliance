@@ -135,7 +135,8 @@ Kontrolliertes Vokabular (ersetzt „nur Ordnername“):
 | `synonyms-de-en-fr.csv` | Synonym-Vorlage (`TermSet;TermPath;Language;Synonym`) |
 | `Import-WissenTermstore.ps1` | Verbindung + Import + Labels |
 | `Apply-Termstore.ps1` | Produktions-Runner (Retry, Delta-Import, optional Synonyme) |
-| `Add-WissenLibraryColumns.ps1` | Managed-Metadata-Spalten in Bibliothek Wissen |
+| `Add-WissenLibraryColumns.ps1` | Managed-Metadata-Spalten in Bibliothek Dokumente |
+| `Add-WissenExtraColumns.ps1` | Jahr, Autor, Werk, Seite, Fundstelle |
 | `WISSEN-LIBRARY-COLUMNS.md` | Anleitung Spalten (PnP + UI) |
 | `ARCHITECTURE.md` | Dieses Dokument |
 

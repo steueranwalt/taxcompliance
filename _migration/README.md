@@ -31,11 +31,12 @@ cd _migration\termstore
 .\Apply-Termstore.ps1 -Connect -Interactive -ClientId "<APP-ID>" -Tenant "<TENANT>.onmicrosoft.com" -ApplySynonyms
 ```
 
-Managed-Metadata-Spalten in Bibliothek Wissen:
+Managed-Metadata-Spalten in Bibliothek Dokumente:
 
 ```powershell
 cd _migration\termstore
-.\Add-WissenLibraryColumns.ps1
+.\Add-WissenLibraryColumns.ps1 -LibraryName "Shared Documents"
+.\Add-WissenExtraColumns.ps1 -LibraryName "Shared Documents"
 ```
 
 Siehe [`termstore/WISSEN-LIBRARY-COLUMNS.md`](termstore/WISSEN-LIBRARY-COLUMNS.md).
