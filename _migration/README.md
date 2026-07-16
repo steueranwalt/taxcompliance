@@ -24,6 +24,13 @@ Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen"
 
 Hinweis: `Import-WissenTermstore.ps1` erstellt vor dem Import automatisch einen Snapshot (`%TEMP%\termstore-snapshot-*`) und importiert standardmäßig nur fehlende Terme (additiv).
 
+Produktionslauf mit Retry/Delta/Synonymen:
+
+```powershell
+cd _migration\termstore
+.\Apply-Termstore.ps1 -Connect -Interactive -ClientId "<APP-ID>" -Tenant "<TENANT>.onmicrosoft.com" -ApplySynonyms
+```
+
 ## OneNote → Markdown
 
 Das Skript `onenote_export.py` liest das SharePoint-Notizbuch **Diverses.one** und legt im Repo unter `Diverses/` je **Abschnitt** einen Ordner an; jede Seite wird als `README.md` gespeichert.
