@@ -30,74 +30,41 @@ Ordnerstruktur in der Bibliothek bleibt navigativ; Tags sind die abfragbare Face
 
 ---
 
-## 1. Rechtsgebiet
+## 1. Rechtsgebiet (bereinigt)
 
-### Öffentliches Recht → Steuerrecht (CH)
-Wie bisher (DBSt, Kantonal, MWST, VSt, Stempel, Grundstückgewinn, Int. Steuerrecht CH, Verfahren CH, Steuerstrafrecht CH).
-
-### Öffentliches Recht → Steuerrecht (DE)
-Abgestimmt auf die Dokumentstruktur (ESt/KSt/USt/Bp/AStG/Verfahren):
+**Leitregel:** Im Termsatz **Rechtsgebiet** stehen nur Fachgebiete.  
+Keine Länderkürzel (CH/DE) und keine Einzelnormen (z. B. AO, FGO, AStG).
 
 ```
-Steuerrecht (DE)
-├── Einkommensteuer (EStG)
-├── Körperschaftsteuer (KStG)
-├── Gewerbesteuer (GewStG)
-├── Umsatzsteuer (UStG)
-├── Abgabenordnung (AO)
-│     └── Außenprüfung / Betriebsprüfung
-├── Steuerverfahrensrecht (DE)
-├── Steuervollstreckung
-├── Nebenleistungen / Säumnis
-├── Außensteuerrecht (AStG)          ← eigener Ast (nicht nur unter Int. Steuerrecht)
-├── Internationales Steuerrecht (DE)
-│     └── DBA / Abkommensrecht
-├── Zollrecht (DE / Unionszollkodex)
-└── Steuerstrafrecht (DE)
-```
+Öffentliches Recht
+├── Verwaltungsrecht
+├── Verfassungsrecht
+├── Sozialversicherungsrecht
+├── Ausländer- und Asylrecht
+├── Datenschutz
+└── Steuerrecht
+      ├── Direkte Steuern
+      ├── Indirekte Steuern
+      ├── Steuerverfahrensrecht
+      ├── Steuervollstreckung
+      ├── Steuerstrafrecht
+      └── Internationales Steuerrecht
+            ├── Doppelbesteuerungsrecht
+            ├── Verrechnungspreise
+            └── Amtshilfe und Informationsaustausch
 
-### Öffentliches Recht → Datenschutz  ← neu
-```
-Datenschutz
-├── DSGVO / EU
-├── BDSG (DE)
-├── DSG (CH)
-└── Steuerdatenschutz
-```
-
-### Öffentliches Recht → Internationales Steuerrecht → Verrechnungspreise
-Fachbereich Transfer Pricing als **eigener Ast** (nicht nur Schlagwort):
-
-```
-Internationales Steuerrecht
-├── Verrechnungspreise
-│     ├── Methoden / Arm’s Length
-│     ├── Funktions- und Risikoanalyse
-│     ├── Dokumentation (Master / Local / CbCR)
-│     ├── Vergleichbarkeitsanalyse
-│     ├── ICAs / Kostenumlagen
-│     ├── Korrekturen / Secondary Adjustments
-│     ├── Vorabverständigung (APA / MAP)
-│     └── Nahestehende Personen / Beteiligung
-├── Betriebsstättengewinnabgrenzung
-└── Amtshilfe / Informationsaustausch (AIA, DAC6/7/8)
-```
-
-> Schlagworte `TP – …` bleiben für Querschnittsthemen. Der **Rechtsgebiet**-Ast steuert Ablage und Primärfilter.
-
-### Verfahrensrecht  ← erweitert
-```
+Privatrecht
+Strafrecht
 Verfahrensrecht
-├── Zivilprozess (ZPO)
-├── Strafprozess (StPO)
-├── Verwaltungsverfahren (VwVG / VwVfG)
-└── Verfahrensrecht (DE)
-      ├── FGO (Finanzgerichtsordnung)
-      ├── Revisionsverfahren
-      └── Rechtsschutz im Steuerverfahren
+├── Steuerverfahrensrecht
+├── Gerichtsverfahren
+└── Rechtsschutz
 ```
 
-> Abgrenzung: materielles/verfahrensrechtliches Steuerrecht DE (`Steuerverfahrensrecht (DE)`, AO) vs. gerichtliches Verfahren (FGO unter Verfahrensrecht).
+Abgrenzung:
+- **Rechtsordnung** trägt den Länder-/Rechtsraumbezug (CH/DE/EU/OECD usw.).
+- **Rechtsgebiet** bleibt fachlich und systematisch stabil.
+- Gesetzes-/Normbezug (AO, FGO, AStG, EStG …) gehört ggf. in Schlagworte oder Metadatenfelder, nicht ins Rechtsgebiet.
 
 ---
 
@@ -126,7 +93,12 @@ Präfix-Konvention (Sortierung + Autocomplete):
 | `Tax Compliance –` | Tax-CMS, GoBD, Kontrollen, Mitteilungspflichten |
 | `Allgemein –` | Rest |
 
-Listen: siehe `schlagworte.csv` (ersetzbar durch eure fertigen Import-CSVs).
+Listen: siehe `schlagworte.csv`.
+
+## 3b. Synonyme (neu)
+
+Für Suche/Autocomplete können Synonyme pro Sprache separat gepflegt werden (DE/EN/FR), ohne den Preferred Label zu ändern.  
+Vorlage: `synonyms-de-en-fr.csv` (wird aktuell dokumentiert, nicht automatisch importiert).
 
 ---
 
@@ -160,18 +132,20 @@ Kontrolliertes Vokabular (ersetzt „nur Ordnername“):
 | `schlagworte.csv` | Flache Terme |
 | `dokumenttyp.csv` | Flache Terme |
 | `labels-de-en-fr.csv` | Mehrsprachige Labels (`TermSet;TermPath;DE;EN;FR`, Pfad mit `\|`) |
+| `synonyms-de-en-fr.csv` | Synonym-Vorlage (`TermSet;TermPath;Language;Synonym`) |
 | `Import-WissenTermstore.ps1` | Verbindung + Import + Labels |
 | `ARCHITECTURE.md` | Dieses Dokument |
 
 ---
 
-## Import-Reihenfolge
+## Import-Reihenfolge (read-first)
 
 1. PnP PowerShell ≥ 2.x, Site-Admin oder Term Store Admin auf dem Tenant  
 2. `Connect-PnPOnline` zur Site `https://transferpricingdocs.sharepoint.com/sites/wissen`  
-3. `.\Import-WissenTermstore.ps1`  
-4. In Bibliothek **Wissen**: Managed Metadata-Spalten anlegen und an Termsets binden  
-5. Optional: Default-Werte / Content Types
+3. `.\Import-WissenTermstore.ps1` (erstellt automatisch einen Snapshot in `%TEMP%/termstore-snapshot-*`)  
+4. Das Skript importiert standardmäßig **additiv** nur fehlende Terme (kein Voll-Overwrite).  
+5. In Bibliothek **Wissen**: Managed Metadata-Spalten anlegen und an Termsets binden.  
+6. Optional: Labels (EN/FR) und danach Synonyme pflegen.
 
 ### Typische Verbindungsprobleme
 

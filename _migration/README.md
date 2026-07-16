@@ -9,7 +9,7 @@ Dieses Verzeichnis enthält die Migrationsblaupause für den Umzug der SharePoin
 | [`wissen-site-strukturkarte.md`](wissen-site-strukturkarte.md) | Vollständiger Ordnerbaum der aktuellen Wissen-Site mit allen bekannten Dokumenten |
 | [`mapping-sp-zu-repo.md`](mapping-sp-zu-repo.md) | Zuordnung: welche SP-Ordner welchem Repo-Pfad entsprechen |
 | [`onenote_export.py`](onenote_export.py) | Exportiert das OneNote-Notizbuch `Diverses.one` nach Markdown |
-| [`termstore/`](termstore/) | Termstore-Gruppe **Wissen** (CSVs + PnP-Import): Rechtsgebiet, Rechtsordnung, Schlagworte, Dokumenttyp |
+| [`termstore/`](termstore/) | Termstore-Gruppe **Wissen** (CSVs + PnP-Import, read-first/additiv): Rechtsgebiet, Rechtsordnung, Schlagworte, Dokumenttyp |
 | [`.env.example`](.env.example) | Vorlage für Entra-App-Zugangsdaten |
 
 ## Termstore (transferpricingdocs)
@@ -21,6 +21,8 @@ cd _migration\termstore
 Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen" -Interactive
 .\Import-WissenTermstore.ps1
 ```
+
+Hinweis: `Import-WissenTermstore.ps1` erstellt vor dem Import automatisch einen Snapshot (`%TEMP%\termstore-snapshot-*`) und importiert standardmäßig nur fehlende Terme (additiv).
 
 ## OneNote → Markdown
 

@@ -24,6 +24,9 @@ param(
     [string]$TermGroupName = "Wissen",
     [string]$DataDir = $PSScriptRoot,
     [switch]$Connect,
+    [switch]$Additive = $true,
+    [switch]$SkipSnapshot,
+    [int]$ChunkSize = 25,
     [switch]$SkipLabels,
     [switch]$WhatIf
 )
@@ -81,6 +84,104 @@ function Import-TaxonomyFile {
         return
     }
     Import-PnPTaxonomy -Path $Path -ErrorAction Stop
+}
+
+function Export-TermstoreSnapshot {
+    param([string]$GroupName)
+
+    $outDir = Join-Path ([System.IO.Path]::GetTempPath()) ("termstore-snapshot-" + (Get-Date -Format "yyyyMMdd-HHmmss"))
+    New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+
+    $group = Get-PnPTermGroup -Identity $GroupName -ErrorAction SilentlyContinue
+    if (-not $group) {
+        Write-Host "Snapshot: Gruppe '$GroupName' noch nicht vorhanden." -ForegroundColor DarkGray
+        return
+    }
+
+    $sets = Get-PnPTermSet -TermGroup $group -ErrorAction SilentlyContinue
+    $sets | Select-Object Id, Name, Description | Export-Csv -NoTypeInformation -Encoding UTF8 -Path (Join-Path $outDir "termsets.csv")
+
+    $rows = @()
+    foreach ($set in $sets) {
+        $terms = Get-PnPTerm -TermGroup $GroupName -TermSet $set.Name -Recursive -ErrorAction SilentlyContinue
+        foreach ($term in $terms) {
+            $rows += [PSCustomObject]@{
+                TermSet      = $set.Name
+                TermId       = $term.Id
+                Name         = $term.Name
+                Path         = $term.Path
+                IsDeprecated = $term.IsDeprecated
+            }
+        }
+    }
+    $rows | Export-Csv -NoTypeInformation -Encoding UTF8 -Path (Join-Path $outDir "terms-flat.csv")
+    Write-Host "Snapshot geschrieben: $outDir" -ForegroundColor DarkGray
+}
+
+function Normalize-Path {
+    param([string]$Path)
+    if ([string]::IsNullOrWhiteSpace($Path)) { return "" }
+    return (($Path -replace "/", ";") -replace "\|", ";").Trim()
+}
+
+function Get-MissingLines {
+    param(
+        [string]$TaxonomyFile,
+        [string]$GroupName
+    )
+
+    $lines = Get-Content -LiteralPath $TaxonomyFile | Where-Object { $_ -match '\S' }
+    $missing = @()
+
+    $bySet = @{}
+    foreach ($line in $lines) {
+        $cols = $line.Split("|")
+        if ($cols.Count -lt 3) { continue }
+        $setName = $cols[1].Trim()
+        if (-not $bySet.ContainsKey($setName)) { $bySet[$setName] = @() }
+        $bySet[$setName] += $line
+    }
+
+    foreach ($setName in $bySet.Keys) {
+        $existing = Get-PnPTerm -TermGroup $GroupName -TermSet $setName -Recursive -ErrorAction SilentlyContinue
+        $existingPaths = New-Object 'System.Collections.Generic.HashSet[string]'
+        foreach ($term in $existing) {
+            [void]$existingPaths.Add((Normalize-Path $term.Path))
+        }
+
+        foreach ($line in $bySet[$setName]) {
+            $cols = $line.Split("|")
+            $segments = $cols[2..($cols.Count - 1)]
+            $desiredPath = Normalize-Path ($segments -join ";")
+            if (-not $existingPaths.Contains($desiredPath)) {
+                $missing += $line
+            }
+        }
+    }
+    return $missing
+}
+
+function Import-InChunks {
+    param(
+        [string]$TaxonomyFile,
+        [int]$ChunkSize = 25
+    )
+    $lines = Get-Content -LiteralPath $TaxonomyFile | Where-Object { $_ -match '\S' }
+    if ($lines.Count -eq 0) {
+        Write-Host "Nichts zu importieren: $(Split-Path $TaxonomyFile -Leaf)" -ForegroundColor DarkGray
+        return
+    }
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) "wissen-termstore-import"
+    New-Item -ItemType Directory -Path $tmpDir -Force | Out-Null
+    $part = 0
+    for ($i = 0; $i -lt $lines.Count; $i += $ChunkSize) {
+        $part++
+        $end = [Math]::Min($i + $ChunkSize - 1, $lines.Count - 1)
+        $chunk = $lines[$i..$end]
+        $partFile = Join-Path $tmpDir ("{0}-part-{1}.csv" -f ([IO.Path]::GetFileNameWithoutExtension($TaxonomyFile)), $part)
+        $chunk | Set-Content -LiteralPath $partFile -Encoding UTF8
+        Import-TaxonomyFile -Path $partFile
+    }
 }
 
 function Set-MultilingualLabels {
@@ -156,6 +257,10 @@ catch {
 
 Ensure-TermGroup -Name $TermGroupName
 
+if (-not $SkipSnapshot) {
+    Export-TermstoreSnapshot -GroupName $TermGroupName
+}
+
 $files = @(
     "rechtsgebiet.csv",
     "rechtsordnung.csv",
@@ -164,7 +269,21 @@ $files = @(
 )
 
 foreach ($f in $files) {
-    Import-TaxonomyFile -Path (Join-Path $DataDir $f)
+    $path = Join-Path $DataDir $f
+    if ($Additive) {
+        $missing = Get-MissingLines -TaxonomyFile $path -GroupName $TermGroupName
+        if ($missing.Count -eq 0) {
+            Write-Host "Keine fehlenden Terme in $f" -ForegroundColor DarkGray
+            continue
+        }
+        $tmpMissing = Join-Path ([System.IO.Path]::GetTempPath()) ("missing-" + $f)
+        $missing | Set-Content -LiteralPath $tmpMissing -Encoding UTF8
+        Write-Host "Additiv importiere $($missing.Count) Zeilen aus $f" -ForegroundColor Cyan
+        Import-InChunks -TaxonomyFile $tmpMissing -ChunkSize $ChunkSize
+    }
+    else {
+        Import-InChunks -TaxonomyFile $path -ChunkSize $ChunkSize
+    }
 }
 
 if (-not $SkipLabels) {

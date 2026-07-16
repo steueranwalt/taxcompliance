@@ -2,60 +2,25 @@ TermSet;TermPath;DE;EN;FR
 Rechtsgebiet;Öffentliches Recht;Öffentliches Recht;Public law;Droit public
 Rechtsgebiet;Öffentliches Recht|Verwaltungsrecht;Verwaltungsrecht;Administrative law;Droit administratif
 Rechtsgebiet;Öffentliches Recht|Verfassungsrecht;Verfassungsrecht;Constitutional law;Droit constitutionnel
-Rechtsgebiet;Öffentliches Recht|Sozialversicherungsrecht (AHV / IV / ALV / KVG);Sozialversicherungsrecht (AHV / IV / ALV / KVG);Social security law;Droit des assurances sociales
-Rechtsgebiet;Öffentliches Recht|Ausländer- und Asylrecht;Ausländer- und Asylrecht;Immigration and asylum law;Droit des étrangers et d'asile
-Rechtsgebiet;Öffentliches Recht|Datenschutz;Datenschutz;Data protection;Protection des données
-Rechtsgebiet;Öffentliches Recht|Datenschutz|DSGVO / EU;DSGVO / EU;GDPR / EU;RGPD / UE
-Rechtsgebiet;Öffentliches Recht|Datenschutz|BDSG (DE);BDSG (DE);Federal Data Protection Act (DE);BDSG (DE)
-Rechtsgebiet;Öffentliches Recht|Datenschutz|DSG (CH);DSG (CH);Federal Act on Data Protection (CH);LPD (CH)
-Rechtsgebiet;Öffentliches Recht|Datenschutz|Steuerdatenschutz;Steuerdatenschutz;Tax data protection;Protection des données fiscales
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH);Steuerrecht (CH);Tax law (CH);Droit fiscal (CH)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Direkte Bundessteuer (DBSt);Direkte Bundessteuer (DBSt);Federal direct tax (FIT);Impôt fédéral direct (IFD)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Kantonale Steuern;Kantonale Steuern;Cantonal taxes;Impôts cantonaux
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|MWST;MWST;VAT (CH);TVA
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Verrechnungssteuer (VSt);Verrechnungssteuer (VSt);Withholding tax (CH);Impôt anticipé
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Stempelabgaben;Stempelabgaben;Stamp duties;Droits de timbre
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Grundstückgewinnsteuer;Grundstückgewinnsteuer;Real estate capital gains tax;Impôt sur les gains immobiliers
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Internationales Steuerrecht (CH);Internationales Steuerrecht (CH);International tax law (CH);Droit fiscal international (CH)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Steuerverfahren (CH);Steuerverfahren (CH);Tax procedure (CH);Procédure fiscale (CH)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (CH)|Steuerstrafrecht (CH);Steuerstrafrecht (CH);Tax criminal law (CH);Droit pénal fiscal (CH)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE);Steuerrecht (DE);Tax law (DE);Droit fiscal (DE)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Einkommensteuer (EStG);Einkommensteuer (EStG);Income tax (EStG);Impôt sur le revenu
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Körperschaftsteuer (KStG);Körperschaftsteuer (KStG);Corporate income tax (KStG);Impôt sur les sociétés
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Gewerbesteuer (GewStG);Gewerbesteuer (GewStG);Trade tax (GewStG);Taxe professionnelle
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Umsatzsteuer (UStG);Umsatzsteuer (UStG);VAT (DE);TVA (DE)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung (AO);Abgabenordnung (AO);Fiscal Code (AO);Code fiscal (AO)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Abgabenordnung (AO)|Außenprüfung / Betriebsprüfung;Außenprüfung / Betriebsprüfung;Tax audit;Contrôle fiscal
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Steuerverfahrensrecht (DE);Steuerverfahrensrecht (DE);Tax procedure law (DE);Procédure fiscale (DE)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Steuervollstreckung;Steuervollstreckung;Tax enforcement;Exécution fiscale
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Nebenleistungen / Säumnis;Nebenleistungen / Säumnis;Ancillary charges / late payment;Intérêts et majorations
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Außensteuerrecht (AStG);Außensteuerrecht (AStG);Foreign Tax Act (AStG);Droit fiscal international unilatéral (AStG)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE);Internationales Steuerrecht (DE);International tax law (DE);Droit fiscal international (DE)
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Internationales Steuerrecht (DE)|DBA / Abkommensrecht;DBA / Abkommensrecht;Tax treaties;Conventions fiscales
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Zollrecht (DE / Unionszollkodex);Zollrecht (DE / Unionszollkodex);Customs law (DE / UCC);Droit douanier
-Rechtsgebiet;Öffentliches Recht|Steuerrecht (DE)|Steuerstrafrecht (DE);Steuerstrafrecht (DE);Tax criminal law (DE);Droit pénal fiscal (DE)
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht;Internationales Steuerrecht;International tax law;Droit fiscal international
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise;Verrechnungspreise;Transfer pricing;Prix de transfert
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Methoden / Arm’s Length;Methoden / Arm’s Length;Methods / Arm’s length;Méthodes / Pleine concurrence
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Funktions- und Risikoanalyse;Funktions- und Risikoanalyse;Functional and risk analysis;Analyse fonctionnelle et des risques
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Dokumentation (Master / Local / CbCR);Dokumentation (Master / Local / CbCR);Documentation (Master / Local / CbCR);Documentation (Master / Local / CbCR)
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Vergleichbarkeitsanalyse;Vergleichbarkeitsanalyse;Comparability analysis;Analyse de comparabilité
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|ICAs / Kostenumlagen;ICAs / Kostenumlagen;ICAs / Cost contribution;ACC / Répartition des coûts
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Korrekturen / Secondary Adjustments;Korrekturen / Secondary Adjustments;Adjustments / Secondary adjustments;Ajustements / Ajustements secondaires
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Vorabverständigung (APA / MAP);Vorabverständigung (APA / MAP);APA / MAP;APA / MAP
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Verrechnungspreise|Nahestehende Personen / Beteiligung;Nahestehende Personen / Beteiligung;Related parties / Ownership;Personnes liées / Participation
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Betriebsstättengewinnabgrenzung;Betriebsstättengewinnabgrenzung;PE profit attribution;Attribution des bénéfices aux ES
-Rechtsgebiet;Öffentliches Recht|Internationales Steuerrecht|Amtshilfe / Informationsaustausch (AIA, DAC6/7/8);Amtshilfe / Informationsaustausch (AIA, DAC6/7/8);Mutual assistance / EOI;Assistance administrative / Échange de renseignements
-Rechtsgebiet;Privatrecht (Vertrag / Haftpflicht / Familie / Erb / Gesellschaft);Privatrecht (Vertrag / Haftpflicht / Familie / Erb / Gesellschaft);Private law;Droit privé
-Rechtsgebiet;Strafrecht (Allgemein / Wirtschaft);Strafrecht (Allgemein / Wirtschaft);Criminal law;Droit pénal
+Rechtsgebiet;Öffentliches Recht|Sozialversicherungsrecht;Sozialversicherungsrecht;Social security law;Droit des assurances sociales
+Rechtsgebiet;Öffentliches Recht|Ausländer- und Asylrecht;Ausländer- und Asylrecht;Immigration and asylum law;Droit des étrangers et de l'asile
+Rechtsgebiet;Öffentliches Recht|Datenschutz;Datenschutz;Data protection law;Droit de la protection des données
+Rechtsgebiet;Öffentliches Recht|Steuerrecht;Steuerrecht;Tax law;Droit fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Direkte Steuern;Direkte Steuern;Direct taxes;Impôts directs
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Indirekte Steuern;Indirekte Steuern;Indirect taxes;Impôts indirects
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Steuerverfahrensrecht;Tax procedure law;Droit de procédure fiscale
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Steuervollstreckung;Steuervollstreckung;Tax enforcement;Recouvrement fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Steuerstrafrecht;Steuerstrafrecht;Tax criminal law;Droit pénal fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht;Internationales Steuerrecht;International tax law;Droit fiscal international
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht|Doppelbesteuerungsrecht;Doppelbesteuerungsrecht;Tax treaty law;Droit conventionnel fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht|Verrechnungspreise;Verrechnungspreise;Transfer pricing;Prix de transfert
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht|Amtshilfe und Informationsaustausch;Amtshilfe und Informationsaustausch;Mutual assistance and exchange of information;Assistance administrative et échange de renseignements
+Rechtsgebiet;Privatrecht;Privatrecht;Private law;Droit privé
+Rechtsgebiet;Strafrecht;Strafrecht;Criminal law;Droit pénal
 Rechtsgebiet;Verfahrensrecht;Verfahrensrecht;Procedural law;Droit procédural
-Rechtsgebiet;Verfahrensrecht|Zivilprozess (ZPO);Zivilprozess (ZPO);Civil procedure (ZPO);Procédure civile (ZPO)
-Rechtsgebiet;Verfahrensrecht|Strafprozess (StPO);Strafprozess (StPO);Criminal procedure (StPO);Procédure pénale (CPP)
-Rechtsgebiet;Verfahrensrecht|Verwaltungsverfahren (VwVG / VwVfG);Verwaltungsverfahren (VwVG / VwVfG);Administrative procedure;Procédure administrative
-Rechtsgebiet;Verfahrensrecht|Verfahrensrecht (DE);Verfahrensrecht (DE);Procedural law (DE);Droit procédural (DE)
-Rechtsgebiet;Verfahrensrecht|Verfahrensrecht (DE)|FGO (Finanzgerichtsordnung);FGO (Finanzgerichtsordnung);Fiscal Court Code (FGO);Loi sur les tribunaux fiscaux (FGO)
-Rechtsgebiet;Verfahrensrecht|Verfahrensrecht (DE)|Revisionsverfahren;Revisionsverfahren;Appeal on points of law;Procédure de révision
-Rechtsgebiet;Verfahrensrecht|Verfahrensrecht (DE)|Rechtsschutz im Steuerverfahren;Rechtsschutz im Steuerverfahren;Legal protection in tax proceedings;Protection juridique en procédure fiscale
+Rechtsgebiet;Verfahrensrecht|Steuerverfahrensrecht;Steuerverfahrensrecht;Tax procedure;Procédure fiscale
+Rechtsgebiet;Verfahrensrecht|Gerichtsverfahren;Gerichtsverfahren;Judicial proceedings;Procédure contentieuse
+Rechtsgebiet;Verfahrensrecht|Rechtsschutz;Rechtsschutz;Legal remedies;Voies de droit
 Rechtsordnung;Schweiz (CH);Schweiz (CH);Switzerland (CH);Suisse (CH)
 Rechtsordnung;Schweiz (CH)|Bund;Bund;Federal;Confédération
 Rechtsordnung;Schweiz (CH)|Kantonal;Kantonal;Cantonal;Cantonal
