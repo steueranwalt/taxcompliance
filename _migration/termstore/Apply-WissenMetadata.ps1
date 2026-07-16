@@ -42,6 +42,12 @@ function Normalize([string]$s) {
     return $s.Trim()
 }
 
+function Test-HasValue($v) {
+    if ($null -eq $v) { return $false }
+    if ($v -is [string]) { return -not [string]::IsNullOrWhiteSpace($v) }
+    return $true
+}
+
 Import-Module PnP.PowerShell -ErrorAction Stop
 try { $null = Get-PnPContext }
 catch { throw "Keine PnP-Verbindung. Zuerst Connect-PnPOnline ausführen." }
@@ -53,23 +59,30 @@ if (-not (Test-Path -LiteralPath $CsvPath)) {
 $list = Get-ListOrThrow -Name $LibraryName
 Write-Host "Bibliothek: $($list.Title)" -ForegroundColor Green
 
-$rows = Import-Csv -LiteralPath $CsvPath -Delimiter ";"
-if ($Limit -gt 0) { $rows = $rows | Select-Object -First $Limit }
+$rows = @(Import-Csv -LiteralPath $CsvPath -Delimiter ";")
+if ($Limit -gt 0) { $rows = @($rows | Select-Object -First $Limit) }
 Write-Host "CSV-Zeilen: $($rows.Count)" -ForegroundColor Cyan
 
-# Index SharePoint files under Wissen/
 Write-Host "Lade Listeneinträge unter '$FolderPrefix' …" -ForegroundColor Cyan
-$items = Get-PnPListItem -List $list -PageSize 2000 -Fields "Id","FileLeafRef","FileRef","FileDirRef","WissenJahr","WissenAutor","WissenWerk","WissenSeite","WissenFundstelle" |
-    Where-Object { $_.FieldValues.FileRef -and ($_.FieldValues.FileRef -like "*/$FolderPrefix/*" -or $_.FieldValues.FileDirRef -like "*/$FolderPrefix*") }
+$allItems = @(Get-PnPListItem -List $list -PageSize 2000 -Fields "Id","FileLeafRef","FileRef","FileDirRef","WissenJahr","WissenAutor","WissenWerk","WissenSeite","WissenFundstelle")
+$items = @($allItems | Where-Object {
+        $_.FieldValues["FileRef"] -and (
+            $_.FieldValues["FileRef"] -like "*/$FolderPrefix/*" -or
+            $_.FieldValues["FileDirRef"] -like "*/$FolderPrefix*"
+        )
+    })
 
 Write-Host "SP-Dateien unter $FolderPrefix : $($items.Count)" -ForegroundColor DarkGray
 
-# Map by FileLeafRef (and disambiguate by ending path)
+# Map FileLeafRef -> array of list items (plain PowerShell arrays)
 $byName = @{}
 foreach ($it in $items) {
-    $name = $it.FieldValues.FileLeafRef
-    if (-not $byName.ContainsKey($name)) { $byName[$name] = New-Object System.Collections.Generic.List[object] }
-    $byName[$name].Add($it)
+    $name = [string]$it.FieldValues["FileLeafRef"]
+    if ([string]::IsNullOrWhiteSpace($name)) { continue }
+    if (-not $byName.ContainsKey($name)) {
+        $byName[$name] = @()
+    }
+    $byName[$name] += $it
 }
 
 $updated = 0
@@ -81,30 +94,41 @@ foreach ($row in $rows) {
     $leaf = Normalize $row.FileLeafRef
     if (-not $leaf) { $skipped++; continue }
 
-    $candidates = @()
-    if ($byName.ContainsKey($leaf)) { $candidates = @($byName[$leaf]) }
+    if (-not $byName.ContainsKey($leaf)) {
+        $missing++
+        continue
+    }
 
+    $candidates = @($byName[$leaf])
     $item = $null
     if ($candidates.Count -eq 1) {
         $item = $candidates[0]
     }
-    elseif ($candidates.Count -gt 1) {
-        $needle = (Normalize $row.ServerRelativePath) -replace "^Wissen/", "" -replace "/", "\\"
-        $item = $candidates | Where-Object {
-            ($_.FieldValues.FileRef -replace "/", "\") -like "*$($needle -replace '\\','\')*" -or
-            ($_.FieldValues.FileRef -replace "\\", "/") -like ("*/" + (($row.ServerRelativePath -replace "^Wissen/","")))
-        } | Select-Object -First 1
+    else {
+        $rel = (Normalize $row.ServerRelativePath) -replace "^Wissen/", ""
+        $relFwd = $rel -replace "\\", "/"
+        $item = @(
+            $candidates | Where-Object {
+                $fr = ([string]$_.FieldValues["FileRef"]) -replace "\\", "/"
+                $fr.EndsWith("/" + $relFwd) -or $fr.Contains("/" + $relFwd)
+            }
+        ) | Select-Object -First 1
         if (-not $item) { $item = $candidates[0] }
     }
 
-    if (-not $item) {
+    if (-not $item -or -not $item.Id) {
         $missing++
         continue
     }
 
     if ($OnlyEmpty) {
         $fv = $item.FieldValues
-        if ($fv.WissenJahr -or $fv.WissenAutor -or $fv.WissenWerk -or $fv.WissenFundstelle) {
+        if (
+            (Test-HasValue $fv["WissenJahr"]) -or
+            (Test-HasValue $fv["WissenAutor"]) -or
+            (Test-HasValue $fv["WissenWerk"]) -or
+            (Test-HasValue $fv["WissenFundstelle"])
+        ) {
             $skipped++
             continue
         }
@@ -113,52 +137,59 @@ foreach ($row in $rows) {
     $values = @{}
     if (Normalize $row.Jahr) {
         $y = 0
-        if ([int]::TryParse((Normalize $row.Jahr), [ref]$y)) { $values["WissenJahr"] = $y }
+        if ([int]::TryParse((Normalize $row.Jahr), [ref]$y)) {
+            # Number fields expect Double in CSOM
+            $values["WissenJahr"] = [double]$y
+        }
     }
-    if (Normalize $row.Autor) { $values["WissenAutor"] = (Normalize $row.Autor) }
-    if (Normalize $row.Werk) { $values["WissenWerk"] = (Normalize $row.Werk) }
-    if (Normalize $row.Seite) { $values["WissenSeite"] = (Normalize $row.Seite) }
-    if (Normalize $row.Fundstelle) { $values["WissenFundstelle"] = (Normalize $row.Fundstelle) }
+    if (Normalize $row.Autor) { $values["WissenAutor"] = [string](Normalize $row.Autor) }
+    if (Normalize $row.Werk) { $values["WissenWerk"] = [string](Normalize $row.Werk) }
+    if (Normalize $row.Seite) { $values["WissenSeite"] = [string](Normalize $row.Seite) }
+    if (Normalize $row.Fundstelle) { $values["WissenFundstelle"] = [string](Normalize $row.Fundstelle) }
 
     if ($values.Count -eq 0 -and $SkipTaxonomy) {
         $skipped++
         continue
     }
 
+    $itemId = [int]$item.Id
+
     if ($WhatIf) {
-        Write-Host "[WhatIf] Id=$($item.Id) $($item.FieldValues.FileLeafRef) => $($values.Keys -join ',')"
+        Write-Host "[WhatIf] Id=$itemId $($item.FieldValues['FileLeafRef']) => $($values.Keys -join ',')"
         $updated++
         continue
     }
 
     try {
         if ($values.Count -gt 0) {
-            Set-PnPListItem -List $list -Identity $item.Id -Values $values -UpdateType SystemUpdate | Out-Null
+            Set-PnPListItem -List $list -Identity $itemId -Values $values | Out-Null
         }
 
         if (-not $SkipTaxonomy) {
-            # Taxonomy by label (best effort)
             if (Normalize $row.Dokumenttyp) {
                 try {
-                    Set-PnPListItem -List $list -Identity $item.Id -Values @{ "WissenDokumenttyp" = (Normalize $row.Dokumenttyp) } -UpdateType SystemUpdate | Out-Null
-                } catch { }
+                    Set-PnPListItem -List $list -Identity $itemId -Values @{ "WissenDokumenttyp" = [string](Normalize $row.Dokumenttyp) } | Out-Null
+                }
+                catch { }
             }
             if (Normalize $row.Rechtsordnung) {
                 try {
-                    Set-PnPListItem -List $list -Identity $item.Id -Values @{ "WissenRechtsordnung" = (Normalize $row.Rechtsordnung) } -UpdateType SystemUpdate | Out-Null
-                } catch { }
+                    Set-PnPListItem -List $list -Identity $itemId -Values @{ "WissenRechtsordnung" = [string](Normalize $row.Rechtsordnung) } | Out-Null
+                }
+                catch { }
             }
             if (Normalize $row.Rechtsgebiet) {
                 try {
-                    Set-PnPListItem -List $list -Identity $item.Id -Values @{ "WissenRechtsgebiet" = (Normalize $row.Rechtsgebiet) } -UpdateType SystemUpdate | Out-Null
-                } catch { }
+                    Set-PnPListItem -List $list -Identity $itemId -Values @{ "WissenRechtsgebiet" = [string](Normalize $row.Rechtsgebiet) } | Out-Null
+                }
+                catch { }
             }
         }
         $updated++
         if (($updated % 50) -eq 0) { Write-Host "… updated=$updated" -ForegroundColor DarkGray }
     }
     catch {
-        Write-Warning "Id=$($item.Id) $($item.FieldValues.FileLeafRef): $($_.Exception.Message)"
+        Write-Warning "Id=$itemId $($item.FieldValues['FileLeafRef']): $($_.Exception.Message)"
         $errors++
     }
 }
