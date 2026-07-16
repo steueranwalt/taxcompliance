@@ -31,6 +31,15 @@ cd _migration\termstore
 .\Apply-Termstore.ps1 -Connect -Interactive -ClientId "<APP-ID>" -Tenant "<TENANT>.onmicrosoft.com" -ApplySynonyms
 ```
 
+Managed-Metadata-Spalten in Bibliothek Wissen:
+
+```powershell
+cd _migration\termstore
+.\Add-WissenLibraryColumns.ps1
+```
+
+Siehe [`termstore/WISSEN-LIBRARY-COLUMNS.md`](termstore/WISSEN-LIBRARY-COLUMNS.md).
+
 ## OneNote → Markdown
 
 Das Skript `onenote_export.py` liest das SharePoint-Notizbuch **Diverses.one** und legt im Repo unter `Diverses/` je **Abschnitt** einen Ordner an; jede Seite wird als `README.md` gespeichert.

@@ -135,6 +135,8 @@ Kontrolliertes Vokabular (ersetzt „nur Ordnername“):
 | `synonyms-de-en-fr.csv` | Synonym-Vorlage (`TermSet;TermPath;Language;Synonym`) |
 | `Import-WissenTermstore.ps1` | Verbindung + Import + Labels |
 | `Apply-Termstore.ps1` | Produktions-Runner (Retry, Delta-Import, optional Synonyme) |
+| `Add-WissenLibraryColumns.ps1` | Managed-Metadata-Spalten in Bibliothek Wissen |
+| `WISSEN-LIBRARY-COLUMNS.md` | Anleitung Spalten (PnP + UI) |
 | `ARCHITECTURE.md` | Dieses Dokument |
 
 ---
@@ -148,12 +150,14 @@ Kontrolliertes Vokabular (ersetzt „nur Ordnername“):
 5. In Bibliothek **Wissen**: Managed Metadata-Spalten anlegen und an Termsets binden.  
 6. Optional: Labels (EN/FR) und danach Synonyme pflegen.
 
-### Produktionslauf (empfohlen)
+### Bibliotheksspalten (nach Termstore)
 
 ```powershell
 cd _migration\termstore
-.\Apply-Termstore.ps1 -Connect -Interactive -ClientId "<APP-ID>" -Tenant "<TENANT>.onmicrosoft.com" -ApplySynonyms
+.\Add-WissenLibraryColumns.ps1
 ```
+
+Details: [`WISSEN-LIBRARY-COLUMNS.md`](WISSEN-LIBRARY-COLUMNS.md)
 
 ### Typische Verbindungsprobleme
 

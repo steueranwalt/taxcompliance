@@ -100,7 +100,10 @@ function Apply-Synonyms {
     $rows = Import-Csv -LiteralPath $CsvPath -Delimiter ";"
     $ok = 0
     $skip = 0
+    $dup = 0
     $hasAddLabel = [bool](Get-Command -Name Add-PnPTermLabel -ErrorAction SilentlyContinue)
+    $ctx = Get-PnPContext
+
     foreach ($row in $rows) {
         if (-not $lcidByLang.ContainsKey($row.Language)) { $skip++; continue }
         $term = Get-TermByPath -GroupName $GroupName -TermSetName $row.TermSet -TermPathPipe $row.TermPath
@@ -110,17 +113,26 @@ function Apply-Synonyms {
             $ok++
             continue
         }
-        if (-not $hasAddLabel) {
-            Write-Warning "Add-PnPTermLabel nicht verfügbar; Synonym-Import übersprungen."
-            break
-        }
         try {
-            Add-PnPTermLabel -Identity $term -Name $row.Synonym -Lcid $lcidByLang[$row.Language] -ErrorAction Stop | Out-Null
+            if ($hasAddLabel) {
+                Add-PnPTermLabel -Identity $term -Name $row.Synonym -Lcid $lcidByLang[$row.Language] -ErrorAction Stop | Out-Null
+            }
+            else {
+                $null = $term.CreateLabel($row.Synonym, $lcidByLang[$row.Language], $false)
+                $ctx.ExecuteQuery()
+            }
             $ok++
         }
-        catch { $skip++ }
+        catch {
+            if ($_.Exception.Message -match "already exists|bereits|existiert") {
+                $dup++
+            }
+            else {
+                $skip++
+            }
+        }
     }
-    Write-Host "Synonyme: angewendet=$ok übersprungen=$skip" -ForegroundColor DarkGray
+    Write-Host "Synonyme: angewendet=$ok duplikat=$dup übersprungen=$skip" -ForegroundColor DarkGray
 }
 
 Import-Module PnP.PowerShell -ErrorAction Stop
