@@ -65,6 +65,18 @@ $Columns = @(
         InternalName = "WissenFundstelle"
         Type         = "Note"
         Description  = "Optionale vollständige Zitation; strukturiert über Werk + Jahr + Seite."
+    },
+    @{
+        DisplayName  = "Titel"
+        InternalName = "WissenTitel"
+        Type         = "Text"
+        Description  = "Dokumenttitel (Internes Memo, Fachaufsatz)."
+    },
+    @{
+        DisplayName  = "Aktenzeichen"
+        InternalName = "WissenAktenzeichen"
+        Type         = "Text"
+        Description  = "Gerichts- oder Behördenaktenzeichen (Urteil, Verwaltungsanweisung)."
     }
 )
 
@@ -167,6 +179,10 @@ Write-Host @"
 Verwendung nach Dokumenttyp:
   alle Dokumente:
     - Jahr, Autor
+  Internes Memo / Fachaufsatz:
+    - Titel
+  Urteil / Rechtsprechung / Verwaltungsanweisung:
+    - Aktenzeichen
   Verwaltungsanweisung / Kommentar / Fachaufsatz / Urteil / Gesetzesmaterialien:
     - Fundstelle = Werk + Jahr + Seite
     - optional Freitext-Spalte Fundstelle

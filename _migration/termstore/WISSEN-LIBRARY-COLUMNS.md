@@ -29,6 +29,8 @@ Skript: `Add-WissenLibraryColumns.ps1`
 | Werk | `WissenWerk` | Text | Fundstellen-Typen* |
 | Seite | `WissenSeite` | Text | Fundstellen-Typen* |
 | Fundstelle | `WissenFundstelle` | Mehrzeilig | optional, vollständige Zitation |
+| Titel | `WissenTitel` | Text | Internes Memo, Fachaufsatz |
+| Aktenzeichen | `WissenAktenzeichen` | Text | Urteil / Rechtsprechung, Verwaltungsanweisung |
 
 \*Fundstellen-Typen (Wert in **Dokumenttyp**):
 
@@ -64,20 +66,20 @@ Voraussetzung: `DenyAddAndCustomizePages` auf der Site = **Disabled** (Custom Sc
 
 SharePoint zeigt Spalten technisch immer; die **inhaltliche Pflicht** hängt vom Dokumenttyp ab:
 
-| Dokumenttyp | Jahr | Autor | Werk | Seite | Fundstelle (Text) |
-|---|---|---|---|---|---|
-| Urteil / Rechtsprechung | ja | ja | ja | ja | optional |
-| Verwaltungsanweisung | ja | ja | ja | ja | optional |
-| Kommentar (Werk) | ja | ja | ja | ja | optional |
-| Fachaufsatz | ja | ja | ja | ja | optional |
-| Gesetzesmaterialien | ja | ja | ja | ja | optional |
-| Merkblatt / Leitfaden | ja | ja | – | – | – |
-| Arbeitshilfe / Checkliste | ja | ja | – | – | – |
-| Präsentation | ja | ja | – | – | – |
-| Vertrag / Vereinbarung | ja | ja | – | – | – |
-| Internes Memo | ja | ja | – | – | – |
-| Datensatz / Grounds | ja | ja | – | – | – |
-| Gesetz / Verordnung | ja | ja | – | – | – |
+| Dokumenttyp | Jahr | Autor | Titel | Aktenzeichen | Werk | Seite | Fundstelle (Text) |
+|---|---|---|---|---|---|---|---|
+| Urteil / Rechtsprechung | ja | ja | – | ja | ja | ja | optional |
+| Verwaltungsanweisung | ja | ja | – | ja | ja | ja | optional |
+| Kommentar (Werk) | ja | ja | – | – | ja | ja | optional |
+| Fachaufsatz | ja | ja | ja | – | ja | ja | optional |
+| Gesetzesmaterialien | ja | ja | – | – | ja | ja | optional |
+| Merkblatt / Leitfaden | ja | ja | – | – | – | – | – |
+| Arbeitshilfe / Checkliste | ja | ja | – | – | – | – | – |
+| Präsentation | ja | ja | – | – | – | – | – |
+| Vertrag / Vereinbarung | ja | ja | – | – | – | – | – |
+| Internes Memo | ja | ja | ja | – | – | – | – |
+| Datensatz / Grounds | ja | ja | – | – | – | – | – |
+| Gesetz / Verordnung | ja | ja | – | – | – | – | – |
 
 Bedingte Formularanzeige (Felder nur bei Fundstellen-Typen sichtbar) ist ein Folgeschritt (Power Apps oder JSON-Form).
 
@@ -85,7 +87,7 @@ Bedingte Formularanzeige (Felder nur bei Fundstellen-Typen sichtbar) ist ein Fol
 
 ## 4. Nach dem Anlegen
 
-1. Ansicht **Alle Dokumente** → Spalten einblenden: Jahr, Autor, Werk, Seite (Fundstelle optional)
+1. Ansicht **Alle Dokumente** → Spalten einblenden: Jahr, Autor, Titel, Aktenzeichen, Werk, Seite (Fundstelle optional)
 2. Optional indizieren: Jahr, Dokumenttyp
 3. Filteransicht z. B. „Urteile“: Dokumenttyp = Urteil / Rechtsprechung
 
@@ -105,6 +107,8 @@ python _migration\termstore\extract_wissen_metadata.py
 Aus Dateiname + Dateikopf werden u. a. erkannt:
 - Fundstelle `NJW 2024, 2092` / `DStR 2018, 2284`
 - Autor aus Beck-Tabelle `TitelFundstelle`
+- **Titel** (Fachaufsatz, Internes Memo) aus Überschrift / Beck-Tabelle
+- **Aktenzeichen** (Urteil, Verwaltungsanweisung) aus BFH/FG-Zeilen, BMF-Schreiben
 - Dokumenttyp / Rechtsordnung / Rechtsgebiet heuristisch aus Pfad
 
 ### Auf SharePoint schreiben

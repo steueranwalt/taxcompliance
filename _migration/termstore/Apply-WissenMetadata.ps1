@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Befüllt Jahr/Autor/Werk/Seite/Fundstelle aus CSV (einfacher, robuster Lauf).
+  Befüllt Jahr/Autor/Werk/Seite/Fundstelle/Titel/Aktenzeichen aus CSV (einfacher, robuster Lauf).
 
 .EXAMPLE
   .\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -Limit 20
@@ -45,6 +45,7 @@ function Find-FileItem {
     <FieldRef Name='ID'/><FieldRef Name='FileRef'/><FieldRef Name='FileLeafRef'/>
     <FieldRef Name='WissenJahr'/><FieldRef Name='WissenAutor'/><FieldRef Name='WissenWerk'/>
     <FieldRef Name='WissenSeite'/><FieldRef Name='WissenFundstelle'/>
+    <FieldRef Name='WissenTitel'/><FieldRef Name='WissenAktenzeichen'/>
   </ViewFields>
   <RowLimit>20</RowLimit>
 </View>
@@ -82,7 +83,7 @@ $list = Get-DocLib $LibraryName
 Write-Host "Bibliothek: $($list.Title)" -ForegroundColor Green
 
 # Prüfen, ob Textspalten existieren
-foreach ($fn in @("WissenAutor", "WissenWerk", "WissenSeite", "WissenFundstelle")) {
+foreach ($fn in @("WissenAutor", "WissenWerk", "WissenSeite", "WissenFundstelle", "WissenTitel", "WissenAktenzeichen")) {
     $fld = Get-PnPField -List $list -Identity $fn -ErrorAction SilentlyContinue
     if (-not $fld) {
         throw "Spalte $fn fehlt. Zuerst: .\Add-WissenExtraColumns.ps1 -LibraryName 'Shared Documents'"
@@ -146,12 +147,16 @@ foreach ($row in $rows) {
     $seite = ("{0}" -f $row.Seite).Trim()
     $fund = ("{0}" -f $row.Fundstelle).Trim()
     $jahr = ("{0}" -f $row.Jahr).Trim()
+    $titel = ("{0}" -f $row.Titel).Trim()
+    $az = ("{0}" -f $row.Aktenzeichen).Trim()
 
     $pairs = [ordered]@{}
     if ($autor) { $pairs["WissenAutor"] = $autor }
     if ($werk) { $pairs["WissenWerk"] = $werk }
     if ($seite) { $pairs["WissenSeite"] = $seite }
     if ($fund) { $pairs["WissenFundstelle"] = $fund }
+    if ($titel) { $pairs["WissenTitel"] = $titel }
+    if ($az) { $pairs["WissenAktenzeichen"] = $az }
     if ($IncludeYear -and $jahr -match '^\d{4}$') {
         $pairs["WissenJahr"] = [int]$jahr
     }
