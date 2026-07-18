@@ -99,8 +99,45 @@ function Test-TaxonomyEmpty($Value) {
     return ($s -eq "" -or $s -eq "0")
 }
 
+function Get-PathDepth([string]$Path) {
+    if (-not $Path) { return 0 }
+    return ($Path -split '\|').Count
+}
+
+function Import-TermPathAliases {
+    <#
+      Liest Taxonomy-CSV (Wissen|TermSet|...|Leaf) und mappt Leaf-Label -> voller TermPath.
+      Bei Duplikaten gewinnt der längere (spezifischere) Pfad.
+    #>
+    param([string]$TaxonomyCsvPath, [string]$TermSetName)
+
+    $aliases = @{}
+    if (-not (Test-Path -LiteralPath $TaxonomyCsvPath)) {
+        Write-Host ("Alias-CSV fehlt (optional): {0}" -f $TaxonomyCsvPath) -ForegroundColor DarkGray
+        return $aliases
+    }
+
+    foreach ($line in Get-Content -LiteralPath $TaxonomyCsvPath -Encoding UTF8) {
+        $line = $line.Trim()
+        if (-not $line -or $line.StartsWith("#")) { continue }
+        $parts = $line -split '\|'
+        if ($parts.Count -lt 3) { continue }
+        if ($parts[1] -ne $TermSetName) { continue }
+        $leaf = $parts[-1].Trim()
+        if (-not $leaf) { continue }
+        $path = $line
+        $key = $leaf.ToLowerInvariant()
+        if (-not $aliases.ContainsKey($key) -or (Get-PathDepth $path) -gt (Get-PathDepth $aliases[$key])) {
+            $aliases[$key] = $path
+            $aliases[$leaf] = $path
+        }
+    }
+    Write-Host ("Alias-Map {0}: {1} Leaf-Labels aus {2}" -f $TermSetName, @($aliases.Keys | Where-Object { $_ -cmatch '[A-ZÄÖÜ]' }).Count, (Split-Path $TaxonomyCsvPath -Leaf)) -ForegroundColor DarkGray
+    return $aliases
+}
+
 function Build-TermLabelMap {
-    param([string]$GroupName, [string]$TermSetName)
+    param([string]$GroupName, [string]$TermSetName, [hashtable]$PathAliases)
 
     # label -> @{ Id = [guid]; Path = "Group|Set|...|Term"; Label = "..." }
     $map = @{}
@@ -113,8 +150,15 @@ function Build-TermLabelMap {
         try {
             if ($t.Path) { $path = ("{0}" -f $t.Path).Trim() }
         } catch {}
-        if (-not $path) {
+        # PnP Path oft ohne Group-Prefix → mit Alias / Group auffüllen
+        if ($PathAliases -and $PathAliases.ContainsKey($name)) {
+            $path = $PathAliases[$name]
+        }
+        elseif (-not $path) {
             $path = "{0}|{1}|{2}" -f $GroupName, $TermSetName, $name
+        }
+        elseif ($path -notlike "$GroupName|*") {
+            $path = "{0}|{1}" -f $GroupName, $path
         }
 
         $entry = @{
@@ -123,25 +167,66 @@ function Build-TermLabelMap {
             Label = $name
         }
 
-        if (-not $map.ContainsKey($name)) { $map[$name] = $entry }
         $key = $name.ToLowerInvariant()
-        if (-not $map.ContainsKey($key)) { $map[$key] = $entry }
+        $replace = $false
+        if (-not $map.ContainsKey($name)) {
+            $replace = $true
+        }
+        elseif ((Get-PathDepth $path) -gt (Get-PathDepth $map[$name].Path)) {
+            $replace = $true
+        }
+        if ($replace) {
+            $map[$name] = $entry
+            $map[$key] = $entry
+        }
     }
-    Write-Host ("Termset {0}: {1} Terms geladen" -f $TermSetName, $terms.Count) -ForegroundColor DarkGray
-    if ($TermSetName -eq "Dokumenttyp") {
-        $labels = ($terms | ForEach-Object { $_.Name } | Sort-Object) -join "; "
+
+    # Auch Alias-Leaves ohne Treffer in Get-PnPTerm vorhalten (Set via TermPath)
+    if ($PathAliases) {
+        foreach ($k in @($PathAliases.Keys)) {
+            if ($map.ContainsKey($k)) { continue }
+            $path = $PathAliases[$k]
+            $leaf = ($path -split '\|')[-1]
+            $entry = @{
+                Id    = [guid]::Empty
+                Path  = $path
+                Label = $leaf
+            }
+            $map[$k] = $entry
+            $map[$leaf] = $entry
+            $map[$leaf.ToLowerInvariant()] = $entry
+        }
+    }
+
+    Write-Host ("Termset {0}: {1} Terms aus Termstore geladen" -f $TermSetName, $terms.Count) -ForegroundColor DarkGray
+    if ($TermSetName -in @("Dokumenttyp", "Rechtsgebiet", "Rechtsordnung")) {
+        $labels = ($terms | ForEach-Object { $_.Name } | Sort-Object -Unique) -join "; "
         Write-Host ("  Labels: {0}" -f $labels) -ForegroundColor DarkGray
     }
     return $map
 }
 
 function Resolve-TermEntry {
-    param([hashtable]$Map, [string]$Label)
+    param([hashtable]$Map, [hashtable]$PathAliases, [string]$Label)
     $label = $Label.Trim()
     if (-not $label) { return $null }
     if ($Map.ContainsKey($label)) { return $Map[$label] }
     $key = $label.ToLowerInvariant()
     if ($Map.ContainsKey($key)) { return $Map[$key] }
+    if ($PathAliases -and $PathAliases.ContainsKey($label)) {
+        return @{
+            Id    = [guid]::Empty
+            Path  = $PathAliases[$label]
+            Label = $label
+        }
+    }
+    if ($PathAliases -and $PathAliases.ContainsKey($key)) {
+        return @{
+            Id    = [guid]::Empty
+            Path  = $PathAliases[$key]
+            Label = $label
+        }
+    }
     return $null
 }
 
@@ -155,22 +240,33 @@ function Set-TaxonomySingle {
         [string]$TermPath
     )
 
-    # PnP verlangt ListItem-Objekt, nicht Id
+    # PnP verlangt ListItem-Objekt, nicht Id.
+    # TermPath zuerst: zuverlässig bei Hierarchie (Direkte Steuern unter Steuerrecht).
     if (Get-Command Set-PnPTaxonomyFieldValue -ErrorAction SilentlyContinue) {
-        try {
-            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName -TermId $TermId -Label $Label -ErrorAction Stop | Out-Null
-            return
-        }
-        catch {
-            if ($TermPath) {
+        if ($TermPath) {
+            try {
                 Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName -TermPath $TermPath -ErrorAction Stop | Out-Null
                 return
             }
-            throw
+            catch {
+                # Fallback auf TermId
+            }
         }
+        if ($TermId -and $TermId -ne [guid]::Empty) {
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName -TermId $TermId -Label $Label -ErrorAction Stop | Out-Null
+            return
+        }
+        if ($TermPath) {
+            # zweiten Versuch-Fehler durchreichen
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName -TermPath $TermPath -ErrorAction Stop | Out-Null
+            return
+        }
+        throw "Kein TermId/TermPath für $FieldName / $Label"
     }
 
-    # Fallback: klassisches Taxonomy-Format für Set-PnPListItem
+    if ($TermId -eq [guid]::Empty) {
+        throw "Set-PnPTaxonomyFieldValue fehlt und TermId leer für $Label"
+    }
     $ht = @{}
     $ht[$FieldName] = ("-1;#{0}|{1}" -f $Label, $TermId.ToString())
     Set-PnPListItem -List $List -Identity $ListItem.Id -Values $ht -ErrorAction Stop | Out-Null
@@ -197,10 +293,34 @@ foreach ($fn in $needed) {
 }
 
 Write-Host "Lade Termstore-Gruppe '$TermGroupName' ..." -ForegroundColor Cyan
+$scriptDir = $PSScriptRoot
+if (-not $scriptDir) { $scriptDir = (Get-Location).Path }
+$csvDir = Split-Path -Parent (Resolve-Path -LiteralPath $CsvPath).Path
+
+function Find-LocalTaxonomyCsv([string]$FileName) {
+    foreach ($dir in @($scriptDir, $csvDir, (Get-Location).Path)) {
+        if (-not $dir) { continue }
+        $p = Join-Path $dir $FileName
+        if (Test-Path -LiteralPath $p) { return $p }
+    }
+    return (Join-Path $scriptDir $FileName)
+}
+
 $mapDok = $null; $mapRo = $null; $mapRg = $null
-if ($IncludeDokumenttyp) { $mapDok = Build-TermLabelMap -GroupName $TermGroupName -TermSetName "Dokumenttyp" }
-if ($IncludeRechtsordnung) { $mapRo = Build-TermLabelMap -GroupName $TermGroupName -TermSetName "Rechtsordnung" }
-if ($IncludeRechtsgebiet) { $mapRg = Build-TermLabelMap -GroupName $TermGroupName -TermSetName "Rechtsgebiet" }
+$aliasDok = @{}; $aliasRo = @{}; $aliasRg = @{}
+
+if ($IncludeDokumenttyp) {
+    $aliasDok = Import-TermPathAliases -TaxonomyCsvPath (Find-LocalTaxonomyCsv "dokumenttyp.csv") -TermSetName "Dokumenttyp"
+    $mapDok = Build-TermLabelMap -GroupName $TermGroupName -TermSetName "Dokumenttyp" -PathAliases $aliasDok
+}
+if ($IncludeRechtsordnung) {
+    $aliasRo = Import-TermPathAliases -TaxonomyCsvPath (Find-LocalTaxonomyCsv "rechtsordnung.csv") -TermSetName "Rechtsordnung"
+    $mapRo = Build-TermLabelMap -GroupName $TermGroupName -TermSetName "Rechtsordnung" -PathAliases $aliasRo
+}
+if ($IncludeRechtsgebiet) {
+    $aliasRg = Import-TermPathAliases -TaxonomyCsvPath (Find-LocalTaxonomyCsv "rechtsgebiet.csv") -TermSetName "Rechtsgebiet"
+    $mapRg = Build-TermLabelMap -GroupName $TermGroupName -TermSetName "Rechtsgebiet" -PathAliases $aliasRg
+}
 
 $rows = @(Import-Csv -LiteralPath $CsvPath -Delimiter ";")
 if ($Limit -gt 0) { $rows = @($rows | Select-Object -First $Limit) }
@@ -252,7 +372,7 @@ foreach ($row in $rows) {
 
     if ($wantDok) {
         if (-not $OnlyEmpty -or (Test-TaxonomyEmpty (Get-ItemVal $item "WissenDokumenttyp"))) {
-            $entry = Resolve-TermEntry -Map $mapDok -Label $dok
+            $entry = Resolve-TermEntry -Map $mapDok -PathAliases $aliasDok -Label $dok
             if ($entry) {
                 $ops.Add([pscustomobject]@{
                         Field = "WissenDokumenttyp"
@@ -270,7 +390,7 @@ foreach ($row in $rows) {
 
     if ($wantRo) {
         if (-not $OnlyEmpty -or (Test-TaxonomyEmpty (Get-ItemVal $item "WissenRechtsordnung"))) {
-            $entry = Resolve-TermEntry -Map $mapRo -Label $ro
+            $entry = Resolve-TermEntry -Map $mapRo -PathAliases $aliasRo -Label $ro
             if ($entry) {
                 $ops.Add([pscustomobject]@{
                         Field = "WissenRechtsordnung"
@@ -288,7 +408,7 @@ foreach ($row in $rows) {
 
     if ($wantRg) {
         if (-not $OnlyEmpty -or (Test-TaxonomyEmpty (Get-ItemVal $item "WissenRechtsgebiet"))) {
-            $entry = Resolve-TermEntry -Map $mapRg -Label $rg
+            $entry = Resolve-TermEntry -Map $mapRg -PathAliases $aliasRg -Label $rg
             if ($entry) {
                 $ops.Add([pscustomobject]@{
                         Field = "WissenRechtsgebiet"
@@ -348,7 +468,8 @@ Write-Host "Fertig. updated=$updated skipped=$skipped missingOnSp=$missing unres
 if ($unresolvedLabels.Count -gt 0) {
     Write-Host "Nicht aufgelöste Labels (fehlen vermutlich im Termstore):" -ForegroundColor Yellow
     $unresolvedLabels | Sort-Object | ForEach-Object { Write-Host "  - $_" -ForegroundColor DarkYellow }
-    Write-Host "Hinweis: Termset Dokumenttyp prüfen bzw. Import-WissenTermstore / Apply-Termstore nachziehen." -ForegroundColor Yellow
+    Write-Host "Hinweis: Termset prüfen. Nested Terms ggf. per Import-WissenTermstore / Apply-Termstore nachziehen." -ForegroundColor Yellow
+    Write-Host "Diagnose: Get-PnPTerm -TermGroup 'Wissen' -TermSet 'Rechtsgebiet' -Recursive | Select-Object Name" -ForegroundColor Yellow
 }
 
 if ($missingRows.Count -gt 0) {
