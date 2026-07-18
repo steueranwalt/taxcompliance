@@ -4,13 +4,10 @@
 
 .DESCRIPTION
   Nutzt Term-GUIDs aus Termstore-Gruppe "Wissen" und Set-PnPTaxonomyFieldValue.
-  Schlagworte werden nicht gesetzt (keine Extraktion).
+  Wichtig: -ListItem muss ein ListItem-Objekt sein (nicht die Id).
 
 .EXAMPLE
-  .\Apply-WissenTaxonomy.ps1 -CsvPath .\wissen-metadata-extract.csv -Limit 20
-
-.EXAMPLE
-  .\Apply-WissenTaxonomy.ps1 -CsvPath .\wissen-metadata-extract.csv -OnlyEmpty
+  .\Apply-WissenTaxonomy.ps1 -CsvPath .\wissen-metadata-extract.csv -IncludeDokumenttyp -OnlyEmpty -Limit 20
 #>
 [CmdletBinding()]
 param(
@@ -28,7 +25,6 @@ param(
 
 $ErrorActionPreference = "Continue"
 
-# Default: alle drei Heuristik-Felder
 if (-not $IncludeDokumenttyp -and -not $IncludeRechtsordnung -and -not $IncludeRechtsgebiet) {
     $IncludeDokumenttyp = $true
     $IncludeRechtsordnung = $true
@@ -91,6 +87,14 @@ function Get-ItemVal($Item, [string]$Name) {
 function Test-TaxonomyEmpty($Value) {
     if ($null -eq $Value) { return $true }
     if ($Value -is [System.Array] -and $Value.Count -eq 0) { return $true }
+    # TaxonomyFieldValue / TaxonomyFieldValueCollection
+    try {
+        if ($null -ne $Value.Count -and $Value.Count -eq 0) { return $true }
+    } catch {}
+    try {
+        if (("" + $Value.Label).Trim() -ne "") { return $false }
+        if (("" + $Value.TermGuid).Trim() -ne "") { return $false }
+    } catch {}
     $s = ("{0}" -f $Value).Trim()
     return ($s -eq "" -or $s -eq "0")
 }
@@ -98,26 +102,40 @@ function Test-TaxonomyEmpty($Value) {
 function Build-TermLabelMap {
     param([string]$GroupName, [string]$TermSetName)
 
+    # label -> @{ Id = [guid]; Path = "Group|Set|...|Term"; Label = "..." }
     $map = @{}
     $terms = @(Get-PnPTerm -TermGroup $GroupName -TermSet $TermSetName -Recursive -ErrorAction Stop)
     foreach ($t in $terms) {
         $name = ("{0}" -f $t.Name).Trim()
         if (-not $name) { continue }
-        # Prefer deepest unique label; keep first if duplicates
-        if (-not $map.ContainsKey($name)) {
-            $map[$name] = [guid]$t.Id
+
+        $path = $null
+        try {
+            if ($t.Path) { $path = ("{0}" -f $t.Path).Trim() }
+        } catch {}
+        if (-not $path) {
+            $path = "{0}|{1}|{2}" -f $GroupName, $TermSetName, $name
         }
-        # also index lowercase for tolerant lookup
+
+        $entry = @{
+            Id    = [guid]$t.Id
+            Path  = $path
+            Label = $name
+        }
+
+        if (-not $map.ContainsKey($name)) { $map[$name] = $entry }
         $key = $name.ToLowerInvariant()
-        if (-not $map.ContainsKey($key)) {
-            $map[$key] = [guid]$t.Id
-        }
+        if (-not $map.ContainsKey($key)) { $map[$key] = $entry }
     }
     Write-Host ("Termset {0}: {1} Terms geladen" -f $TermSetName, $terms.Count) -ForegroundColor DarkGray
+    if ($TermSetName -eq "Dokumenttyp") {
+        $labels = ($terms | ForEach-Object { $_.Name } | Sort-Object) -join "; "
+        Write-Host ("  Labels: {0}" -f $labels) -ForegroundColor DarkGray
+    }
     return $map
 }
 
-function Resolve-TermId {
+function Resolve-TermEntry {
     param([hashtable]$Map, [string]$Label)
     $label = $Label.Trim()
     if (-not $label) { return $null }
@@ -128,17 +146,34 @@ function Resolve-TermId {
 }
 
 function Set-TaxonomySingle {
-    param($List, [int]$ItemId, [string]$FieldName, [guid]$TermId, [string]$Label)
+    param(
+        $List,
+        $ListItem,
+        [string]$FieldName,
+        [guid]$TermId,
+        [string]$Label,
+        [string]$TermPath
+    )
 
+    # PnP verlangt ListItem-Objekt, nicht Id
     if (Get-Command Set-PnPTaxonomyFieldValue -ErrorAction SilentlyContinue) {
-        Set-PnPTaxonomyFieldValue -List $List -Identity $ItemId -InternalFieldName $FieldName -TermId $TermId -ErrorAction Stop | Out-Null
-        return
+        try {
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName -TermId $TermId -Label $Label -ErrorAction Stop | Out-Null
+            return
+        }
+        catch {
+            if ($TermPath) {
+                Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName -TermPath $TermPath -ErrorAction Stop | Out-Null
+                return
+            }
+            throw
+        }
     }
 
-    # Fallback: Label|Guid format for taxonomy fields
+    # Fallback: klassisches Taxonomy-Format für Set-PnPListItem
     $ht = @{}
-    $ht[$FieldName] = ("{0}|{1}" -f $Label, $TermId.ToString())
-    Set-PnPListItem -List $List -Identity $ItemId -Values $ht -ErrorAction Stop | Out-Null
+    $ht[$FieldName] = ("-1;#{0}|{1}" -f $Label, $TermId.ToString())
+    Set-PnPListItem -List $List -Identity $ListItem.Id -Values $ht -ErrorAction Stop | Out-Null
 }
 
 Import-Module PnP.PowerShell -ErrorAction Stop
@@ -174,6 +209,7 @@ Write-Host "CSV-Zeilen: $($rows.Count)" -ForegroundColor Cyan
 $updated = 0; $skipped = 0; $missing = 0; $errors = 0; $unresolved = 0
 $missingRows = New-Object System.Collections.Generic.List[object]
 $unresolvedLabels = New-Object System.Collections.Generic.HashSet[string]
+$firstErrorShown = $false
 
 foreach ($row in $rows) {
     $leaf = ("{0}" -f $row.FileLeafRef).Trim()
@@ -216,9 +252,14 @@ foreach ($row in $rows) {
 
     if ($wantDok) {
         if (-not $OnlyEmpty -or (Test-TaxonomyEmpty (Get-ItemVal $item "WissenDokumenttyp"))) {
-            $tid = Resolve-TermId -Map $mapDok -Label $dok
-            if ($tid) {
-                $ops.Add([pscustomobject]@{ Field = "WissenDokumenttyp"; TermId = $tid; Label = $dok; Multi = $false }) | Out-Null
+            $entry = Resolve-TermEntry -Map $mapDok -Label $dok
+            if ($entry) {
+                $ops.Add([pscustomobject]@{
+                        Field = "WissenDokumenttyp"
+                        TermId = $entry.Id
+                        Label = $entry.Label
+                        Path = $entry.Path
+                    }) | Out-Null
             }
             else {
                 [void]$unresolvedLabels.Add("Dokumenttyp::$dok")
@@ -229,9 +270,14 @@ foreach ($row in $rows) {
 
     if ($wantRo) {
         if (-not $OnlyEmpty -or (Test-TaxonomyEmpty (Get-ItemVal $item "WissenRechtsordnung"))) {
-            $tid = Resolve-TermId -Map $mapRo -Label $ro
-            if ($tid) {
-                $ops.Add([pscustomobject]@{ Field = "WissenRechtsordnung"; TermId = $tid; Label = $ro; Multi = $true }) | Out-Null
+            $entry = Resolve-TermEntry -Map $mapRo -Label $ro
+            if ($entry) {
+                $ops.Add([pscustomobject]@{
+                        Field = "WissenRechtsordnung"
+                        TermId = $entry.Id
+                        Label = $entry.Label
+                        Path = $entry.Path
+                    }) | Out-Null
             }
             else {
                 [void]$unresolvedLabels.Add("Rechtsordnung::$ro")
@@ -242,9 +288,14 @@ foreach ($row in $rows) {
 
     if ($wantRg) {
         if (-not $OnlyEmpty -or (Test-TaxonomyEmpty (Get-ItemVal $item "WissenRechtsgebiet"))) {
-            $tid = Resolve-TermId -Map $mapRg -Label $rg
-            if ($tid) {
-                $ops.Add([pscustomobject]@{ Field = "WissenRechtsgebiet"; TermId = $tid; Label = $rg; Multi = $true }) | Out-Null
+            $entry = Resolve-TermEntry -Map $mapRg -Label $rg
+            if ($entry) {
+                $ops.Add([pscustomobject]@{
+                        Field = "WissenRechtsgebiet"
+                        TermId = $entry.Id
+                        Label = $entry.Label
+                        Path = $entry.Path
+                    }) | Out-Null
             }
             else {
                 [void]$unresolvedLabels.Add("Rechtsgebiet::$rg")
@@ -259,7 +310,7 @@ foreach ($row in $rows) {
     }
 
     if ($WhatIf) {
-        Write-Host ("[WhatIf] Id={0} {1} => {2}" -f $itemId, $leaf, (($ops | ForEach-Object { $_.Field }) -join ","))
+        Write-Host ("[WhatIf] Id={0} {1} => {2}" -f $itemId, $leaf, (($ops | ForEach-Object { $_.Label }) -join ","))
         $updated++
         continue
     }
@@ -267,10 +318,17 @@ foreach ($row in $rows) {
     $okItem = $true
     foreach ($op in $ops) {
         try {
-            Set-TaxonomySingle -List $list -ItemId $itemId -FieldName $op.Field -TermId $op.TermId -Label $op.Label
+            Set-TaxonomySingle -List $list -ListItem $item -FieldName $op.Field -TermId $op.TermId -Label $op.Label -TermPath $op.Path
         }
         catch {
-            Write-Warning ("Id={0} {1} field {2}: {3}" -f $itemId, $leaf, $op.Field, $_.Exception.Message)
+            $msg = $_.Exception.Message
+            if (-not $firstErrorShown) {
+                Write-Warning ("ERSTER FEHLER Id={0} {1} field {2}: {3}" -f $itemId, $leaf, $op.Field, $msg)
+                $firstErrorShown = $true
+            }
+            elseif ($errors -lt 5) {
+                Write-Warning ("Id={0} {1} field {2}: {3}" -f $itemId, $leaf, $op.Field, $msg)
+            }
             $okItem = $false
             $errors++
         }
@@ -278,8 +336,8 @@ foreach ($row in $rows) {
 
     if ($okItem) {
         $updated++
-        if ($updated -le 10 -or ($updated % 25) -eq 0) {
-            Write-Host "OK Id=$itemId $leaf" -ForegroundColor DarkGray
+        if ($updated -le 15 -or ($updated % 25) -eq 0) {
+            Write-Host ("OK Id={0} {1} => {2}" -f $itemId, $leaf, (($ops | ForEach-Object { $_.Label }) -join ",")) -ForegroundColor DarkGray
         }
     }
 }
@@ -288,8 +346,9 @@ Write-Host ""
 Write-Host "Fertig. updated=$updated skipped=$skipped missingOnSp=$missing unresolvedLabels=$unresolved errors=$errors" -ForegroundColor Green
 
 if ($unresolvedLabels.Count -gt 0) {
-    Write-Host "Nicht aufgelöste Labels:" -ForegroundColor Yellow
+    Write-Host "Nicht aufgelöste Labels (fehlen vermutlich im Termstore):" -ForegroundColor Yellow
     $unresolvedLabels | Sort-Object | ForEach-Object { Write-Host "  - $_" -ForegroundColor DarkYellow }
+    Write-Host "Hinweis: Termset Dokumenttyp prüfen bzw. Import-WissenTermstore / Apply-Termstore nachziehen." -ForegroundColor Yellow
 }
 
 if ($missingRows.Count -gt 0) {
