@@ -111,20 +111,33 @@ Aus Dateiname + Dateikopf werden u. a. erkannt:
 - **Aktenzeichen** (Urteil, Verwaltungsanweisung) aus BFH/FG-Zeilen, BMF-Schreiben
 - Dokumenttyp / Rechtsordnung / Rechtsgebiet heuristisch aus Pfad
 
-### Auf SharePoint schreiben
+### Auf SharePoint schreiben (Text + Jahr)
 
 ```powershell
 cd "$env:TEMP\wissen-termstore"
-# CSV + Apply-Skript vom Branch laden
 $base = "https://raw.githubusercontent.com/steueranwalt/taxcompliance/cursor/onenote-md-export-06a0/_migration/termstore"
 Invoke-WebRequest "$base/Apply-WissenMetadata.ps1" -OutFile .\Apply-WissenMetadata.ps1
 Invoke-WebRequest "$base/wissen-metadata-extract.csv" -OutFile .\wissen-metadata-extract.csv
 
 Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen" -Interactive -ClientId "c77bfeb7-7624-497f-85d7-e509c5ec9dbc" -Tenant "transferpricingdocs.onmicrosoft.com"
 
-# Test mit 20 Dateien:
-.\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -Limit 20
+# Textfelder + Jahr (pro Feld nur wenn leer)
+.\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -OnlyEmpty -IncludeYear
 
-# Vollauf (nur leere Felder überschreiben nicht, wenn schon gesetzt: -OnlyEmpty)
-.\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -OnlyEmpty
+# Fehlende Dateien landen in:
+#   .\wissen-metadata-missing-on-sp.csv
 ```
+
+### Taxonomie (Dokumenttyp / Rechtsordnung / Rechtsgebiet)
+
+```powershell
+Invoke-WebRequest "$base/Apply-WissenTaxonomy.ps1" -OutFile .\Apply-WissenTaxonomy.ps1
+
+# Test
+.\Apply-WissenTaxonomy.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -Limit 20
+
+# Vollauf (nur leere Taxonomie-Felder)
+.\Apply-WissenTaxonomy.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -OnlyEmpty
+```
+
+Optional nur ein Feld: `-IncludeDokumenttyp`, `-IncludeRechtsordnung`, `-IncludeRechtsgebiet` (ohne Schalter = alle drei).

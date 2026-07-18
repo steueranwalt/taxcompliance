@@ -2,14 +2,22 @@
 .SYNOPSIS
   Befüllt Jahr/Autor/Werk/Seite/Fundstelle/Titel/Aktenzeichen aus CSV (einfacher, robuster Lauf).
 
+.DESCRIPTION
+  -OnlyEmpty prüft pro Feld (nicht pauschal die ganze Datei).
+  Fehlende SharePoint-Dateien werden am Ende gelistet und in eine Report-Datei geschrieben.
+
 .EXAMPLE
   .\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -Limit 20
+
+.EXAMPLE
+  .\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -OnlyEmpty -IncludeYear
 #>
 [CmdletBinding()]
 param(
     [string]$LibraryName = "Shared Documents",
     [string]$CsvPath = (Join-Path $PSScriptRoot "wissen-metadata-extract.csv"),
     [string]$FolderPrefix = "Wissen",
+    [string]$MissingReportPath = (Join-Path (Get-Location) "wissen-metadata-missing-on-sp.csv"),
     [int]$Limit = 0,
     [switch]$WhatIf,
     [switch]$OnlyEmpty,
@@ -29,7 +37,6 @@ function Get-DocLib {
 
 function Find-FileItem {
     param($List, [string]$Leaf, [string]$RelPath)
-    # CAML: Dateiname
     $safe = $Leaf.Replace("'", "''")
     $query = @"
 <View Scope='RecursiveAll'>
@@ -74,6 +81,12 @@ function Get-ItemVal($Item, [string]$Name) {
     return $null
 }
 
+function Test-EmptyVal($Value) {
+    if ($null -eq $Value) { return $true }
+    $s = ("{0}" -f $Value).Trim()
+    return ($s -eq "" -or $s -eq "0")
+}
+
 Import-Module PnP.PowerShell -ErrorAction Stop
 try { $null = Get-PnPContext } catch { throw "Zuerst Connect-PnPOnline ausführen." }
 
@@ -82,7 +95,6 @@ if (-not (Test-Path -LiteralPath $CsvPath)) { throw "CSV fehlt: $CsvPath" }
 $list = Get-DocLib $LibraryName
 Write-Host "Bibliothek: $($list.Title)" -ForegroundColor Green
 
-# Prüfen, ob Textspalten existieren
 foreach ($fn in @("WissenAutor", "WissenWerk", "WissenSeite", "WissenFundstelle", "WissenTitel", "WissenAktenzeichen")) {
     $fld = Get-PnPField -List $list -Identity $fn -ErrorAction SilentlyContinue
     if (-not $fld) {
@@ -99,16 +111,13 @@ if ($Limit -gt 0) { $rows = @($rows | Select-Object -First $Limit) }
 Write-Host "CSV-Zeilen: $($rows.Count) (CAML-Suche je Datei, kein Bulk-Index)" -ForegroundColor Cyan
 
 $updated = 0; $skipped = 0; $missing = 0; $errors = 0
+$missingRows = New-Object System.Collections.Generic.List[object]
 
 foreach ($row in $rows) {
     $leaf = ("{0}" -f $row.FileLeafRef).Trim()
     if (-not $leaf) { $skipped++; continue }
 
     $rel = ("{0}" -f $row.ServerRelativePath).Trim()
-    # optional: nur Pfade unter Wissen
-    if ($rel -and ($rel -notlike "Wissen/*") -and ($rel -notlike "*/$FolderPrefix/*")) {
-        # CSV-Pfade beginnen mit Wissen/...
-    }
 
     try {
         $item = Find-FileItem -List $list -Leaf $leaf -RelPath $rel
@@ -121,26 +130,15 @@ foreach ($row in $rows) {
 
     if ($null -eq $item) {
         $missing++
+        $missingRows.Add([pscustomobject]@{
+                FileLeafRef        = $leaf
+                ServerRelativePath = $rel
+                LocalPath          = ("{0}" -f $row.LocalPath).Trim()
+            }) | Out-Null
         continue
     }
 
     $itemId = [int]$item.Id
-
-    if ($OnlyEmpty) {
-        $has =
-            $null -ne (Get-ItemVal $item "WissenAutor") -or
-            $null -ne (Get-ItemVal $item "WissenWerk") -or
-            $null -ne (Get-ItemVal $item "WissenFundstelle") -or
-            $null -ne (Get-ItemVal $item "WissenJahr")
-        if ($has -and ("$(Get-ItemVal $item 'WissenAutor')$(Get-ItemVal $item 'WissenWerk')$(Get-ItemVal $item 'WissenFundstelle')$(Get-ItemVal $item 'WissenJahr')" -ne "")) {
-            # if any non-empty string/number
-            $a = "$(Get-ItemVal $item 'WissenAutor')"; $w = "$(Get-ItemVal $item 'WissenWerk')"; $f = "$(Get-ItemVal $item 'WissenFundstelle')"; $y = "$(Get-ItemVal $item 'WissenJahr')"
-            if (($a -and $a -ne "") -or ($w -and $w -ne "") -or ($f -and $f -ne "") -or ($y -and $y -ne "")) {
-                $skipped++
-                continue
-            }
-        }
-    }
 
     $autor = ("{0}" -f $row.Autor).Trim()
     $werk = ("{0}" -f $row.Werk).Trim()
@@ -151,13 +149,25 @@ foreach ($row in $rows) {
     $az = ("{0}" -f $row.Aktenzeichen).Trim()
 
     $pairs = [ordered]@{}
-    if ($autor) { $pairs["WissenAutor"] = $autor }
-    if ($werk) { $pairs["WissenWerk"] = $werk }
-    if ($seite) { $pairs["WissenSeite"] = $seite }
-    if ($fund) { $pairs["WissenFundstelle"] = $fund }
-    if ($titel) { $pairs["WissenTitel"] = $titel }
-    if ($az) { $pairs["WissenAktenzeichen"] = $az }
-    if ($IncludeYear -and $jahr -match '^\d{4}$') {
+    if ($autor -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenAutor")))) {
+        $pairs["WissenAutor"] = $autor
+    }
+    if ($werk -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenWerk")))) {
+        $pairs["WissenWerk"] = $werk
+    }
+    if ($seite -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenSeite")))) {
+        $pairs["WissenSeite"] = $seite
+    }
+    if ($fund -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenFundstelle")))) {
+        $pairs["WissenFundstelle"] = $fund
+    }
+    if ($titel -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenTitel")))) {
+        $pairs["WissenTitel"] = $titel
+    }
+    if ($az -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenAktenzeichen")))) {
+        $pairs["WissenAktenzeichen"] = $az
+    }
+    if ($IncludeYear -and $jahr -match '^\d{4}$' -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenJahr")))) {
         $pairs["WissenJahr"] = [int]$jahr
     }
 
@@ -176,7 +186,6 @@ foreach ($row in $rows) {
     foreach ($key in $pairs.Keys) {
         try {
             $val = $pairs[$key]
-            # Set-PnPFieldValue is more reliable for single fields in PnP 3.x
             if (Get-Command Set-PnPFieldValue -ErrorAction SilentlyContinue) {
                 Set-PnPFieldValue -List $list -Identity $itemId -FieldName $key -Value $val -ErrorAction Stop | Out-Null
             }
@@ -203,4 +212,15 @@ foreach ($row in $rows) {
 
 Write-Host ""
 Write-Host "Fertig. updated=$updated skipped=$skipped missingOnSp=$missing errors=$errors" -ForegroundColor Green
-Write-Host "Jahr wird nur mit -IncludeYear gesetzt (Zahlenspalte separat testen)."
+
+if ($missingRows.Count -gt 0) {
+    $missingRows | Export-Csv -LiteralPath $MissingReportPath -Delimiter ";" -NoTypeInformation -Encoding UTF8
+    Write-Host "Missing-Report: $MissingReportPath" -ForegroundColor Yellow
+    Write-Host "Fehlende Dateien (max. 30):" -ForegroundColor Yellow
+    $missingRows | Select-Object -First 30 | ForEach-Object {
+        Write-Host ("  - {0}" -f $_.FileLeafRef) -ForegroundColor DarkYellow
+    }
+    if ($missingRows.Count -gt 30) {
+        Write-Host ("  ... und {0} weitere (siehe Report)" -f ($missingRows.Count - 30)) -ForegroundColor DarkYellow
+    }
+}
