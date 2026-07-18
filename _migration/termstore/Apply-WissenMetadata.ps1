@@ -1,13 +1,10 @@
 <#
 .SYNOPSIS
-  Befüllt Jahr/Autor/Werk/Seite/Fundstelle/Titel/Aktenzeichen aus CSV (einfacher, robuster Lauf).
+  Befüllt Jahr/Autor/Werk/Seite/Fundstelle/Title/Aktenzeichen aus CSV.
 
 .DESCRIPTION
-  -OnlyEmpty prüft pro Feld (nicht pauschal die ganze Datei).
-  Fehlende SharePoint-Dateien werden am Ende gelistet und in eine Report-Datei geschrieben.
-
-.EXAMPLE
-  .\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -Limit 20
+  Titel geht in die SharePoint-Standardspalte Title (nicht WissenTitel).
+  -OnlyEmpty prüft pro Feld. Für Title gelten Dateiname-Platzhalter als „leer“.
 
 .EXAMPLE
   .\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -OnlyEmpty -IncludeYear
@@ -49,10 +46,10 @@ function Find-FileItem {
     </Where>
   </Query>
   <ViewFields>
-    <FieldRef Name='ID'/><FieldRef Name='FileRef'/><FieldRef Name='FileLeafRef'/>
+    <FieldRef Name='ID'/><FieldRef Name='FileRef'/><FieldRef Name='FileLeafRef'/><FieldRef Name='Title'/>
     <FieldRef Name='WissenJahr'/><FieldRef Name='WissenAutor'/><FieldRef Name='WissenWerk'/>
     <FieldRef Name='WissenSeite'/><FieldRef Name='WissenFundstelle'/>
-    <FieldRef Name='WissenTitel'/><FieldRef Name='WissenAktenzeichen'/>
+    <FieldRef Name='WissenAktenzeichen'/>
   </ViewFields>
   <RowLimit>20</RowLimit>
 </View>
@@ -87,6 +84,20 @@ function Test-EmptyVal($Value) {
     return ($s -eq "" -or $s -eq "0")
 }
 
+function Test-TitleNeedsUpdate {
+    param([string]$CurrentTitle, [string]$FileLeaf, [string]$NewTitle, [switch]$OnlyEmpty)
+    if (-not $NewTitle) { return $false }
+    if (-not $OnlyEmpty) { return $true }
+    if (Test-EmptyVal $CurrentTitle) { return $true }
+
+    $cur = $CurrentTitle.Trim()
+    $stem = [IO.Path]::GetFileNameWithoutExtension($FileLeaf)
+    # Dateiname als Titel = noch kein echter Dokumenttitel
+    if ($cur -eq $FileLeaf -or $cur -eq $stem) { return $true }
+    if ($stem -and ($cur -replace '\s', '-') -eq ($stem -replace '\s', '-')) { return $true }
+    return $false
+}
+
 Import-Module PnP.PowerShell -ErrorAction Stop
 try { $null = Get-PnPContext } catch { throw "Zuerst Connect-PnPOnline ausführen." }
 
@@ -95,7 +106,7 @@ if (-not (Test-Path -LiteralPath $CsvPath)) { throw "CSV fehlt: $CsvPath" }
 $list = Get-DocLib $LibraryName
 Write-Host "Bibliothek: $($list.Title)" -ForegroundColor Green
 
-foreach ($fn in @("WissenAutor", "WissenWerk", "WissenSeite", "WissenFundstelle", "WissenTitel", "WissenAktenzeichen")) {
+foreach ($fn in @("WissenAutor", "WissenWerk", "WissenSeite", "WissenFundstelle", "WissenAktenzeichen")) {
     $fld = Get-PnPField -List $list -Identity $fn -ErrorAction SilentlyContinue
     if (-not $fld) {
         throw "Spalte $fn fehlt. Zuerst: .\Add-WissenExtraColumns.ps1 -LibraryName 'Shared Documents'"
@@ -106,9 +117,15 @@ if ($IncludeYear -and -not $yearField) {
     throw "Spalte WissenJahr fehlt."
 }
 
+$legacyTitel = Get-PnPField -List $list -Identity "WissenTitel" -ErrorAction SilentlyContinue
+if ($legacyTitel) {
+    Write-Host "Hinweis: Zusatzspalte WissenTitel existiert noch. Bitte .\Migrate-WissenTitelToTitle.ps1 ausführen." -ForegroundColor Yellow
+}
+
 $rows = @(Import-Csv -LiteralPath $CsvPath -Delimiter ";")
 if ($Limit -gt 0) { $rows = @($rows | Select-Object -First $Limit) }
 Write-Host "CSV-Zeilen: $($rows.Count) (CAML-Suche je Datei, kein Bulk-Index)" -ForegroundColor Cyan
+Write-Host "Titel → Standardspalte Title" -ForegroundColor Cyan
 
 $updated = 0; $skipped = 0; $missing = 0; $errors = 0
 $missingRows = New-Object System.Collections.Generic.List[object]
@@ -146,6 +163,7 @@ foreach ($row in $rows) {
     $fund = ("{0}" -f $row.Fundstelle).Trim()
     $jahr = ("{0}" -f $row.Jahr).Trim()
     $titel = ("{0}" -f $row.Titel).Trim()
+    if ($titel.Length -gt 255) { $titel = $titel.Substring(0, 255) }
     $az = ("{0}" -f $row.Aktenzeichen).Trim()
 
     $pairs = [ordered]@{}
@@ -161,8 +179,9 @@ foreach ($row in $rows) {
     if ($fund -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenFundstelle")))) {
         $pairs["WissenFundstelle"] = $fund
     }
-    if ($titel -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenTitel")))) {
-        $pairs["WissenTitel"] = $titel
+    $curTitle = ("{0}" -f (Get-ItemVal $item "Title")).Trim()
+    if (Test-TitleNeedsUpdate -CurrentTitle $curTitle -FileLeaf $leaf -NewTitle $titel -OnlyEmpty:$OnlyEmpty) {
+        $pairs["Title"] = $titel
     }
     if ($az -and (-not $OnlyEmpty -or (Test-EmptyVal (Get-ItemVal $item "WissenAktenzeichen")))) {
         $pairs["WissenAktenzeichen"] = $az

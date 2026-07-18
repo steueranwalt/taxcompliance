@@ -29,7 +29,7 @@ Skript: `Add-WissenLibraryColumns.ps1`
 | Werk | `WissenWerk` | Text | Fundstellen-Typen* |
 | Seite | `WissenSeite` | Text | Fundstellen-Typen* |
 | Fundstelle | `WissenFundstelle` | Mehrzeilig | optional, vollständige Zitation |
-| Titel | `WissenTitel` | Text | Internes Memo, Fachaufsatz |
+| Titel | `Title` (Standard) | Text | Internes Memo, Fachaufsatz — **keine** Zusatzspalte `WissenTitel` |
 | Aktenzeichen | `WissenAktenzeichen` | Text | Urteil / Rechtsprechung, Verwaltungsanweisung |
 
 \*Fundstellen-Typen (Wert in **Dokumenttyp**):
@@ -87,9 +87,10 @@ Bedingte Formularanzeige (Felder nur bei Fundstellen-Typen sichtbar) ist ein Fol
 
 ## 4. Nach dem Anlegen
 
-1. Ansicht **Alle Dokumente** → Spalten einblenden: Jahr, Autor, Titel, Aktenzeichen, Werk, Seite (Fundstelle optional)
+1. Ansicht **Alle Dokumente** → Spalten einblenden: Dokumenttyp, Rechtsgebiet, Rechtsordnung, Jahr, Autor, Aktenzeichen, Werk, Seite (Fundstelle optional)
 2. Optional indizieren: Jahr, Dokumenttyp
 3. Filteransicht z. B. „Urteile“: Dokumenttyp = Urteil / Rechtsprechung
+4. Wenn doppelte Spalte „Titel“ existiert: `Migrate-WissenTitelToTitle.ps1` (Werte → Standard-`Title`, dann `WissenTitel` löschen)
 
 ---
 
@@ -121,7 +122,11 @@ Invoke-WebRequest "$base/wissen-metadata-extract.csv" -OutFile .\wissen-metadata
 
 Connect-PnPOnline -Url "https://transferpricingdocs.sharepoint.com/sites/wissen" -Interactive -ClientId "c77bfeb7-7624-497f-85d7-e509c5ec9dbc" -Tenant "transferpricingdocs.onmicrosoft.com"
 
-# Textfelder + Jahr (pro Feld nur wenn leer)
+# Optional: doppelte Titelsäule bereinigen (WissenTitel → Title)
+Invoke-WebRequest "$base/Migrate-WissenTitelToTitle.ps1" -OutFile .\Migrate-WissenTitelToTitle.ps1
+.\Migrate-WissenTitelToTitle.ps1 -LibraryName "Shared Documents"
+
+# Textfelder + Jahr + Title (pro Feld nur wenn leer)
 .\Apply-WissenMetadata.ps1 -CsvPath .\wissen-metadata-extract.csv -LibraryName "Shared Documents" -OnlyEmpty -IncludeYear
 
 # Fehlende Dateien landen in:

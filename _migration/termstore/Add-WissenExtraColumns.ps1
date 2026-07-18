@@ -67,17 +67,13 @@ $Columns = @(
         Description  = "Optionale vollständige Zitation; strukturiert über Werk + Jahr + Seite."
     },
     @{
-        DisplayName  = "Titel"
-        InternalName = "WissenTitel"
-        Type         = "Text"
-        Description  = "Dokumenttitel (Internes Memo, Fachaufsatz)."
-    },
-    @{
         DisplayName  = "Aktenzeichen"
         InternalName = "WissenAktenzeichen"
         Type         = "Text"
         Description  = "Gerichts- oder Behördenaktenzeichen (Urteil, Verwaltungsanweisung)."
     }
+    # Hinweis: Dokumenttitel → SharePoint-Standardspalte Title (Anzeigename oft „Titel“).
+    # Keine Zusatzspalte WissenTitel mehr anlegen (siehe Migrate-WissenTitelToTitle.ps1).
 )
 
 function Connect-Wissen {
@@ -180,7 +176,7 @@ Verwendung nach Dokumenttyp:
   alle Dokumente:
     - Jahr, Autor
   Internes Memo / Fachaufsatz:
-    - Titel
+    - Title (Standardspalte „Titel“)
   Urteil / Rechtsprechung / Verwaltungsanweisung:
     - Aktenzeichen
   Verwaltungsanweisung / Kommentar / Fachaufsatz / Urteil / Gesetzesmaterialien:
