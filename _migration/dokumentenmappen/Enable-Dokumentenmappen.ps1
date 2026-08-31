@@ -53,21 +53,25 @@ else {
 }
 
 # --- 2. Basis-Inhaltstyp pruefen -----------------------------------------
-# Nach Aktivierung braucht SharePoint einen Moment, bis 0x0120D520 im
-# Websitesammlungs-Katalog auftaucht.
+# Reiner Lesezugriff, deshalb unabhaengig von -WhatIf mit vollen Versuchen:
+# nach Aktivierung braucht SharePoint einen Moment, bis 0x0120D520 im
+# Websitesammlungs-Katalog auftaucht. Ein Feature, das laut Get-PnPFeature
+# schon aktiv war (nicht erst hier aktiviert wurde), kann trotzdem ohne
+# Inhaltstyp dastehen, wenn die Provisionierung frueher nicht durchlief -
+# das ist kein Timing-Fall, den Wiederholen behebt, sondern ein blockierender
+# Befund, der IMMER gemeldet wird, auch unter -WhatIf.
 $docSetBase = $null
 foreach ($attempt in 1..6) {
     $docSetBase = Get-PnPContentType -Identity $script:CtIdDocumentSet -ErrorAction SilentlyContinue
     if ($docSetBase) { break }
-    if ($WhatIf) { break }
     Start-Sleep -Seconds 5
 }
 
 if ($docSetBase) {
     Write-Ok "Basis-Inhaltstyp vorhanden: $($docSetBase.Name) ($script:CtIdDocumentSet)"
 }
-elseif (-not $WhatIf) {
-    throw "Basis-Inhaltstyp $script:CtIdDocumentSet nicht gefunden. Feature-Aktivierung pruefen (Websiteeinstellungen -> Websitesammlungsfeatures -> Dokumentenmappen)."
+else {
+    throw "Basis-Inhaltstyp $script:CtIdDocumentSet nicht gefunden, obwohl das Feature aktiv ist. Deactivate/Reactivate erzwingt die Provisionierung neu:`n  Disable-PnPFeature -Scope Site -Identity $script:DocumentSetsFeatureId -Force`n  Enable-PnPFeature  -Scope Site -Identity $script:DocumentSetsFeatureId -Force"
 }
 
 # --- 3. Inhaltstypen-Verwaltung in der Bibliothek ------------------------
