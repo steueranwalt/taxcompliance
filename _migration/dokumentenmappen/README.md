@@ -94,7 +94,7 @@ Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" -Interacti
 .\Enable-Dokumentenmappen.ps1 -WhatIf
 .\Enable-Dokumentenmappen.ps1
 
-# Schritt 2 – Inhaltstyp "Wissensmappe"
+# Schritt 2 – nur falls noch kein Dokumentenmappen-Inhaltstyp existiert
 .\New-WissenMappeContentType.ps1 -WhatIf
 .\New-WissenMappeContentType.ps1
 
@@ -102,6 +102,28 @@ Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" -Interacti
 .\Convert-FoldersToDocumentSets.ps1 -ReportOnly     # ändert nichts
 .\Convert-FoldersToDocumentSets.ps1 -Limit 5        # fünf Ordner
 .\Convert-FoldersToDocumentSets.ps1                 # alle
+
+# Schritt 4 – geteilte Spalten befüllen
+.\Set-MappeMetadata.ps1 -WhatIf
+.\Set-MappeMetadata.ps1 -Limit 5
+.\Set-MappeMetadata.ps1 -OnlyEmpty
+```
+
+**Schritt 2 ist bedingt.** Die `Wissen*`-Spalten sind in dieser Bibliothek
+bereits angelegt und als geteilte Spalten konfiguriert. Existiert auch schon ein
+Inhaltstyp auf Basis `Dokumentenmappe`, entfällt Schritt 2 — dann dessen Namen
+an die beiden Folgeskripte durchgeben:
+
+```powershell
+.\Convert-FoldersToDocumentSets.ps1 -ContentTypeName "<vorhandener Inhaltstyp>"
+```
+
+Prüfen lässt sich das mit:
+
+```powershell
+Get-PnPContentType -List "Freigegebene Dokumente" |
+    Where-Object { $_.Id.StringValue -like "0x0120D520*" } |
+    Select-Object Name, @{n="Id";e={$_.Id.StringValue}}
 ```
 
 Nach dem Probelauf im Browser prüfen: der Ordner trägt das Mappen-Symbol, ein
@@ -127,6 +149,9 @@ Zurücknehmen:
 
 ## 4. Metadatenmodell der Mappe
 
+Die Spalten sind vorhanden und als geteilte Spalten konfiguriert — offen ist
+nicht die Konfiguration, sondern das **Befüllen**. Genau das macht Schritt 4.
+
 | Feld | Am Inhaltstyp | Geteilt (wird durchgeschrieben) |
 |---|---|---|
 | `Title` | ja | – (Willkommensseite) |
@@ -140,29 +165,87 @@ Das folgt der Trennungsregel aus `ARCHITECTURE.md`: *wovon* (Rechtsgebiet) und
 *welches Recht* (Rechtsordnung) gelten für die ganze Mappe, *welche Art Quelle*
 (Dokumenttyp) und die Fundstelle gelten je Dokument.
 
-Die geteilten Spalten und die Willkommensseite werden über CSOM gesetzt —
-PnP.PowerShell hat dafür kein Cmdlet. Scheitert das, gibt Schritt 2 die
-UI-Schritte aus und läuft weiter; die Migration funktioniert auch ohne.
+`New-WissenMappeContentType.ps1` setzt geteilte Spalten und Willkommensseite
+über CSOM, weil PnP.PowerShell dafür kein Cmdlet hat. Das Skript ist idempotent
+und überspringt, was schon konfiguriert ist; scheitert der CSOM-Zugriff, gibt es
+die UI-Schritte aus und läuft weiter.
 
 ---
 
-## 5. Danach
+## 5. Schritt 4: die geteilten Spalten befüllen
+
+Ein Wert pro Thema statt pro Dokument — SharePoint schreibt ihn anschliessend
+selbst auf alle Dokumente der Mappe durch (asynchron, bei grossen Mappen einige
+Minuten).
+
+[`mappen-metadaten.csv`](mappen-metadaten.csv) enthält einen **Vorschlag je
+Mappe**, abgeleitet aus Ordnername und Ablageort und vollständig gegen
+`../termstore/rechtsgebiet.csv`, `rechtsordnung.csv` und `schlagworte.csv`
+geprüft — keine erfundenen Terme:
+
+| | Mappen |
+|---|---:|
+| mit `Rechtsgebiet` | 47 |
+| mit `Rechtsordnung` | 49 |
+| mit `Schlagworten` | 17 |
+| bewusst leer gelassen | 8 |
+
+Bewusst leer sind die heterogenen Sammelordner, bei denen ein einzelner Wert
+falsch wäre: `04 Recht allgemein/Gesetze`, `Checklisten`, `Statistik und Daten`,
+`Bewertung` (leer) sowie `05 eigene Literatur/03 Publikationen`, `04 Entwuerfe`,
+`05 Hinweise`, `06 Diverse`. Leere Zelle heisst «nichts schreiben», nicht «Wert
+löschen».
+
+**Der Vorschlag ist zu prüfen, nicht zu glauben.** Er stammt aus Ordnernamen,
+nicht aus dem Inhalt. Drei Stellen, die ich bewusst so und nicht anders
+entschieden habe und die Sie anders sehen können:
+
+- `04 Recht allgemein/SchKG CH` → `Verfahrensrecht`. Alternativ
+  `Steuervollstreckung`, wenn der Ordner vor allem Steuerbezug hat.
+- `02 Steuern DE/Kfz und Steuern` → `Direkte Steuern` (Annahme: Firmenwagen,
+  1 %-Regelung). Bei Kfz-Steuer im engeren Sinn wäre `Indirekte Steuern` richtig.
+- `02 Steuern DE/CO2_Emsssionshandel` → `Indirekte Steuern`; der gleichnamige
+  Ordner unter `04 Recht allgemein` → `Verwaltungsrecht`, weil dort der
+  ordnungsrechtliche Teil liegt.
+
+Format der CSV (Semikolon, UTF-8 mit BOM), mehrere Werte je Zelle mit `` || ``:
+
+```
+Pfad;Rechtsgebiet;Rechtsordnung;Schlagworte
+02 Steuern DE/Umsatzsteuer;Indirekte Steuern;Deutschland (DE);
+01 Internationales Steuerrecht/DBA-DE-CH;Doppelbesteuerungsrecht;Deutschland (DE) || Schweiz (CH);
+```
+
+Terme gehen als Blatt-Label oder als vollständiger Termpfad. Der vollständige
+Pfad ist nötig, wo ein Label mehrfach hängt — `Steuerverfahrensrecht` steht
+sowohl unter `Steuerrecht` als auch unter `Verfahrensrecht`; die CSV benutzt
+dort den Pfad. Unbekannte Terme werden gemeldet und übersprungen, nie geraten.
+
+`-OnlyEmpty` lässt bereits gesetzte Werte unangetastet — für Nachläufe, nachdem
+von Hand nachgeschärft wurde.
+
+---
+
+## 6. Danach
 
 1. Ansicht **Alle Dokumente**: Spalte `Inhaltstyp` einblenden, um Mappen von
    Ordnern zu unterscheiden.
-2. Je Mappe `Rechtsgebiet` und `Rechtsordnung` setzen — einmal pro Thema statt
-   einmal pro Dokument. Die Werte für die 59 Mappen lassen sich aus
-   `../termstore/wissen-metadata-extract.csv` vorbelegen.
-3. Erst danach `Apply-WissenTaxonomy.ps1` für die dokumentspezifischen Felder
-   laufen lassen — die geteilten Spalten sind dann bereits gefüllt.
+2. Prüfen, dass das Durchschreiben gegriffen hat: ein Dokument in einer
+   befüllten Mappe öffnen, `Rechtsgebiet` muss gesetzt sein.
+3. Erst danach `../termstore/Apply-WissenTaxonomy.ps1` für die
+   dokumentspezifischen Felder (`Dokumenttyp`, Fundstelle) laufen lassen — die
+   geteilten Spalten sind dann bereits gefüllt.
 
-## 6. Dateien
+## 7. Dateien
 
 | Datei | Inhalt |
 |---|---|
 | `_Common.ps1` | Verbindung, Bibliotheks-Auflösung, Content-Type-IDs |
 | `Enable-Dokumentenmappen.ps1` | Schritt 1: Feature + Inhaltstypen-Verwaltung |
-| `New-WissenMappeContentType.ps1` | Schritt 2: Inhaltstyp `Wissensmappe` |
+| `New-WissenMappeContentType.ps1` | Schritt 2: Inhaltstyp `Wissensmappe` (bedingt) |
 | `Convert-FoldersToDocumentSets.ps1` | Schritt 3: Umwandlung, Protokoll, Rollback |
+| `Set-MappeMetadata.ps1` | Schritt 4: geteilte Spalten befüllen |
 | `mappen-kandidaten.csv` | Bestandsaufnahme Ebene 1–2 mit Empfehlung |
+| `mappen-metadaten.csv` | Vorschlag Rechtsgebiet / Rechtsordnung / Schlagworte je Mappe |
 | `dokumentenmappen-log.csv` | wird vom Konvertierungslauf geschrieben |
+| `mappen-metadaten-log.csv` | wird vom Befüllungslauf geschrieben |
