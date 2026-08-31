@@ -1,0 +1,92 @@
+﻿Ebene;Pfad;AlsMappe;Begruendung
+1;01 Internationales Steuerrecht;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
+2;01 Internationales Steuerrecht/Amtshilfe und Rechtshilfe;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Auslandsimmobilie;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Betriebstaette;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/DBA-DE-CH;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/DBA-DE-CH ErbSt;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Freihandel;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/IP-Box;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Malta;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Mitteilungspflichten;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Monaco;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/OECD - Mindestbesteuerung;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Steuerabkommen_CH;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Verrechnungspreise;ja;Themenordner - wird Wissensmappe
+2;01 Internationales Steuerrecht/Zypern;ja;Themenordner - wird Wissensmappe
+1;02 Steuern DE;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
+2;02 Steuern DE/Betriebsprüfung;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Bewertung;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Bilanz und Jahresabschluss;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/CO2_Emsssionshandel;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Einkommensteuer;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Erbschaftsteuer;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Kassenbuchführung;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Kfz und Steuern;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Lohnsteuer;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Rechnung;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Schätzung;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Steuerwissenschaften;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Umsatzsteuer;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Verbrauchsteuern;ja;Themenordner - wird Wissensmappe
+2;02 Steuern DE/Verfahrensrecht;ja;Themenordner - wird Wissensmappe
+1;03 Steuern CH;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
+2;03 Steuern CH/MWST;ja;Themenordner - wird Wissensmappe
+2;03 Steuern CH/Quellensteuer_CH;ja;Themenordner - wird Wissensmappe
+2;03 Steuern CH/Steuerverfahrensrecht_CH;ja;Themenordner - wird Wissensmappe
+2;03 Steuern CH/Unternehmen;ja;Themenordner - wird Wissensmappe
+1;04 Recht allgemein;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
+2;04 Recht allgemein/Berufsrecht CH;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Berufsrecht DE;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Bewertung;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Bilanz und Jahresabschluss;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Checklisten;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/CO2_Emsssionshandel;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Compliance;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Gesetze;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Recht_CH_Diverse;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Recht_DE_Diverse;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Rechtsthemen CH;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Rechtsthemen DE;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/SchKG CH;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Selbstanzeige;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Sozialrecht_DE;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Statistik und Daten;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Strafrecht_CH;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Strafrecht_DE;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Vertragsrecht;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Zoll;ja;Themenordner - wird Wissensmappe
+1;05 eigene Literatur;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
+2;05 eigene Literatur/01 Wassermeyer DBA;ja;Themenordner - wird Wissensmappe
+2;05 eigene Literatur/02 SchwarzArbG-Komm;ja;Themenordner - wird Wissensmappe
+2;05 eigene Literatur/03 Publikationen;ja;Themenordner - wird Wissensmappe
+2;05 eigene Literatur/04 Entwuerfe;ja;Themenordner - wird Wissensmappe
+2;05 eigene Literatur/05 Hinweise;ja;Themenordner - wird Wissensmappe
+2;05 eigene Literatur/06 Diverse;ja;Themenordner - wird Wissensmappe
+1;06 AI-Memory;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
+2;06 AI-Memory/memory;nein;Arbeitsverzeichnis des Memory-Agents, kein Wissensthema
+1;General;nein;Teams-Kanalordner, gemischter Kanzleibetrieb inkl. Personal_DE/Personal_CH - nicht Wissensbestand
+2;General/claude-cowork-complete-guide;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Excel-Training;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Legal Project Management Fortbildung 11_2022;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/LPM;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Personaleinsatz;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Personal_CH;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Personal_DE;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Statistik und Daten;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Steuerwissenschaften;nein;unterhalb von 'General' - siehe Ebene 1
+2;General/Wissen;nein;unterhalb von 'General' - siehe Ebene 1
+1;Steuerrecht;nein;OneNote-Notizbuch (Notizbuch oeffnen.onetoc2) - Umwandlung wuerde das Notizbuch beschaedigen
+2;Steuerrecht/OneNote_RecycleBin;nein;OneNote-Systemordner
+1;Wissen;nein;OneNote-Notizbuch (Notizbuch oeffnen.onetoc2) - Umwandlung wuerde das Notizbuch beschaedigen
+2;Wissen/Bp;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Diverse;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/OneNote_RecycleBin;nein;OneNote-Systemordner
+2;Wissen/Schwarzarbeit;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Steuerrecht CH;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Steuerrecht_DE;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Strafverfahren;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/USt DE;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Wirtschaftsstrafrecht;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Zoll CH;nein;unterhalb von 'Wissen' - siehe Ebene 1
+2;Wissen/Zoll DE;nein;unterhalb von 'Wissen' - siehe Ebene 1
