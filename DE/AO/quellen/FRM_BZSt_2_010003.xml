@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-data xmlns="http://www.lucom.com/ffw/xml-data-1.0.xsd">
+	<form>catalog://Buerger/ausbez/010003</form>
+	<instance>
+		<datarow>
+			<element id="Zeile_Nr">1</element>
+			<element id="k4">false</element>
+			<element id="k5">false</element>
+			<element id="k6">false</element>
+			<element id="k7">false</element>
+			<element id="k9">false</element>
+			<element id="k10">false</element>
+			<element id="k12">false</element>
+			<element id="k13">false</element>
+			<element id="k14">false</element>
+			<element id="k15">false</element>
+			<element id="k16">false</element>
+			<element id="k2">false</element>
+			<element id="k11">false</element>
+			<element id="datum_mitteilung">31.08.2026 13:12:04</element>
+			<element id="k25">false</element>
+			<element id="k26">false</element>
+			<element id="k24">false</element>
+		</datarow>
+		<dataset id="dataset_gesellschaft">
+			<datarow />
+		</dataset>
+		<dataset id="dataset_beteiligte">
+			<datarow />
+		</dataset>
+		<dataset id="dataset_drittstaatgesellschaft">
+			<datarow />
+		</dataset>
+	</instance>
+</xml-data>
+

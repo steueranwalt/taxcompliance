@@ -2,16 +2,18 @@
 
 **Stand:** 31.08.2026
 
-**Quellen:** ELSTER-Fragebögen für Einzelunternehmen, Kapitalgesellschaft/Genossenschaft, Personengesellschaft/-gemeinschaft, Körperschaft nach ausländischem Recht sowie BZSt2 nach § 138 Abs. 2 AO.
+**Quellen:** ELSTER-Fragebögen für Einzelunternehmen, Kapitalgesellschaft/Genossenschaft, Personengesellschaft/-gemeinschaft, Körperschaft nach ausländischem Recht sowie BZSt2 nach § 138 Abs. 2 AO. Ergänzend ausgewertet (separat geführt): Antrag erneute W-IdNr.-Mitteilung; ASt-Mitteilung nach § 6 AStG.
 
 **Rollen der Dokumente in `DE/AO/`:**
 
 | Dokument | Rolle |
 |---|---|
 | dieses Datenmodell | Zielbild, Pflichtlogik, normalisierte Objekte, Forms-/Übergabe-Architektur |
-| [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) | vollständiger Feld-/Kz-Katalog je Fragebogen (keine zweite Fachquelle für Kz-Details) |
+| [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) | vollständiger Feld-/Kz-Katalog je Fragebogen inkl. BZSt2 |
+| [`formulardaten-widnr-erneute-mitteilung.md`](formulardaten-widnr-erneute-mitteilung.md) | separates FMS-Formular; Overlap nur Identifikation |
+| [`../AStG/formulardaten-mitteilung-6-astg.md`](../AStG/formulardaten-mitteilung-6-astg.md) | separates AStG-/InvStG-Modul (kein §-138-AO-Ersatz) |
 
-Feldgenaue Kz stehen nur in der Rohfassung. Hier stehen Pflichtstatus, Objektstruktur und Architektur.
+Feldgenaue Kz der Erfassungsfragebögen und BZSt2 stehen in der Rohfassung. Hier stehen Pflichtstatus, Objektstruktur und Architektur.
 
 ## 1. Ziel und Abgrenzung
 
