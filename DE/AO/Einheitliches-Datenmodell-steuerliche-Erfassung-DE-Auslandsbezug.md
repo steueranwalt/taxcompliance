@@ -4,6 +4,15 @@
 
 **Quellen:** ELSTER-Fragebögen für Einzelunternehmen, Kapitalgesellschaft/Genossenschaft, Personengesellschaft/-gemeinschaft, Körperschaft nach ausländischem Recht sowie BZSt2 nach § 138 Abs. 2 AO.
 
+**Rollen der Dokumente in `DE/AO/`:**
+
+| Dokument | Rolle |
+|---|---|
+| dieses Datenmodell | Zielbild, Pflichtlogik, normalisierte Objekte, Forms-/Übergabe-Architektur |
+| [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) | vollständiger Feld-/Kz-Katalog je Fragebogen (keine zweite Fachquelle für Kz-Details) |
+
+Feldgenaue Kz stehen nur in der Rohfassung. Hier stehen Pflichtstatus, Objektstruktur und Architektur.
+
 ## 1. Ziel und Abgrenzung
 
 Das Datenmodell dient der einheitlichen Erhebung für zwei Richtungen:
@@ -90,113 +99,52 @@ Die übermittelte Fehlerliste endet nach den folgenden Angaben. Weitergehende Pf
 
 ## 3. Einheitlicher allgemeiner Kern
 
-Dieser Kern wird sowohl für Inbound-Fragebögen als auch für BZSt2 einmalig erhoben und in nachfolgenden Fragebögen vorbefüllt. Abweichungen werden pro Formular über eine Zuordnungstabelle an die jeweilige Kz übertragen.
+Dieser Kern wird sowohl für Inbound-Fragebögen als auch für BZSt2 einmalig erhoben und in nachfolgenden Fragebögen vorbefüllt. Die formularspezifischen Feld-/Kz-Zeilen stehen in der [Rohfassung](formulardaten-roherfassung.md).
 
-| Objekt | Datenfeld | Inbound-Kz, Beispiele | BZSt2-Kz |
+| Objekt | Datenfeld | Inbound (Rohfassung) | BZSt2 (Rohfassung) |
 |---|---|---|---|
-| Fall | Akten-/Fall-ID, Bearbeitungsnotiz, Erfassungsjahr | keine Kz | Jahr: keine Kz ausgewiesen |
-| Steuerliche Identifikation | Art der Nummer, Steuernummer, IdNr., Wirtschafts-IdNr., zuständiges Finanzamt | Startseite; je nach Formular | keine Kz ausgewiesen |
-| Meldepflichtiger | Person oder Firma | EU: 2–5; KapG: 2–6; PersG: 2–5 | keine Kz ausgewiesen |
-| Name | Nachname/Firma; bei Person Vorname, Titel, Geburtsdatum | EU: 2–3; KapG/PersG: 2 | keine Kz ausgewiesen |
-| Rechtsform | deutsche/ausländische Rechtsform, sonstige Rechtsform | KapG 63; PersG 31–32; Ausland 107 | keine Kz ausgewiesen |
-| Adresse | Adressart, Strasse, Nummer, Zusatz, PLZ, Ort, Staat, Postfach | wiederkehrend, z. B. KapG 4–7 | 15–17, übrige Felder ohne Kz ausgewiesen |
-| Kontakt | Telefon, Web-Adresse | wiederkehrend, z. B. KapG 11–12 | nicht abgefragt |
-| Tätigkeit | genaue Tätigkeit; vermögensverwaltend ja/nein | EU 21; KapG 13–14; PersG 12; Ausland 12–13 | Sachverhalt in Mitteilungsmodul |
-| Ort der Leitung | Abweichender Ort der Geschäftsleitung | EU 63–66; KapG 8–10; PersG 7–9; Ausland 7–9 | Adressart «Ort der Geschäftsleitung» |
-| Steuerberatung | natürliche/juristische Person, Adresse, Telefon; Vollmacht | wiederkehrend | Mitwirkung: 30 |
-| Bank | IBAN, BIC, Kontoinhaber, abweichender Kontoinhaber | EU/KapG/PersG/Ausland, jeweils eigener Kz-Block | nicht abgefragt |
-| Anlagen | Dokumenttyp, Bezeichnung, Datei, Erforderlichkeit | formularspezifische Anlagen-Kz | Anhang ohne Kz ausgewiesen |
+| Fall | Akten-/Fall-ID, Bearbeitungsnotiz, Erfassungsjahr | Startseite je Fragebogen | Startseite / Mitteilungsjahr |
+| Steuerliche Identifikation | Art der Nummer, Steuernummer, IdNr., Wirtschafts-IdNr., zuständiges Finanzamt | Startseite; Identifikationsfelder | Startseite / Identifikation |
+| Meldepflichtiger | Person oder Firma | Allgemeine Angaben | Allgemeine Angaben |
+| Name | Nachname/Firma; bei Person Vorname, Titel, Geburtsdatum | Allgemeine Angaben | Allgemeine Angaben |
+| Rechtsform | deutsche/ausländische Rechtsform, sonstige Rechtsform | KapG / PersG / Ausland | Allgemeine Angaben |
+| Adresse | Adressart, Strasse, Nummer, Zusatz, PLZ, Ort, Staat, Postfach | wiederkehrende Adressblöcke | Adresse (u. a. 15–17) |
+| Kontakt | Telefon, Web-Adresse | wiederkehrende Kontaktblöcke | nicht abgefragt |
+| Tätigkeit | genaue Tätigkeit; vermögensverwaltend ja/nein | Tätigkeitsfelder je Fragebogen | Sachverhalt in Mitteilungsmodul |
+| Ort der Leitung | Abweichender Ort der Geschäftsleitung | jeweiliger Leitungsblock | Adressart «Ort der Geschäftsleitung» |
+| Steuerberatung | natürliche/juristische Person, Adresse, Telefon; Vollmacht | Steuerberatung / Empfang | Mitwirkung |
+| Bank | IBAN, BIC, Kontoinhaber, abweichender Kontoinhaber | Bankverbindung je Fragebogen | nicht abgefragt |
+| Anlagen | Dokumenttyp, Bezeichnung, Datei, Erforderlichkeit | Beilagen / Unterlagen | Anhänge |
 
 ## 4. Wiederholbare Datenobjekte
 
-Diese Objekte dürfen nicht in Freitextfeldern gesammelt werden. Jeder Datensatz erhält eine technische Objekt-ID und eine fortlaufende Nummer.
+Diese Objekte dürfen nicht in Freitextfeldern gesammelt werden. Jeder Datensatz erhält eine technische Objekt-ID und eine fortlaufende Nummer. Feldlisten und Kz: [Rohfassung](formulardaten-roherfassung.md).
 
-| Objekt | Kernfelder | Wichtige Formular-Kz |
+| Objekt | Kernfelder | Rohfassung (Beispiele) |
 |---|---|---|
-| Adresse | Typ, Inland/Ausland, Strasse, Hausnummer, Zusatz, PLZ, Ort, Staat, Postfach | siehe allgemeiner Kern |
-| Person | Anrede, Titel, Name, Vorname, Namenszusatz, Geburtsdatum, IdNr., Beruf | gesetzlicher Vertreter KapG 25–30; PersG-Vertretung 45–54; Ausland 76–85 |
-| Juristische Person | Firma, Rechtsform, Sitz, Register, Registernummer, Steuerkennzeichen | Anteilseigner KapG 72–77; Beteiligter PersG 86–91; Ausland 124–130 |
-| Betriebsstätte/Einrichtung | Bezeichnung, Adresse, Land, Art, feste/nicht feste Einrichtung, Eigentum, Nutzung | EU 70–74; KapG 15–19; Ausland Detailblock vor 56 |
-| Beteiligung | Beteiligter/Anteilseigner, direkte/mittelbare Beteiligung, Rolle, Kapitalanteil, Prozentquote, Zähler/Nenner, Treuhand | KapG 67a–78, 90; PersG 92–99; Ausland 121–132; BZSt2: Beteiligten-Abschnitte |
-| Vertretung | Person/Organisation, Rolle, Vertretungsbefugnis, Abschlussvollmacht | KapG 25–30; PersG 45–54; Ausland ständiger Vertreter 62–68 |
-| Steuerprognose | Steuerart, Jahr, Betrag, Beteiligter, Sonderbetriebsbezug | EU 105–113; KapG 165–168; PersG 77, 93–95; Ausland 175–178 |
-| Umsatzsteuerprofil | Umsatz, Steuerverfahren, Umsatzart, Steuersatz, USt-IdNr., OSS, Onlinehandel | jeweils eigenes USt-Kz-Modul |
-| Dokument | Dokumenttyp, Bezug zu Objekt, vorhanden/hochgeladen, Dateiname, Hinweis | jeweils Anlagen-Kz-Modul |
+| Adresse | Typ, Inland/Ausland, Strasse, Hausnummer, Zusatz, PLZ, Ort, Staat, Postfach | Adressblöcke in allen Fragebögen |
+| Person | Anrede, Titel, Name, Vorname, Namenszusatz, Geburtsdatum, IdNr., Beruf | gesetzliche Vertreter, Vertretung, BZSt2-Person |
+| Juristische Person | Firma, Rechtsform, Sitz, Register, Registernummer, Steuerkennzeichen | Anteilseigner / Beteiligte |
+| Betriebsstätte/Einrichtung | Bezeichnung, Adresse, Land, Art, feste/nicht feste Einrichtung, Eigentum, Nutzung | Betriebstätten-/Einrichtungsblöcke |
+| Beteiligung | Beteiligter/Anteilseigner, direkte/mittelbare Beteiligung, Rolle, Kapitalanteil, Prozentquote, Zähler/Nenner, Treuhand | Anteilseigner / Beteiligte / BZSt2-Beteiligungsstruktur |
+| Vertretung | Person/Organisation, Rolle, Vertretungsbefugnis, Abschlussvollmacht | gesetzliche / ständige Vertreter, Empfang |
+| Steuerprognose | Steuerart, Jahr, Betrag, Beteiligter, Sonderbetriebsbezug | Vorauszahlungen / Gewinnanteile |
+| Umsatzsteuerprofil | Umsatz, Steuerverfahren, Umsatzart, Steuersatz, USt-IdNr., OSS, Onlinehandel | USt-/OSS-/Onlinehandelsblöcke |
+| Dokument | Dokumenttyp, Bezug zu Objekt, vorhanden/hochgeladen, Dateiname, Hinweis | Beilagen / Anhänge |
 
-## 5. Rechtsformspezifische Module und Kz
+## 5. Rechtsformspezifische Module → Rohfassung
 
-### 5.1 Einzelunternehmen
+Die früheren Modul-/Kz-Tabellen sind in die Rohfassung überführt. Hier nur die Zuordnung:
 
-| Modul | Daten | Kz |
-|---|---|---|
-| Persönliche Verhältnisse | Religion, Ehe/Lebenspartnerschaft, Ehegatte, bisherige persönliche Verhältnisse | 5, 11–18, 47–54 |
-| Unternehmen | Unternehmensbezeichnung, Unternehmensadresse, Tätigkeitsbeginn | 55–62, 69 |
-| Register/Gründung | Handelsregister, Gründungsart, Vorinhaber | 80–92 |
-| Vorbetätigung/Konzern | Vortätigkeit, Konzernunternehmen | 93–104 |
-| Gewinn | Einkünfte, Sonderausgaben, Steuerabzug, Gewinnermittlung | 105–116 |
-| Lohnsteuer | Arbeitnehmer, Lohnzahlungen, Lohnsteuerstätte | 118–126 |
-| Umsatzsteuer | Geschäftsveräusserung, Umsatz, Kleinunternehmer, USt, Befreiung/Steuersatz, Ist/Soll, USt-IdNr., Bau/Gebäudereinigung | 127–162 |
-| USt-Sonderverfahren | Organschaft, OSS, Onlinehandel, soziale Medien | 135–184 |
-| Beilagen | Beilagenliste | 189–194 |
+| Modulfamilie | Rohfassung |
+|---|---|
+| Einzelunternehmen | [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) → Abschnitt 1 |
+| Kapitalgesellschaft / Genossenschaft | [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) → Abschnitt 2 |
+| Personengesellschaft / -gemeinschaft | [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) → Abschnitt 3 |
+| Körperschaft nach ausländischem Recht | [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) → Abschnitt 4 |
+| BZSt2 (§ 138 Abs. 2 AO) | [`formulardaten-roherfassung.md`](formulardaten-roherfassung.md) → Abschnitt 5 |
 
-### 5.2 Kapitalgesellschaft oder Genossenschaft
-
-| Modul | Daten | Kz |
-|---|---|---|
-| Gesellschaft/Vertretung | Sitz, Adresse, gesetzliche Vertreter | 2–30 |
-| Register/Kapital | Notar, Register, Rechtsform, Tätigkeitsbeginn, Wirtschaftsjahr, Grund-/Stammkapital | 54–67 |
-| Anteilseigner | natürliche/juristische Anteilseigner, Beteiligungsnummer, Kapital, Quote, Treuhand | 68–90 |
-| Gründungs- und Umwandlungsvorgang | Bar-/Sachgründung, Einbringung, Anteilstausch, Umwandlung, Bewertung | 91–126 |
-| Sonderstrukturen | Betriebsaufspaltung, Komplementärin, atypisch stille Beteiligung | 127–143 |
-| Organschaft/Konzern/Steuerbefreiung | Organträger/-gesellschaft, Konzern, Befreiung nach § 5 KStG | 144–164 |
-| Gewinn/Lohnsteuer | Vorauszahlungen; Arbeitnehmer und Lohnsteuerstätte | 165–177 |
-| Umsatzsteuer | Umsatz, Kleinunternehmer, Steuerbefreiung/Steuersatz, Ist/Soll, USt-IdNr., Bau/Gebäudereinigung | 178–202 |
-| OSS/Onlinehandel/Bauabzug | OSS, Webshop/Marktplätze, Freistellungsbescheinigung | 203–223 |
-| Beilagen | Gesellschaftsvertrag, Verträge, Treuhand, Organschaft etc. | 224–236 |
-
-### 5.3 Personengesellschaft oder Personengemeinschaft
-
-| Modul | Daten | Kz |
-|---|---|---|
-| Gesellschaft/Gründung | Gesellschaftsname, Tätigkeit, Gründungsart, Vorinhaber/Vorunternehmen | 2–12, 23–30 |
-| Rechtsform/Register | Rechtsform, Rechtsfähigkeit, Tätigkeitsbeginn, Register | 31–39 |
-| Vertretung | vertretungsberechtigte natürliche/juristische Personen | 45–54 |
-| Empfang/Vollmacht/Konzern | Steuerberatung, Empfangsbevollmächtigung, gemeinsamer Empfangsbevollmächtigter, Konzern | 55–76 |
-| Gewinn/Verteilung | Gesellschaftsgewinn, Gewinnermittlung, Aufteilungsschlüssel, abweichendes Wirtschaftsjahr | 77–81 |
-| Beteiligte | Identität, Rolle, Art des Beteiligten, Quote, Kapitalanteil, Sonderbetriebsdaten | 82–99, 92–95 |
-| Lohnsteuer | Arbeitnehmer, Lohnsteuerstätte | 119–127 |
-| Umsatzsteuer | Umsatz, Kleinunternehmer, Steuerbefreiung/Steuersatz, Ist/Soll, USt-IdNr., Bau/Gebäudereinigung | 128–161 |
-| OSS/Onlinehandel/Beilagen | OSS, Marktplätze, Verträge und Vollmachten | 162–191 |
-
-### 5.4 Körperschaft nach ausländischem Recht
-
-| Modul | Daten | Kz |
-|---|---|---|
-| Deutscher Inlandsbezug | Regie-/Lohnarbeit, Subunternehmertätigkeit, Arbeitnehmerüberlassung | 14–17 |
-| Zuständigkeit | Zustimmungsvereinbarung, bisherige deutsche Erfassung | 18–21 |
-| Einrichtungen/Vertreter | feste/nicht feste deutsche Einrichtungen, Nutzung, ständiger Vertreter | Detailblock vor 56; 56–68 |
-| Ausländische Gesellschaft | Gründungsstaat, Vertragsdatum, Rechtsform, Register, Notar | 106–116 |
-| Dauer/Kapital | Tätigkeit in Deutschland, Wirtschaftsjahr, Kapital und Währung | 117–120 |
-| Anteilseigner | natürliche/juristische Anteilseigner, Quote, Treuhand | 121–132 |
-| Auslands-/Sonderstrukturen | ausländische Steuerbehörde, Inlandvermögen, Komplementärin, atypisch still | 145–155 |
-| Organschaft/Konzern | Organschaft und Konzern | 156–174 |
-| Gewinn/Lohnsteuer | Vorauszahlungen, Arbeitnehmer in Deutschland, Lohnsteuerstätte | 175–187 |
-| Umsatzsteuerlicher Leistungsweg | Geschäftsveräusserung, Umsatz, Waren/Leistungen, Abnehmer, Steuerbarkeit, Einfuhr/Lager, Eingangsumsätze | 188–216 |
-| Weitere Umsatzsteuer | Kleinunternehmer, Steuerbefreiung/Steuersatz, Ist/Soll, USt-IdNr., Vorsteuervergütung, EORI, Bau/Gebäudereinigung | 217–242 |
-| OSS/Onlinehandel/Bauausführungen | OSS, Marktplätze, Bauausführungen/Montagen | 243–263 ff. |
-| Beilagen | Gesellschaftsvertrag, Registerauszug, Verträge, Ansässigkeit, Bilanz etc. | 282–300 |
-
-### 5.5 BZSt2: Auslandsbezug nach § 138 Abs. 2 AO
-
-| Modul | Daten | Kz |
-|---|---|---|
-| Allgemeine Angaben | Person/Firma, Name, Vorname, Rechtsform, Geburtsdatum, Adressart, Anschrift | Adresse 15–17; übrige Angaben ohne Kz ausgewiesen |
-| Mitteilungssachverhalt | Negativmeldung; ausländischer Betrieb/Betriebsstätte; ausländische Personen- oder Kapitalgesellschaft; Drittstaat-Gesellschaft | keine Kz ausgewiesen |
-| Beteiligungsstruktur | Jede unmittelbare und mittelbare Beteiligung; bei Beteiligungen vollständiger Beteiligtenabschnitt | keine Kz ausgewiesen |
-| Sammelmitteilung | Mitteilung durch ausländische Personengesellschaft/Treuhänder für alle inländischen Beteiligten | keine Kz ausgewiesen |
-| Mitwirkung | Steuerberater, Bearbeiterkennzeichen, Mandantennummer, Bescheiddatenabholung | 30 |
-
-Die beigefügte XML-Datei ist eine leere BZSt2-Instanz. Sie bestätigt die wiederholbaren Datensätze `gesellschaft`, `beteiligte` und `drittstaatgesellschaft`, enthält aber keine zusätzliche fachliche Feldzuordnung.
+Die leere BZSt2-XML-Instanz in der Rohfassung bestätigt die wiederholbaren Datensätze `gesellschaft`, `beteiligte` und `drittstaatgesellschaft`, ohne zusätzliche fachliche Feldzuordnung.
 
 ## 6. Empfohlene Forms-Architektur
 
@@ -229,9 +177,9 @@ Ein einzelnes MS Forms-Formular kann Verzweigungen, aber keine belastbaren, dyna
 ## 7. Übergabeprinzip für ELSTER und BZSt
 
 1. Forms/Listen speichern fachlich normalisierte Daten, nicht bloss ELSTER-Feldnamen.
-2. Eine zentrale Mappingtabelle ordnet jedem normierten Feld je Formulartyp die Kz, den technischen Zielpfad, Datentyp, Wiederholungsregel und Auslösebedingung zu.
-3. Vor Übergabe validiert eine Regelmatrix die Pflichtfelder und sachverhaltsabhängigen Folgefelder.
-4. Die Übertragung erzeugt eine formularspezifische ELSTER- oder BZSt-Datensatzstruktur. Der BZSt2-XML-Entwurf zeigt hierfür bereits die wiederholbaren Bereiche für Gesellschaften, Beteiligte und Drittstaat-Gesellschaften.
+2. Eine zentrale Mappingtabelle ordnet jedem normierten Feld je Formulartyp die Kz (aus der Rohfassung), den technischen Zielpfad, Datentyp, Wiederholungsregel und Auslösebedingung zu.
+3. Vor Übergabe validiert eine Regelmatrix die Pflichtfelder (Abschnitt 2) und sachverhaltsabhängigen Folgefelder.
+4. Die Übertragung erzeugt eine formularspezifische ELSTER- oder BZSt-Datensatzstruktur. Der BZSt2-XML-Entwurf in der Rohfassung zeigt bereits die wiederholbaren Bereiche für Gesellschaften, Beteiligte und Drittstaat-Gesellschaften.
 5. Anhänge werden als eigenständige Dokumentobjekte mit Bezug zum auslösenden Sachverhalt geführt.
 
 ## 8. Offene Validierungspunkte
