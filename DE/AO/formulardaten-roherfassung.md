@@ -1,5 +1,9 @@
 # Formulardaten: Rohfassung
 
+Vollständiger Feld-/Kz-Katalog der ELSTER-Fragebögen und der BZSt2-Mitteilung nach § 138 Abs. 2 AO.
+
+**Zugehöriges Zielbild:** [`Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) (Pflichtlogik, normalisierte Objekte, Forms-/Übergabe-Architektur). Kz-Details werden nur hier gepflegt.
+
 ## 1. Fragebogen zur steuerlichen Erfassung für Einzelunternehmen
 
 ### Startseite
