@@ -97,18 +97,45 @@ Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" -Interacti
 
 **Seit PnP.PowerShell 2.2 braucht `-Interactive` eine eigene `-ClientId`.** Die
 frühere mehrmandantenfähige «PnP Management Shell»-App wurde von Microsoft
-zurückgezogen; ohne ClientId bricht der Aufruf mit einem Hinweis auf ein
-fehlendes Anwendungskonto ab. Einmalig pro Tenant registrieren:
+zurückgezogen. Ohne ClientId bricht der Aufruf ab mit:
 
-```powershell
-# einmalig, braucht Entra-Rolle Anwendungsadministrator oder höher
-Register-PnPEntraIDAppForInteractiveLogin `
-    -ApplicationName "PnP-Wissen-Migration" `
-    -Tenant "obenhaus.onmicrosoft.com" `
-    -Interactive
+```
+WARNING: Please specify a valid client id for an Entra ID App Registration.
+Connect-PnPOnline: Specified method is not supported.
 ```
 
-Der Aufruf gibt eine ClientId zurück. Danach immer damit verbinden:
+Es braucht also **einmalig pro Tenant eine App-Registrierung**. Zwei Wege:
+
+**Weg A — über PnP.** Die Parameter dieses Cmdlets haben sich zwischen den
+Modulversionen geändert; erst die Signatur der installierten Version ansehen,
+nicht raten:
+
+```powershell
+Get-Module PnP.PowerShell -ListAvailable | Select-Object Name, Version
+Get-Command Register-PnPEntraIDAppForInteractiveLogin -Syntax
+```
+
+Dann mit den Parametern aufrufen, die die Signatur tatsächlich anbietet —
+mindestens `-ApplicationName` und `-Tenant`. Der Aufruf legt die App an, öffnet
+die Zustimmung und gibt die ClientId zurück.
+
+**Weg B — von Hand im Entra Admin Center.** Unabhängig von der Modulversion und
+das, was Weg A im Ergebnis auch tut:
+
+1. Entra Admin Center → *App-Registrierungen* → *Neue Registrierung*
+2. Name z. B. `PnP-Wissen-Migration`, *Nur eigene Organisation*
+3. Umleitungs-URI: Typ *Öffentlicher Client / native*, Wert `http://localhost`
+4. *Authentifizierung* → *Öffentliche Clientflows zulassen* auf **Ja**
+5. *API-Berechtigungen* → *Delegiert*:
+   SharePoint → `AllSites.FullControl`, Microsoft Graph → `User.Read`
+6. *Administratorzustimmung erteilen*
+7. Die *Anwendungs-ID (Client)* von der Übersichtsseite kopieren
+
+Beide Wege brauchen die Entra-Rolle **Anwendungsadministrator** oder höher plus
+das Recht, Administratorzustimmung zu erteilen. Fehlt das, muss die IT ran — es
+ist eine Tenant-Einstellung, keine Einstellung der Site.
+
+Danach immer mit der ClientId verbinden:
 
 ```powershell
 $clientId = "<ClientId aus der Registrierung>"
