@@ -7,7 +7,8 @@
 ### Abgabenordnung (AO)
 
 - [Einheitliches Datenmodell: steuerliche Erfassung DE und Auslandsbezug](DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) — Pflichtlogik, Objekte, Forms-/Übergabe-Architektur
-- [Formulardaten: Rohfassung](DE/AO/formulardaten-roherfassung.md) — vollständiger Feld-/Kz-Katalog (ELSTER + BZSt2)
+- [Formulardaten: Rohfassung](DE/AO/formulardaten-roherfassung.md) — Feld-/Kz-Katalog (ELSTER + BZSt2)
+- [W-IdNr.: erneute Mitteilung](DE/AO/formulardaten-widnr-erneute-mitteilung.md) — separates FMS-Formular
 - Übersicht: [`DE/AO/README.md`](DE/AO/README.md)
 
 ### Einkommensteuer (EStG)
@@ -26,7 +27,9 @@ _noch keine Dokumente_
 _noch keine Dokumente_
 
 ### Außensteuergesetz (AStG)
-_noch keine Dokumente_
+
+- [Formulardaten: ASt-Mitteilung nach § 6 AStG](DE/AStG/formulardaten-mitteilung-6-astg.md) — Wegzugsbesteuerung / Stundungsmitteilung (ggf. InvStG)
+- Übersicht: [`DE/AStG/README.md`](DE/AStG/README.md)
 
 ---
 

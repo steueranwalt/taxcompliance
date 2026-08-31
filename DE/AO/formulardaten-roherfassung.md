@@ -876,74 +876,94 @@ Vollständiger Feld-/Kz-Katalog der ELSTER-Fragebögen und der BZSt2-Mitteilung 
 
 ## 5. Mitteilung über Sachverhalte mit Auslandsbezug (BZSt2 – § 138 Absatz 2 AO)
 
-### Startseite
+**Quellen (Stand 31.08.2026):**
 
-| Feld | Kz |
-|---|---:|
-| Jahr | keine Kz ausgewiesen |
-| Steuernummer / Identifikationsnummer: Einkommensteuer | keine Kz ausgewiesen |
-| Steuernummer / Identifikationsnummer: Gesonderte und einheitliche Feststellung | keine Kz ausgewiesen |
-| Steuernummer / Identifikationsnummer: Körperschaftsteuer | keine Kz ausgewiesen |
-| Identifikationsnummer / Wirtschafts-Identifikationsnummer und zuständiges Finanzamt | keine Kz ausgewiesen |
-| Persönliche Bearbeitungsnotiz | keine Kz ausgewiesen |
+- amtlicher Papiervordruck `010003 - BZSt 2 - 06/2019` (PDF, Formular-Management-System)
+- FMS-XML-Instanz `catalog://Buerger/ausbez/010003` → [`quellen/FRM_BZSt_2_010003.xml`](quellen/FRM_BZSt_2_010003.xml)
 
-### 1. Allgemeine Angaben
+**Abgrenzung:** deckt sich thematisch mit dem Outbound-Kern des [Datenmodells](Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md). Person-/Adress-/Identifikationsfelder überlappen mit dem allgemeinen Stammblock; Anlagen `gesellschaft`, `beteiligte`, `drittstaatgesellschaft` sind BZSt2-spezifisch. Nicht verwechseln mit der [ASt-Mitteilung nach § 6 AStG](../AStG/formulardaten-mitteilung-6-astg.md) (Wegzugsbesteuerung).
 
-| Feld | Kz |
-|---|---:|
-| Auswahl Person/Firma | keine Kz ausgewiesen |
-| Nachname oder Firmenname | keine Kz ausgewiesen |
-| Vorname | keine Kz ausgewiesen |
-| Titel und akademischer Grad | keine Kz ausgewiesen |
-| Rechtsform | keine Kz ausgewiesen |
-| Bezeichnung der sonstigen Rechtsform | keine Kz ausgewiesen |
-| Geburtsdatum | keine Kz ausgewiesen |
-| Adressart: Rechtssitz/Betriebsstätte/Geschäftsadresse/Wohnsitz/Ort der Geschäftsleitung | keine Kz ausgewiesen |
-| Meldung für alle inländischen Beteiligten: ja/nein | keine Kz ausgewiesen |
-| Adresse im Inland: Strasse, Hausnummer, Hausnummerzusatz | 15 |
-| Adresse im Inland: Adressergänzung | 16 |
-| Adresse im Inland: Postleitzahl, Wohnort | 17 |
-| Adresse im Ausland | im übermittelten Auszug keine Kz sichtbar |
-| Postfachadresse | im übermittelten Auszug keine Kz sichtbar |
+### 5.1 Deckblatt / Allgemeine Angaben (Papier + FMS)
 
-### 2. Mitteilungen
+| Feld | Kz / Hinweis |
+|---|---|
+| Jahr | Papier: Jahr `20__`; FMS: Mitteilungsjahr ohne Kz |
+| An das Finanzamt | ohne Kz |
+| Steuer-Identifikationsnummer bzw. Wirtschafts-Identifikationsnummer | ohne Kz; FMS: genau eine Steuer-/Identifikationsnummer |
+| Steuernummer | ohne Kz |
+| Mitteilung über (Fußnote 9): Betriebe/Betriebsstätten; PersG-Beteiligung; KapG-/Vermögensmasse-Beteiligung; Drittstaat-Beherrschung | ohne Kz; FMS-Sachverhaltsauswahl |
+| Name (Steuerpflichtige Person / Firma) | ohne Kz |
+| Vorname | ohne Kz |
+| Rechtsform | ohne Kz |
+| Geburtsdatum | ohne Kz |
+| Straße / Hausnummer | ohne Kz |
+| Postleitzahl; Sitz / Ort der Geschäftsleitung / Wohnort | Papier ohne Zeilen-Kz; FMS Inland-Adresse 15–17 |
+| Adressart / Adressergänzung / Ausland / Postfach | FMS; Auslands-/Postfach-Kz im Auszug nicht sichtbar |
+| Meldung für alle inländischen Beteiligten (Sammelmitteilung) | FMS: ja/nein |
+| Negativmeldung: keine Betriebe/Betriebsstätten und keine meldepflichtigen Beteiligungen | ohne Kz |
+| Positiv: ausländische Betriebe/Betriebsstätten gegründet/erworben + Anzahl Anlagen | ohne Kz |
+| Positiv: Beteiligungen an ausländischen Personengesellschaften + Anzahl Anlagen Gesellschaft/Beteiligte | ohne Kz |
+| Positiv: Beteiligungen an ausländischen Körperschaften/Vermögensmassen/Personenvereinigungen + Anzahl Anlagen | ohne Kz |
+| Positiv: Beteiligung aufgegeben / geändert (nur PersG) / veräußert + Anzahl Anlagen | ohne Kz |
+| Positiv: beherrschender/bestimmender Einfluss auf Drittstaat-Gesellschaft + Anzahl Anlagen | ohne Kz |
+| Datum, Unterschrift (Fußnote 2) | ohne Kz |
+| Mitwirkung Steuerberatung (FMS) | Kz 30 |
+| Anhänge / Dateiupload (FMS) | ohne Kz |
 
-| Feld | Kz |
-|---|---:|
-| Keine ausländischen Betriebe/Betriebsstätten gegründet oder erworben und keine meldepflichtigen Beteiligungen | keine Kz ausgewiesen |
-| Ausländische Gesellschaft / ausländische Betriebsstätte / ausländischer Betrieb: Mitteilung über | keine Kz ausgewiesen |
-| Drittstaat-Gesellschaften: Auswahl Drittstaat-Gesellschaft | keine Kz ausgewiesen |
+### 5.2 Anlage: Ausländische Gesellschaft / Betriebsstätte / Betrieb
 
-### 3. Mitwirkung bei der Anfertigung des Antrags
+Wiederholbar; entspricht XML-`dataset_gesellschaft`.
 
-| Feld | Kz |
-|---|---:|
-| Mitwirkung eines Angehörigen der steuerberatenden Berufe | 30 |
-| Name | 30 |
-| Vorname | 30 |
-| Adresse | 30 |
-| Wohnort | 30 |
-| Telefon | 30 |
-| Bearbeiterkennzeichen | 30 |
-| Mandantennummer | 30 |
-| Mandantennummer für elektronische Bescheiddatenabholung | 30 |
-| Zusätzliche Angaben | 30 |
+| Feld | Hinweis |
+|---|---|
+| Kopf: Name/Firma, IdNr./W-IdNr., Steuernummer, Jahr der steuerpflichtigen Person | Bezug Deckblatt |
+| Typ: ausländische Betriebsstätte / ausländischer Betrieb / ausländische Personengesellschaft / ausländische Kapitalgesellschaft, Vermögensmasse, Personenvereinigung | Ankreuzfeld |
+| Lfd. Nr. (Fußnote 3) | Querverweis bei Mehrfacheintrag |
+| Firmenname (Fußnote 4), Rechtsform | |
+| Straße/Hausnummer; PLZ; Ort/Sitz/Ort der Geschäftsleitung/Wohnort; Staat | |
+| Sitz abweichend: Straße, PLZ, Ort, Staat | nur wenn Registersitz abweicht |
+| Nominalkapital (KapG) / Kapital Gesellschaftereinlage (PersG); Währung (Fußnote 5) | |
+| Gründung am | |
+| Art der wirtschaftlichen Tätigkeit / Geschäftszweck (Kennzahlen 1–13, Fußnote 10) | |
+| Im Inland steuerlich erfasst beim Finanzamt; IdNr./W-IdNr.; Steuernummer (Fußnote 6) | |
 
-### 4. Anhänge
+**Tätigkeitskennzahl:** 1 Land-/Forstwirtschaft · 2 Herstellung/Verarbeitung · 3 Kredit/Versicherung · 4 Handel · 5 Rechte/Muster · 6 VuV Grundstücke · 7 VuV bewegliche Sachen · 8 Verwaltung · 9 Kapitalanlage · 10 Finanzierung · 11 sonstige Dienstleistungen · 12 Holding · 13 Sonstiges (Erläuterung Pflicht).
 
-| Feld | Kz |
-|---|---:|
-| Bezeichnung der Datei / des Inhalts | keine Kz ausgewiesen |
-| Dateiupload | keine Kz ausgewiesen |
+### 5.3 Anlage: Beteiligte
 
-### XML-Datei FRM_BZSt_2_010003_Anzeige_ausl_Betriebsstätte.xml
+Wiederholbar; entspricht XML-`dataset_beteiligte`. Bezug: zur Anlage ausl. Gesellschaft lfd. Nr.
+
+| Feld | Hinweis |
+|---|---|
+| Name, Vorname / Firmenname; Rechtsform | Fußnote 4 |
+| Straße/Hausnummer; PLZ; Wohnort/Sitz/Ort der Geschäftsleitung | |
+| Anteil am Nominalkapital (KapG) / Kapital (PersG) in Prozent | |
+| Beteiligt seit dem | |
+| Beteiligung geändert / aufgegeben (PersG) / veräußert (KapG) am | |
+| Im Inland steuerlich erfasst beim Finanzamt; IdNr./W-IdNr.; Steuernummer | nur wenn abweichend vom Kopf |
+
+Fußnote 7: bei mittelbarer Beteiligung unmittelbare Zwischengesellschaften gesondert mitteilen; bei Stiftungen/Vermögensmassen Stifter/Begünstigte mit Anteilen.
+
+### 5.4 Anlage: Drittstaat-Gesellschaft
+
+Wiederholbar; entspricht XML-`dataset_drittstaatgesellschaft`. Drittstaat = außerhalb EU/EFTA (Fußnote 8); Einfluss kann auch mit nahestehenden Personen i. S. d. § 1 Abs. 2 AStG bestehen.
+
+| Feld | Hinweis |
+|---|---|
+| Typ: ausländische Personengesellschaft / Kapitalgesellschaft, Vermögensmasse, Personenvereinigung; Lfd. Nr. | |
+| Firmenname, Rechtsform, Adresse, Staat; abweichender Sitz | |
+| Gründung am; Art der wirtschaftlichen Tätigkeit (Kennzahl 1–13) | |
+| Erläuterungen | |
+| Im Inland steuerlich erfasst; IdNr./W-IdNr.; Steuernummer | |
+| Beteiligung an der Drittstaat-Gesellschaft: ja/nein | |
+| Anteil am Nominalkapital/Kapital in Prozent; beteiligt seit dem | |
+
+### 5.5 XML-Instanz (leere FMS-Rohdaten)
 
 | Element | Wert |
 |---|---|
 | Formular | `catalog://Buerger/ausbez/010003` |
 | `Zeile_Nr` | `1` |
-| `k4`, `k5`, `k6`, `k7`, `k9`, `k10`, `k12`, `k13`, `k14`, `k15`, `k16`, `k2`, `k11`, `k25`, `k26`, `k24` | `false` |
+| `k2`, `k4`–`k7`, `k9`–`k16`, `k24`–`k26` | `false` (Ankreuz-/Steuerungsfelder, fachliche Zuordnung offen) |
 | `datum_mitteilung` | `31.08.2026 13:12:04` |
-| `dataset_gesellschaft` | leere Datenzeile |
-| `dataset_beteiligte` | leere Datenzeile |
-| `dataset_drittstaatgesellschaft` | leere Datenzeile |
+| `dataset_gesellschaft` / `dataset_beteiligte` / `dataset_drittstaatgesellschaft` | leere Datenzeilen |
