@@ -4,23 +4,25 @@
   registriert ihn in der Zielbibliothek.
 
 .DESCRIPTION
-  Erbt von 0x0120D520 (Dokumentenmappe) und traegt die Facetten, die fuer eine
-  ganze Mappe gelten (vgl. _migration/termstore/ARCHITECTURE.md):
+  Erbt von 0x0120D520 (Dokumentenmappe) und bindet zwei bereits vorhandene,
+  kanzleiweite Websitespalten (Gruppe "Steueranwaltskanzlei Obenhaus") als
+  geteilte Felder - keine neuen Spalten, kein eigenes "Wissen"-Vokabular:
 
-    Feld am Inhaltstyp   Rolle
-    -------------------  --------------------------------------------------
-    Title                Sprechender Mappentitel
-    WissenRechtsgebiet   Fachgebiet der Mappe        -> geteiltes Feld
-    WissenRechtsordnung  Rechtsraum der Mappe        -> geteiltes Feld
-    WissenSchlagworte    Querschnittsthemen          -> geteiltes Feld
+    Feld (intern)  Anzeige       Termset       Rolle
+    -------------  ------------  ------------  ------------------------------
+    Rechtsgebiet   Themengebiet  Themengebiet  Fachgebiet -> geteiltes Feld
+    Rechtsordnung  Rechtsordnung Rechtsordnung Rechtsraum -> geteiltes Feld
 
   "Geteiltes Feld" (Shared Field) heisst: der an der Mappe gesetzte Wert wird
   von SharePoint auf alle Dokumente in der Mappe durchgeschrieben. Genau das
   ersetzt das bisherige "Metadatum steckt nur im Ordnernamen".
 
-  Bewusst NICHT geteilt, weil dokumentspezifisch:
-    WissenDokumenttyp, WissenJahr, WissenAutor, WissenWerk, WissenSeite,
-    WissenFundstelle, WissenAktenzeichen
+  Kein drittes Feld fuer Schlagworte: die einzige vorhandene Kandidatenspalte
+  ("Schlagwoerter" / intern Dossier-Stichwoerter) haengt am Termset
+  Dokument-Verschlagwortung (Auftrag, Berechnung, Entwurf, Memo, Stammakte,
+  Steuer, ...) - das ist Aktendokument-Klassifikation, keine
+  Sachthemen-Verschlagwortung, und passt fachlich nicht. Siehe README.md,
+  Abschnitt "Metadatenmodell".
 
   Idempotent: vorhandener Inhaltstyp und vorhandene Feldbindungen werden
   uebersprungen.
@@ -35,7 +37,7 @@ param(
     [string]$SiteUrl = "https://obenhaus.sharepoint.com/sites/Wissen",
     [string]$LibraryName = "Freigegebene Dokumente",
     [string]$ContentTypeName = "Wissensmappe",
-    [string]$ContentTypeGroup = "Wissen Metadaten",
+    [string]$ContentTypeGroup = "Wissen",
     [switch]$Connect,
     [switch]$Interactive,
     [string]$ClientId,
@@ -49,14 +51,15 @@ $ErrorActionPreference = "Stop"
 Import-Module PnP.PowerShell -ErrorAction Stop
 . "$PSScriptRoot\_Common.ps1"
 
-# Felder am Inhaltstyp der Mappe
-$MappeFields = @("WissenRechtsgebiet", "WissenRechtsordnung", "WissenSchlagworte")
+# Felder am Inhaltstyp der Mappe - bereits vorhandene kanzleiweite Spalten,
+# keine "Wissen*"-Spalten.
+$MappeFields = @("Rechtsgebiet", "Rechtsordnung")
 
 # Felder, deren Wert auf die enthaltenen Dokumente durchgeschrieben wird
-$SharedFields = @("WissenRechtsgebiet", "WissenRechtsordnung", "WissenSchlagworte")
+$SharedFields = @("Rechtsgebiet", "Rechtsordnung")
 
 # Felder auf der Willkommensseite der Mappe
-$WelcomePageFields = @("Title", "WissenRechtsgebiet", "WissenRechtsordnung", "WissenSchlagworte")
+$WelcomePageFields = @("Title", "Rechtsgebiet", "Rechtsordnung")
 
 Connect-Wissen -Connect:$Connect -SiteUrl $SiteUrl -Interactive:$Interactive -ClientId $ClientId -Tenant $Tenant
 
@@ -74,7 +77,7 @@ foreach ($f in ($MappeFields | Select-Object -Unique)) {
     if (-not (Get-PnPField -Identity $f -ErrorAction SilentlyContinue)) { $missingFields += $f }
 }
 if ($missingFields.Count -gt 0) {
-    throw "Websitespalten fehlen: $($missingFields -join ', '). Diese Spalten legt _migration/termstore/Add-WissenLibraryColumns.ps1 an (dort ggf. auf Websiteebene heben)."
+    throw "Websitespalten fehlen: $($missingFields -join ', '). Diese Spalten sind kanzleiweite Standardspalten (Gruppe 'Steueranwaltskanzlei Obenhaus') und sollten auf jedem Tenant mit diesem Modell bereits existieren - pruefen mit: Get-PnPField | Where-Object { `$_.TypeAsString -like 'TaxonomyField*' }"
 }
 
 # --- 2. Inhaltstyp anlegen ----------------------------------------------
@@ -90,7 +93,7 @@ else {
     Write-Step "Lege Inhaltstyp '$ContentTypeName' an (Eltern: $($docSetBase.Name)) ..."
     Add-PnPContentType -Name $ContentTypeName `
                        -Group $ContentTypeGroup `
-                       -Description "Dokumentenmappe fuer ein Wissensthema. Rechtsgebiet, Rechtsordnung und Schlagworte gelten fuer die ganze Mappe und werden auf die enthaltenen Dokumente durchgeschrieben." `
+                       -Description "Dokumentenmappe fuer ein Wissensthema. Themengebiet und Rechtsordnung gelten fuer die ganze Mappe und werden auf die enthaltenen Dokumente durchgeschrieben." `
                        -ParentContentType $docSetBase | Out-Null
     $ct = Get-PnPContentType -Identity $ContentTypeName
     Write-Ok "Inhaltstyp angelegt: $($ct.Id.StringValue)"

@@ -1,60 +1,60 @@
-﻿Pfad;Rechtsgebiet;Rechtsordnung;Schlagworte
-01 Internationales Steuerrecht/Amtshilfe und Rechtshilfe;Amtshilfe und Informationsaustausch;International / Bilateral;
-01 Internationales Steuerrecht/Auslandsimmobilie;Doppelbesteuerungsrecht;International / Bilateral;
-01 Internationales Steuerrecht/Betriebstaette;Internationales Steuerrecht;International / Bilateral;TP – Permanent Establishment || TP – AOA / AOA Authorised OECD Approach
-01 Internationales Steuerrecht/DBA-DE-CH;Doppelbesteuerungsrecht;Deutschland (DE) || Schweiz (CH);
-01 Internationales Steuerrecht/DBA-DE-CH ErbSt;Doppelbesteuerungsrecht;Deutschland (DE) || Schweiz (CH);
-01 Internationales Steuerrecht/Freihandel;Öffentliches Recht;Europäische Union (EU) || International / Bilateral;
-01 Internationales Steuerrecht/IP-Box;Internationales Steuerrecht;International / Bilateral;TP – Lizenz / Royalties || TP – DEMPE / Intangibles
-01 Internationales Steuerrecht/Malta;Internationales Steuerrecht;Europäische Union (EU);
-01 Internationales Steuerrecht/Mitteilungspflichten;Internationales Steuerrecht;Deutschland (DE);Tax Compliance – DAC6 / Mitteilungspflichten
-01 Internationales Steuerrecht/Monaco;Internationales Steuerrecht;International / Bilateral;
-01 Internationales Steuerrecht/OECD - Mindestbesteuerung;Internationales Steuerrecht;OECD;Tax Compliance – Pillar Two / GloBE
-01 Internationales Steuerrecht/Steuerabkommen_CH;Doppelbesteuerungsrecht;Schweiz (CH);
-01 Internationales Steuerrecht/Verrechnungspreise;Verrechnungspreise;OECD;TP – Arm’s Length Principle || TP – Master File || TP – Local File
-01 Internationales Steuerrecht/Zypern;Internationales Steuerrecht;Europäische Union (EU);
-02 Steuern DE/Betriebsprüfung;Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Deutschland (DE);Verfahren – Mitwirkungspflicht || Verfahren – Datenzugriff || Verfahren – GoBD
-02 Steuern DE/Bewertung;Direkte Steuern;Deutschland (DE);
-02 Steuern DE/Bilanz und Jahresabschluss;Direkte Steuern;Deutschland (DE);
-02 Steuern DE/CO2_Emsssionshandel;Indirekte Steuern;Deutschland (DE) || Europäische Union (EU);Tax Compliance – ESG / Nachhaltigkeitsreporting
-02 Steuern DE/Einkommensteuer;Direkte Steuern;Deutschland (DE);
-02 Steuern DE/Erbschaftsteuer;Direkte Steuern;Deutschland (DE);
-02 Steuern DE/Kassenbuchführung;Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Deutschland (DE);Verfahren – GoBD || Verfahren – Datenzugriff || Tax Compliance – Verfahrensdokumentation
-02 Steuern DE/Kfz und Steuern;Direkte Steuern;Deutschland (DE);
-02 Steuern DE/Lohnsteuer;Direkte Steuern;Deutschland (DE);
-02 Steuern DE/Rechnung;Indirekte Steuern;Deutschland (DE);Verfahren – GoBD
-02 Steuern DE/Schätzung;Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Deutschland (DE);Verfahren – Schätzung || Verfahren – Beweislast
-02 Steuern DE/Steuerwissenschaften;Steuerrecht;Deutschland (DE);
-02 Steuern DE/Umsatzsteuer;Indirekte Steuern;Deutschland (DE);
-02 Steuern DE/Verbrauchsteuern;Indirekte Steuern;Deutschland (DE);
-02 Steuern DE/Verfahrensrecht;Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Deutschland (DE);Verfahren – Rechtsmittel || Verfahren – Verjährung
-03 Steuern CH/MWST;Indirekte Steuern;Schweiz (CH);
-03 Steuern CH/Quellensteuer_CH;Direkte Steuern;Schweiz (CH);
-03 Steuern CH/Steuerverfahrensrecht_CH;Wissen|Rechtsgebiet|Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Schweiz (CH);Verfahren – Rechtsmittel
-03 Steuern CH/Unternehmen;Direkte Steuern;Schweiz (CH);
-04 Recht allgemein/Berufsrecht CH;Öffentliches Recht;Schweiz (CH);Allgemein – Berufshaftung
-04 Recht allgemein/Berufsrecht DE;Öffentliches Recht;Deutschland (DE);Allgemein – Berufshaftung
-04 Recht allgemein/Bewertung;;;
-04 Recht allgemein/Bilanz und Jahresabschluss;Privatrecht;Deutschland (DE) || Schweiz (CH);
-04 Recht allgemein/Checklisten;;;
-04 Recht allgemein/CO2_Emsssionshandel;Verwaltungsrecht;Europäische Union (EU);Tax Compliance – ESG / Nachhaltigkeitsreporting
-04 Recht allgemein/Compliance;Öffentliches Recht;;Allgemein – Compliance || Tax Compliance – Tax CMS || Tax Compliance – Risikoanalyse
-04 Recht allgemein/Gesetze;;;
-04 Recht allgemein/Recht_CH_Diverse;;Schweiz (CH);
-04 Recht allgemein/Recht_DE_Diverse;;Deutschland (DE);
-04 Recht allgemein/Rechtsthemen CH;;Schweiz (CH);
-04 Recht allgemein/Rechtsthemen DE;;Deutschland (DE);
-04 Recht allgemein/SchKG CH;Verfahrensrecht;Schweiz (CH);
-04 Recht allgemein/Selbstanzeige;Steuerstrafrecht;Deutschland (DE) || Schweiz (CH);Verfahren – Selbstanzeige
-04 Recht allgemein/Sozialrecht_DE;Sozialversicherungsrecht;Deutschland (DE);
-04 Recht allgemein/Statistik und Daten;;;
-04 Recht allgemein/Strafrecht_CH;Strafrecht;Schweiz (CH);
-04 Recht allgemein/Strafrecht_DE;Strafrecht;Deutschland (DE);
-04 Recht allgemein/Vertragsrecht;Privatrecht;;
-04 Recht allgemein/Zoll;Indirekte Steuern;Europäische Union (EU) || Deutschland (DE);
-05 eigene Literatur/01 Wassermeyer DBA;Doppelbesteuerungsrecht;International / Bilateral;
-05 eigene Literatur/02 SchwarzArbG-Komm;Strafrecht;Deutschland (DE);
-05 eigene Literatur/03 Publikationen;;;
-05 eigene Literatur/04 Entwuerfe;;;
-05 eigene Literatur/05 Hinweise;;;
-05 eigene Literatur/06 Diverse;;;
+﻿Pfad;Rechtsgebiet;Rechtsordnung
+01 Internationales Steuerrecht/Amtshilfe und Rechtshilfe;Steuerrecht;OECD
+01 Internationales Steuerrecht/Auslandsimmobilie;Steuerrecht;Deutschland
+01 Internationales Steuerrecht/Betriebstaette;Steuerrecht;Deutschland || Schweiz
+01 Internationales Steuerrecht/DBA-DE-CH;Steuerrecht;Deutschland || Schweiz
+01 Internationales Steuerrecht/DBA-DE-CH ErbSt;Steuerrecht;Deutschland || Schweiz
+01 Internationales Steuerrecht/Freihandel;Öffentliches Recht;EU
+01 Internationales Steuerrecht/IP-Box;Steuerrecht;Malta || EU
+01 Internationales Steuerrecht/Malta;Steuerrecht;Malta
+01 Internationales Steuerrecht/Mitteilungspflichten;Steuerrecht;Deutschland || EU
+01 Internationales Steuerrecht/Monaco;Steuerrecht;Monaco
+01 Internationales Steuerrecht/OECD - Mindestbesteuerung;Steuerrecht;OECD
+01 Internationales Steuerrecht/Steuerabkommen_CH;Steuerrecht;Schweiz
+01 Internationales Steuerrecht/Verrechnungspreise;Steuerrecht;OECD
+01 Internationales Steuerrecht/Zypern;Steuerrecht;EU
+02 Steuern DE/Betriebsprüfung;Steuerrecht;Deutschland
+02 Steuern DE/Bewertung;Steuerrecht;Deutschland
+02 Steuern DE/Bilanz und Jahresabschluss;Steuerrecht;Deutschland
+02 Steuern DE/CO2_Emsssionshandel;Steuerrecht;Deutschland || EU
+02 Steuern DE/Einkommensteuer;Steuerrecht;Deutschland
+02 Steuern DE/Erbschaftsteuer;Steuerrecht;Deutschland
+02 Steuern DE/Kassenbuchführung;Steuerrecht;Deutschland
+02 Steuern DE/Kfz und Steuern;Steuerrecht;Deutschland
+02 Steuern DE/Lohnsteuer;Steuerrecht;Deutschland
+02 Steuern DE/Rechnung;Steuerrecht;Deutschland
+02 Steuern DE/Schätzung;Steuerrecht;Deutschland
+02 Steuern DE/Steuerwissenschaften;Steuerrecht;
+02 Steuern DE/Umsatzsteuer;Steuerrecht;Deutschland
+02 Steuern DE/Verbrauchsteuern;Steuerrecht;Deutschland
+02 Steuern DE/Verfahrensrecht;Steuerrecht;Deutschland
+03 Steuern CH/MWST;Steuerrecht;Schweiz
+03 Steuern CH/Quellensteuer_CH;Steuerrecht;Schweiz
+03 Steuern CH/Steuerverfahrensrecht_CH;Steuerrecht;Schweiz
+03 Steuern CH/Unternehmen;Steuerrecht;Schweiz
+04 Recht allgemein/Berufsrecht CH;Berufsrecht;Schweiz
+04 Recht allgemein/Berufsrecht DE;Berufsrecht;Deutschland
+04 Recht allgemein/Bewertung;Recht allgemein;
+04 Recht allgemein/Bilanz und Jahresabschluss;Steuerrecht;
+04 Recht allgemein/Checklisten;Recht allgemein;
+04 Recht allgemein/CO2_Emsssionshandel;Öffentliches Recht;Deutschland || EU
+04 Recht allgemein/Compliance;Recht allgemein;
+04 Recht allgemein/Gesetze;Recht allgemein;
+04 Recht allgemein/Recht_CH_Diverse;Recht allgemein;Schweiz
+04 Recht allgemein/Recht_DE_Diverse;Recht allgemein;Deutschland
+04 Recht allgemein/Rechtsthemen CH;Recht allgemein;Schweiz
+04 Recht allgemein/Rechtsthemen DE;Recht allgemein;Deutschland
+04 Recht allgemein/SchKG CH;Zivilrecht;Schweiz
+04 Recht allgemein/Selbstanzeige;Strafrecht;Deutschland || Schweiz
+04 Recht allgemein/Sozialrecht_DE;Soziale Sicherung;Deutschland
+04 Recht allgemein/Statistik und Daten;Recht allgemein;
+04 Recht allgemein/Strafrecht_CH;Strafrecht;Schweiz
+04 Recht allgemein/Strafrecht_DE;Strafrecht;Deutschland
+04 Recht allgemein/Vertragsrecht;Zivilrecht;
+04 Recht allgemein/Zoll;Öffentliches Recht;Deutschland || EU
+05 eigene Literatur/01 Wassermeyer DBA;Steuerrecht;
+05 eigene Literatur/02 SchwarzArbG-Komm;Strafrecht;Deutschland
+05 eigene Literatur/03 Publikationen;Recht allgemein;
+05 eigene Literatur/04 Entwuerfe;Recht allgemein;
+05 eigene Literatur/05 Hinweise;Recht allgemein;
+05 eigene Literatur/06 Diverse;Recht allgemein;

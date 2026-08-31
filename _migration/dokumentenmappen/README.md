@@ -4,11 +4,17 @@
 **Bibliothek:** `Freigegebene Dokumente`
 **Inhaltstyp:** `Wissensmappe` (abgeleitet von `Dokumentenmappe`, `0x0120D520`)
 
-Fortsetzung von [`../termstore/ARCHITECTURE.md`](../termstore/ARCHITECTURE.md).
-Dort galt: *«Ordnerstruktur bleibt navigativ; Tags sind die abfragbare Facette.»*
-Dokumentenmappen schliessen die Lücke dazwischen — das Thema wird ein Objekt mit
-eigenen Metadaten, und diese Metadaten werden über *geteilte Spalten* auf die
+Dokumentenmappen schliessen eine Lücke: das Thema wird ein Objekt mit eigenen
+Metadaten, und diese Metadaten werden über *geteilte Spalten* auf die
 enthaltenen Dokumente durchgeschrieben, statt nur im Ordnernamen zu stecken.
+
+**Wichtiger Hinweis zu [`../termstore/`](../termstore/ARCHITECTURE.md):** Diese
+Skripte und `ARCHITECTURE.md` sind für einen *anderen* Tenant geschrieben
+(`transferpricingdocs.sharepoint.com`, siehe deren `$SiteUrl`/`$Tenant`), nicht
+für `obenhaus.sharepoint.com`. Termstore und Websitespalten sind pro Tenant
+getrennt — nichts davon existiert hier. Das Metadatenmodell in diesem Ordner
+wurde live auf `obenhaus.sharepoint.com` erhoben (siehe Abschnitt 1a) und ist
+komplett unabhängig vom `termstore`-Modell.
 
 ---
 
@@ -47,6 +53,31 @@ Vollständige Liste mit Begründung pro Ordner:
    wertlos. Auf Ebene 2 stehen die tatsächlichen Themen (`Betriebstaette`,
    `Verrechnungspreise`, `Kassenbuchführung`, `Umsatzsteuer`, `Zoll` …) — genau
    die Einheit, für die `Rechtsgebiet` + `Rechtsordnung` je einen Wert haben.
+
+### 1a. Metadatenmodell: vorhanden, nicht das aus `../termstore/`
+
+Auf `obenhaus.sharepoint.com` existiert weder eine `Wissen*`-Websitespalte noch
+das im `termstore`-Ordner beschriebene Termset-Modell (`Rechtsgebiet`,
+`Rechtsordnung`, `Dokumenttyp`, `Schlagworte`) — das ist für einen anderen
+Tenant gebaut. Live geprüft (`Get-PnPTermGroup`, `Get-PnPField`) existiert
+stattdessen ein **kanzleiweites** Modell, Gruppe `Steueranwaltskanzlei
+Obenhaus`, das schon produktiv genutzt wird:
+
+| Feld (intern) | Anzeige | Typ | Termset (Gruppe `Wissen`) | Werte |
+|---|---|---|---|---|
+| `Rechtsgebiet` | Themengebiet | einwertig, **Required** | `Themengebiet` | Steuerrecht, Öffentliches Recht, Zivilrecht, Strafrecht, Berufsrecht, IT, Recht allgemein, Soziale Sicherung, Project Management |
+| `Rechtsordnung` | Rechtsordnung | mehrwertig | `Rechtsordnung` | Deutschland, Schweiz, Österreich, EU, OECD, Frankreich, Italien, Liechtenstein, Malta, Monaco |
+| `Dossier-Stichwörter` | Schlagwörter | einwertig | `Dokument-Verschlagwortung` | Auftrag, Auswertung, Berechnung, Entwurf, Handakte, Liegenschaft, Memo, Stammakte, Steuer |
+
+Die ersten beiden passen direkt und sind hier verwendet — flach statt
+hierarchisch, aber inhaltlich richtig. Das dritte **nicht**: `Dossier-
+Stichwörter` klassifiziert Aktendokumente (Auftrag, Berechnung, Entwurf,
+Memo, Stammakte …), keine Sachthemen wie „TP – DEMPE" oder „Verfahren –
+Selbstanzeige". Für Schlagworte gibt es auf diesem Tenant kein passendes
+Termset — die Wissensmappe verzichtet deshalb bewusst darauf und trägt nur
+`Rechtsgebiet` und `Rechtsordnung` als geteilte Felder. Details und die
+Termsets, die sonst noch in der Gruppe `Wissen` existieren (`Publikationstyp`,
+`Gericht`, `Publikationen`), stehen in Abschnitt 4.
 
 ---
 
@@ -255,10 +286,11 @@ cd _migration\dokumentenmappen
 .\Set-MappeMetadata.ps1 -OnlyEmpty
 ```
 
-**Schritt 2 ist bedingt.** Die `Wissen*`-Spalten sind in dieser Bibliothek
-bereits angelegt und als geteilte Spalten konfiguriert. Existiert auch schon ein
-Inhaltstyp auf Basis `Dokumentenmappe`, entfällt Schritt 2 — dann dessen Namen
-an die beiden Folgeskripte durchgeben:
+**Schritt 2 ist bedingt.** `Rechtsgebiet` und `Rechtsordnung` sind
+kanzleiweite Standardspalten und schon vorhanden (siehe Abschnitt 1a) — Schritt
+2 bindet sie nur an den neuen Inhaltstyp. Existiert bereits ein Inhaltstyp auf
+Basis `Dokumentenmappe` (aus einem früheren Lauf oder von anderswo), entfällt
+Schritt 2 komplett — dann dessen Namen an die beiden Folgeskripte durchgeben:
 
 ```powershell
 .\Convert-FoldersToDocumentSets.ps1 -ContentTypeName "<vorhandener Inhaltstyp>"
@@ -298,26 +330,37 @@ Zurücknehmen:
 
 ## 4. Metadatenmodell der Mappe
 
-Die Spalten sind vorhanden und als geteilte Spalten konfiguriert — offen ist
-nicht die Konfiguration, sondern das **Befüllen**. Genau das macht Schritt 4.
+Die Spalten sind vorhanden und kanzleiweit produktiv (siehe Abschnitt 1a) —
+offen ist nicht die Konfiguration, sondern das **Anbinden** (Schritt 2) und
+**Befüllen** (Schritt 4).
 
-| Feld | Am Inhaltstyp | Geteilt (wird durchgeschrieben) |
-|---|---|---|
-| `Title` | ja | – (Willkommensseite) |
-| `WissenRechtsgebiet` | ja | **ja** |
-| `WissenRechtsordnung` | ja | **ja** |
-| `WissenSchlagworte` | ja | **ja** |
-| `WissenDokumenttyp` | nein | nein — je Dokument verschieden |
-| `WissenJahr`, `WissenAutor`, `WissenWerk`, `WissenSeite`, `WissenFundstelle`, `WissenAktenzeichen` | nein | nein — je Dokument verschieden |
+| Feld (intern) | Anzeige | Am Inhaltstyp | Geteilt (wird durchgeschrieben) |
+|---|---|---|---|
+| `Title` | Titel | ja | – (Willkommensseite) |
+| `Rechtsgebiet` | Themengebiet | ja | **ja** |
+| `Rechtsordnung` | Rechtsordnung | ja | **ja** |
 
-Das folgt der Trennungsregel aus `ARCHITECTURE.md`: *wovon* (Rechtsgebiet) und
-*welches Recht* (Rechtsordnung) gelten für die ganze Mappe, *welche Art Quelle*
-(Dokumenttyp) und die Fundstelle gelten je Dokument.
+Kein drittes geteiltes Feld für Schlagworte — Begründung in Abschnitt 1a. Auch
+kein Dokumenttyp-Feld je Dokument: `Publikationstyp` (Rechtsprechung,
+Verwaltungsvorschrift, Aufsatz, Gesetz, Kommentar/Handbuch, Skript, Notiz,
+Nachricht, Meldungen/Anmerkungen) wäre inhaltlich das Gegenstück, ist aber noch
+nicht an die Bibliothek `Freigegebene Dokumente` gebunden und nicht Teil dieser
+Migration — dafür gibt es hier (anders als im `termstore`-Modell) noch kein
+Skript.
 
 `New-WissenMappeContentType.ps1` setzt geteilte Spalten und Willkommensseite
 über CSOM, weil PnP.PowerShell dafür kein Cmdlet hat. Das Skript ist idempotent
 und überspringt, was schon konfiguriert ist; scheitert der CSOM-Zugriff, gibt es
 die UI-Schritte aus und läuft weiter.
+
+Weitere Termsets in der Gruppe `Wissen`, aktuell ungenutzt, aber möglicher
+Ausgangspunkt für Folgearbeit:
+
+| Termset | Werte |
+|---|---|
+| `Gericht` | Gerichte Deutschland, Gerichte Europa, Gerichte Schweiz (bislang nur die drei Oberkategorien, keine einzelnen Gerichte) |
+| `Publikationen` | ungeprüft, welchem Zweck es dient |
+| `Publikationstyp` | siehe oben — Kandidat für ein künftiges Dokumenttyp-Feld |
 
 ---
 
@@ -328,47 +371,59 @@ selbst auf alle Dokumente der Mappe durch (asynchron, bei grossen Mappen einige
 Minuten).
 
 [`mappen-metadaten.csv`](mappen-metadaten.csv) enthält einen **Vorschlag je
-Mappe**, abgeleitet aus Ordnername und Ablageort und vollständig gegen
-`../termstore/rechtsgebiet.csv`, `rechtsordnung.csv` und `schlagworte.csv`
-geprüft — keine erfundenen Terme:
+Mappe**, abgeleitet aus Ordnername und Ablageort und vollständig gegen die
+echten, live erhobenen Termsets `Themengebiet` und `Rechtsordnung` geprüft
+(Abschnitt 1a) — keine erfundenen Terme, keine Terme aus dem falschen
+`termstore`-Modell:
 
 | | Mappen |
 |---|---:|
-| mit `Rechtsgebiet` | 47 |
-| mit `Rechtsordnung` | 49 |
-| mit `Schlagworten` | 17 |
-| bewusst leer gelassen | 8 |
+| mit `Rechtsgebiet` | 59 von 59 — Pflichtfeld, jede Mappe bekommt einen Wert |
+| mit `Rechtsordnung` | 46 von 59 |
+| `Rechtsordnung` leer gelassen | 13 |
 
-Bewusst leer sind die heterogenen Sammelordner, bei denen ein einzelner Wert
-falsch wäre: `04 Recht allgemein/Gesetze`, `Checklisten`, `Statistik und Daten`,
-`Bewertung` (leer) sowie `05 eigene Literatur/03 Publikationen`, `04 Entwuerfe`,
-`05 Hinweise`, `06 Diverse`. Leere Zelle heisst «nichts schreiben», nicht «Wert
-löschen».
+`Rechtsgebiet` ist am Feld selbst `Required="TRUE"` — deshalb bekommt jede
+Mappe einen Wert, notfalls den Auffangbegriff `Recht allgemein` für
+heterogene Sammelordner (`Checklisten`, `Gesetze`, `Statistik und Daten`,
+`Compliance`, `03 Publikationen`, `04 Entwuerfe`, `05 Hinweise`, `06 Diverse`,
+das zweite `Bewertung` unter `04 Recht allgemein`). `Rechtsordnung` ist nicht
+Pflicht und bleibt dort leer, wo kein Land eindeutig zutrifft (z. B.
+`Steuerwissenschaften`, `Vertragsrecht`, `01 Wassermeyer DBA`). Leere Zelle
+heisst «nichts schreiben», nicht «Wert löschen».
+
+**Themengebiet ist flach und grob** (nur neun Werte, keine Unterkategorien wie
+„Verrechnungspreise" oder „Direkte Steuern") — fast jede Mappe zu
+internationalem oder deutschem/schweizerischem Steuerrecht bekommt schlicht
+`Steuerrecht`. Das ist die reale Granularität dieses Tenants, keine
+Vereinfachung meinerseits.
 
 **Der Vorschlag ist zu prüfen, nicht zu glauben.** Er stammt aus Ordnernamen,
-nicht aus dem Inhalt. Drei Stellen, die ich bewusst so und nicht anders
-entschieden habe und die Sie anders sehen können:
+nicht aus dem Inhalt. Judgment Calls, die Sie anders sehen können:
 
-- `04 Recht allgemein/SchKG CH` → `Verfahrensrecht`. Alternativ
-  `Steuervollstreckung`, wenn der Ordner vor allem Steuerbezug hat.
-- `02 Steuern DE/Kfz und Steuern` → `Direkte Steuern` (Annahme: Firmenwagen,
-  1 %-Regelung). Bei Kfz-Steuer im engeren Sinn wäre `Indirekte Steuern` richtig.
-- `02 Steuern DE/CO2_Emsssionshandel` → `Indirekte Steuern`; der gleichnamige
-  Ordner unter `04 Recht allgemein` → `Verwaltungsrecht`, weil dort der
-  ordnungsrechtliche Teil liegt.
+- `04 Recht allgemein/SchKG CH` → `Zivilrecht` (Schuldbetreibung/Konkurs als
+  Zivilverfahrensrecht). Kein `Verfahrensrecht`-Themengebiet vorhanden, das
+  näher läge.
+- `04 Recht allgemein/Selbstanzeige` → `Strafrecht` (Steuerstrafrecht), nicht
+  `Steuerrecht`.
+- `05 eigene Literatur/02 SchwarzArbG-Komm` → `Strafrecht` (Sanktionsnorm),
+  könnte auch `Soziale Sicherung` sein.
+- `01 Internationales Steuerrecht/Zypern` → `Rechtsordnung` bleibt auf `EU`,
+  weil kein Zypern-Term im Termset existiert.
+- Die zwei gleichnamigen `CO2_Emsssionshandel`-Ordner erhalten unterschiedliche
+  Werte: unter `02 Steuern DE` → `Steuerrecht` (Abgabenperspektive), unter
+  `04 Recht allgemein` → `Öffentliches Recht` (Regulierungsperspektive).
 
-Format der CSV (Semikolon, UTF-8 mit BOM), mehrere Werte je Zelle mit `` || ``:
+Format der CSV (Semikolon, UTF-8 mit BOM), Rechtsordnung mehrwertig mit `` || ``:
 
 ```
-Pfad;Rechtsgebiet;Rechtsordnung;Schlagworte
-02 Steuern DE/Umsatzsteuer;Indirekte Steuern;Deutschland (DE);
-01 Internationales Steuerrecht/DBA-DE-CH;Doppelbesteuerungsrecht;Deutschland (DE) || Schweiz (CH);
+Pfad;Rechtsgebiet;Rechtsordnung
+02 Steuern DE/Umsatzsteuer;Steuerrecht;Deutschland
+01 Internationales Steuerrecht/DBA-DE-CH;Steuerrecht;Deutschland || Schweiz
 ```
 
-Terme gehen als Blatt-Label oder als vollständiger Termpfad. Der vollständige
-Pfad ist nötig, wo ein Label mehrfach hängt — `Steuerverfahrensrecht` steht
-sowohl unter `Steuerrecht` als auch unter `Verfahrensrecht`; die CSV benutzt
-dort den Pfad. Unbekannte Terme werden gemeldet und übersprungen, nie geraten.
+Beide Termsets sind flach — ein Blatt-Label reicht, ein vollständiger Termpfad
+ist hier (anders als im `termstore`-Modell) nie nötig. Unbekannte Terme werden
+gemeldet und übersprungen, nie geraten.
 
 `-OnlyEmpty` lässt bereits gesetzte Werte unangetastet — für Nachläufe, nachdem
 von Hand nachgeschärft wurde.
@@ -380,10 +435,10 @@ von Hand nachgeschärft wurde.
 1. Ansicht **Alle Dokumente**: Spalte `Inhaltstyp` einblenden, um Mappen von
    Ordnern zu unterscheiden.
 2. Prüfen, dass das Durchschreiben gegriffen hat: ein Dokument in einer
-   befüllten Mappe öffnen, `Rechtsgebiet` muss gesetzt sein.
-3. Erst danach `../termstore/Apply-WissenTaxonomy.ps1` für die
-   dokumentspezifischen Felder (`Dokumenttyp`, Fundstelle) laufen lassen — die
-   geteilten Spalten sind dann bereits gefüllt.
+   befüllten Mappe öffnen, `Themengebiet` muss gesetzt sein.
+3. Optional, als Folgearbeit: `Publikationstyp` an die Bibliothek binden und
+   je Dokument befüllen (Rechtsprechung, Verwaltungsvorschrift, Aufsatz, …) —
+   dafür existiert in diesem Ordner noch kein Skript.
 
 ## 7. Dateien
 
@@ -391,10 +446,10 @@ von Hand nachgeschärft wurde.
 |---|---|
 | `_Common.ps1` | Verbindung, Bibliotheks-Auflösung, Content-Type-IDs |
 | `Enable-Dokumentenmappen.ps1` | Schritt 1: Feature + Inhaltstypen-Verwaltung |
-| `New-WissenMappeContentType.ps1` | Schritt 2: Inhaltstyp `Wissensmappe` (bedingt) |
+| `New-WissenMappeContentType.ps1` | Schritt 2: Inhaltstyp `Wissensmappe` (bedingt), bindet `Rechtsgebiet`/`Rechtsordnung` |
 | `Convert-FoldersToDocumentSets.ps1` | Schritt 3: Umwandlung, Protokoll, Rollback |
-| `Set-MappeMetadata.ps1` | Schritt 4: geteilte Spalten befüllen |
+| `Set-MappeMetadata.ps1` | Schritt 4: `Rechtsgebiet`/`Rechtsordnung` je Mappe befüllen |
 | `mappen-kandidaten.csv` | Bestandsaufnahme Ebene 1–2 mit Empfehlung |
-| `mappen-metadaten.csv` | Vorschlag Rechtsgebiet / Rechtsordnung / Schlagworte je Mappe |
+| `mappen-metadaten.csv` | Vorschlag Rechtsgebiet (Themengebiet) / Rechtsordnung je Mappe |
 | `dokumentenmappen-log.csv` | wird vom Konvertierungslauf geschrieben |
 | `mappen-metadaten-log.csv` | wird vom Befüllungslauf geschrieben |
