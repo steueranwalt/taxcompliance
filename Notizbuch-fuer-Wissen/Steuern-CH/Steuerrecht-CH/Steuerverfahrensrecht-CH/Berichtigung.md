@@ -1,0 +1,28 @@
+# Berichtigung
+
+Berichtigung bei Fehler im Ausdruck, nicht bei Fehler bei der Kopfarbeit
+
+Gemass Art. 150 Abs. 1 des Bundesgesetzes vom 14. Dezember 1990 uber die direkte Bundessteuer (DBG; SR 642.11) konnen Rechnungsfehler und Schreibversehen in rechtskraftigen Verfugungen und Entscheidungen innert funf Jahren nach der Eroffnung auf Antrag oder von Amtes wegen von der Behorde berichtigt werden, der sie unterlaufen sind.
+
+## Kanzleifehler
+
+Wie das Bundesgericht in seinem grundlegenden Entscheid 2C_519/2011 vom 24. Februar 2012 (StR 2012, 367 = StE 2012 B 97.3 Nr. 9 = RDAF 2012 II 418; spater bestatigt durch das Urteil 2C_596/2012 vom 19. Marz 2013, StR 2013, 474 = StE 2013 B 97.11 Nr. 28 = BStPra 2013) festgehalten hat, soll dieser Berichtigungstatbestand sicherstellen, dass rechtskraftige Verfugungen und Entscheide, die aufgrund eines Kanzleifehlers den wirklichen Willen der betreffenden Steuer- oder Steuergerichtsbehorde unzutreffend zum Ausdruck bringen, moglichst formlos korrigiert werden konnen. Er raumt der Verwaltungs- oder Gerichtsbehorde das Recht ein, auf eine rechtskraftige Verfugung oder einen ebensolchen Entscheid zuruckzukommen, begrenzt diese Befugnis indessen in zeitlicher (absolute Verwirkungsfrist von funf Jahren) und sachlicher ("Kanzleifehler") Hinsicht. Mithin tragt die Bestimmung auch den Charakter einer Schutznorm fur die steuerpflichtige Person. Wahrend der steuerrechtliche Berichtigungstatbestand dazu dient, vereinzelte, geringfugige Unstimmigkeiten zu beseitigen, zielt der verwaltungsrechtliche Widerruf der Verfugung, der im Steuerrecht aufgrund des Numerus clausus der steuerrechtlichen Grunde fur die Abanderung rechtskraftiger Verfugungen und Entscheide keine Anwendung findet, auf die Bereinigung bis hin zur Aufhebung der Verfugung insgesamt ab.
+
+Kanzleifehler haben, so das Bundesgericht, den Ausdruck des Verfugungsinhalts und des behordlichen Willens, also die Willensausserung zum Gegenstand. Bei der Berichtigung geht es um die Klarstellung eines Erklarungsirrtums, in welchem sich die Steuerbehorde befand.Kennzeichnend fur Kanzleifehler ist, dass sie bei der behordlichen "Handarbeit" auftreten. Der "Kopfarbeit" entspringen dagegen die eigentlichen Verfugungsfehler. Ein inhaltlicher Fehler der Verfugung und damit der Willensbildung der Behorde liegt vor, wenn die Verfugung auf einer unzutreffenden tatbestandlichen oder rechtlichen Wurdigung beruht, ungeachtet dessen, ob fur die steuerpflichtige Person erkennbar ist, dass sich die Behorde in einem Sach- oder Rechtsirrtum und damit einem Grundlagenirrtum befand. Eigentliche Veranlagungsfehler sind nicht berichtigungsweise, sondern im Rechtsmittelweg geltend zu machen. Hierzu verfugt auch die offentliche Hand uber die erforderlichen Rechtsmittelmoglichkeiten (Art. 141 Abs. 1 und 145 Abs. 2 DBG).
+
+Bei der Redaktion von Art. 150 DBG folgte der Gesetzgeber von 1990 bewusst der Vorgangerbestimmung. Die neurechtliche Berichtigung entspricht, so schon der Bundesrat, "grundsatzlich der Regelung von Artikel 127 Absatze 1 und 3 BdBSt, betrifft aber nicht mehr nur Rechnungsfehler, sondern neu auch Schreibversehen" (Botschaft vom 25. Mai 1983 zu Bundesgesetzen uber die Harmonisierung der direkten Steuern der Kantone und Gemeinden sowie uber die direkte Bundessteuer, BBl 1983 III 1 ff., insb. 215 [DBG] und, ohne weiteren Kommentar, 137 [StHG]). Der Bundesrat hielt diese Erweiterung fur "wichtig, weil heute dank der verbreiteten Anwendung von EDV-Anlagen Rechnungsfehler kaum noch, Schreibversehen dagegen durchaus noch vorkommen". Mit den notigen Einschrankungen ist die altrechtliche Praxis folglich auch auf den Berichtigungstatbestand nach DBG/StHG anwendbar.
+
+Im erwahnten Urteil hob das Bundesgericht auch hervor, dass sich die Veranlagungsarbeiten als Massengeschaft gestalten, das als solches anfallig fur Fluchtigkeitsfehler ist. Die Tatigkeit des Veranlagungspersonals spielt sich ja heute weitgehend bis ausschliesslich am Bildschirm ab. Die bei Einfuhrung der EDV noch unerlassliche manuelle Übertragung vom Steuererklarungsformular in das Veranlagungssystem erfolgt zunehmend automatisiert, sei es durch Scanning oder Online-Anlieferung der Daten. Liessen sich im einstigen, durch vertikale Arbeitsteilung gepragten Modell 
+
+die Willensbildung ("Kopfarbeit" des Veranlagungspersonals zwecks Ermittlung der Steuerfaktoren) und Willensausserung ("Handarbeit" des Kanzleipersonals anlasslich der Ablesung des Tarifs und der Erstellung der Veranlagungsverfugung) muhelos trennen, sind die Konturen angesichts der Arbeit am Computer, die zur automatischen Berechnung der Steuer und Ausfertigung der Verfugung fuhrt, verwischt. Die Auslegung des Normzwecks von Art. 150 DBG hat nach Ansicht des Bundesgerichts den gewandelten Umstanden Rechnung zu tragen. Eine zur Hauptsache ablaufbezogene Betrachtung – Fehler schon in der Willensbildung oder erst in der Willensausserung? – wird seines Erachtens der heutigen Arbeitsweise nicht mehr vollstandig gerecht. Nicht nur sei fur Aussenstehende bloss beschrankt einseh- und nachvollziehbar, ob es sich um einen Programmierungs-, einen Handhabungs- oder einen Fehler im Druckzentrum handelt. Vielmehr frage sich ganz grundsatzlich, wem und welchem Verfahrensstadium "Computerfehler" zuzurechnen sind (Freiburg Kantonsgericht Steuergerichtshof 20.01.2014 604 2012 132).
+
+  
+
+
+## Frist
+
+Berichtigung aufgrund eines Kanzleifehlers; beschrankt in zeitlicher Hinsicht auf 5 Jahre (absolute
+
+Verwirkungsfrist) und in sachlicher Hinsicht auf "Kanzleifehler" – jedoch weite Auslegung des Berichtigungstatbestandes zum Ausgleich des Ungleichgewichts in der Risikoverteilung zwischen
+
+Steuerbehorden und Steuerpflichtigen (Urteil des Bundesgerichts 2C_331/2019 vom 7.4.2020).

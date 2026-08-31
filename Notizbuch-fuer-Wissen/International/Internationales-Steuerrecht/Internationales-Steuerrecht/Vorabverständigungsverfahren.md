@@ -1,0 +1,3 @@
+# Vorabverständigungsverfahren 
+
+Die deutschen Finanzbehorden haben Vorabverstandigungsverfahren mit anderen Staaten bislang auf Basis eines Merkblattes (BMF v. 5.10.2006 – IV B 4 – S 1341 – 38/06, BStBl. I 2006, I 594, BeckVerw 079289) unter Berufung auf eine Art. 25 OECD-MA nachgebildete DBA-Vorschrift gefuhrt, um Meinungsverschiedenheiten zwischen den Finanzbehorden der betroffenen Staaten und den Unternehmen insbesondere uber Verrechnungspreise soweit moglich im Voraus einvernehmlich zu verhindern. Der deutsche Gesetzgeber will nunmehr mit § 89a AO-E eine eigenstandige nationale Rechtsgrundlage fur bi- und multilaterale Vorabverstandigungsverfahren schaffen (Ditz/Barsch/Engelen/Quilitzsch, DStR 2020, 73).

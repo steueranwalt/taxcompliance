@@ -1,0 +1,26 @@
+# Kapitalvermögen
+
+## Seiten
+
+- [laufende Erträge](laufende-Erträge.md)
+- [Währungsgeschäfte](Währungsgeschäfte.md)
+- [Retrozessionen](Retrozessionen.md)
+- [GmbH-Anteile / Aktien](GmbH-Anteile-Aktien.md)
+- [Die Abgeltungsteuer](Die-Abgeltungsteuer.md)
+- [Investmentsteuer](Investmentsteuer.md)
+- [Kapitallebensversicherung](Kapitallebensversicherung.md)
+- [Unbenannte Seite](Unbenannte-Seite.md)
+- [Stückzinsen](Stückzinsen.md)
+- [Unentgeltliche Depotüberträge (§ 43 Abs. 1 Satz 5 und 6 EStG)](Unentgeltliche-Depotüberträge-(§-43-Abs.-1-Satz-5-und-6-EStG)/README.md)
+- [Steuertarif](Steuertarif.md)
+- [KapESt: Ausnahmen für Unternehmen (§ 43 Abs. 2 Satz 3 bis 8 EStG)](KapESt-Ausnahmen-für-Unternehmen-(§-43-Abs.-2-Satz-3-bis-8-EStG)/README.md)
+- [Kapitalertragsteuerabzug bei beschränkt steuerpflichtigen Einkünften aus Kapitalvermögen (§ 49 Abs. 1 Nr. 5 EStG)](Kapitalertragsteuerabzug-bei-beschränkt-steuerpflichtigen-Einkünften-au-6fdca558.md)
+- [Verlustverrechnung, § 20 Abs. 6 EStG](Verlustverrechnung,-§-20-Abs.-6-EStG.md)
+- [KapESt Dividenden](KapESt-Dividenden.md)
+- [KapESt Veräusserungsgewinne](KapESt-Veräusserungsgewinne.md)
+- [KapESt Zins](KapESt-Zins.md)
+- [KapESt - benötigte Informationen](KapESt-benötigte-Informationen.md)
+- [Prompt Gutachten zu Dividende + Veräusserungsgewinn / Zins ](Prompt-Gutachten-zu-Dividende-+-Veräusserungsgewinn-Zins.md)
+- [Prompt Gutachten zu Kapitalforderungen mit typischerweise gewinnabhängiger Verzinsung](Prompt-Gutachten-zu-Kapitalforderungen-mit-typischerweise-gewinnabhängi-12b022f5.md)
+- [Vielen Dank für den Hinweis! Ich habe mich in der Begrifflichkeit vertan. Die Normen § 20 Abs. 1 Nr. 4 EStG und § 20 Abs. 2 Nr. 4 EStG beziehen sich nicht auf "Genussrechte", sondern auf Kapitalforderungen mit typischerweise gewinnabhängiger Verzinsung (N](Vielen-Dank-für-den-Hinweis!-Ich-habe-mich-in-der-Begrifflichkeit-verta-36bfa34e.md)
+- [Gewinnrealisierung](Gewinnrealisierung.md)

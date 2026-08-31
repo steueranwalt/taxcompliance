@@ -1,0 +1,28 @@
+# Art. 5
+
+## Seiten
+
+- [Art. 5 DBA - Betriebsstätte](Art.-5-DBA-Betriebsstätte.md)
+- [Schrifttum](Schrifttum.md)
+- [Verwaltungsvorschriften / -anweisungen](Verwaltungsvorschriften-anweisungen.md)
+- [Verwaltungsvorschriften / -anweisungen DE](Verwaltungsvorschriften-anweisungen-DE.md)
+- [Konsultationsvereinbarung wg Covid 19](Konsultationsvereinbarung-wg-Covid-19.md)
+- [wesentliche Divergenzen](wesentliche-Divergenzen.md)
+- [Rechtsprechung](Rechtsprechung.md)
+- [Checkliste Betriebsstätte](Checkliste-Betriebsstätte.md)
+- [Abs. 1 Definition](Abs.-1-Definition.md)
+- [Betriebsstätten nach Schweizer Recht](Betriebsstätten-nach-Schweizer-Recht.md)
+- [Abs. 2 Katalog](Abs.-2-Katalog.md)
+- [Baustelle als Betriebsstätte CH](Baustelle-als-Betriebsstätte-CH.md)
+- [Bau- und Montagebetriebsstätten](Bau-und-Montagebetriebsstätten.md)
+- [Abs. 3 Hilfs- und Vorbereitungstätigkeiten](Abs.-3-Hilfs-und-Vorbereitungstätigkeiten.md)
+- [Vorbereitungstätigkeiten](Vorbereitungstätigkeiten.md)
+- [Abs. 4 abhängiger Vertreter](Abs.-4-abhängiger-Vertreter.md)
+- [Vertreterbetriebsstätte](Vertreterbetriebsstätte.md)
+- [Abs. 5 unabhängiger Vertreter - Independent Agent Exception](Abs.-5-unabhängiger-Vertreter-Independent-Agent-Exception.md)
+- [Die Begriffe "abhängiger Vertreter" nach Artikel 5 Absatz 4 und "unabhängiger Vertreter" nach Artikel 5 Absatz 5 des DBA Deutschland-Schweiz beziehen sich auf verschiedene Arten von Vertretern eines Unternehmens, die in einem anderen Vertragsstaat tätig s](Die-Begriffe-abhängiger-Vertreter-nach-Artikel-5-Absatz-4-und-unabhängi-99ecf2f3.md)
+- [Abs. 6 Beherrschung „Anti-Organ-Klausel“](Abs.-6-Beherrschung-„Anti-Organ-Klausel“.md)
+- [steuerrechtliche Ausscheidung](steuerrechtliche-Ausscheidung.md)
+- [OECD-MA-Änderungen ](OECD-MA-Änderungen.md)
+- [Änderungsprotoll 2023](Änderungsprotoll-2023.md)
+- [Home Office](Home-Office.md)

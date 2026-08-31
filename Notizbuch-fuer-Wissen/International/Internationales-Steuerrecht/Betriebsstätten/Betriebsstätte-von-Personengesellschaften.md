@@ -1,0 +1,3 @@
+# Betriebsstätte von Personengesellschaften
+
+Die auslandische Personengesellschaft verfugt uber eine Betriebsstatte im Sinne es DBA Großbritannien, wenn die Limited als geschaftsfuhrende Gesellschafterin der auslandischen Personengesellschaft einen Mietvertrag uber die Nutzung eines Buroraums sowie die Inanspruchnahme diverser Buroinfrastruktur in Großbritannien abgeschlossen hat, wenn der Buroraum der auslandischen Personengesellschaft bei Bedarf tatsachlich zur Verfugung stand und wenn es sich dabei nicht lediglich um eine Schein- oder sogenannte Briefkastenadresse gehandelt hat (FG Baden-Wurttemberg vom 30.6.2020 – 5 K 3305/17).

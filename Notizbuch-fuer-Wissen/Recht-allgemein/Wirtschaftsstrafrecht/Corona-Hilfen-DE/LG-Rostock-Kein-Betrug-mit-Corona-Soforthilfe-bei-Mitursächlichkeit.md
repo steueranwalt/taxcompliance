@@ -1,0 +1,10 @@
+# LG Rostock | Kein Betrug mit Corona-Soforthilfe bei Mitursächlichkeit
+
+Ausgeschnitten aus: <https://www.iww.de/pstr/urteilsbesprechungen-steuerstrafrecht/lg-rostock-kein-betrug-mit-corona-soforthilfe-bei-mitursaechlichkeit-f136520>
+
+| Das LG Rostock hat entschieden, dass ein Betrug bei unberechtigt erhaltenen Corona-Soforthilfen ausscheidet, wenn die Pandemie zumindest mitursachlich fur den Liquiditatsengpass des subventionierten Unternehmens war (19.8.20, 18 Qs 115/20, Abruf-Nr. [219380](<https://www.iww.de/pstr/quellenmaterial/abrufnummer/219380>)). |
+
+Ein Gastwirt G hatte Corona-Soforthilfe beantragt. Es gab aber mehrere Pfandungen aus Januar 20, die finanzielle Schwierigkeiten auch schon vor der Pandemie belegten. Dennoch hat das LG einen Betrugsverdacht verneint. Der Antragstext, in dem der G versichert hatte „…, dass die existenzbedrohliche Wirtschaftslage bzw. der Liquiditatsengpass eine Folgewirkung der Coronapandemie vom Fruhjahr 20 ist“, enthalte nicht die Aussage, dass diese alleinige Ursache fur die schlechte wirtschaftliche Situation des Unternehmens sei oder die Situation erst seit der Pandemie bestehe. Dies folgert das LG aus dem Begriff „Folgewirkung“. Auch aus dem Gesamteindruck des Forderformulars gehe nicht hervor, dass eine Erklarung dahingehend erwartet werde, dass die Pandemie alleinige Ursache fur die wirtschaftliche Lage des Unternehmens sei. Dementsprechend hatte der G keine falsche Versicherung abgegeben, obwohl sein Unternehmen bereits im Januar 20 wirtschaftliche Schwierigkeiten gehabt hatte.
+
+MERKE | Es kommt damit auf die Formulierungen im Antragsformular an. Werden wie im vorliegenden Fall (Land Mecklenburg-Vorpommern) ahnliche Formulierungen auch in Antragsformularen anderer Lander verwendet, durfte bei Mitursachlichkeit auch dort eine Betrugsstrafbarkeit ausscheiden. Nur wenn eindeutige Textformulierungen verwendet werden, ware ggf. anders zu entscheiden. Im Übrigen durfte statt eines Betruges eher (der speziellere) Subventionsbetrug einschlagig sein.(DR)  
+---

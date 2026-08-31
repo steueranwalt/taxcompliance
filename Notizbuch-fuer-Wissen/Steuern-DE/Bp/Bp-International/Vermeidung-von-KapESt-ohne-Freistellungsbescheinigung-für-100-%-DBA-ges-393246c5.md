@@ -1,0 +1,3 @@
+# Vermeidung von KapESt ohne Freistellungsbescheinigung für 100 % DBA-geschützte Fälle? 
+
+Anders als in vielen anderen Landern wird in Deutschland eine Nichterhebung von deutschen Quellensteuern ‒ insbesondere aufgrund der Regelungen eines DBA ‒ (grundsatzlich) nur gewahrt, wenn dem Glaubiger der Kapitalertrage oder Vergutungen auf Basis eines Freistellungsantrags eine Freistellungsbescheinigung vom BZSt zwecks teilweiser oder voller Abstandnahme vom Steuerabzug an der Quelle erteilt wurde (vgl. § 50c Abs. 2 S. 1 Nr. 1 EStG). Eine ruckwirkende Erteilung der Freistellungsbescheinigung auf zuruckliegende Veranlagungszeitraume ist gesetzlich nicht vorgesehen und wird lediglich durch das BMF bzw. BZSt mit Blick auf sog. „inlandische Registerfalle“ gewahrt.

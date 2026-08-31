@@ -10,6 +10,7 @@ Systematische Sammlung von Rechtstexten und Arbeitsmaterialien zur Tax Complianc
 | [`CH/`](CH/) | Schweizer Steuerrecht |
 | [`DE-CH/`](DE-CH/) | Grenzüberschreitende Fragen (DBA, Wegzug, Zuzug) |
 | [`Arbeitsmaterialien/`](Arbeitsmaterialien/) | Checklisten, Muster, interne Arbeitshilfen |
+| [`Notizbuch-fuer-Wissen/`](Notizbuch-fuer-Wissen/) | Export des SharePoint-OneNote-Notizbuchs (Abschnitte als Ordner) |
 
 ## Nutzung
 
@@ -17,4 +18,4 @@ Jedes Verzeichnis enthält ein eigenes `README.md` mit Übersicht der enthaltene
 
 ## Stand
 
-Letzter Bearbeitungsstand: 2026-05-26
+Letzter Bearbeitungsstand: 2026-07-14

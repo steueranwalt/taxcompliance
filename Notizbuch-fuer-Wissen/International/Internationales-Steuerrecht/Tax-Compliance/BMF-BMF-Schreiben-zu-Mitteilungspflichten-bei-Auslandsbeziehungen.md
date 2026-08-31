@@ -1,0 +1,7 @@
+# BMF | BMF-Schreiben zu Mitteilungspflichten bei Auslandsbeziehungen
+
+Ausgeschnitten aus: <https://www.iww.de/pstr/steuern-und-recht-aktuell/bmf-bmf-schreiben-zu-mitteilungspflichten-bei-auslandsbeziehungen-f146797>
+
+| Mit Schreiben vom 26.4.22 aktualisiert das BMF die Verwaltungsanweisung zu Mitteilungspflichten bei Auslandsbeziehungen nach § 138 Abs. 2 und § 138b AO (IV B 5 - S 0301/19/10009 :001, 2022/0391038, Abruf-Nr. [229213](<https://www.iww.de/pstr/quellenmaterial/abrufnummer/229213>)). Das Schreiben ersetzt die BMF-Schreiben vom 5.2.18 (BStBl I 18, 289), 18.7.18 (BStBl I 18, 815), 18.9.20 (BStBl I 20. 971) und 28.12.20 (BStBl I 21, 55) mit Wirkung ab 1.1.22. Der bisherige Vordruck „Mitteilung nach § 138b der Abgabenordnung (AO)“ gilt unverandert fort. |
+
+Die betreffenden Mitteilungspflichten sind nach § 379 Abs. 2 Nr. 1 oder 1d AO bußgeldbewehrt (Geldbuße bis 25.000 EUR). Fur die Verfolgungsverjahrung bei Unterlassen der Mitteilung gibt das BMF-Schreiben (vgl. Rn. 38) vor, dass diese nicht mit dem Ablauf der Frist nach § 138 Abs. 5 AO, § 138b Abs. 4 S. 1 AO, sondern gewohnlich erst zu dem Zeitpunkt beginnt, zu dem an der Erfullung kein Interesse mehr besteht, z. B., weil im Rahmen einer Betriebsprufung die entsprechenden Feststellungen getroffen worden sind. Außerdem ist bei Verstoßen gegen die Mitteilungspflichten „im Regelfall“ die zustandige BuStra einzuschalten (Rn. 39).(DR)

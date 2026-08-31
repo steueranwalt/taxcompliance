@@ -1,0 +1,3 @@
+# Feststellungslast für den späteren Zugang
+
+Macht der Adressat des Briefes geltend, die Sendung spater erhalten zu haben, muss er, um Zweifel zu begrunden, substantiiert Tatsachen vortragen, die den Schluss darauf zulassen, dass ein anderer Geschehensablauf als der typische -- Zugang binnen dreier Tage nach Aufgabe zur Post -- ernstlich in Betracht zu ziehen sei (Poststempel des Briefumschlages, Eingangsvermerk, Zeugen) (BFH 5.12.74, [V R 111/74](<https://dejure.org/dienste/vernetzung/rechtsprechung?Text=V%20R%20111/74#1537686881c7073351c9>), [BStBl II 75, 286](<https://dejure.org/dienste/vernetzung/rechtsprechung?Text=BStBl%20II%2075,%20286#15376868814c69908e3f>)).

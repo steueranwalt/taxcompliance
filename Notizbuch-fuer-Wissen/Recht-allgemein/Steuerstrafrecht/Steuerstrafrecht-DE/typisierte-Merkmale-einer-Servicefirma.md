@@ -1,0 +1,15 @@
+# typisierte Merkmale einer Servicefirma
+
+Verdacht einer „Servicefirma": Dabei werden mehrere rechnungsstellende Firmen (sog. Servicefirmen) hintereinander geschaltet, um Schwarzlohnzahlungen beim Endverbraucher buchhalterisch abzudecken und das systematische Vorenthalten von Lohnsteuer- und Sozialversicherungsbeitragen auf Seiten des Endverbrauchers zu verschleiern.
+
+Das Betatigungsfeld der Servicefirmen, die vorrangig in der Gesellschaftsform der Gesellschaft mit beschrankter Haftung und der Einschaltung von „Strohmanngeschaftsfuhrern" betrieben werden, beschrankt sich auf das entgeltliche Inverkehrbringen von Scheinrechnungen.
+
+In der Regel firmieren diese „Servicefilmen" unter einer tatsachlich existenten Geschaftsadresse (angemieteter Buroraum, ggf. Burogemeinschaft mit anderen Serviceunternehmen) und verfugen uber keine oder nur eine geringe Anzahl pro forma kurzzeitig gemeldeter Arbeitnehmer, die dann als Geringverdiener keine oder nur geringe Lohnsteuerzahlungen auslosen.
+
+Nach korrekter steuerlicher Anmeldung (und Anmeldung bei weiteren Institutionen wie Sozialversicherungstrager, Handwerkskammer, Berufsgenossenschaft, etc.) werden von den Servicefirmen zunachst auch monatliche Umsatzsteuervoranmeldungsdaten ubermittelt. Dabei ergeben sich in der Regel trotz erheblicher Umsatzzahlen keine nennenswerten Vorauszahlungen, da den Ausgangsrechnungen mit 19%igen Umsatzsteuerausweis auf der Betriebsausgabenseite entsprechen fingierte und vorsteuerbehaftete Subunternehmerrechnungen anderer Rechnungsschreiber gegenuber gestellt werden.
+
+Durch die Weiterberechnung der (vom Endverbraucher erbrachten) Leistungen zum Schein auf mehrere Subunternehmerebenen und verhaltnismaßig zeitnahe Einschaltung von abtauchenden „Strohmanngeschaftsfuhrern" oder Übertragung der Geschaftsanteile und Geschaftsfuhrung auf Alias-Personen wird letztendlich eine Überprufung der tatsachlichen Geschaftsablaufe erschwert bzw. verhindert.
+
+Nach verhaltnismaßig kurzer Zeit werden die angemieteten Buroraume aufgegeben und die Gesellschaftsanteile an einen nicht greifbaren Firmenbestatter - vorzugsweise unter Verwendung von Alias- oder gefalschter Personalien - veraußert. Verantwortliche dieser Scheinfirmen sind dann nicht mehr greifbar und eine Überprufung von Firmenunterlagen in der Regel nicht mehr moglich.
+
+Die aufgrund ruckwirkend versagten Vorsteuerabzugs auflaufenden Steuerschulden sind nicht mehr beitreibbar, die tatsachlichen Drahtzieher bleiben unerkannt. Aus den bislang gefuhrten Kettenbetrugsverfahren ist bekannt, dass die den Rechnungsempfangern in Rechnung gestellten Entgelte ubenwiegend auf das Geschaftskonto der betreffenden Servicefirma uberwiesen werden (um die vermeintliche Durchfuhrung der abgerechneten Geschafte zu unterstreichen bzw. moglichst glaubhaft erscheinen zu lassen) und zeitnah - ggf. in Sammelbetragen - in bar vom Konto abgehoben werden. Nach Einbehalt einer „Provision" fur das Ausstellen der Rechnungen fließen die Rechnungsbetrage als sog. „Kickbackzahlungen" zeitnah an den Rechnungsempfanger zuruck.

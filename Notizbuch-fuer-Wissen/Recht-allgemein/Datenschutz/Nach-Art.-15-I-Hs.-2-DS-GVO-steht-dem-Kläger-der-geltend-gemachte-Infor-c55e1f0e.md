@@ -1,0 +1,3 @@
+# Nach Art. 15 I Hs. 2 DS-GVO steht dem Kläger der geltend gemachte Informationsanspruch zu. Dieser ist nicht nach § 32c AO ausgeschlossen (Bleschick, DStR 2018, 1050, 1053). Diese Rechtsgrundlagen sind seit dem 25.5.2018 in Kraft. Nach Art. 15 I Hs. 2 DS-G
+
+Nach Art. 15 I Hs. 2 DS-GVO steht dem Klager der geltend gemachte Informationsanspruch zu. Dieser ist nicht nach § 32c AO ausgeschlossen (Bleschick, DStR 2018, 1050, 1053). Diese Rechtsgrundlagen sind seit dem 25.5.2018 in Kraft. Nach Art. 15 I Hs. 2 DS-GVO haben naturliche Personen das Recht auf Auskunft uber die verarbeiteten personenbezogenen Daten.

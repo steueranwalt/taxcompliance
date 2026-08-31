@@ -1,0 +1,45 @@
+TermSet;TermPath;DE;EN;FR
+Rechtsgebiet;Öffentliches Recht;Öffentliches Recht;Public law;Droit public
+Rechtsgebiet;Öffentliches Recht|Verwaltungsrecht;Verwaltungsrecht;Administrative law;Droit administratif
+Rechtsgebiet;Öffentliches Recht|Verfassungsrecht;Verfassungsrecht;Constitutional law;Droit constitutionnel
+Rechtsgebiet;Öffentliches Recht|Sozialversicherungsrecht;Sozialversicherungsrecht;Social security law;Droit des assurances sociales
+Rechtsgebiet;Öffentliches Recht|Ausländer- und Asylrecht;Ausländer- und Asylrecht;Immigration and asylum law;Droit des étrangers et de l'asile
+Rechtsgebiet;Öffentliches Recht|Datenschutz;Datenschutz;Data protection law;Droit de la protection des données
+Rechtsgebiet;Öffentliches Recht|Steuerrecht;Steuerrecht;Tax law;Droit fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Direkte Steuern;Direkte Steuern;Direct taxes;Impôts directs
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Indirekte Steuern;Indirekte Steuern;Indirect taxes;Impôts indirects
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Steuerverfahrensrecht;Steuerverfahrensrecht;Tax procedure law;Droit de procédure fiscale
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Steuervollstreckung;Steuervollstreckung;Tax enforcement;Recouvrement fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Steuerstrafrecht;Steuerstrafrecht;Tax criminal law;Droit pénal fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht;Internationales Steuerrecht;International tax law;Droit fiscal international
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht|Doppelbesteuerungsrecht;Doppelbesteuerungsrecht;Tax treaty law;Droit conventionnel fiscal
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht|Verrechnungspreise;Verrechnungspreise;Transfer pricing;Prix de transfert
+Rechtsgebiet;Öffentliches Recht|Steuerrecht|Internationales Steuerrecht|Amtshilfe und Informationsaustausch;Amtshilfe und Informationsaustausch;Mutual assistance and exchange of information;Assistance administrative et échange de renseignements
+Rechtsgebiet;Privatrecht;Privatrecht;Private law;Droit privé
+Rechtsgebiet;Strafrecht;Strafrecht;Criminal law;Droit pénal
+Rechtsgebiet;Verfahrensrecht;Verfahrensrecht;Procedural law;Droit procédural
+Rechtsgebiet;Verfahrensrecht|Steuerverfahrensrecht;Steuerverfahrensrecht;Tax procedure;Procédure fiscale
+Rechtsgebiet;Verfahrensrecht|Gerichtsverfahren;Gerichtsverfahren;Judicial proceedings;Procédure contentieuse
+Rechtsgebiet;Verfahrensrecht|Rechtsschutz;Rechtsschutz;Legal remedies;Voies de droit
+Rechtsordnung;Schweiz (CH);Schweiz (CH);Switzerland (CH);Suisse (CH)
+Rechtsordnung;Schweiz (CH)|Bund;Bund;Federal;Confédération
+Rechtsordnung;Schweiz (CH)|Kantonal;Kantonal;Cantonal;Cantonal
+Rechtsordnung;Deutschland (DE);Deutschland (DE);Germany (DE);Allemagne (DE)
+Rechtsordnung;Deutschland (DE)|Bundesrecht;Bundesrecht;Federal law;Droit fédéral
+Rechtsordnung;Deutschland (DE)|Landesrecht;Landesrecht;State law;Droit des Länder
+Rechtsordnung;Österreich (AT);Österreich (AT);Austria (AT);Autriche (AT)
+Rechtsordnung;Europäische Union (EU);Europäische Union (EU);European Union (EU);Union européenne (UE)
+Rechtsordnung;OECD;OECD;OECD;OCDE
+Rechtsordnung;International / Bilateral;International / Bilateral;International / Bilateral;International / Bilatéral
+Dokumenttyp;Urteil / Rechtsprechung;Urteil / Rechtsprechung;Case law / Judgment;Jurisprudence
+Dokumenttyp;Verwaltungsanweisung;Verwaltungsanweisung;Administrative guidance;Instruction administrative
+Dokumenttyp;Gesetz / Verordnung;Gesetz / Verordnung;Statute / Regulation;Loi / Ordonnance
+Dokumenttyp;Gesetzesmaterialien;Gesetzesmaterialien;Legislative materials;Travaux préparatoires
+Dokumenttyp;Fachaufsatz;Fachaufsatz;Article;Article de doctrine
+Dokumenttyp;Kommentar (Werk);Kommentar (Werk);Treatise / Commentary;Commentaire
+Dokumenttyp;Merkblatt / Leitfaden;Merkblatt / Leitfaden;Guidance note;Guide / Fiche
+Dokumenttyp;Arbeitshilfe / Checkliste;Arbeitshilfe / Checkliste;Checklist / Work aid;Aide-mémoire
+Dokumenttyp;Präsentation;Präsentation;Presentation;Présentation
+Dokumenttyp;Vertrag / Vereinbarung;Vertrag / Vereinbarung;Contract / Agreement;Contrat / Accord
+Dokumenttyp;Internes Memo;Internes Memo;Internal memo;Note interne
+Dokumenttyp;Datensatz / Grounds;Datensatz / Grounds;Dataset / Grounds;Jeu de données

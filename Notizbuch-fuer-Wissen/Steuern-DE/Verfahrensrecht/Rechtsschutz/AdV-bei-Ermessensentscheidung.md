@@ -1,0 +1,3 @@
+# AdV bei Ermessensentscheidung
+
+Im Verfahren der Aussetzung oder Aufhebung der Vollziehung, das auf einen ermessensgebundenen Verwaltungsakt bezogen ist, darf das Gericht im Hinblick auf die Ermessensausubung durch die Verwaltungsbehorde jedoch nur prufen, ob die gesetzlichen Grenzen des Ermessens uberschritten sind oder ob von dem Ermessen in einer dem Zweck der Ermachtigung nicht entsprechenden Weise Gebrauch gemacht ist (§ 102 FGO; BFH vom 7.7.1976 I B 93/75, BFHE 119, 232, BStBl II 1976, 628; v. 9.1.1990 - VII B 127/89, BFH/NV 1990, 473; Graber/Stapperfend § 69 FGO Rn. 181). Bei Anlegung dieses Prufungsmaßstabes kann ein Ermessensfehler nicht festgestellt werden.

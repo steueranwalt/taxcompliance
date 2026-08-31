@@ -1,0 +1,3 @@
+# Eigen- vs. Fremdkapital
+
+

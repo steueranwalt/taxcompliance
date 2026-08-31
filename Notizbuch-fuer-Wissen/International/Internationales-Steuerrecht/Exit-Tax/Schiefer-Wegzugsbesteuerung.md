@@ -1,0 +1,9 @@
+# Schiefer Wegzugsbesteuerung
+
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-01c6255eff574511843b4282dfb96bd3!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)   
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-a8f0ffbea2bb4b819fc4d1b7e547846f!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)   
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-bcdd2e529fc74026b9e7a91fe09c3c16!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)   
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-dbf2562e2efb4092b65a303757016756!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)   
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-fd7a4b803b394e57a7876e1edb1bc6c7!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)   
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-3af9906f8f3043219b04a7c63717b44f!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)   
+![null](https://graph.microsoft.com/v1.0/siteCollections/obenhaus.sharepoint.com,c8e1905c-859d-437a-be04-8a06fe606322,df8e44e5-a0c7-49d4-a950-711142afe01e/onenote/resources/1-7672e92ae35e4315820827db804d17b9!1-57fde06f-c188-4d9b-868b-4dcac18b762b/$value)

@@ -1,0 +1,11 @@
+# Akteneinsicht | FGO hat Vorrang vor der DS-GVO
+
+Ausgeschnitten aus: <https://www.iww.de/pstr/urteilsbesprechungen-steuerstrafrecht/akteneinsicht-fgo-hat-vorrang-vor-der-ds-gvo-n132273>
+
+| Einsicht in Papierakten sind nur in den Raumen eines Gerichts oder einer Behorde unter Aufsicht eines im offentlichen Dienst stehenden Bediensteten moglich. Es gibt keinen Rechtsanspruch auf die Übersendung von Akten oder die Überlassung vollstandiger Kopien (FG Baden-Wurttemberg 17. 12.19, 2 K 770/17). |
+
+Form und Ort der Akteneinsicht wird durch § 78 Abs. 2 [und 3 FGO](<https://www.iww.de/nwb/?docid=78715_3>) ausdrucklich geregelt. Danach wird den Beteiligten Einsicht in die in Papierform gefuhrten Gerichtsakten und die dem Gericht vorgelegten Akten „in Dienstraumen“ gewahrt. Kanzleiraume eines Anwalts sind keine Dienstraume. Besondere Grunde, die ausnahmsweise eine Aktenubersendung rechtfertigen konnten, liegen nicht vor. Der Prozessbevollmachtigte kann nach Akteneinsicht an einem anderen Gericht oder einer Behorde dem FG eine Liste mit Aktenseiten, die er kopiert haben will, vorlegen. 
+
+§ 78 Abs. 3 S. 2 FGO verpflichtet das FG nicht, Behordenakten zu digitalisieren. Daher muss das FG keine elektronische Fassung der in Papierform gefuhrten Behordenakten herstellen und hierauf einen elektronischen Zugriff ermoglichen. Aus Art. 15 DS-GVO ergibt sich auch kein Anspruch auf Übersendung von Aktenkopien. Dessen Anwendung im Finanzgerichtsverfahren normiert die FGO nicht. Dies entspricht Art. 23 Abs. 1f DS-GVO zum Schutz der Unabhangigkeit der Justiz und von Gerichtsverfahren. Die FGO geht dem Datenschutzrecht und dem Auskunftsrecht aus Art. 15 DSGVO vor.
+
+Der Prozessbevollmachtigte einer Klagerin hatte beim FG beantragt, ihm Akteneinsicht durch Übersendung der vollstandigen Akten im Original oder in Kopie in seine Kanzleiraume zu gewahren. Er verwies in seinem Antrag auf das „Gebaren“ des Beklagten, der erst nach Aufforderung des Senats nach der mundlichen Verhandlung die Akten im Original vorgelegt hatte. Dies mache eine umfangreiche Recherche am Arbeitsplatz erforderlich. Eine solche sei ihm in einem Gericht weder moglich noch zumutbar. Bei den hamburgischen Gerichten gebe es auch keinen Kopierer fur Externe. Die Klagerin beantragte außerdem die Übersendung vollstandiger Kopien der Akten gem. Art. 15 DSGVO.

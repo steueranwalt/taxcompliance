@@ -1,0 +1,3 @@
+# Die Finca auf Mallorca – Steuerliche Folgen bei Erwerb, Unterhalt und Übertragung
+
+Glucklich ist, wer neben dem inlandischen Wohnsitz noch uber ein Ferienhaus verfugen kann. Befindet sich das bevorzugte Feriendomizil im Ausland, so gesellt sich zu den gewunschten klimatischen und kulturellen Gegebenheiten allerdings auch ein abweichendes Rechtssystem. Nicht nur gelegentlich fuhrt dies zu Überraschungen, die den Erholungsfaktor stellenweise infrage stellen. Als gemeinsamer Erfahrungsbericht eines Anlegers und ­eines mallorquinischen Beraters zeigt der Musterfall anhand einer typischen Immobilieninvestition auf den Balearen die steuerlichen Fragestellungen auf, denen sich der inlandische Kaufinteressent vor dem Erwerb eines Ferienhauses stellen sollte.
