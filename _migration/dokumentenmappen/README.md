@@ -106,18 +106,30 @@ Connect-PnPOnline: Specified method is not supported.
 
 Es braucht also **einmalig pro Tenant eine App-Registrierung**. Zwei Wege:
 
-**Weg A — über PnP.** Die Parameter dieses Cmdlets haben sich zwischen den
-Modulversionen geändert; erst die Signatur der installierten Version ansehen,
-nicht raten:
+**Weg A — über PnP.** Für PnP.PowerShell 3.3.0 verifizierte Signatur: das
+Cmdlet hat **kein** `-Interactive`; der Standard-Parametersatz ist bereits der
+interaktive Browser-Login, die Alternative ist `-DeviceLogin`.
+
+```powershell
+Register-PnPEntraIDAppForInteractiveLogin `
+    -ApplicationName "PnP-Wissen-Migration" `
+    -Tenant "obenhaus.onmicrosoft.com" `
+    -SharePointDelegatePermissions "AllSites.FullControl" `
+    -GraphDelegatePermissions "User.Read"
+```
+
+Der Aufruf legt die App an, öffnet die Zustimmung im Browser und gibt die
+ClientId zurück. Bei anderen Modulversionen zuerst die Signatur prüfen, statt
+Parameter zu raten:
 
 ```powershell
 Get-Module PnP.PowerShell -ListAvailable | Select-Object Name, Version
 Get-Command Register-PnPEntraIDAppForInteractiveLogin -Syntax
 ```
 
-Dann mit den Parametern aufrufen, die die Signatur tatsächlich anbietet —
-mindestens `-ApplicationName` und `-Tenant`. Der Aufruf legt die App an, öffnet
-die Zustimmung und gibt die ClientId zurück.
+Wird ein Berechtigungswert nicht angenommen, die beiden
+`*DelegatePermissions`-Parameter weglassen und die Berechtigungen nach Weg B
+Schritt 5 im Portal nachtragen.
 
 **Weg B — von Hand im Entra Admin Center.** Unabhängig von der Modulversion und
 das, was Weg A im Ergebnis auch tut:
@@ -135,13 +147,25 @@ Beide Wege brauchen die Entra-Rolle **Anwendungsadministrator** oder höher plus
 das Recht, Administratorzustimmung zu erteilen. Fehlt das, muss die IT ran — es
 ist eine Tenant-Einstellung, keine Einstellung der Site.
 
-Danach immer mit der ClientId verbinden:
+Danach immer mit der ClientId verbinden. **Die GUID muss wirklich eingesetzt
+werden** — bleibt der Platzhalter stehen, endet der Browser-Login mit
+
+```
+AADSTS90013: Invalid input received from the user.
+```
+
+weil Entra den Platzhaltertext als `client_id` erhält. Ein `AADSTS90013` an
+dieser Stelle ist also kein Berechtigungs-, sondern ein Tippproblem.
 
 ```powershell
-$clientId = "<ClientId aus der Registrierung>"
+$clientId = "11111111-2222-3333-4444-555555555555"   # GUID aus der Registrierung
 Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" `
                   -Interactive -ClientId $clientId -Tenant "obenhaus.onmicrosoft.com"
 ```
+
+Nützliche Nebenbeobachtung zur Tenant-Angabe: kommt `AADSTS90013` (oder ein
+anderer Fehler nach der Mandantenauflösung), war die `-Tenant`-Angabe richtig —
+eine falsche Domäne bricht schon vorher mit `AADSTS90002 Tenant not found` ab.
 
 Ist `obenhaus.onmicrosoft.com` nicht die Anfangsdomäne des Tenants, stattdessen
 die richtige `*.onmicrosoft.com`-Domäne oder die Tenant-GUID einsetzen. Die
