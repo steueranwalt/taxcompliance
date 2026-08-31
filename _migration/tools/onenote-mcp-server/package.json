@@ -1,0 +1,17 @@
+{
+  "name": "onenote-mcp-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lokaler MCP-Server, der OneNote-Notizbücher auf einer SharePoint-Site über Microsoft Graph (App-Only / Client-Credentials) lesbar macht.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2",
+    "zod": "^4.4.3"
+  }
+}
