@@ -48,7 +48,13 @@ elseif ($WhatIf) {
 }
 else {
     Write-Step "Aktiviere Feature Dokumentenmappen ($script:DocumentSetsFeatureId) ..."
-    Enable-PnPFeature -Scope Site -Identity $script:DocumentSetsFeatureId -Force
+    # Kein -Force: der Parameter ist in PnP.PowerShell >= 3.x veraltet und loest
+    # dort einen Entfernen-und-neu-Hinzufuegen-Zyklus aus. Beobachtet auf einem
+    # Live-Tenant: das Feature war aktiv, "Enable-PnPFeature ... -Force" schlug
+    # mit "not installed in this farm, and cannot be added to this scope" fehl
+    # UND deaktivierte das Feature dabei. Ohne -Force ist Aktivieren eines
+    # bereits aktiven Features ein No-Op statt eines Entfernungsversuchs.
+    Enable-PnPFeature -Scope Site -Identity $script:DocumentSetsFeatureId
     Write-Ok "Feature aktiviert."
 }
 
@@ -71,7 +77,7 @@ if ($docSetBase) {
     Write-Ok "Basis-Inhaltstyp vorhanden: $($docSetBase.Name) ($script:CtIdDocumentSet)"
 }
 else {
-    throw "Basis-Inhaltstyp $script:CtIdDocumentSet nicht gefunden, obwohl das Feature aktiv ist. Deactivate/Reactivate erzwingt die Provisionierung neu:`n  Disable-PnPFeature -Scope Site -Identity $script:DocumentSetsFeatureId -Force`n  Enable-PnPFeature  -Scope Site -Identity $script:DocumentSetsFeatureId -Force"
+    throw "Basis-Inhaltstyp $script:CtIdDocumentSet nicht gefunden, obwohl das Feature aktiv ist. NICHT -Force verwenden (siehe README, Abschnitt 'Bekannte Falle: -Force bei Enable/Disable-PnPFeature'). Neu aktivieren ueber die native SharePoint-Oberflaeche: <Site-URL>/_layouts/15/ManageFeatures.aspx?Scope=Site -> 'Document Sets' aktivieren."
 }
 
 # --- 3. Inhaltstypen-Verwaltung in der Bibliothek ------------------------

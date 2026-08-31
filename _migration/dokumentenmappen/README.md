@@ -183,6 +183,53 @@ Get-PnPConnection | Select-Object Url, ClientId
 Get-PnPWeb | Select-Object Title, ServerRelativeUrl
 ```
 
+### Bekannte Falle: `-Force` bei Enable/Disable-PnPFeature
+
+**`-Force` bei `Enable-PnPFeature` / `Disable-PnPFeature` niemals manuell verwenden.**
+In PnP.PowerShell ≥ 3.x ist der Parameter als veraltet markiert und löst intern
+einen Entfernen-und-neu-Hinzufügen-Zyklus aus, statt ein reines Reaktivieren zu
+sein.
+
+Beobachtet auf einem Live-Tenant: das Feature Dokumentenmappen war laut
+`Get-PnPFeature` aktiv. `Enable-PnPFeature -Scope Site -Identity <Id> -Force`
+sollte die Provisionierung erzwingen, schlug aber ab mit
+
+```
+WARNING: Parameter 'Force' is obsolete.
+Enable-PnPFeature: Feature with Id '...' is not installed in this farm,
+and cannot be added to this scope.
+```
+
+und **deaktivierte dabei das zuvor aktive Feature**, statt es zu reaktivieren —
+danach lieferte `Get-PnPFeature -Scope Site -Identity <Id>` keine Zeile mehr.
+Die intern versuchte Entfernung gelang, das Neu-Hinzufügen scheiterte.
+
+Fehlt der Basis-Inhaltstyp `0x0120D520`, obwohl das Feature aktiv ist (siehe
+`Enable-Dokumentenmappen.ps1`), NICHT mit `-Force` reaktivieren. Stattdessen:
+
+1. Ohne `-Force` versuchen — schadlos, da kein Entfernen-Zyklus ausgelöst wird,
+   behebt auf dem beobachteten Tenant aber die eigentliche Ursache nicht:
+   ```powershell
+   Enable-PnPFeature -Scope Site -Identity 3bae86a2-776d-499d-9db8-fa4cd926e061
+   ```
+   Live beobachtet: **derselbe Fehler auch ohne `-Force`**
+   (`... is not installed in this farm, and cannot be added to this scope.`).
+   Das zeigt: die Blockade liegt nicht am Parameter `-Force`, sondern generell
+   an der Reaktivierung dieser Feature-ID über PnP/CSOM auf diesem Tenant.
+2. Über die native SharePoint-Oberfläche aktivieren — das umgeht CSOM
+   vollständig und war der Weg, der auf dem betroffenen Tenant funktionierte:
+   ```
+   <Site-URL>/_layouts/15/ManageFeatures.aspx?Scope=Site
+   ```
+   Dort **Document Sets** suchen und **Activate** klicken. Fehlt die Zeile in
+   der Liste komplett, ist es keine PnP-Eigenheit mehr, sondern vermutlich eine
+   Tenant-Richtlinie — dann den SharePoint-Admin hinzuziehen.
+
+`Enable-Dokumentenmappen.ps1` ruft `Enable-PnPFeature` seit diesem Befund ohne
+`-Force` auf; da der Aufruf dort nur erfolgt, wenn das Feature laut
+`Get-PnPFeature` noch **nicht** aktiv ist, ist ein Entfernen-Zyklus dort gar
+nicht möglich.
+
 ### 3.2 Die vier Schritte
 
 ```powershell
