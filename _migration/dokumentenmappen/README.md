@@ -86,9 +86,57 @@ Voraussetzungen: PnP.PowerShell ≥ 2.x, Site-Collection-Administrator auf
 `/sites/Wissen`, und die `Wissen*`-Spalten aus
 [`../termstore/`](../termstore/WISSEN-LIBRARY-COLUMNS.md).
 
+### 3.1 Verbindung herstellen
+
+Jedes Skript und jede Prüfabfrage braucht eine bestehende PnP-Verbindung. Ohne
+sie kommt nur `You are not signed in. Please use Connect-PnPOnline to connect.`
+
+```powershell
+Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" -Interactive
+```
+
+**Seit PnP.PowerShell 2.2 braucht `-Interactive` eine eigene `-ClientId`.** Die
+frühere mehrmandantenfähige «PnP Management Shell»-App wurde von Microsoft
+zurückgezogen; ohne ClientId bricht der Aufruf mit einem Hinweis auf ein
+fehlendes Anwendungskonto ab. Einmalig pro Tenant registrieren:
+
+```powershell
+# einmalig, braucht Entra-Rolle Anwendungsadministrator oder höher
+Register-PnPEntraIDAppForInteractiveLogin `
+    -ApplicationName "PnP-Wissen-Migration" `
+    -Tenant "obenhaus.onmicrosoft.com" `
+    -Interactive
+```
+
+Der Aufruf gibt eine ClientId zurück. Danach immer damit verbinden:
+
+```powershell
+$clientId = "<ClientId aus der Registrierung>"
+Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" `
+                  -Interactive -ClientId $clientId -Tenant "obenhaus.onmicrosoft.com"
+```
+
+Ist `obenhaus.onmicrosoft.com` nicht die Anfangsdomäne des Tenants, stattdessen
+die richtige `*.onmicrosoft.com`-Domäne oder die Tenant-GUID einsetzen. Die
+Skripte nehmen `-ClientId` und `-Tenant` auch selbst an, zusammen mit `-Connect`:
+
+```powershell
+.\Convert-FoldersToDocumentSets.ps1 -ReportOnly -Connect -Interactive `
+    -ClientId $clientId -Tenant "obenhaus.onmicrosoft.com"
+```
+
+Verbindung prüfen:
+
+```powershell
+Get-PnPConnection | Select-Object Url, ClientId
+Get-PnPWeb | Select-Object Title, ServerRelativeUrl
+```
+
+### 3.2 Die vier Schritte
+
 ```powershell
 cd _migration\dokumentenmappen
-Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/Wissen" -Interactive
+# Verbindung wie unter 3.1
 
 # Schritt 1 – Feature + Inhaltstypen-Verwaltung
 .\Enable-Dokumentenmappen.ps1 -WhatIf
@@ -118,13 +166,16 @@ an die beiden Folgeskripte durchgeben:
 .\Convert-FoldersToDocumentSets.ps1 -ContentTypeName "<vorhandener Inhaltstyp>"
 ```
 
-Prüfen lässt sich das mit:
+Prüfen lässt sich das mit (Verbindung nach 3.1 muss stehen):
 
 ```powershell
 Get-PnPContentType -List "Freigegebene Dokumente" |
     Where-Object { $_.Id.StringValue -like "0x0120D520*" } |
     Select-Object Name, @{n="Id";e={$_.Id.StringValue}}
 ```
+
+Leere Ausgabe heisst: es gibt noch keinen Inhaltstyp auf Basis
+`Dokumentenmappe` in der Bibliothek — dann Schritt 2 ausführen.
 
 Nach dem Probelauf im Browser prüfen: der Ordner trägt das Mappen-Symbol, ein
 Klick öffnet die Willkommensseite, die Dateien sind vollständig da.
