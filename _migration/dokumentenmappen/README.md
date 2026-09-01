@@ -35,7 +35,9 @@ Die Bibliothek hat auf oberster Ebene neun Ordner:
 | Wissen | 99 KB | – | **nein** |
 
 Vollständige Liste mit Begründung pro Ordner:
-[`mappen-kandidaten.csv`](mappen-kandidaten.csv) (91 Zeilen, 59 empfohlene Mappen).
+[`mappen-kandidaten.csv`](mappen-kandidaten.csv) (91 Zeilen, 55 empfohlene Mappen -
+ursprünglich 59, vier davon live als eingebettete OneNote-Notizbücher erkannt,
+siehe Abschnitt 3.2).
 
 ### Drei Befunde, die die Migration bestimmen
 
@@ -316,12 +318,36 @@ Zurücknehmen:
 .\Convert-FoldersToDocumentSets.ps1 -Rollback -ReportPath .\dokumentenmappen-log.csv
 ```
 
+**Live-Befund beim ersten `-ReportOnly`-Lauf: vier weitere eingebettete
+OneNote-Notizbücher.** `04 Recht allgemein/Rechtsthemen CH`, `Rechtsthemen DE`,
+`Selbstanzeige` und `Zoll` enthalten selbst ein `.onetoc2` — das war bei der
+ursprünglichen Bestandsaufnahme (Abschnitt 1) nicht aufgefallen, weil dort nicht
+jeder der 82 Ebene-2-Ordner einzeln auf diese Datei geprüft wurde. Das Skript
+erkennt und schützt sie trotzdem automatisch (Grund `OneNote-Notizbuch` im
+Protokoll) — `mappen-kandidaten.csv` und `mappen-metadaten.csv` sind
+inzwischen entsprechend korrigiert (55 statt 59 Mappen).
+
+Prüfen, ob ein `-ReportOnly`-Lauf weitere solche Notizbücher findet, bevor
+`mappen-metadaten.csv` gepflegt wird:
+
+```powershell
+Import-Csv .\dokumentenmappen-log.csv -Delimiter ';' |
+    Where-Object { $_.Reason -eq 'OneNote-Notizbuch' } |
+    Select-Object Path
+```
+
+**Zweiter Live-Befund, ein echter Fehler:** `06 AI-Memory/memory` stand zwar in
+`mappen-kandidaten.csv` als `nein` (Arbeitsverzeichnis des Memory-Agenten, kein
+Wissensthema), war aber nicht in der `-ExcludePath`-Vorgabe des Skripts
+enthalten und wäre trotzdem umgewandelt worden. Behoben — die Vorgabe enthält
+jetzt `06 AI-Memory` mit.
+
 ### Wichtige Schalter
 
 | Schalter | Wirkung |
 |---|---|
 | `-Depth 1` | statt der Themenordner die acht Hauptordner umwandeln |
-| `-ExcludePath` | Ausnahmeliste; Vorgabe `General`, `Steuerrecht`, `Wissen` |
+| `-ExcludePath` | Ausnahmeliste; Vorgabe `General`, `Steuerrecht`, `Wissen`, `06 AI-Memory` |
 | `-Limit n` | nur die ersten n Kandidaten |
 | `-SystemUpdate` | ohne neue Version und ohne «Geändert von» zu überschreiben |
 | `-WhatIf` | zeigt jede Änderung, führt keine aus |
@@ -393,8 +419,8 @@ echten, live erhobenen Termsets `Themengebiet` und `Rechtsordnung` geprüft
 
 | | Mappen |
 |---|---:|
-| mit `Rechtsgebiet` | 59 von 59 — Pflichtfeld, jede Mappe bekommt einen Wert |
-| mit `Rechtsordnung` | 46 von 59 |
+| mit `Rechtsgebiet` | 55 von 55 — Pflichtfeld, jede Mappe bekommt einen Wert |
+| mit `Rechtsordnung` | 42 von 55 |
 | `Rechtsordnung` leer gelassen | 13 |
 
 `Rechtsgebiet` ist am Feld selbst `Required="TRUE"` — deshalb bekommt jede
