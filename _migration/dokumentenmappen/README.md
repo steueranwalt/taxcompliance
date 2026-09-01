@@ -353,6 +353,21 @@ Skript.
 und überspringt, was schon konfiguriert ist; scheitert der CSOM-Zugriff, gibt es
 die UI-Schritte aus und läuft weiter.
 
+**Live beobachtet: dieser CSOM-Zugriff scheitert unter PnP.PowerShell 3.3.0 auf
+PowerShell 7** mit `Unable to find type
+[Microsoft.Office.DocumentManagement.DocumentSets.DocumentSetTemplate]` — auch
+der Fallback über `Microsoft.SharePoint.Client.DocumentManagement.dll` findet
+nichts. Das ist kein transienter Fehler: die plattformübergreifende Version von
+PnP.PowerShell bringt diese (historisch .NET-Framework-only) Assembly
+offenbar gar nicht mit. Erneutes Ausführen behebt das nicht — direkt die
+UI-Schritte gehen, die das Skript ausgibt.
+
+**Dieser Schritt ist nicht optional.** Ohne ihn wird `Rechtsgebiet`/
+`Rechtsordnung` an der Mappe gesetzt, aber nicht auf die enthaltenen Dokumente
+durchgeschrieben — das ist der ganze Zweck dieser Migration. Erledigen, bevor
+Schritt 4 (`Set-MappeMetadata.ps1`) läuft, sonst wirkt Schritt 4 wie erfolgreich,
+ohne dass die Dokumente etwas davon sehen.
+
 Weitere Termsets in der Gruppe `Wissen`, aktuell ungenutzt, aber möglicher
 Ausgangspunkt für Folgearbeit:
 

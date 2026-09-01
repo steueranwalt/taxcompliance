@@ -197,13 +197,19 @@ elseif ($ct) {
     if (-not $done) {
         Write-Warn2 @"
 
-Geteilte Felder bitte einmalig in der UI setzen:
+WICHTIG - nicht optional: ohne diesen Schritt wird Rechtsgebiet/Rechtsordnung
+an der Mappe zwar gesetzt, aber NICHT auf die enthaltenen Dokumente
+durchgeschrieben. Genau das ist der Zweck dieser Migration - bitte jetzt
+einmalig in der UI nachholen, bevor Set-MappeMetadata.ps1 laeuft:
+
   Websiteeinstellungen -> Websiteinhaltstypen -> $ContentTypeName
     -> Einstellungen fuer Dokumentenmappen
     -> Geteilte Spalten:        $($SharedFields -join ', ')
     -> Spalten Willkommensseite: $($WelcomePageFields -join ', ')
     -> Zulaessige Inhaltstypen:  Dokument
-Alles andere in dieser Migration funktioniert auch ohne diesen Schritt.
+
+Ordner umwandeln (Schritt 3) und der Inhaltstyp selbst funktionieren auch ohne
+diesen Schritt - das automatische Durchschreiben auf die Dokumente nicht.
 "@
     }
 }
