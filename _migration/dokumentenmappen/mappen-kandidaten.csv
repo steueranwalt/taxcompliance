@@ -46,16 +46,16 @@
 2;04 Recht allgemein/Gesetze;ja;Themenordner - wird Wissensmappe
 2;04 Recht allgemein/Recht_CH_Diverse;ja;Themenordner - wird Wissensmappe
 2;04 Recht allgemein/Recht_DE_Diverse;ja;Themenordner - wird Wissensmappe
-2;04 Recht allgemein/Rechtsthemen CH;ja;Themenordner - wird Wissensmappe
-2;04 Recht allgemein/Rechtsthemen DE;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Rechtsthemen CH;nein;OneNote-Notizbuch (live erkannt bei Convert-FoldersToDocumentSets.ps1 -ReportOnly, nicht bei der urspruenglichen Bestandsaufnahme aufgefallen)
+2;04 Recht allgemein/Rechtsthemen DE;nein;OneNote-Notizbuch (live erkannt bei Convert-FoldersToDocumentSets.ps1 -ReportOnly, nicht bei der urspruenglichen Bestandsaufnahme aufgefallen)
 2;04 Recht allgemein/SchKG CH;ja;Themenordner - wird Wissensmappe
-2;04 Recht allgemein/Selbstanzeige;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Selbstanzeige;nein;OneNote-Notizbuch (live erkannt bei Convert-FoldersToDocumentSets.ps1 -ReportOnly, nicht bei der urspruenglichen Bestandsaufnahme aufgefallen)
 2;04 Recht allgemein/Sozialrecht_DE;ja;Themenordner - wird Wissensmappe
 2;04 Recht allgemein/Statistik und Daten;ja;Themenordner - wird Wissensmappe
 2;04 Recht allgemein/Strafrecht_CH;ja;Themenordner - wird Wissensmappe
 2;04 Recht allgemein/Strafrecht_DE;ja;Themenordner - wird Wissensmappe
 2;04 Recht allgemein/Vertragsrecht;ja;Themenordner - wird Wissensmappe
-2;04 Recht allgemein/Zoll;ja;Themenordner - wird Wissensmappe
+2;04 Recht allgemein/Zoll;nein;OneNote-Notizbuch (live erkannt bei Convert-FoldersToDocumentSets.ps1 -ReportOnly, nicht bei der urspruenglichen Bestandsaufnahme aufgefallen)
 1;05 eigene Literatur;nein;Ebene 1 bleibt navigativer Ordner - Mappen liegen auf Ebene 2
 2;05 eigene Literatur/01 Wassermeyer DBA;ja;Themenordner - wird Wissensmappe
 2;05 eigene Literatur/02 SchwarzArbG-Komm;ja;Themenordner - wird Wissensmappe

@@ -48,26 +48,36 @@ elseif ($WhatIf) {
 }
 else {
     Write-Step "Aktiviere Feature Dokumentenmappen ($script:DocumentSetsFeatureId) ..."
-    Enable-PnPFeature -Scope Site -Identity $script:DocumentSetsFeatureId -Force
+    # Kein -Force: der Parameter ist in PnP.PowerShell >= 3.x veraltet und loest
+    # dort einen Entfernen-und-neu-Hinzufuegen-Zyklus aus. Beobachtet auf einem
+    # Live-Tenant: das Feature war aktiv, "Enable-PnPFeature ... -Force" schlug
+    # mit "not installed in this farm, and cannot be added to this scope" fehl
+    # UND deaktivierte das Feature dabei. Ohne -Force ist Aktivieren eines
+    # bereits aktiven Features ein No-Op statt eines Entfernungsversuchs.
+    Enable-PnPFeature -Scope Site -Identity $script:DocumentSetsFeatureId
     Write-Ok "Feature aktiviert."
 }
 
 # --- 2. Basis-Inhaltstyp pruefen -----------------------------------------
-# Nach Aktivierung braucht SharePoint einen Moment, bis 0x0120D520 im
-# Websitesammlungs-Katalog auftaucht.
+# Reiner Lesezugriff, deshalb unabhaengig von -WhatIf mit vollen Versuchen:
+# nach Aktivierung braucht SharePoint einen Moment, bis 0x0120D520 im
+# Websitesammlungs-Katalog auftaucht. Ein Feature, das laut Get-PnPFeature
+# schon aktiv war (nicht erst hier aktiviert wurde), kann trotzdem ohne
+# Inhaltstyp dastehen, wenn die Provisionierung frueher nicht durchlief -
+# das ist kein Timing-Fall, den Wiederholen behebt, sondern ein blockierender
+# Befund, der IMMER gemeldet wird, auch unter -WhatIf.
 $docSetBase = $null
 foreach ($attempt in 1..6) {
     $docSetBase = Get-PnPContentType -Identity $script:CtIdDocumentSet -ErrorAction SilentlyContinue
     if ($docSetBase) { break }
-    if ($WhatIf) { break }
     Start-Sleep -Seconds 5
 }
 
 if ($docSetBase) {
     Write-Ok "Basis-Inhaltstyp vorhanden: $($docSetBase.Name) ($script:CtIdDocumentSet)"
 }
-elseif (-not $WhatIf) {
-    throw "Basis-Inhaltstyp $script:CtIdDocumentSet nicht gefunden. Feature-Aktivierung pruefen (Websiteeinstellungen -> Websitesammlungsfeatures -> Dokumentenmappen)."
+else {
+    throw "Basis-Inhaltstyp $script:CtIdDocumentSet nicht gefunden, obwohl das Feature aktiv ist. NICHT -Force verwenden (siehe README, Abschnitt 'Bekannte Falle: -Force bei Enable/Disable-PnPFeature'). Neu aktivieren ueber die native SharePoint-Oberflaeche: <Site-URL>/_layouts/15/ManageFeatures.aspx?Scope=Site -> 'Document Sets' aktivieren."
 }
 
 # --- 3. Inhaltstypen-Verwaltung in der Bibliothek ------------------------
