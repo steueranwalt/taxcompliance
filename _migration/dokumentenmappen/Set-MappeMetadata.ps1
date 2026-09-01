@@ -79,8 +79,8 @@ Import-Module PnP.PowerShell -ErrorAction Stop
 # Spalte heisst intern "Rechtsgebiet", ist aber an das Termset "Themengebiet"
 # gebunden (vgl. New-WissenMappeContentType.ps1).
 $FieldMap = @(
-    @{ Column = "Rechtsgebiet";  Field = "Rechtsgebiet";  TermSet = "Themengebiet"  }
-    @{ Column = "Rechtsordnung"; Field = "Rechtsordnung"; TermSet = "Rechtsordnung" }
+    @{ Column = "Rechtsgebiet";  Field = "Rechtsgebiet";  TermSet = "Themengebiet";  Multi = $false }
+    @{ Column = "Rechtsordnung"; Field = "Rechtsordnung"; TermSet = "Rechtsordnung"; Multi = $true  }
 )
 
 $MultiSeparator = " || "
@@ -166,17 +166,31 @@ function Test-TaxonomyEmpty {
 }
 
 function Set-TaxonomyValues {
-    <# Schreibt einen oder mehrere Terme in ein Managed-Metadata-Feld. #>
-    param($List, $ListItem, [string]$FieldName, $Entries)
+    <#
+      Schreibt einen oder mehrere Terme in ein Managed-Metadata-Feld.
 
-    # Ein Wert: TermPath ist der zuverlaessigste Weg bei Hierarchien.
-    if ($Entries.Count -eq 1) {
-        Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName `
-                                  -TermPath $Entries[0].Path -ErrorAction Stop | Out-Null
+      Der Schreibweg richtet sich nach der FELDEIGENSCHAFT (-Multi), nicht
+      nach der Anzahl Werte in der jeweiligen CSV-Zelle. Live-Befund: bei
+      einem einwertigen Feld mit genau einem Wert schlug -TermPath allein
+      mit "Taxonomy Term not found" fehl, obwohl derselbe Term im Trockenlauf
+      korrekt aufgeloest wurde - deshalb hier ebenfalls ein Fallback.
+    #>
+    param($List, $ListItem, [string]$FieldName, $Entries, [bool]$Multi)
+
+    if (-not $Multi) {
+        $entry = $Entries[0]
+        try {
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName `
+                                      -TermPath $entry.Path -ErrorAction Stop | Out-Null
+        }
+        catch {
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName `
+                                      -TermId $entry.Id -Label $entry.Label -ErrorAction Stop | Out-Null
+        }
         return
     }
 
-    # Mehrere Werte: Hashtable Label -> TermId.
+    # Mehrwertiges Feld: Hashtable Label -> TermId.
     $terms = @{}
     foreach ($e in $Entries) { $terms[$e.Label] = $e.Id.ToString() }
     try {
@@ -277,7 +291,7 @@ foreach ($row in $rows) {
         }
 
         try {
-            Set-TaxonomyValues -List $list -ListItem $item -FieldName $m.Field -Entries $entries
+            Set-TaxonomyValues -List $list -ListItem $item -FieldName $m.Field -Entries $entries -Multi:$m.Multi
             $anyWritten = $true
         }
         catch {
