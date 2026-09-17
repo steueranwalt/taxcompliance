@@ -50,6 +50,11 @@ function New-ListIfMissing {
     }
 }
 
+function Get-XmlEscaped {
+    param([string]$Text)
+    return [System.Security.SecurityElement]::Escape($Text)
+}
+
 function Add-Field {
     param(
         [string]$List,
@@ -66,14 +71,19 @@ function Add-Field {
         Write-Host "  Feld existiert bereits: $List / $InternalName"
         return
     }
+    $requiredAttr = if ($Required) { "TRUE" } else { "FALSE" }
+    $escapedDisplayName = Get-XmlEscaped $DisplayName
+
     switch ($Type) {
         "Choice" {
-            Add-PnPField -List $List -InternalName $InternalName -DisplayName $DisplayName `
-                -Type Choice -Choices $Choices -Required:$Required | Out-Null
+            $choiceXml = ($Choices | ForEach-Object { "<CHOICE>$(Get-XmlEscaped $_)</CHOICE>" }) -join ""
+            $fieldXml = "<Field Type='Choice' Name='$InternalName' StaticName='$InternalName' DisplayName='$escapedDisplayName' Required='$requiredAttr' Format='Dropdown'><CHOICES>$choiceXml</CHOICES></Field>"
+            Add-PnPFieldFromXml -List $List -FieldXml $fieldXml | Out-Null
         }
         "Lookup" {
-            Add-PnPField -List $List -InternalName $InternalName -DisplayName $DisplayName `
-                -Type Lookup -LookupList $LookupList -LookupField $LookupField -Required:$Required | Out-Null
+            $targetList = Get-PnPList -Identity $LookupList
+            $fieldXml = "<Field Type='Lookup' Name='$InternalName' StaticName='$InternalName' DisplayName='$escapedDisplayName' Required='$requiredAttr' List='{$($targetList.Id)}' ShowField='$LookupField' />"
+            Add-PnPFieldFromXml -List $List -FieldXml $fieldXml | Out-Null
         }
         default {
             Add-PnPField -List $List -InternalName $InternalName -DisplayName $DisplayName `
