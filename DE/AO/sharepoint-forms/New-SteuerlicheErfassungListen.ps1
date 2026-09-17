@@ -16,16 +16,27 @@
     -SiteUrl entsprechend setzen.
 
     Ausfuehrung (Beispiel):
-      Connect-PnPOnline -Url "https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei" -Interactive
-      .\New-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei"
+      .\New-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei" -ClientId "<Entra-App-ClientId>"
+
+    -ClientId ist erforderlich, wenn der Tenant die generische PnP-Management-Shell-App
+    (31359c7f-bd7e-475c-86db-fdb8c937548e) blockiert; dann eine tenant-eigene
+    App-Registrierung mit delegierter Berechtigung "AllSites.FullControl" verwenden.
 #>
 param(
     [Parameter(Mandatory = $true)]
-    [string]$SiteUrl
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $false)]
+    [string]$ClientId
 )
 
 $ErrorActionPreference = "Stop"
-Connect-PnPOnline -Url $SiteUrl -Interactive
+if ($ClientId) {
+    Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
+}
+else {
+    Connect-PnPOnline -Url $SiteUrl -Interactive
+}
 
 function New-ListIfMissing {
     param([string]$Title, [string]$Template = "GenericList")
