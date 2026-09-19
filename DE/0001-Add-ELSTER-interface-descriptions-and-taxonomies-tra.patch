@@ -1,0 +1,340 @@
+From b98ecccb51f3c8ce77c26176408cf3253c60a15a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 19 Sep 2026 15:36:12 +0200
+Subject: [PATCH] =?UTF-8?q?Add=20ELSTER=20interface=20descriptions=20and?=
+ =?UTF-8?q?=20taxonomies=20(transport=20layer,=20DIVA/error/Bescheidnummer?=
+ =?UTF-8?q?=20catalogs,=20Pr=C3=BCfziffernverfahren)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01F56cRJNwQtAGwk2BdFU1G8
+---
+ DE/AO/ELSTER-Infrastruktur/README.md          |  16 ++
+ .../elster-taxonomien-kataloge.md             | 142 ++++++++++++++++++
+ .../elster-transportschicht-und-verfahren.md  | 114 ++++++++++++++
+ DE/AO/README.md                               |   1 +
+ INDEX.md                                      |   1 +
+ 5 files changed, 274 insertions(+)
+ create mode 100644 DE/AO/ELSTER-Infrastruktur/README.md
+ create mode 100644 DE/AO/ELSTER-Infrastruktur/elster-taxonomien-kataloge.md
+ create mode 100644 DE/AO/ELSTER-Infrastruktur/elster-transportschicht-und-verfahren.md
+
+diff --git a/DE/AO/ELSTER-Infrastruktur/README.md b/DE/AO/ELSTER-Infrastruktur/README.md
+new file mode 100644
+index 0000000..9dc8b1a
+--- /dev/null
++++ b/DE/AO/ELSTER-Infrastruktur/README.md
+@@ -0,0 +1,16 @@
++# ELSTER-Infrastruktur: Schnittstellenbeschreibungen und Taxonomien
++
++Generische Transport-, Verwaltungs- und Nebenverfahrens-Infrastruktur von ELSTER, auf der jedes Fachverfahren (ESt, KSt, USt, GewSt, ErbSt, Lohnsteuer …) aufsetzt. Ausgewertet aus dem Ordner `01 Projekte/ELSTER-Entwickler` (11 Schnittstellenpakete + Referenzdaten), Stand der Pakete 2026-01 bis 2026-07-24, Sichtung 19.9.2026.
++
++**Wichtige Abgrenzung:** Die eigentlichen Formular-Schnittstellen der Steuererklärungen (ESt, KSt, USt-VA, GewSt, ErbSt mit ihren Kennziffern-Katalogen) liegen **nicht** in den gesichteten Unterlagen, sondern im separaten ERiC-/Vordruck-Entwicklerpaket. Die hier dokumentierte Infrastruktur ist die Schicht darunter (Transport, Authentifizierung, Datenabholung, Dokumenttyp- und Fehlercode-Kataloge).
++
++## Dokumente
++
++| Dokument | Inhalt |
++|---|---|
++| [`elster-transportschicht-und-verfahren.md`](elster-transportschicht-und-verfahren.md) | ElsterXML-Grundaufbau (TransferHeader/NutzdatenHeader), Authentifizierung/Verschlüsselung, Online-/Offline-Verfahren, Verfahren-Datenart-Vorgang-Taxonomie je Paket (ElsterDatenabholung, ElsterKontoabfrage, ElsterObjektspeicher/OTTER, RABE, ElsterLohn, LAVENDEL/HMS) |
++| [`elster-taxonomien-kataloge.md`](elster-taxonomien-kataloge.md) | DIVA-Schlüsselkatalog „Art des Schreibens", Fehlerliste/Klassifizierung, Bescheidnummern-Kataloge (ESt/GSt/USt), Prüfziffernverfahren, Finanzamtsdaten |
++
++## Bezug zu den übrigen `DE/AO`-Dokumenten
++
++Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`formulardaten-roherfassung.md`](../formulardaten-roherfassung.md), [`Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](../Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`../AStG/formulardaten-mitteilung-6-astg.md`](../../AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert.
+diff --git a/DE/AO/ELSTER-Infrastruktur/elster-taxonomien-kataloge.md b/DE/AO/ELSTER-Infrastruktur/elster-taxonomien-kataloge.md
+new file mode 100644
+index 0000000..50f66f3
+--- /dev/null
++++ b/DE/AO/ELSTER-Infrastruktur/elster-taxonomien-kataloge.md
+@@ -0,0 +1,142 @@
++# ELSTER-Taxonomien und Referenzkataloge
++
++**Quellen:** `DIVA_SK_ArtDesSchreibens_v21.0.0.zip` (Schlüsselkatalog „Art des Schreibens", Version 21.0.0, Stand 3.6.2026), `Fehlerliste.xml` (laufend gepflegt, ausgewertet 19.9.2026: 477 Einträge), `Bescheidnr_Januar_2026.zip` (Bescheidnummern ESt/GSt/USt), `Pruefung_der_Steuer_und_Steueridentifikatsnummer.pdf` (Stand 15.4.2026), `Finanzamtsdaten.xlsx`.
++
++## A. DIVA-Schlüsselkatalog „Art des Schreibens"
++
++**Zweck (Kap. 5.1 der Doku):** Die Steuerverwaltung verwendet Schlüsselkataloge, um verfahrensübergreifend ausgetauschten Entitäten eindeutige Schlüssel und verwaltungsübliche Bezeichnungen gemäss AEAO zu § 122 Tz. 3.1.1.1 zuzuweisen. Der Katalog „Art des Schreibens" definiert die Typen von Textdokumenten (Verwaltungsakte und sonstige Mitteilungen), die von der Steuerverwaltung elektronisch bereitgestellt werden.
++
++### I. Spalten des Schlüsselkatalogs (Tabellenblatt „Schlüssel" in `VDM_SK_ArtDesSchreibens_v21.0.0.xlsx`)
++
++| Spalte | In Abholungsrequest | In Abholungsresponse | Bedeutung |
++|---|---|---|---|
++| `DateibezeichnungID` | Nein | Ja | numerischer Schlüsselwert, identifiziert Dokumenttypen eindeutig |
++| `Klartext` | Nein | Nein | fachliche Beschreibung des Dokumenttyps |
++| `Gültig von` | Nein | Nein | frühestmöglicher Verwendungszeitpunkt |
++| `Gültig bis` | Nein | Nein | letztmöglicher Verwendungszeitpunkt |
++| `Dateibezeichnung` | Nein | Ja | fachliche Beschreibung, wird in der Datenabholung mitgeliefert |
++| `DateibezeichnungKurz` | Nein | Ja | Kurzbezeichnung gem. AEAO zu § 122 Tz. 3.1.1.1; wird u. a. im Betreff der Benachrichtigungsmail verwendet |
++| `Verwaltungsakt` | Nein | Nein | Ja/Nein — ob der bereitgestellte Dokumenttyp ein Verwaltungsakt ist |
++| `ELSTER-Dokumentengruppe` | Ja | Ja | gruppiert Dokumenttypen, nutzbar zur Filterung im Abholungsrequest (hiess bis Version 18 „Steuerart") |
++
++### II. Abholung
++
++Verfahren `ElsterDatenabholung`, Datenart `PostfachAnfrage`, plus `DatenartBereitstellung` aus der Excel-Tabelle.
++
++### III. Beispiel-Metadatenstruktur (Datenabholung, ein Anhang)
++
++```xml
++<Anhaenge xmlns="http://finkonsens.de/elster/anhaenge/simple/v3" version="3">
++  <Anhang>
++    <Dateibezeichnung>Feststellungsbescheid nach § 27 ff KStG</Dateibezeichnung>
++    <Dateityp>application/pdf</Dateityp>
++    <Dateiinhalt>… [Base64-codiertes unverschlüsseltes PDF] …</Dateiinhalt>
++    <Virengeprueft>false</Virengeprueft>
++    <Normalisiert>false</Normalisiert>
++    <MetadatenAnhang>
++      <MetadatumAnhang><SchluesselAnhang>DateibezeichnungKurz</SchluesselAnhang><WertAnhang>FB27KStG</WertAnhang></MetadatumAnhang>
++      <MetadatumAnhang><SchluesselAnhang>DateibezeichnungID</SchluesselAnhang><WertAnhang>003002</WertAnhang></MetadatumAnhang>
++    </MetadatenAnhang>
++  </Anhang>
++</Anhaenge>
++```
++
++### IV. Versionsverlauf (Auszug, Änderungsnachweis der Doku)
++
++| Version | Datum | Änderung |
++|---|---|---|
++| 14.0.1 | 16.5.2023 | Initiale Version |
++| 15.1.0 | 3.4.2024 | Art des Schreibens „Sonstiges Schreiben" ergänzt |
++| 16.0.0 | 12.8.2024 | diverse Arten für ESt, GewSt, KSt, ErbSt hinzugekommen |
++| 17.0.0 | 27.1.2025 | Office-Schreiben (Schlüssel `10nnnn`) hinzu; behördeninterne Arten entfernt; Spalte „(Abholungs-)Datenart" umbenannt |
++| 18.0.0 | 22.5.2025 | neue Arten mit `DateibezeichnungID ≥ 101551` |
++| 19.0.0 | 16.9.2025 | 28 neue Schlüssel (u. a. `000160`–`000183`, `003044`, `101027`); 4 Schlüssel umbenannt |
++| 21.0.0 | 3.6.2026 | aktueller Stand des gesichteten Katalogs |
++
++**Hinweis zur Vollständigkeit:** Die vollständige Werteliste (mehrere hundert `DateibezeichnungID`-Einträge) liegt als Excel-Tabellenblatt `Schlüssel` in `VDM_SK_ArtDesSchreibens_v21.0.0.xlsx` vor und ist hier aus Umfangsgründen nicht Zeile für Zeile reproduziert; Mapping-Tabelle DIVA → interner Dokumenttyp: siehe `Aenderungsbedarf_ELSTER_vs_Architektur_2026-07-24.md` im Ordner `ELSTER-Entwickler`.
++
++## B. Fehlerliste — Struktur und Klassifizierung
++
++**Schema:** `<Fehlerliste xmlns="http://www.elster.de/fehlerliste/v1"><Fehler><Komponente/><Unterkomponente/><Klassifizierung/><Nummer/><Text/></Fehler>…</Fehlerliste>`
++
++**Umfang (Stand der Sichtung):** 477 Fehlereinträge, 17 Komponenten (`01, 02, 05, 06, 07, 08, 11, 13, 19, 23, 37, 52, 60, 68, 69, 70, 90`).
++
++### I. Klassifizierungswerte — Verteilung und Beispieltexte
++
++Eine offizielle Legende der `Klassifizierung`-Werte liegt in den gesichteten Unterlagen nicht vor; die folgende Zuordnung ist aus je einem repräsentativen Fehlertext pro Wert abgeleitet und vor Automatisierungslogik durch weitere Stichproben zu verifizieren:
++
++| Klassifizierung | Anzahl | Beispieltext | vorläufige Deutung |
++|---:|---:|---|---|
++| 0 | 24 | „Die Signaturprüfung wurde erfolgreich durchgeführt." | Erfolg/Bestätigung |
++| 1 | 46 | „Bei der Verarbeitung der übermittelten Daten ist ein Fehler aufgetreten." | allgemeiner Verarbeitungsfehler |
++| 3 | 26 | „Die Clearingstelle ist momentan nicht erreichbar, bitte versuchen Sie es später erneut." | temporär (Serverseite) |
++| 5 | 328 | „Die Version der ELSTER-Komponente ist nicht mehr aktuell." | fachlich/technisch (grösste Gruppe) |
++| 7 | 35 | „In der Datei web.xml sind nicht alle erforderlichen Einträge. Daten konnten nicht erfolgreich verarbeitet werden." | Konfigurationsfehler beim Hersteller/Client |
++| 9 | 18 | „Ihr Request konnte nicht erfolgreich eingelesen werden." | schwerwiegend/Request unlesbar |
++
++**Beispiel-Fehlereinträge (Komponente 01, Unterkomponente 001–002):**
++
++| Komponente | Unterkomponente | Klassifizierung | Nummer | Text |
++|---|---|---:|---|---|
++| 01 | 001 | 5 | 008 | Version der ELSTER-Komponente nicht mehr aktuell — Update beim Softwarehersteller erfragen |
++| 01 | 001 | 9 | 002 | Request konnte nicht erfolgreich eingelesen werden |
++| 01 | 001 | 9 | 007 | schwerwiegender Fehler bei der Verarbeitung der gesamten Datenlieferung |
++| 01 | 002 | 3 | 012/013 | Clearingstelle momentan nicht erreichbar |
++| 01 | 002 | 5 | 005/007 | keine Versionsnummer aus dem TransferHeader ermittelbar |
++| 01 | 002 | 5 | 010 | kein Schema zur THeader-Versionsnummer gefunden |
++| 01 | 002 | 5 | 012 | „TH 08 ist an der offenen Schnittstelle nicht erlaubt" |
++| 01 | 002 | 5 | 013/014 | Encoding entspricht weder ISO-8859-15 noch UTF-8 |
++
++## C. Bescheidnummern-Kataloge
++
++**Quelle:** `Bescheidnr_Januar_2026.zip`, Stand 21.1.2026 — separate XML-Kataloge je Steuerart: `Bescheidnummern_ESt.xml` (größter Katalog), `Bescheidnummern_GSt.xml`, `Bescheidnummern_USt.xml`. Format: Microsoft-Excel-XML-Workbook (`urn:schemas-microsoft-com:office:spreadsheet`), enthält die Bescheidarten-Codes je Steuerart feingranularer als der DIVA-Katalog. Dient als eigene Referenzliste „Bescheidarten (Steuerart)" — feldgenaue Auswertung der Codetabellen steht aus (Workbook-Zellinhalte, nicht als einfache Zeilen-CSV strukturiert).
++
++## D. Prüfziffernverfahren
++
++**Quelle:** `Pruefung_der_Steuer_und_Steueridentifikatsnummer.pdf`, Stand 15.4.2026 (116 Seiten).
++
++### I. Verfahrenstyp je Bundesland (Steuernummer)
++
++| Bundesland | Verfahren |
++|---|---|
++| Bayern, Berlin, Brandenburg, Bremen, Hamburg, Mecklenburg-Vorpommern, Niedersachsen, NRW, Saarland, Sachsen, Sachsen-Anhalt, Thüringen | 11er-Verfahren |
++| Baden-Württemberg | 2er-Verfahren |
++| Hessen, Schleswig-Holstein | modifiziertes 11er-Verfahren |
++| Rheinland-Pfalz | (eigene Spalte in Quelltabelle — abweichend markiert) |
++
++*Hinweis: die IdNr. (Steuer-Identifikationsnummer) hat unabhängig vom Bundesland ein bundeseinheitliches 11er-Modulo-Verfahren über die ersten 10 Stellen (Kap. 2.2 der Doku, mit Pseudocode).*
++
++### II. Grundsteuer — Landesnummer, Datenart/Modell, Ordnungskriterium je Bundesland (Kap. 8)
++
++| Bundesland | Landesnummer | Datenart/Modell | Ordnungskriterium |
++|---|---:|---|---|
++| Baden-Württemberg | 28 | GrundsteuerBW | Aktenzeichen |
++| Bayern | 9 | GrundsteuerBY | Aktenzeichen |
++| Berlin | 11 | Grundsteuerwert (Bundesmodell) | Steuernummer |
++| Brandenburg | 30 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Bremen | 24 | Grundsteuerwert (Bundesmodell) | Steuernummer |
++| Hamburg | 22 | GrundsteuerHH | Steuernummer |
++| Hessen | 26 | GrundsteuerHE | Aktenzeichen |
++| Mecklenburg-Vorpommern | 40 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Niedersachsen | 23 | GrundsteuerNI | Aktenzeichen |
++| Nordrhein-Westfalen | 5 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Rheinland-Pfalz | 27 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Saarland | 10 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Sachsen | 32 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Sachsen-Anhalt | 31 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++| Schleswig-Holstein | 21 | Grundsteuerwert (Bundesmodell) | Steuernummer |
++| Thüringen | 41 | Grundsteuerwert (Bundesmodell) | Aktenzeichen |
++
++**Wichtig für Erfassung:** In der Grundsteuererklärung ist nicht das Wohnsitz-Finanzamt der steuerpflichtigen Person, sondern das Lage-Finanzamt des Grundstücks massgebend (ausdrücklicher Hinweis der Quelle).
++
++### III. Bundesland-Sonderfälle (bereits bekannt, aus Voranalyse bestätigt)
++
++Bayern: Finanzamtsnummer wird in der gedruckten Steuernummer zunehmend weggelassen. Hessen: führende Null in der Steuernummer entfällt. Berlin: zwei Prüfzifferverfahren mit Bezirksausnahmen (Bezirke 201–693 nutzen Verfahren B). Detailtabellen je Bundesland (Aufbau der Steuernummer, Umrechnungsformel Finanzamt ↔ vereinheitlichte Steuernummer): Kap. 8.2 der Quelle, je Bundesland ein eigener Abschnitt (Baden-Württemberg, Berlin, Bremen, Hamburg, Hessen, Niedersachsen, NRW, Schleswig-Holstein).
++
++## E. Finanzamtsdaten
++
++**Quelle:** `Finanzamtsdaten.xlsx` / `Finanzamtsdaten.xml`, laufend durch ELSTER aktualisiert (mehrfach pro Quartal), ein Tabellenblatt je Bundesland. Kernspalten: `Finanzamtsnummer` (BUFA-Nr., 4-stellig), `Finanzamtsname`, `ÄnderungsInformationen` (Wert `KEIN_DELTA` oder Änderungsart — die Datei ist damit bereits diff-fähig ausgeliefert). Referenztabelle Bundesland/Länderschlüssel/BUFA-Nummern-Bereich: Kap. 9 der Prüfziffer-Dokumentation (Zeile ab „Bundesland — Finanzamtsnummer(n) — Länderschlüssel — BUFA-Nrn.").
++
++## F. Bezug zur SharePoint-Umsetzung
++
++Die konkreten SharePoint-Listen und -Spalten, die diese Kataloge als Referenzlisten abbilden (Finanzämter, Prüfziffernverfahren, ELSTER-Verfahren & Datenarten), sowie der Abgleich mit den im `taxcompliance`-Repo dokumentierten Meldungsfeldern (steuerliche Erfassung, BZSt2, ASt-Mitteilung § 6 AStG, W-IdNr.) stehen in `Aenderungsbedarf_ELSTER_vs_Architektur_2026-07-24.md` und `sp_listenschema_elster_meldungen.md` im Ordner `01 Projekte/ELSTER-Entwickler` (kanzleiintern, nicht Teil dieses Repos, da mandatsbezogene Architekturentscheidungen).
+diff --git a/DE/AO/ELSTER-Infrastruktur/elster-transportschicht-und-verfahren.md b/DE/AO/ELSTER-Infrastruktur/elster-transportschicht-und-verfahren.md
+new file mode 100644
+index 0000000..354c3d4
+--- /dev/null
++++ b/DE/AO/ELSTER-Infrastruktur/elster-transportschicht-und-verfahren.md
+@@ -0,0 +1,114 @@
++# ELSTER-Transportschicht und Verfahrenstaxonomie
++
++**Quelle:** `ElsterXML-Schnittstelle_V11_2026.7.20.0.zip` (Doku "Einheitliche Elster-Datenschnittstelle XML", Version 4.3.0, Stand 12.2.2026), `Verzeichnis_der_Datenarten.csv`, sowie die Fachpakete ElsterDatenabholung, ElsterKontoabfrage, ElsterObjektspeicher (OTTER), RABE-Belegdatenhaltung, ElsterLohn/Lohnsteuerbescheinigung, LAVENDEL/HMS.
++
++## A. Paketübersicht
++
++| Paket | Version | Funktion |
++|---|---|---|
++| ElsterXML-Schnittstelle (v11) | Doku 4.3.0, Stand 12.2.2026 | Basis-Transportformat (TransferHeader/NutzdatenHeader), Verschlüsselung, Datenarten-Konzept |
++| Authentifizierung / ELSTER-Token / Auth-Applet | V02.2.1 / 1.27 / v24.1 | Signatur- und Zertifikatsverfahren (Softtoken, Sicherheitsstick) |
++| ElsterDatenabholung | v31.0.6 → v32.0.1 | Empfangen: Postfach-Nachrichten, Bescheide, VaSt-Belege abholen |
++| ElsterKontoabfrage | v2.1.3 | Steuerkonto-Abfrage (offene Beträge / Ist-Buchungen / Soll-Stellungen) |
++| ElsterObjektspeicher „OTTER" | v1.4.6 | REST-Objektspeicher zum Hochladen grosser Anhänge (Push zu ELSTER) |
++| RABE-Belegdatenhaltung | v2.3 | Gegenstück zu OTTER: Belege bleiben bei der Kanzlei, Finanzverwaltung holt sie ab (Pull) |
++| ElsterLohn/Lohnsteuerbescheinigung | 1.36 | einziges Paket mit komplettem Formularvordruck (Muster mit Kennziffern) |
++| LAVENDEL Datenübermittler + HMS | 2.0.1 | Registrierung, wer (Datenübermittler) für welchen Arbeitgeber ELStAM abrufen darf |
++
++## B. ElsterXML-Grundaufbau
++
++```
++<Elster>
++  <TransferHeader>...</TransferHeader>
++  <DatenTeil>
++    <Nutzdatenblock>
++      <NutzdatenHeader>...</NutzdatenHeader>
++      <Nutzdaten>...</Nutzdaten>
++    </Nutzdatenblock>
++  </DatenTeil>
++</Elster>
++```
++
++TransferHeader (THeader) und NutzdatenHeader (NHeader) haben für jedes Fachverfahren denselben Elementaufbau; nur die Nutzdaten unterscheiden sich fachverfahrensspezifisch. Referenz-Schemata: `elster11_bisNH_extern.xsd`, `header/th000011_extern.xsd`, `header/ndh000011.xsd`, `header/headerbasis_datenarten.xsd`, `header/headerbasis_verfahren.xsd`, `header/headerelemente.xsd`.
++
++### 1. Datenteile
++
++| Element | Verschlüsselung | Inhalt |
++|---|---|---|
++| TransferHeader | weitestgehend unverschlüsselt, dem verschlüsselten Teil vorangestellt | Verarbeitungsinformationen für Clearingstelle, Verteilung an Bundesländer, Rückgabe-/Fehlermeldungen |
++| NutzdatenHeader | innerhalb des verschlüsselten Teils | Verarbeitungsinformationen für den Datensatz, Rückgabe-/Fehlermeldungen |
++| Nutzdaten | innerhalb des verschlüsselten Teils | fachverfahrensspezifischer, datentypabhängiger Datensatz |
++
++Bei Sammellieferungen sind mehrere Nutzdatenblöcke möglich (nur teilweise unterstützt, siehe Doku Tz. 3.5).
++
++### 2. Rückgabecode-Struktur
++
++```xml
++<RC>
++  <Rueckgabe><Code>…</Code><Text>…</Text></Rueckgabe>
++  <Stack><Code>…</Code><Text>…</Text></Stack>
++</RC>
++```
++
++- `Code = 0` in TransferHeader **und** NutzdatenHeader → Daten vollständig entgegengenommen und verarbeitet.
++- Strukturfehler/Übermittlungsfehler → Fehlermeldung im TransferHeader, DatenTeil bleibt leer (kein NutzdatenHeader/Nutzdaten).
++- Inhaltliche Fehler in den Nutzdaten → TransferHeader-Code „0" (Übermittlung erfolgreich), qualifizierter Rückgabewert ungleich „0" im NutzdatenHeader, Nutzdaten leer.
++
++### 3. Online- vs. Offline-Verfahren
++
++| | Online-Verfahren | Offline-Verfahren |
++|---|---|---|
++| Bestätigung | sofort (Annahme/Fehler) | sofortige Annahmebestätigung nur zur Übermittlung, Verarbeitungsergebnis separat abzuholen |
++| Beispiel | UStVA, LStA (Steueranmeldungen) | Lohnsteuerbescheinigungen (LStB) + Protokollanforderung |
++| Besonderheit | — | ggf. `<TransportSchluessel>` im TransferHeader für spätere Protokollabholung nötig; Sammellieferungen nur hier möglich |
++
++### 4. Standards
++
++- Encoding: `utf-8` (historisch ISO-8859-15, seit Version 4.2.10 vollständig auf UTF-8 umgestellt; Version 4.3.0 vom 8.12.2025: Umstellung von 3DES auf **AES-Verschlüsselung**).
++- Namespace: `http://www.elster.de/elsterxml/schema/v11`, einmalig im Wurzelelement `<Elster>` gesetzt; Fachverfahren nutzen eigene Namespaces erst innerhalb `<Nutzdaten>`.
++- Authentifizierung: Signaturdaten werden bei DatenTeil-Authentifizierung im TransferHeader abgelegt (Vorgang `send-Auth`); Details in `Einheitliche_Datenschnittstelle_XML_Authentifizierung_V02.2.1.pdf` und `Spezifikation_ELSTER-Token_1.27.pdf`.
++- Zeichenumfang: eingeschränktes Zeichenrepertoire (Pattern in Kap. 2.2 der Doku) — nicht beliebiges UTF-8, sondern eine definierte Teilmenge (lateinische Basis + Sonderzeichen inkl. Œ, œ, Š, š, Ÿ, Ž, ž, €).
++- Kommunikation: HTTPS an die Server der Clearingstelle (`datenannahme{1-4}.elster.de`, siehe Aenderungsbedarf-Dokumentation im Ordner `ELSTER-Entwickler`).
++- Client-Alternative: ERiC (Elster Rich Client) übernimmt Komprimierung/Verschlüsselung/Authentifizierung/Versand; alternativ kann die „offene Schnittstelle" direkt implementiert werden (roh-XML), siehe `Verzeichnis_der_Datenarten`.
++
++## C. Taxonomie Verfahren / Datenart / Vorgang
++
++Jede ELSTER-Datenlieferung wird über das Tripel **Verfahren – Datenart – Vorgang** adressiert (Element im ElsterXML-Header). Ausschnitt aus `Verzeichnis_der_Datenarten.csv` (offene Schnittstelle, ohne ERiC):
++
++| Verfahren | Datenart | Vorgang | Anwendung |
++|---|---|---|---|
++| ElsterDatenabholung | ElsterLohn2Daten | send-Auth | offene Schnittstelle |
++| ElsterDatenabholung | ElsterLohnDaten | send-Auth | offene Schnittstelle |
++| ElsterDatenabholung | PostfachAnfrage | send-Auth / send-NoSig | offene Schnittstelle |
++| ElsterDatenabholung | PostfachBestaetigung | send-Auth / send-NoSig | offene Schnittstelle |
++| ElsterDatenabholung | PostfachStatus | send-Auth / send-NoSig | offene Schnittstelle |
++| ElsterDatenabholung | ElsterKMVDaten | send-Auth | offene Schnittstelle |
++| ElsterLohn2 | DUeAbmelden / DUeAnmelden / DUeUmmelden | send-Auth | offene Schnittstelle |
++| ElsterLohn | LStB | send-Auth / send-Auth-Part | offene Schnittstelle |
++| ElsterKMV | LSTMitteilung | send-Auth / send-Auth-Part | offene Schnittstelle |
++| ElsterLohn | Lohnersatzleistung | send-Auth / send-Auth-Part | offene Schnittstelle |
++
++Vollständige Liste (alle Verfahren/Datenarten/Vorgänge inkl. Anmeldungssteuern, ERiC-only-Kombinationen): `ElsterXML-Schnittstelle_V11_2026.7.20.0.zip → v11/Dokumente/Verzeichnis_der_Datenarten.csv` sowie `Verfahren_DatenArt_Vorgang_v*.xml` im COALA-Downloadbereich (nicht im gesichteten Bestand). `send-Auth` = signierte/authentifizierte Übermittlung, `send-NoSig` = unsignierte Anfrage/Statusabruf, `send-Auth-Part` = teilauthentifiziert (Sammellieferung).
++
++## D. Bekannte Datenarten je Fachpaket (für Liste „ELSTER-Verfahren & Datenarten")
++
++- **ElsterDatenabholung**: `PostfachStatus`, `PostfachAnfrage`, `PostfachBestaetigung` (Bestätigungspflicht binnen 24 h), `Statusabfrage`, `ElsterVaStDaten` (Anfrage/Einzelabholung/Sammelabholung).
++- **ElsterKontoabfrage**: `Kontoabfrage-O` (offene Beträge), `Kontoabfrage-I` (Ist-Buchungen), `Kontoabfrage-ZS` (Soll-Stellungen).
++- **ElsterLohn**: `LStB` (Neu/Korrektur), `LStBStorno`, `eTIN`-Ermittlung (nur Altfälle bis VZ 2022).
++- **LAVENDEL**: Arbeitnehmer anmelden/abmelden, Datenübermittler-Wechsel, Änderungsliste (Anmelde-/Abmelde-/Ummeldebestätigung, Monatsliste, Bruttoliste).
++- **ElsterObjektspeicher (OTTER)**: REST-Push grosser Anhänge; Objekt-ID wird im ElsterXML referenziert; 7-Tage-Frist zur Abholung durch die Finanzverwaltung.
++- **RABE-Belegdatenhaltung**: Pull-Gegenmodell zu OTTER — Belege verbleiben auf einem Server der Kanzlei, die Finanzverwaltung holt sie dort ab.
++- **Grundsteuer** (aus Prüfziffer-Dokumentation): `Grundsteuerwert` (Bundesmodell), länderspezifisch `GrundsteuerBY`, `GrundsteuerBW`, `GrundsteuerHE`, `GrundsteuerHH`, `GrundsteuerNI`.
++
++## E. Architekturschichten für eine eigene ELSTER-Anbindung
++
++| Schicht | Baustein | Zweck |
++|---|---|---|
++| Transport & Auth | ElsterXML v11 + Authentifizierung + ELSTER-Token/Auth-Applet | XML-Aufbau, Verschlüsselung (AES), Signatur (RSASSA-PSS/SHA-256), Versand an `datenannahme{1-4}.elster.de` |
++| Senden (Formulare/Meldungen) | verfahrensspezifische Datenart-Schemata + KmId/RefKmId-Logik für Korrektur/Storno | Befüllen und Übermitteln der Formulare |
++| Belege/Anlagen hochladen | OTTER (Push) bzw. RABE (Pull) | Anhänge zur Finanzverwaltung bringen |
++| Empfangen | ElsterDatenabholung (Postfach/Bescheide/VaSt) + ElsterKontoabfrage (Kontostatus) + DIVA-Katalog zur Klassifikation | Bescheide/Schreiben automatisiert abholen, bestätigen, einsortieren |
++| Identität/Vertretung | LAVENDEL/HMS (nur ELStAM), Herstellerregistrierung (HerstellerID), Datenübermittler-/Vertreterregistrierung je Mandant | Wer darf für wen senden/empfangen |
++| Validierung | Prüfziffern-Logik + Finanzamtsliste + Fehlercode-Katalog (siehe `elster-taxonomien-kataloge.md`) | gemeinsame Bibliothek für alle Schichten |
++
++**Offene Punkte:** Herstellerregistrierung (HerstellerID/Zertifikat) beim ELSTER-Herstellerforum/IMS ist in den gesichteten Unterlagen nicht beschrieben; Entscheidung ERiC-Einbindung vs. Eigenimplementierung (inkl. Verschlüsselung/Signatur) steht aus; Test-Zertifikate liegen vor (`Test_Zertifikate.zip`, `Test_Zertifikate_3072_Bit.zip`).
+diff --git a/DE/AO/README.md b/DE/AO/README.md
+index 61ebab0..a9967c2 100644
+--- a/DE/AO/README.md
++++ b/DE/AO/README.md
+@@ -10,6 +10,7 @@ Rechtstexte, Verwaltungsanweisungen und Arbeitshilfen zur Abgabenordnung — Sch
+ | [Formulardaten: Rohfassung](formulardaten-roherfassung.md) | Feld-/Kz-Katalog ELSTER-Fragebögen + BZSt2 (§ 138 Abs. 2 AO) |
+ | [W-IdNr.: erneute Mitteilung](formulardaten-widnr-erneute-mitteilung.md) | separates FMS-Formular; Overlap nur Identifikation |
+ | [`quellen/`](quellen/) | FMS-XML-Rohinstanzen (BZSt2, W-IdNr.) |
++| [`ELSTER-Infrastruktur/`](ELSTER-Infrastruktur/README.md) | Transportschicht, Verfahren-/Datenart-Taxonomie, DIVA-/Fehler-/Bescheidnummern-Kataloge, Prüfziffernverfahren, Finanzamtsdaten |
+ 
+ Verwandt, aber **nicht** unter AO zu führen: [ASt-Mitteilung § 6 AStG](../AStG/formulardaten-mitteilung-6-astg.md) (Wegzugsbesteuerung).
+ 
+diff --git a/INDEX.md b/INDEX.md
+index d7a9f1e..b1d02ae 100644
+--- a/INDEX.md
++++ b/INDEX.md
+@@ -9,6 +9,7 @@
+ - [Einheitliches Datenmodell: steuerliche Erfassung DE und Auslandsbezug](DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) — Pflichtlogik, Objekte, Forms-/Übergabe-Architektur
+ - [Formulardaten: Rohfassung](DE/AO/formulardaten-roherfassung.md) — Feld-/Kz-Katalog (ELSTER + BZSt2)
+ - [W-IdNr.: erneute Mitteilung](DE/AO/formulardaten-widnr-erneute-mitteilung.md) — separates FMS-Formular
++- [ELSTER-Infrastruktur](DE/AO/ELSTER-Infrastruktur/README.md) — Transportschicht, Verfahrens-/Datenart-Taxonomie, DIVA-/Fehler-/Bescheidnummern-Kataloge, Prüfziffernverfahren
+ - Übersicht: [`DE/AO/README.md`](DE/AO/README.md)
+ 
+ ### Einkommensteuer (EStG)
+-- 
+2.43.0
+

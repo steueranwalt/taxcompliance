@@ -1,24 +1,16 @@
-# Deutsches Steuerrecht
+# ELSTER-Infrastruktur: Schnittstellenbeschreibungen und Taxonomien
 
-Rechtstexte, Verwaltungsanweisungen und Arbeitsmaterialien zum deutschen Steuerrecht.
+Generische Transport-, Verwaltungs- und Nebenverfahrens-Infrastruktur von ELSTER, auf der jedes Fachverfahren (ESt, KSt, USt, GewSt, ErbSt, Lohnsteuer …) aufsetzt. Ausgewertet aus dem Ordner `01 Projekte/ELSTER-Entwickler` (11 Schnittstellenpakete + Referenzdaten), Stand der Pakete 2026-01 bis 2026-07-24, Sichtung 19.9.2026.
 
-## Unterverzeichnisse
+**Wichtige Abgrenzung:** Die eigentlichen Formular-Schnittstellen der Steuererklärungen (ESt, KSt, USt-VA, GewSt, ErbSt mit ihren Kennziffern-Katalogen) liegen **nicht** in den gesichteten Unterlagen, sondern im separaten ERiC-/Vordruck-Entwicklerpaket. Die hier dokumentierte Infrastruktur ist die Schicht darunter (Transport, Authentifizierung, Datenabholung, Dokumenttyp- und Fehlercode-Kataloge).
 
-| Verzeichnis | Rechtsgebiet |
+## Dokumente
+
+| Dokument | Inhalt |
 |---|---|
-| [`AO/`](AO/) | Abgabenordnung |
-| [`EStG/`](EStG/) | Einkommensteuergesetz |
-| [`KStG/`](KStG/) | Körperschaftsteuergesetz |
-| [`GewStG/`](GewStG/) | Gewerbesteuergesetz |
-| [`UStG/`](UStG/) | Umsatzsteuergesetz |
-| [`ErbStG/`](ErbStG/) | Erbschaft- und Schenkungsteuergesetz |
-| [`AStG/`](AStG/) | Außensteuergesetz |
-| [`Sonstiges/`](Sonstiges/) | Weitere Steuergesetze, BMF-Schreiben, BFH-Urteile |
+| [`elster-transportschicht-und-verfahren.md`](elster-transportschicht-und-verfahren.md) | ElsterXML-Grundaufbau (TransferHeader/NutzdatenHeader), Authentifizierung/Verschlüsselung, Online-/Offline-Verfahren, Verfahren-Datenart-Vorgang-Taxonomie je Paket (ElsterDatenabholung, ElsterKontoabfrage, ElsterObjektspeicher/OTTER, RABE, ElsterLohn, LAVENDEL/HMS) |
+| [`elster-taxonomien-kataloge.md`](elster-taxonomien-kataloge.md) | DIVA-Schlüsselkatalog „Art des Schreibens", Fehlerliste/Klassifizierung, Bescheidnummern-Kataloge (ESt/GSt/USt), Prüfziffernverfahren, Finanzamtsdaten |
 
-## Dokumenttypen
+## Bezug zu den übrigen `DE/AO`-Dokumenten
 
-- **Gesetzestexte** – amtliche Fassungen
-- **BMF-Schreiben** – Verwaltungsanweisungen des Bundesministeriums der Finanzen
-- **BFH-Urteile** – Entscheidungen des Bundesfinanzhofs
-- **Richtlinien** – EStR, KStR, UStR etc.
-- **Arbeitshilfen** – interne Materialien
+Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`formulardaten-roherfassung.md`](../formulardaten-roherfassung.md), [`Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](../Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`../AStG/formulardaten-mitteilung-6-astg.md`](../../AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert.
