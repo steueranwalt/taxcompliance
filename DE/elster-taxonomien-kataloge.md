@@ -139,4 +139,11 @@ Bayern: Finanzamtsnummer wird in der gedruckten Steuernummer zunehmend weggelass
 
 ## F. Bezug zur SharePoint-Umsetzung
 
-Die konkreten SharePoint-Listen und -Spalten, die diese Kataloge als Referenzlisten abbilden (Finanzämter, Prüfziffernverfahren, ELSTER-Verfahren & Datenarten), sowie der Abgleich mit den im `taxcompliance`-Repo dokumentierten Meldungsfeldern (steuerliche Erfassung, BZSt2, ASt-Mitteilung § 6 AStG, W-IdNr.) stehen in `Aenderungsbedarf_ELSTER_vs_Architektur_2026-07-24.md` und `sp_listenschema_elster_meldungen.md` im Ordner `01 Projekte/ELSTER-Entwickler` (kanzleiintern, nicht Teil dieses Repos, da mandatsbezogene Architekturentscheidungen).
+Die konkreten SharePoint-Listen, Inhaltstypen und Spalten sowie der Forms-/ELSTER-Datenfluss stehen im Kanzlei-Repo:
+
+- `steuerkanzlei/sharepoint-architektur/elster-listen/einrichtungsplan-elster-listen-2026-09-20.md`
+- `steuerkanzlei/sharepoint-architektur/elster-listen/schema/listen-schema.json`
+
+Pilot-Site: `https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei`. Später identisches Schema auf dem TP-Docs-Tenant.
+
+Ältere kanzleiinterne Entwürfe (`Aenderungsbedarf_ELSTER_vs_Architektur_2026-07-24.md`, `sp_listenschema_elster_meldungen.md` im Ordner `01 Projekte/ELSTER-Entwickler`) bleiben historische Quelle; die Listenplanung oben ist die aktuelle Umsetzungsgrundlage.

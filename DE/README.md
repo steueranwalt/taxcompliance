@@ -13,4 +13,6 @@ Generische Transport-, Verwaltungs- und Nebenverfahrens-Infrastruktur von ELSTER
 
 ## Bezug zu den übrigen `DE/AO`-Dokumenten
 
-Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`formulardaten-roherfassung.md`](../formulardaten-roherfassung.md), [`Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](../Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`../AStG/formulardaten-mitteilung-6-astg.md`](../../AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert.
+Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`AO/formulardaten-roherfassung.md`](AO/formulardaten-roherfassung.md), [`AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`AStG/formulardaten-mitteilung-6-astg.md`](AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert.
+
+Die SharePoint-Listenplanung (Inhaltstypen, Spalten, Forms, Pilot-Site) liegt im Repo `steuerkanzlei` unter `sharepoint-architektur/elster-listen/`.
