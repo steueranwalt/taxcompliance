@@ -36,7 +36,11 @@ _noch keine Dokumente_
 ## Schweizer Steuerrecht (`CH/`)
 
 ### Direkte Bundessteuer (DBG)
-_noch keine Dokumente_
+
+- [Quellensteuer: Tarifformat](CH/DBG/quellensteuer-tarifformat.md) — ESTV-Satzarten, Feldlayout, Lookup
+- [Quellensteuer: Aktualisierung](CH/DBG/quellensteuer-aktualisierung.md) — Bezugskalender 2026, Weiterverbreitung ja
+- [QSt-Tarifcodes](CH/DBG/qst-tarifcodes.csv) — maschinenlesbare Codeliste
+- [Tarife 2026](CH/DBG/tarife/2026/) — Manifest und Schweiz-ZIP (Löhne + übrige Einkünfte, 26 Kantone)
 
 ### Steuerharmonisierungsgesetz (StHG)
 _noch keine Dokumente_

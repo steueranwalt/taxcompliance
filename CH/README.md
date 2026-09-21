@@ -6,7 +6,7 @@ Rechtstexte, Kreisschreiben und Arbeitsmaterialien zum Schweizer Steuerrecht (Bu
 
 | Verzeichnis | Rechtsgebiet |
 |---|---|
-| [`DBG/`](DBG/) | Bundesgesetz über die direkte Bundessteuer |
+| [`DBG/`](DBG/) | Bundesgesetz über die direkte Bundessteuer; enthält die Formatdokumentation der Quellensteuertarife sowie Manifest und Schweiz-ZIP 2026 (keine entpackten TXT) |
 | [`StHG/`](StHG/) | Steuerharmonisierungsgesetz |
 | [`MWSTG/`](MWSTG/) | Mehrwertsteuergesetz |
 | [`VStG/`](VStG/) | Verrechnungssteuergesetz |
