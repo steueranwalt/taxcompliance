@@ -1,0 +1,30 @@
+code,art,serie,bedeutung,kinder,kirche,kantone,entspricht,grundlage
+A,tarifgruppe,loehne,Alleinstehende,0-9,Y/N,alle,,QStV Art. 1 Abs. 1 Bst. a
+B,tarifgruppe,loehne,Verheiratete Alleinverdiener,0-9,Y/N,alle,,QStV Art. 1 Abs. 1 Bst. b
+C,tarifgruppe,loehne,Verheiratete Doppelverdiener; satzbestimmendes Ehegatteneinkommen hoechstens Median (Recordart 13),0-9,Y/N,alle,,QStV Art. 1 Abs. 1 Bst. c
+D,tarifgruppe,loehne,Personen mit AHV-Beitragsrueckerstattung; fixer Satz,0-9,Y/N,typisch nur GE,,QStV Art. 1 Abs. 1 Bst. d; ESTV Löhne 2025 Ziff. 4.4
+E,tarifgruppe,beide,Vereinfachtes Abrechnungsverfahren / Einkuenfte nach BGSA; fixer Satz,fix-E0,Y/N,alle,,QStV Art. 1 Abs. 1 Bst. e
+G,tarifgruppe,beide,"Ersatzeinkuenfte, nicht ueber den Arbeitgeber ausbezahlt",fix-G9N,N-fix,alle,,QStV Art. 1 Abs. 1; ESTV Löhne 2025 Ziff. 4.2
+H,tarifgruppe,loehne,"Alleinstehende mit Kindern oder unterstuetzungsbeduerftigen Personen im Haushalt, Unterhalt zur Hauptsache",1-9,Y/N,alle,,QStV Art. 1 Abs. 1 Bst. h
+L,tarifgruppe,loehne,"Grenzgaenger aus Deutschland, Voraussetzungen von A",0-9,Y/N,alle,A,QStV Art. 1 Abs. 1 Bst. i; DBA-D Art. 15a
+M,tarifgruppe,loehne,"Grenzgaenger aus Deutschland, Voraussetzungen von B",0-9,Y/N,alle,B,QStV Art. 1 Abs. 1 Bst. j; DBA-D Art. 15a
+N,tarifgruppe,loehne,"Grenzgaenger aus Deutschland, Voraussetzungen von C",0-9,Y/N,alle,C,QStV Art. 1 Abs. 1 Bst. k; DBA-D Art. 15a
+P,tarifgruppe,loehne,"Grenzgaenger aus Deutschland, Voraussetzungen von H",1-9,Y/N,alle,H,QStV Art. 1 Abs. 1 Bst. l; DBA-D Art. 15a
+Q,tarifgruppe,beide,"Grenzgaenger aus Deutschland, Voraussetzungen von G",fix-G9N,N-fix,alle,G,QStV Art. 1 Abs. 1 Bst. m; DBA-D Art. 15a
+R,tarifgruppe,loehne,"Grenzgaenger aus Italien nach Art. 3 Abs. 1 CH-IT, Voraussetzungen von A",0-9,Y/N,"GR,TI,VS",A,QStV Art. 1; Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01
+S,tarifgruppe,loehne,"Grenzgaenger aus Italien, Voraussetzungen von B",0-9,Y/N,"GR,TI,VS",B,Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01
+T,tarifgruppe,loehne,"Grenzgaenger aus Italien, Voraussetzungen von C",0-9,Y/N,"GR,TI,VS",C,Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01
+U,tarifgruppe,loehne,"Grenzgaenger aus Italien, Voraussetzungen von H",1-9,Y/N,"GR,TI,VS",H,Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01
+V,tarifgruppe,beide,"Grenzgaenger aus Italien, Voraussetzungen von G",fix-G9N,N-fix,"GR,TI,VS",G,Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01
+W,tarifgruppe,einkuenfte,"Renten aus Vorsorge; W9N allgemein, W9G Ansässigkeit Deutschland",ohne,N-oder-G,alle,,ESTV übrige Einkünfte 2025 Ziff. 3.5 / 4.2
+Y,tarifgruppe,einkuenfte,"Kapitalleistungen aus Vorsorge, Alleinstehende (Y9N)",ohne,N-fix,alle,,ESTV übrige Einkünfte 2025 Ziff. 3.6
+Z,tarifgruppe,einkuenfte,"Kapitalleistungen aus Vorsorge, Verheiratete (Z9N)",ohne,N-fix,alle,,ESTV übrige Einkünfte 2025 Ziff. 3.6
+HE,vordefiniert,loehne,"Verwaltungsraete, fixer Satz, Recordart 11",ohne,Y/N,alle,,Art. 93 DBG
+ME,vordefiniert,loehne,"Mitarbeiterbeteiligungen, fixer Satz, Recordart 11",ohne,Y/N,alle,,Art. 97a DBG
+NO,vordefiniert,loehne,"Korrektur nicht oder zu Unrecht quellensteuerpflichtig, Recordart 11",ohne,Y/N,alle,,ESTV Löhne 2025 Ziff. 4.5
+SF,vordefiniert,loehne,"Grenzgaenger Frankreich, Sondervereinbarung, Recordart 11, nur SFN",ohne,N-fix,"BE,BS,BL,JU,NE,SO,VD,VS",,ESTV Löhne 2025 Ziff. 4.2 / 4.5
+PEL,bezugsprovision,beide,"Bezugsprovision elektronisch, Recordart 12",ohne,,alle,,ESTV Löhne 2025 Ziff. 4.6
+PPA,bezugsprovision,beide,"Bezugsprovision Papier, Recordart 12",ohne,,alle,,ESTV Löhne 2025 Ziff. 4.6
+PSP,bezugsprovision,beide,"Bezugsprovision vereinfachtes Verfahren, Recordart 12",ohne,,alle,,ESTV Löhne 2025 Ziff. 4.6
+PLS,bezugsprovision,einkuenfte,"Bezugsprovision Kapitalleistungen aus Vorsorge, Recordart 12",ohne,,alle,,ESTV übrige Einkünfte 2025 Ziff. 4.7
+MED,median,beide,"Hoechstbetrag satzbestimmendes Ehegatteneinkommen Tarif C; Betrag in Feld 10, Recordart 13",ohne,,alle,,ESTV Löhne 2025 Ziff. 4.7

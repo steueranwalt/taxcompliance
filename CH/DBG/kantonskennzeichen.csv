@@ -1,0 +1,27 @@
+kennzeichen,kanton,r_bis_v,sf_frankreich
+AG,Aargau,nein,nein
+AI,Appenzell Innerrhoden,nein,nein
+AR,Appenzell Ausserrhoden,nein,nein
+BE,Bern,nein,ja
+BL,Basel-Landschaft,nein,ja
+BS,Basel-Stadt,nein,ja
+FR,Freiburg,nein,nein
+GE,Genf,nein,nein
+GL,Glarus,nein,nein
+GR,Graubünden,ja,nein
+JU,Jura,nein,ja
+LU,Luzern,nein,nein
+NE,Neuenburg,nein,ja
+NW,Nidwalden,nein,nein
+OW,Obwalden,nein,nein
+SG,St. Gallen,nein,nein
+SH,Schaffhausen,nein,nein
+SO,Solothurn,nein,ja
+SZ,Schwyz,nein,nein
+TG,Thurgau,nein,nein
+TI,Tessin,ja,nein
+UR,Uri,nein,nein
+VD,Waadt,nein,ja
+VS,Wallis,ja,ja
+ZG,Zug,nein,nein
+ZH,Zürich,nein,nein

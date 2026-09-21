@@ -1,0 +1,299 @@
+{
+  "stand": "2026-09-21",
+  "abruf": "2026-09-21",
+  "weiterverbreitung": "freigegeben (Kanzlei, 21.9.2026): Tarifdateien duerfen weiterverbreitet werden",
+  "umfang": "Löhne und übrige Einkünfte, alle 26 Kantone",
+  "quelle_seiten": {
+    "loehne": "https://www.estv.admin.ch/de/quellensteuertarife-import-in-lohnbuchhaltungssysteme",
+    "einkuenfte": "https://www.estv.admin.ch/de/quellensteuertarife-fuer-uebrige-einkuenfte"
+  },
+  "haftung": "Die ESTV haftet nicht; zustaendig sind die kantonalen Steuerverwaltungen.",
+  "packages": [
+    {
+      "serie": "loehne",
+      "filename": "tar2026txt.zip",
+      "url": "https://www.estv2.admin.ch/qst/2026/loehne/tar2026txt.zip",
+      "estv_stand": "2026-03-04",
+      "extract_dir": "loehne",
+      "sha256": "619b53e364545ffcd32e01669983326f79e5dea82c520de5e158c4e9e10943d6",
+      "bytes": 11923946,
+      "dateien": 26
+    },
+    {
+      "serie": "einkuenfte",
+      "filename": "vsl2026txt.zip",
+      "url": "https://www.estv2.admin.ch/qst/2026/uebrige-einkuenfte/vsl2026txt.zip",
+      "estv_stand": "2026-01-09",
+      "extract_dir": "einkuenfte",
+      "sha256": "004cc96392cc1570ffa3d09045972e65eef2ee3c61eb2646df191d800628423a",
+      "bytes": 877507,
+      "dateien": 26
+    }
+  ],
+  "dateien": {
+    "loehne": [
+      {
+        "filename": "tar26ag.txt",
+        "bytes": 1269975,
+        "sha256": "796f855d1c9bb39495f002358ef637dd906bb59b6c335b2944e595610cc2019e"
+      },
+      {
+        "filename": "tar26ai.txt",
+        "bytes": 2367255,
+        "sha256": "46ce1d6b839bb59cc8e1455ff719879dd444a9b7b20ea786d56f4326fb465cfd"
+      },
+      {
+        "filename": "tar26ar.txt",
+        "bytes": 2897687,
+        "sha256": "91dde9a021f23f0c40f0956bb1d5c8e97b469b1a5dbc041cb0e20a980020088b"
+      },
+      {
+        "filename": "tar26be.txt",
+        "bytes": 6331095,
+        "sha256": "1a17929f8767808309981b158dc2cf135ea3b07c66aa609363e2844b869d3438"
+      },
+      {
+        "filename": "tar26bl.txt",
+        "bytes": 3084247,
+        "sha256": "02e4dcf584e6362b40f4bae95d05c6e7a022e126ac9d81333fd4d5f28b32b690"
+      },
+      {
+        "filename": "tar26bs.txt",
+        "bytes": 5695319,
+        "sha256": "560a47bd2673df713c1a4cc4b9886ed1cfcefc485a69820c498168e5f3ad40d8"
+      },
+      {
+        "filename": "tar26fr.txt",
+        "bytes": 20224919,
+        "sha256": "0783bec60b921085a9e17977637f35d302a872b869b6763476a0de964621df0b"
+      },
+      {
+        "filename": "tar26ge.txt",
+        "bytes": 2052695,
+        "sha256": "65b51b7254fe36cf6be74cefb6d9ca9d5bcd03b8565426e7798a6b7537fe3c01"
+      },
+      {
+        "filename": "tar26gl.txt",
+        "bytes": 3082391,
+        "sha256": "48a6cfca57d0944cd1b3cf5f65a2227a6abc69e5378d299a7984a717f2d6429b"
+      },
+      {
+        "filename": "tar26gr.txt",
+        "bytes": 8206807,
+        "sha256": "cadf01728e426b5b4ddf7429d297d027cc3d74efeecc3a78d7b4d91831d8db07"
+      },
+      {
+        "filename": "tar26ju.txt",
+        "bytes": 8023639,
+        "sha256": "2d3d03d6fd54458227edcea004e374c5e58652ed761ba4cf3a4353c61907a5a5"
+      },
+      {
+        "filename": "tar26lu.txt",
+        "bytes": 4025879,
+        "sha256": "88edf7da30fdaf797413d5f50e9878b0a83886c780898b1c1d2ee991e23eb72a"
+      },
+      {
+        "filename": "tar26ne.txt",
+        "bytes": 8063447,
+        "sha256": "f1265c9f921a74e73ca9adbec7697b09e456376c9c7df2b3069d1d3ce24ac476"
+      },
+      {
+        "filename": "tar26nw.txt",
+        "bytes": 20032791,
+        "sha256": "b2873dc84fdc7e18dcb42e326698316a0dbdebc433768ae0217b765d194e370d"
+      },
+      {
+        "filename": "tar26ow.txt",
+        "bytes": 1679639,
+        "sha256": "1590b6d8c0bfe510940da8f4686e5a7cff56feae76cbc532c9b7b9ba20cbc1cf"
+      },
+      {
+        "filename": "tar26sg.txt",
+        "bytes": 3550231,
+        "sha256": "e705cfec655b4484291d374c1543543d343038b16d9ab24bf64b334be5122582"
+      },
+      {
+        "filename": "tar26sh.txt",
+        "bytes": 6324759,
+        "sha256": "0e7bdcb477b6acf50e012fab5d7619cdcee8a68ecd19704ae2006607b569ca28"
+      },
+      {
+        "filename": "tar26so.txt",
+        "bytes": 10121879,
+        "sha256": "69a3ac3ee065bfede53cb89d8496d24a0853e71450fc6240e10e5b3a489e0489"
+      },
+      {
+        "filename": "tar26sz.txt",
+        "bytes": 7991447,
+        "sha256": "b989ffa087709aab9689f95a05809d91ff5e814dd6d0653b92c39c51a54d1038"
+      },
+      {
+        "filename": "tar26tg.txt",
+        "bytes": 6098455,
+        "sha256": "9fd532f57b1d4b1e75951af631b311822f23302c2feed59b5b11b0ad0277dbbb"
+      },
+      {
+        "filename": "tar26ti.txt",
+        "bytes": 10222743,
+        "sha256": "42206887f3c2e60ddbb82d6d930190077424e3b27597e9843ad0ce495c9ca031"
+      },
+      {
+        "filename": "tar26ur.txt",
+        "bytes": 10325271,
+        "sha256": "4bbccb23db77ebbac34227fb96e3c41aa768b48a718dac948bb1d4280a64af98"
+      },
+      {
+        "filename": "tar26vd.txt",
+        "bytes": 1352983,
+        "sha256": "34d00dbdbd8d9bca1870600c727fb52161cd646d77fde9b9fd20dcb65c9fe576"
+      },
+      {
+        "filename": "tar26vs.txt",
+        "bytes": 7657687,
+        "sha256": "bda8c375ee514d4a293d3666738d21b692cb910756e0777cef7ef3c3a78d41e0"
+      },
+      {
+        "filename": "tar26zg.txt",
+        "bytes": 17217239,
+        "sha256": "3237d8e21e1c821a3da0e9057ce5ef004b409089056443ce1bbd6b0001e81ce4"
+      },
+      {
+        "filename": "tar26zh.txt",
+        "bytes": 1598615,
+        "sha256": "742f984bb9c3d1c64ce32d7504ff693b138ef7ed3bff77600240dd6c2ad58226"
+      }
+    ],
+    "einkuenfte": [
+      {
+        "filename": "vsl26ag.txt",
+        "bytes": 26647,
+        "sha256": "1afc37059c335f0ae1c7d336c205fc41a8e0eaaa9767a28fa2419b252f09d591"
+      },
+      {
+        "filename": "vsl26ai.txt",
+        "bytes": 766935,
+        "sha256": "2ac2646974807b91804b2b61512ab0684940a30b4a1cf9dc17b724d49feed30e"
+      },
+      {
+        "filename": "vsl26ar.txt",
+        "bytes": 766935,
+        "sha256": "ce2a2f863be21aaed0b5ea4be543372baaad6c3b6b748c5ebab3c5ec1777601b"
+      },
+      {
+        "filename": "vsl26be.txt",
+        "bytes": 720855,
+        "sha256": "f8ab98992641b22eb48a8254c298ab5c71cf16beb4c4b7649ffd2889e69d2cf4"
+      },
+      {
+        "filename": "vsl26bl.txt",
+        "bytes": 678871,
+        "sha256": "810bb0413d1bf2f7b96508fd5c6c7ae404dc57e687e33e750be8e974a84bc90a"
+      },
+      {
+        "filename": "vsl26bs.txt",
+        "bytes": 717655,
+        "sha256": "a2a0659ea9a30e2823b8ab3111a185d3294c9db65e1d7d491e07308cbfa18c20"
+      },
+      {
+        "filename": "vsl26fr.txt",
+        "bytes": 512727,
+        "sha256": "9fa30a93dd1c6e90a703ea2f652a1f8e196e2436fd1101a02887c204edd5d589"
+      },
+      {
+        "filename": "vsl26ge.txt",
+        "bytes": 150999,
+        "sha256": "5993fda7d42813395a1f14d7bae59c961fe321b5aef459e0fdae4ecc374ee215"
+      },
+      {
+        "filename": "vsl26gl.txt",
+        "bytes": 766935,
+        "sha256": "f06811cb76176baefffb4e882f9f0c0dcb636a7fd2ae7114dcbae54f517dfcd1"
+      },
+      {
+        "filename": "vsl26gr.txt",
+        "bytes": 744727,
+        "sha256": "b79f8743a0f4e38df3b388016277baa97099d673ce863587864886fc02fad52c"
+      },
+      {
+        "filename": "vsl26ju.txt",
+        "bytes": 834455,
+        "sha256": "5cceefc5a68d79a321327e70606a70080fcd5ce532ca37192381659b764f61bc"
+      },
+      {
+        "filename": "vsl26lu.txt",
+        "bytes": 766935,
+        "sha256": "f7370e408bdd2813c240e330afafdb4bfbdc06031dfdf63cd496ff133d3a9a63"
+      },
+      {
+        "filename": "vsl26ne.txt",
+        "bytes": 835543,
+        "sha256": "b21c06cec3e4b9b8d3698830b6ac2a4160885076749317cf3e891f81627656b9"
+      },
+      {
+        "filename": "vsl26nw.txt",
+        "bytes": 894295,
+        "sha256": "e4688be0d1891da44fea0f6cc226531b803d4ba9e2d0fe0aa6a673b6a2622f8c"
+      },
+      {
+        "filename": "vsl26ow.txt",
+        "bytes": 766935,
+        "sha256": "08b7c746086699d978ffeb85bff47e0aa16da704decfdcdecceb93db6ecc9273"
+      },
+      {
+        "filename": "vsl26sg.txt",
+        "bytes": 685783,
+        "sha256": "d208a07a92f88a122886f8bf889fec1237ae91eb906d89f31ac2ef985fe86b57"
+      },
+      {
+        "filename": "vsl26sh.txt",
+        "bytes": 894295,
+        "sha256": "6e4cfe7bdb897763a727b6c54b71d0b8a2542dbad439f76d9bc9a206f4ab9bc8"
+      },
+      {
+        "filename": "vsl26so.txt",
+        "bytes": 767639,
+        "sha256": "7197cc40e8fec8462f41bb1591db7266c7a7d853ff2d6b1a54ff5498a3a5448a"
+      },
+      {
+        "filename": "vsl26sz.txt",
+        "bytes": 1384919,
+        "sha256": "52078966b023880379da96e40625e83fab74406504782822b02c3beea74b0e28"
+      },
+      {
+        "filename": "vsl26tg.txt",
+        "bytes": 718039,
+        "sha256": "4136a24b2a3ab7ae276bb77f29700698073400f364c31354c3816fa643f29cee"
+      },
+      {
+        "filename": "vsl26ti.txt",
+        "bytes": 275415,
+        "sha256": "31a8b856fa0e757a81d041efe1c48474fb53e6787f02d2df53510fbbbc451d97"
+      },
+      {
+        "filename": "vsl26ur.txt",
+        "bytes": 771415,
+        "sha256": "6f71295073026107dcbfb02af2ea181275211880be7c229806591711a4f0ca28"
+      },
+      {
+        "filename": "vsl26vd.txt",
+        "bytes": 151511,
+        "sha256": "6a0ff00800a8e1f4d2b3a040be7868ec2b2327c24ee38371039c1a444131e7da"
+      },
+      {
+        "filename": "vsl26vs.txt",
+        "bytes": 384855,
+        "sha256": "597fdb754cc2f8ec201ecc543d614b9d0d0dde59e2d7e84c2bda4b7e4280dc77"
+      },
+      {
+        "filename": "vsl26zg.txt",
+        "bytes": 766999,
+        "sha256": "7156fabb439a795d070dd8d831b72665cf9e6caae310708073ff2925055f3388"
+      },
+      {
+        "filename": "vsl26zh.txt",
+        "bytes": 661079,
+        "sha256": "1b9100b7ade07991e86b61a420e10cbc2cdffa6209fd5e560196d3c1402e101a"
+      }
+    ]
+  }
+}

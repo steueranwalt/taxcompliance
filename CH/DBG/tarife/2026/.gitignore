@@ -1,0 +1,4 @@
+# Entpackte Produktionsdateien — zu gross, ZIP + Manifest reichen.
+loehne/
+einkuenfte/
+*.txt
