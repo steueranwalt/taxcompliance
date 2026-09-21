@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "stand": "2026-09-20",
+    "format_gueltig_ab": "2025-01-01",
+    "abruf": "2026-09-20",
+    "quelle_loehne": "https://www.estv.admin.ch/dam/de/sd-web/AvojuyFCZY95/qst-tarife-recordformate-loehne-2025-de.pdf",
+    "quelle_einkuenfte": "https://www.estv.admin.ch/dam/de/sd-web/oFSE9NY33E1k/qst-tarife-recordformate-einkuenfte-2025-de.pdf",
+    "hinweis": "Nur Codeliste. Keine Tarifsaetze. ESTV haftet nicht; zustaendig sind die Kantone."
+  },
+  "kirchensteuer": [
+    {"zeichen": "Y", "bedeutung": "mit Kirchensteueranteil"},
+    {"zeichen": "N", "bedeutung": "ohne Kirchensteueranteil"}
+  ],
+  "kinderregeln": [
+    {"regel": "0-9", "beschreibung": "Kinderzahl 0 bis 9 gemaess Kanton"},
+    {"regel": "1-9", "beschreibung": "nur mit 1 bis 9 Kindern (H, P, U)"},
+    {"regel": "fix-G9N", "beschreibung": "immer G9N bzw. Q9N bzw. V9N, unabhaengig von Kindern und Kirche"},
+    {"regel": "fix-E0", "beschreibung": "nur E0N oder E0Y"},
+    {"regel": "ohne", "beschreibung": "keine Kinderstaffel"}
+  ],
+  "codes": [
+    {"code": "A", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Alleinstehende", "kinder": "0-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1 Bst. a"},
+    {"code": "B", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Verheiratete Alleinverdiener", "kinder": "0-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1 Bst. b"},
+    {"code": "C", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Verheiratete Doppelverdiener; satzbestimmendes Ehegatteneinkommen hoechstens Median (Recordart 13)", "kinder": "0-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1 Bst. c"},
+    {"code": "D", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Personen mit AHV-Beitragsrueckerstattung; fixer Satz", "kinder": "0-9", "kirche": "Y/N", "kantone": "typisch nur GE", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1 Bst. d; ESTV Löhne 2025 Ziff. 4.4"},
+    {"code": "E", "art": "tarifgruppe", "serie": "beide", "bedeutung": "Vereinfachtes Abrechnungsverfahren / Einkuenfte nach BGSA; fixer Satz", "kinder": "fix-E0", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1 Bst. e"},
+    {"code": "G", "art": "tarifgruppe", "serie": "beide", "bedeutung": "Ersatzeinkuenfte, nicht ueber den Arbeitgeber ausbezahlt", "kinder": "fix-G9N", "kirche": "N-fix", "kantone": "alle", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1; ESTV Löhne 2025 Ziff. 4.2"},
+    {"code": "H", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Alleinstehende mit Kindern oder unterstuetzungsbeduerftigen Personen im Haushalt, Unterhalt zur Hauptsache", "kinder": "1-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "QStV Art. 1 Abs. 1 Bst. h"},
+    {"code": "L", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Deutschland, Voraussetzungen von A", "kinder": "0-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "A", "grundlage": "QStV Art. 1 Abs. 1 Bst. i; DBA-D Art. 15a"},
+    {"code": "M", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Deutschland, Voraussetzungen von B", "kinder": "0-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "B", "grundlage": "QStV Art. 1 Abs. 1 Bst. j; DBA-D Art. 15a"},
+    {"code": "N", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Deutschland, Voraussetzungen von C", "kinder": "0-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "C", "grundlage": "QStV Art. 1 Abs. 1 Bst. k; DBA-D Art. 15a"},
+    {"code": "P", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Deutschland, Voraussetzungen von H", "kinder": "1-9", "kirche": "Y/N", "kantone": "alle", "entspricht": "H", "grundlage": "QStV Art. 1 Abs. 1 Bst. l; DBA-D Art. 15a"},
+    {"code": "Q", "art": "tarifgruppe", "serie": "beide", "bedeutung": "Grenzgaenger aus Deutschland, Voraussetzungen von G", "kinder": "fix-G9N", "kirche": "N-fix", "kantone": "alle", "entspricht": "G", "grundlage": "QStV Art. 1 Abs. 1 Bst. m; DBA-D Art. 15a"},
+    {"code": "R", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Italien nach Art. 3 Abs. 1 CH-IT, Voraussetzungen von A", "kinder": "0-9", "kirche": "Y/N", "kantone": "GR,TI,VS", "entspricht": "A", "grundlage": "QStV Art. 1; Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01"},
+    {"code": "S", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Italien, Voraussetzungen von B", "kinder": "0-9", "kirche": "Y/N", "kantone": "GR,TI,VS", "entspricht": "B", "grundlage": "Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01"},
+    {"code": "T", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Italien, Voraussetzungen von C", "kinder": "0-9", "kirche": "Y/N", "kantone": "GR,TI,VS", "entspricht": "C", "grundlage": "Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01"},
+    {"code": "U", "art": "tarifgruppe", "serie": "loehne", "bedeutung": "Grenzgaenger aus Italien, Voraussetzungen von H", "kinder": "1-9", "kirche": "Y/N", "kantone": "GR,TI,VS", "entspricht": "H", "grundlage": "Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01"},
+    {"code": "V", "art": "tarifgruppe", "serie": "beide", "bedeutung": "Grenzgaenger aus Italien, Voraussetzungen von G", "kinder": "fix-G9N", "kirche": "N-fix", "kantone": "GR,TI,VS", "entspricht": "G", "grundlage": "Grenzgängerabkommen CH-IT Art. 3 Abs. 1; ab 2024-01-01"},
+    {"code": "W", "art": "tarifgruppe", "serie": "einkuenfte", "bedeutung": "Renten aus Vorsorge; W9N allgemein, W9G Ansässigkeit Deutschland", "kinder": "ohne", "kirche": "N-oder-G", "kantone": "alle", "entspricht": "", "grundlage": "ESTV übrige Einkünfte 2025 Ziff. 3.5 / 4.2"},
+    {"code": "Y", "art": "tarifgruppe", "serie": "einkuenfte", "bedeutung": "Kapitalleistungen aus Vorsorge, Alleinstehende (Y9N)", "kinder": "ohne", "kirche": "N-fix", "kantone": "alle", "entspricht": "", "grundlage": "ESTV übrige Einkünfte 2025 Ziff. 3.6"},
+    {"code": "Z", "art": "tarifgruppe", "serie": "einkuenfte", "bedeutung": "Kapitalleistungen aus Vorsorge, Verheiratete (Z9N)", "kinder": "ohne", "kirche": "N-fix", "kantone": "alle", "entspricht": "", "grundlage": "ESTV übrige Einkünfte 2025 Ziff. 3.6"},
+    {"code": "HE", "art": "vordefiniert", "serie": "loehne", "bedeutung": "Verwaltungsraete, fixer Satz, Recordart 11", "kinder": "ohne", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "Art. 93 DBG"},
+    {"code": "ME", "art": "vordefiniert", "serie": "loehne", "bedeutung": "Mitarbeiterbeteiligungen, fixer Satz, Recordart 11", "kinder": "ohne", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "Art. 97a DBG"},
+    {"code": "NO", "art": "vordefiniert", "serie": "loehne", "bedeutung": "Korrektur nicht oder zu Unrecht quellensteuerpflichtig, Recordart 11", "kinder": "ohne", "kirche": "Y/N", "kantone": "alle", "entspricht": "", "grundlage": "ESTV Löhne 2025 Ziff. 4.5"},
+    {"code": "SF", "art": "vordefiniert", "serie": "loehne", "bedeutung": "Grenzgaenger Frankreich, Sondervereinbarung, Recordart 11, nur SFN", "kinder": "ohne", "kirche": "N-fix", "kantone": "BE,BS,BL,JU,NE,SO,VD,VS", "entspricht": "", "grundlage": "ESTV Löhne 2025 Ziff. 4.2 / 4.5"},
+    {"code": "PEL", "art": "bezugsprovision", "serie": "beide", "bedeutung": "Bezugsprovision elektronisch, Recordart 12", "kinder": "ohne", "kirche": "", "kantone": "alle", "entspricht": "", "grundlage": "ESTV Löhne 2025 Ziff. 4.6"},
+    {"code": "PPA", "art": "bezugsprovision", "serie": "beide", "bedeutung": "Bezugsprovision Papier, Recordart 12", "kinder": "ohne", "kirche": "", "kantone": "alle", "entspricht": "", "grundlage": "ESTV Löhne 2025 Ziff. 4.6"},
+    {"code": "PSP", "art": "bezugsprovision", "serie": "beide", "bedeutung": "Bezugsprovision vereinfachtes Verfahren, Recordart 12", "kinder": "ohne", "kirche": "", "kantone": "alle", "entspricht": "", "grundlage": "ESTV Löhne 2025 Ziff. 4.6"},
+    {"code": "PLS", "art": "bezugsprovision", "serie": "einkuenfte", "bedeutung": "Bezugsprovision Kapitalleistungen aus Vorsorge, Recordart 12", "kinder": "ohne", "kirche": "", "kantone": "alle", "entspricht": "", "grundlage": "ESTV übrige Einkünfte 2025 Ziff. 4.7"},
+    {"code": "MED", "art": "median", "serie": "beide", "bedeutung": "Hoechstbetrag satzbestimmendes Ehegatteneinkommen Tarif C; Betrag in Feld 10, Recordart 13", "kinder": "ohne", "kirche": "", "kantone": "alle", "entspricht": "", "grundlage": "ESTV Löhne 2025 Ziff. 4.7"}
+  ]
+}
