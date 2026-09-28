@@ -14,3 +14,5 @@ Rechtstexte, Verwaltungsanweisungen und Arbeitshilfen zur Abgabenordnung — Sch
 Verwandt, aber **nicht** unter AO zu führen: [ASt-Mitteilung § 6 AStG](../AStG/formulardaten-mitteilung-6-astg.md) (Wegzugsbesteuerung).
 
 Die frühere Top-Level-Ablage `steuerliche-erfassung/` ist nach `DE/AO/` zusammengeführt.
+
+SharePoint-Umsetzung (Listen, Inhaltstypen, Forms): `steuerkanzlei/sharepoint-architektur/elster-listen/`.

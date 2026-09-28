@@ -17,3 +17,5 @@ Generische Transport-, Verwaltungs- und Nebenverfahrens-Infrastruktur von ELSTER
 Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`AO/formulardaten-roherfassung.md`](AO/formulardaten-roherfassung.md), [`AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`AStG/formulardaten-mitteilung-6-astg.md`](AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert — siehe [`elster/kataloge/`](elster/kataloge/).
 
 **Hinweis zur ERiC-Lücke:** Die eigentlichen Formularfeldkataloge dieser Dokumente (steuerliche Erfassung, BZSt2, § 6 AStG, W-IdNr.) beruhen **nicht** auf einem ELSTER-Entwicklerpaket, sondern auf separat ausgewerteten Formularen; ein zugehöriges ELSTER-/ERiC-Entwicklerpaket liegt für diese Formulare nicht vor (siehe [`elster/README.md`](elster/README.md) Abschnitt 3.1).
+
+Die SharePoint-Listenplanung (Inhaltstypen, Spalten, Forms, Pilot-Site) liegt im Repo `steuerkanzlei` unter `sharepoint-architektur/elster-listen/`.
