@@ -1,0 +1,366 @@
+[
+  {
+    "id": "elsterxml-v11",
+    "name": "ElsterBasis-XML-Schnittstelle (ElsterXML)",
+    "version": "2026.7.20.0 / Doku 4.3.0 (Stand 2026-02-12)",
+    "verfahren": "(fachverfahrensübergreifend — Header für alle Verfahren)",
+    "datenarten": [],
+    "vorgaenge": [
+      "send-Auth",
+      "send-NoSig",
+      "send-Auth-Part"
+    ],
+    "taxonomies": [
+      "Verzeichnis_der_Datenarten.csv",
+      "headerbasis_verfahren.xsd (~80 Verfahren)",
+      "headerbasis_datenarten.xsd (~854 Datenarten)"
+    ],
+    "source_files": [
+      "ElsterXML-Schnittstelle_V11_2026.7.20.0.zip",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Dokumente/Einheitliche_Datenschnittstelle_XML_11.pdf",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Dokumente/Einheitliche_Datenschnittstelle_XML_Authentifizierung_V02.2.1.pdf",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Dokumente/Spezifikation_ELSTER-Token_1.27.pdf",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Dokumente/Verzeichnis_der_Datenarten.csv",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Dokumente/kleine_Uebersicht.txt",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Schemata/elster11_bisNH_extern.xsd",
+      "extracted/ElsterXML-Schnittstelle_V11_2026.7.20.0/v11/Schemata/header/"
+    ],
+    "notes": "Transportformat TransferHeader/NutzdatenHeader/Nutzdaten; AES-Verschlüsselung (ab Doku 4.3.0); nur offene Schnittstelle. CSV listet 18 offene-Schnittstelle-Kombinationen (Datenabholung/Lohn/KMV/Lohn2)."
+  },
+  {
+    "id": "elster-datenabholung-v32",
+    "name": "ElsterDatenabholung",
+    "version": "32.0.1 (Portal auch v31.0.6, gültig parallel)",
+    "verfahren": "ElsterDatenabholung",
+    "datenarten": [
+      "PostfachStatus",
+      "PostfachAnfrage",
+      "PostfachBestaetigung",
+      "Statusabfrage",
+      "ElsterVaStDaten",
+      "ElsterLohnDaten",
+      "ElsterLohn2Daten",
+      "ElsterKMVDaten"
+    ],
+    "vorgaenge": [
+      "send-Auth",
+      "send-NoSig"
+    ],
+    "taxonomies": [
+      "DIVA ELSTER-Dokumentengruppe (Filter DatenartBereitstellung)",
+      "OTTER Objekt-IDs für Anhänge"
+    ],
+    "source_files": [
+      "ElsterDatenabholung-v32.0.1.zip",
+      "extracted/ElsterDatenabholung-v32.0.1/Dokumentation/SSb ElsterDatenabholung - Extern V32.0.1.pdf",
+      "extracted/ElsterDatenabholung-v32.0.1/Schemata/datenabholung_32.xsd",
+      "extracted/ElsterDatenabholung-v32.0.1/Schemata/elster11_datenabholung_32.xsd",
+      "extracted/ElsterDatenabholung-v32.0.1/Beispiele_TH11/"
+    ],
+    "notes": "PostfachNachricht-Daten vs VaSt-Beleg-Daten. Schlüssel-Elemente: Anfrage/Abholung/Statusabfrage, Bereitstellungen, Datenpaket, Anhaenge, VertreterInformation. Bestätigungspflicht nach PostfachAnfrage (binnen 24h laut Auswertung)."
+  },
+  {
+    "id": "elster-objektspeicher-otter-v1.4.6",
+    "name": "ElsterObjektspeicher (OTTER)",
+    "version": "1.4.6",
+    "verfahren": "OTTER (REST, kein ElsterXML-Verfahren)",
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [],
+    "source_files": [
+      "ElsterObjektspeicher_v1.4.6.zip",
+      "extracted/ElsterObjektspeicher_v1.4.6/ElsterObjektspeicher_v1.4.6/Dokumentation/OTTER-SSb-v1.4.6.pdf",
+      "extracted/ElsterObjektspeicher_v1.4.6/ElsterObjektspeicher_v1.4.6/OpenAPI/otter.yml"
+    ],
+    "notes": "REST OpenAPI 3.0.3: GET /api/v1/obj/{objektid} (fetch), POST /api/v1/obj (send), GET /api/v1/health. Auth via Clientzertifikat. Primär Download im Rahmen Datenabholung; Upload für große Anhänge (Objekt-ID im ElsterXML referenziert)."
+  },
+  {
+    "id": "elsterlohn-lstb-1.36",
+    "name": "ElsterLohn / Lohnsteuerbescheinigung",
+    "version": "1.36 (Stand 22.08.2024, Portal 28.08.2024)",
+    "verfahren": "ElsterLohn (bis VZ 2025); ab VZ 2026 produktiv: ElsterKMV",
+    "datenarten": [
+      "LStB",
+      "Lohnersatzleistung",
+      "LSTMitteilung (ElsterKMV ab VZ 2026, nicht im ZIP)"
+    ],
+    "vorgaenge": [
+      "send-Auth",
+      "send-Auth-Part"
+    ],
+    "taxonomies": [
+      "Kennziffern LStB 202501 (Muster_LSTB_2025.pdf + lstb202501.xsd Annotationen, ~29 nummerierte Felder / Vordruck 1–34)",
+      "LStBStorno v1/v2 (gleiche DatenArt LStB)",
+      "eTIN (Tool + Altfälle; ab LStB 202301 nicht mehr im Schema)"
+    ],
+    "source_files": [
+      "ElsterLohn_Lohnsteuerbescheinigung_1.36.zip",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/",
+      "ELSTERLOHN-LSTB-EXTRACT.md",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Vordruck/Muster_LSTB_2025.pdf",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Schemata/lstb202501.xsd",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Doku/SST_ElsterLohn_Verfahrensablauf.pdf",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Doku/SST_ElsterLohn_Datenschnittstelle_LStB_202501.pdf"
+    ],
+    "notes": "ZIP lokal extrahiert (≈56 MB / 138 MB unpacked). DatenArt LStB trägt Neu/Korrektur und Storno (Nutzdaten-Root LStBStorno). Lohnersatzleistung nur in Doku/CSV, kein Schema im ZIP. ElsterKMV/LSTMitteilung ab VZ 2026 → esteuer.de."
+  },
+  {
+    "id": "elster-kontoabfrage-v2.1.3",
+    "name": "ElsterKontoabfrage",
+    "version": "2.1.3 (Stand 24.11.2025)",
+    "verfahren": "ElsterKontoabfrage",
+    "datenarten": [
+      "Kontoabfrage"
+    ],
+    "vorgaenge": [
+      "send-Auth"
+    ],
+    "taxonomies": [],
+    "source_files": [
+      "ElsterKontoabfrage_v2.1.3.zip",
+      "extracted/ElsterKontoabfrage_v2.1.3/Version_2.1.3/ElsterKontoabfrage/Doku/ElsterKontoabfrage_Schnittstellenbeschreibung_V2.1.3.pdf",
+      "extracted/ElsterKontoabfrage_v2.1.3/Version_2.1.3/ElsterKontoabfrage/Schemata/Kontoabfrage-6.xsd",
+      "extracted/ElsterKontoabfrage_v2.1.3/Version_2.1.3/ElsterKontoabfrage/Schemata/eko_o_abfrage_000006.xsd",
+      "extracted/ElsterKontoabfrage_v2.1.3/Version_2.1.3/ElsterKontoabfrage/Schemata/eko_i_abfrage_000006.xsd",
+      "extracted/ElsterKontoabfrage_v2.1.3/Version_2.1.3/ElsterKontoabfrage/Schemata/eko_zs_abfrage_000006.xsd",
+      "extracted/ElsterKontoabfrage_v2.1.3/Version_2.1.3/ElsterKontoabfrage/Beispiele/"
+    ],
+    "notes": "Nutzdaten: kontoabfrage version=6 mit kontoabfrage-art O (offen) / I (Ist) / ZS (Soll). Felder u.a. steuernummer, steuerart, zeitraum, wertstellungsdatum; Antwort: steuerkontoOffeneBetraege / steuerkontoTilgungen / steuerkontoauszug. Encoding UTF-8. Voraussetzung: erteilte Vollmacht."
+  },
+  {
+    "id": "lavendel-datenuebermittler-v2.0.1",
+    "name": "LAVENDEL Datenübermittler (ELStAM)",
+    "version": "2.0.1 (Stand 03.07.2025)",
+    "verfahren": "ElsterLohn2 (ElsterXML); fachlich LAVENDEL/ELStAM",
+    "datenarten": [
+      "DUeAnmelden",
+      "DUeAbmelden",
+      "DUeUmmelden",
+      "AenderungslisteDUe / AenderungslisteElstam (Header-Enums)"
+    ],
+    "vorgaenge": [
+      "send-Auth"
+    ],
+    "taxonomies": [
+      "ELStAM Steuerklassen/Konfessionen (SimpleTypes)",
+      "Aenderungsliste Art: BRUTTOLISTE/MONATSLISTE/ANMELDE-/ABMELDE-/UMMELDEBESTAETIGUNGSLISTE"
+    ],
+    "source_files": [
+      "LAVENDEL_Datenuebermittler_Version_2.0.1.zip",
+      "extracted/LAVENDEL_Datenuebermittler_Version_2.0.1/v201/readme.txt",
+      "extracted/LAVENDEL_Datenuebermittler_Version_2.0.1/v201/Dokumentation/Schnittstellenbeschreibung_LAVENDEL_V-201.pdf",
+      "extracted/LAVENDEL_Datenuebermittler_Version_2.0.1/v201/Dokumentation/Verfahrenshinweise_LAVENDEL_V-201.pdf",
+      "extracted/LAVENDEL_Datenuebermittler_Version_2.0.1/v201/resources/elster11_lavendel_extern-v2.xsd",
+      "extracted/LAVENDEL_Datenuebermittler_Version_2.0.1/v201/resources/datenuebermittler-v201/"
+    ],
+    "notes": "Message types: ArbeitnehmerAnmeldenRequest, ArbeitnehmerAbmeldenRequest, DatenuebermittlerWechselRequest, Aenderungsliste. Beispiele liegen im HMS-Paket."
+  },
+  {
+    "id": "hms-hersteller-v2.0.1",
+    "name": "HMS Auslieferungspaket Hersteller (ELStAM Mock)",
+    "version": "2.0.1 (Stand 09.07.2025)",
+    "verfahren": "ElsterLohn2 / LAVENDEL (Test/Mock)",
+    "datenarten": [
+      "DUeAnmelden",
+      "DUeAbmelden",
+      "DUeUmmelden",
+      "Aenderungsliste-*"
+    ],
+    "vorgaenge": [
+      "send-Auth"
+    ],
+    "taxonomies": [
+      "HMS_Geschäftsvorfälle_IdNr_V2_0_1.xlsx (Geschäftsvorfall-IdNrn)"
+    ],
+    "source_files": [
+      "HMS_Auslieferungspaket_Hersteller_V2_0_1.zip",
+      "extracted/HMS_Auslieferungspaket_Hersteller_V2_0_1/HMS_Auslieferungspaket_Hersteller_V2_0_1/dokumentation/",
+      "extracted/HMS_Auslieferungspaket_Hersteller_V2_0_1/HMS_Auslieferungspaket_Hersteller_V2_0_1/HMS-Template-XML_V2_0_1/",
+      "extracted/HMS_Auslieferungspaket_Hersteller_V2_0_1/HMS_Auslieferungspaket_Hersteller_V2_0_1/HMS-XML_V2_0_1/"
+    ],
+    "notes": "Hersteller-Mock-System Templates je IdNr-Geschäftsvorfall (Anmelden/Abmelden/Ummelden + Änderungslisten). Kein Produktivverfahren."
+  },
+  {
+    "id": "rabe-belegdatenhaltung-v2.3",
+    "name": "RABE-Belegdatenhaltung (externe Schnittstelle)",
+    "version": "2.3 (Stand 09.04.2026)",
+    "verfahren": "RABE (REST Extern; kein ElsterXML-Verfahren)",
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [],
+    "source_files": [
+      "RABE-Belegdatenhaltung_v2.3.zip",
+      "extracted/RABE-Belegdatenhaltung_v2.3/RABE-Belegdatenhaltung_v2.3/Dokumentation/RABE Client Extern_SSb_V2.3.pdf",
+      "extracted/RABE-Belegdatenhaltung_v2.3/RABE-Belegdatenhaltung_v2.3/OpenAPI/rabe-extern.yml",
+      "extracted/RABE-Belegdatenhaltung_v2.3/RABE-Belegdatenhaltung_v2.3/Schema/rabe-extern-belegeinheiten.xsd",
+      "extracted/RABE-Belegdatenhaltung_v2.3/RABE-Belegdatenhaltung_v2.3/Schema/rabe-extern-quittung.xsd"
+    ],
+    "notes": "REST: GET /api/v1/belegpakete/{referenzId}, GET /belegeinheiten/{dateiId}, POST/PUT /quittung/{anfrageId}, /alive. Pull-Modell: Belege bleiben bei Kanzlei, FV holt ab."
+  },
+  {
+    "id": "rabe-informationen-hersteller-1.3",
+    "name": "RABE Informationen für Hersteller",
+    "version": "1.3 (Stand 27.11.2024)",
+    "verfahren": "RABE",
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [],
+    "source_files": [
+      "RABE_Informationen_fuer_Hersteller_Version_1.3.pdf"
+    ],
+    "notes": "Fachliche/technische Hersteller-Infos zur Bereitstellung externer RABE-Belegdatenhaltungen (PDF, kein Schema-Paket)."
+  },
+  {
+    "id": "bescheidnr-januar-2026",
+    "name": "Bescheidwertnummern (ESt/GSt/USt)",
+    "version": "Januar 2026 (Portal Stand 22.01.2026)",
+    "verfahren": null,
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [
+      "Bescheidwertnr-Katalog ESt (~1865 Codes)",
+      "GSt (~401)",
+      "USt (~229)"
+    ],
+    "source_files": [
+      "Bescheidnr_Januar_2026.zip",
+      "extracted/Bescheidnr_Januar_2026/Bescheidnummern_ESt.xml",
+      "extracted/Bescheidnr_Januar_2026/Bescheidnummern_GSt.xml",
+      "extracted/Bescheidnr_Januar_2026/Bescheidnummern_USt.xml"
+    ],
+    "notes": "Excel-XML SpreadsheetML. Spalten: Bescheidwertnr., Bezeichnung, Dezimalst., Art*). Feingranularer als DIVA für Steuerbescheidarten."
+  },
+  {
+    "id": "fehlerliste",
+    "name": "ELSTER-Fehlerliste",
+    "version": "Portal Stand 24.11.2025",
+    "verfahren": null,
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [
+      "Fehlercodes Komponente/Unterkomponente/Klassifizierung/Nummer"
+    ],
+    "source_files": [
+      "Fehlerliste.xml"
+    ],
+    "notes": "477 <Fehler>-Einträge. Schema: Komponente, Unterkomponente, Klassifizierung (0/1/3/5/7/9 — Counts 24/46/26/328/35/18), Nummer, Text. Offizielle Legende Klassifizierung unbekannt; vorläufig aus Texten abgeleitet (siehe Auswertung)."
+  },
+  {
+    "id": "pruefung-steuernummer-idnr",
+    "name": "Prüfung Steuer- und Steueridentifikationsnummer (+ Grundsteuer-Ordnungskriterien)",
+    "version": "Stand 15.04.2026",
+    "verfahren": null,
+    "datenarten": [
+      "Grundsteuerwert",
+      "GrundsteuerBY",
+      "GrundsteuerBW",
+      "GrundsteuerHE",
+      "GrundsteuerHH",
+      "GrundsteuerNI"
+    ],
+    "vorgaenge": [],
+    "taxonomies": [
+      "Prüfziffernverfahren je Bundesland",
+      "IdNr 11er-Modulo bundeseinheitlich",
+      "Grundsteuer Landesnummer/Ordnungskriterium"
+    ],
+    "source_files": [
+      "Pruefung_der_Steuer_und_Steueridentifikatsnummer.pdf"
+    ],
+    "notes": "116-seitige Doku. Verfahren: 2er / 11er / modifiziertes 11er / Berlin-Sonderfälle. Grundsteuer: Ordnungskriterium Steuernummer vs Aktenzeichen je BL."
+  },
+  {
+    "id": "finanzamtsdaten",
+    "name": "Finanzamtsdaten (GEMFA)",
+    "version": "15.04.2026 (GEMFA 2.0, Diff vs 19.01.2026)",
+    "verfahren": null,
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [
+      "BUFA-Nummern je Bundesland"
+    ],
+    "source_files": [
+      "Finanzamtsdaten.xlsx"
+    ],
+    "notes": "40 Sheets (Prod+Test+Allg). Spalten: Finanzamtsnummer, Finanzamtsname, ÄnderungsInformationen. ~566 Prod-+~186 Test-Zeilen. Diff-fähig (KEIN_DELTA/NEU/GELOESCHT/GEAENDERT)."
+  },
+  {
+    "id": "diva-art-des-schreibens-v21",
+    "name": "DIVA Schlüsselkatalog Art des Schreibens",
+    "version": "21.0.0 (Stand Katalog/Doku ~03.06.2026; Portal Download 25.06.2026)",
+    "verfahren": "ElsterDatenabholung (Abholung); Produkt ELDAS",
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [
+      "DateibezeichnungID (335 Einträge im Sheet Schlüssel)",
+      "ELSTER-Dokumentengruppe"
+    ],
+    "source_files": [
+      "DIVA_SK_ArtDesSchreibens_v21.0.0.zip",
+      "extracted/DIVA_SK_ArtDesSchreibens_v21.0.0/VDM_SK_ArtDesSchreibens_v21.0.0.xlsx",
+      "extracted/DIVA_SK_ArtDesSchreibens_v21.0.0/DIVA_SK_ArtDesSchreibens_v21.0.0.pdf"
+    ],
+    "notes": "335 Schlüsselzeilen. Dokumentengruppen u.a. DivaBescheidESt/GewSt/KSt/GrESt/ErbSt/SchenkSt, DivaSonstigerVA (138), DivaSonstigeMitteilung (101), DIVAInvStG51Feststellung (4), WIdNrVA, VerbindlicheAuskunft/-Zusage, diverse Rennwett-/Lotterie-/Automatensteuern. Vollständige Liste: Excel-Pfad (nicht hier dump)."
+  },
+  {
+    "id": "invstg51-feststellung-xml-anhang",
+    "name": "XML-Anhang InvStG § 51 Feststellung",
+    "version": "Doku v1 / Muster v3 (Portal 09.01.2025; Fassung Doku 18.12.2024)",
+    "verfahren": "ElsterErklaerung / Bescheid-Anhang (Datenartversion 3 und 4)",
+    "datenarten": [
+      "InvStG51Feststellung (Namespace elstererklaerung/invstg51feststellung/v3)"
+    ],
+    "vorgaenge": [],
+    "taxonomies": [
+      "DIVAInvStG51Feststellung"
+    ],
+    "source_files": [
+      "Dokumentation_XML-Anhang_zu_InvStG51Feststellung_v1.pdf",
+      "MUSTER_Anlage_zur_Ges_einh_Fest_51_InvStG.xml"
+    ],
+    "notes": "Maschinenlesbarer XML-Anhang neben PDF-Bescheid (kein VA). Struktur: BescheidInformationen (Nachrichtenkopf, Briefkopf, Empfaenger, Bekanntgabeadressat, SPIF_AVF_Anteilklasse, Feststellungen, Erklaerungen), InvSt1 (Allgemeines/Ertragsverw/…), FB (Bescheid/GINSTER)."
+  },
+  {
+    "id": "serverstatus-rss",
+    "name": "ELSTER Serverstatus RSS-Dokumentation",
+    "version": "PDF vorhanden (Portal; Feed https://www.elster.de/elsterweb/serverstatus_rss)",
+    "verfahren": null,
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [],
+    "source_files": [
+      "serverstatus_rss_documentation.pdf"
+    ],
+    "notes": "RSS 2.0 Feed-Struktur für Annahmeserver-Status. Mapping Verfahren/Steuerart → relevante <title>-Einträge in der Doku. Kein Formularpaket."
+  },
+  {
+    "id": "vast-informationen-v1",
+    "name": "VaSt-Informationen (Vorausgefüllte Steuererklärung)",
+    "version": "v1 (Portal 11.03.2013) — ZIP lokal NICHT vorhanden",
+    "verfahren": "ElsterDatenabholung (ElsterVaStDaten)",
+    "datenarten": [
+      "ElsterVaStDaten"
+    ],
+    "vorgaenge": [
+      "send-Auth"
+    ],
+    "taxonomies": [],
+    "source_files": [
+      "schnittstellen.html"
+    ],
+    "notes": "Portal-Eintrag vorhanden, Datei nicht heruntergeladen. Allgemeine Hersteller-Infos zur VaSt."
+  },
+  {
+    "id": "portal-schnittstellen.html",
+    "name": "Portal-Dump Schnittstellenbeschreibungen",
+    "version": "Dump Stand ~2026-07-24",
+    "verfahren": null,
+    "datenarten": [],
+    "vorgaenge": [],
+    "taxonomies": [],
+    "source_files": [
+      "schnittstellen.html"
+    ],
+    "notes": "Offizielle Liste der Download-Pakete; Quelle für fehlende Downloads und ElsterLohn/ElsterKMV-Hinweis."
+  }
+]

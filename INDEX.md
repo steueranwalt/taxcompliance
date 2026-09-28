@@ -4,6 +4,13 @@
 
 ## Deutsches Steuerrecht (`DE/`)
 
+### ELSTER-Infrastruktur
+
+- Übersicht: [`DE/README.md`](DE/README.md)
+- [ELSTER-Transportschicht und Verfahrenstaxonomie](DE/elster-transportschicht-und-verfahren.md) — ElsterXML-Grundaufbau, Authentifizierung, Verfahren/Datenart/Vorgang je Paket
+- [ELSTER-Taxonomien und Referenzkataloge](DE/elster-taxonomien-kataloge.md) — DIVA, Fehlerliste, Bescheidnummern, Prüfziffern, Finanzamtsdaten
+- [`DE/elster/`](DE/elster/README.md) — eine Seite je Paket/Formular/Katalog (Zweck, Daten, Taxonomie, Quellen, Gaps), Rohinventar `DE/elster/inventar.json`, explizite ERiC-/Portal-Lücken
+
 ### Abgabenordnung (AO)
 
 - [Einheitliches Datenmodell: steuerliche Erfassung DE und Auslandsbezug](DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) — Pflichtlogik, Objekte, Forms-/Übergabe-Architektur
