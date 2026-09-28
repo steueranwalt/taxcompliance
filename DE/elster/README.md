@@ -80,3 +80,15 @@ Diese liegen typischerweise im separaten **ERiC-Entwicklerbereich** bzw. in jäh
 ## 5. Quellenhinweis
 
 Fakten aus ZIP/XSD/PDF/HTML des gesichteten Bestands; alles Unbekannte ist in den Einzelseiten unter „Gaps / offene Punkte" markiert. Vollständiges maschinenlesbares Rohinventar: [`inventar.json`](inventar.json).
+
+## 6. Betriebsunterlagen für die Formularausfüllung (Kanzlei-Bot)
+
+Damit ein Agent aus dem Repo heraus Formulare vorschlagen, Pflichtfelder lesen, Daten sammeln, sich in ELSTER anmelden (Zertifikat HH/ZH je Mandat), eintragen, nur mit Freigabe absenden und das Übermittlungsprotokoll ablegen kann, liegen hier drei aufeinander abgestimmte Artefakte:
+
+| Artefakt | Zweck |
+|---|---|
+| [`elster-formularausfuellung-ablauf.md`](elster-formularausfuellung-ablauf.md) | Betriebsablauf: harte Regeln (keine fiktiven Daten, Absenden nur mit Freigabe, Zertifikat-/Passwort-Handling, Übermittlungsprotokoll-Ablage) und die feste Schrittfolge Auftrag → Formularvorschlag → Datenerfassung → ELSTER-Anmeldung → Eintragen → Freigabe → Absenden → Protokoll |
+| [`erfassungsformulare.json`](erfassungsformulare.json) | Vorschlagsliste der vom Bot bedienbaren Formulare (Erfassung, BZSt2, Einspruch, LStB) mit Verweisen auf die Pflichtfeldkataloge in [`../AO/`](../AO/README.md) bzw. hier im Ordner |
+| [`katalog-verfahren-datenarten.json`](katalog-verfahren-datenarten.json) | Maschinenlesbarer Katalog aller 80 Verfahren und 854 Datenarten aus `headerbasis_verfahren.xsd` / `headerbasis_datenarten.xsd` (ElsterXML V11) plus dem offene-Schnittstelle-Ausschnitt (`Verzeichnis_der_Datenarten.csv`); dient der Prüfung, ob ein Verfahren/Datenart-Bezug in `erfassungsformulare.json` tatsächlich belegt ist |
+
+**Klarstellung bleibt unverändert:** ERiC-Formular-XSDs (ESt, KSt, USt-VA, GewSt, ErbSt, Fragebögen steuerliche Erfassung, BZSt2, Einspruch) fehlen weiterhin im ELSTER-Entwickler-Bestand (siehe Abschnitt 3). Die Datenerfassung für diese Formulare läuft daher über die Portal-UI, gesteuert durch die Pflichtfeldkataloge in [`../AO/`](../AO/README.md) und [`../AStG/`](../AStG/README.md) — technische ERiC-Feldpfade werden nicht erfunden.
