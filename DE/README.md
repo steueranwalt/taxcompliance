@@ -8,11 +8,14 @@ Generische Transport-, Verwaltungs- und Nebenverfahrens-Infrastruktur von ELSTER
 
 | Dokument | Inhalt |
 |---|---|
-| [`elster-transportschicht-und-verfahren.md`](elster-transportschicht-und-verfahren.md) | ElsterXML-Grundaufbau (TransferHeader/NutzdatenHeader), Authentifizierung/Verschlüsselung, Online-/Offline-Verfahren, Verfahren-Datenart-Vorgang-Taxonomie je Paket (ElsterDatenabholung, ElsterKontoabfrage, ElsterObjektspeicher/OTTER, RABE, ElsterLohn, LAVENDEL/HMS) |
-| [`elster-taxonomien-kataloge.md`](elster-taxonomien-kataloge.md) | DIVA-Schlüsselkatalog „Art des Schreibens", Fehlerliste/Klassifizierung, Bescheidnummern-Kataloge (ESt/GSt/USt), Prüfziffernverfahren, Finanzamtsdaten |
+| [`elster-transportschicht-und-verfahren.md`](elster-transportschicht-und-verfahren.md) | ElsterXML-Grundaufbau (TransferHeader/NutzdatenHeader), Authentifizierung/Verschlüsselung, Online-/Offline-Verfahren, Verfahren-Datenart-Vorgang-Taxonomie je Paket (ElsterDatenabholung, ElsterKontoabfrage, ElsterObjektspeicher/OTTER, RABE, ElsterLohn, LAVENDEL/HMS) — fachliche Übersicht |
+| [`elster-taxonomien-kataloge.md`](elster-taxonomien-kataloge.md) | DIVA-Schlüsselkatalog „Art des Schreibens", Fehlerliste/Klassifizierung, Bescheidnummern-Kataloge (ESt/GSt/USt), Prüfziffernverfahren, Finanzamtsdaten — fachliche Übersicht |
+| [`elster/`](elster/README.md) | **Detailseite je Paket/Formular/Katalog** (Zweck, Verfahren/Datenart/Vorgang, Taxonomie, Quellen, Gaps), Rohinventar [`elster/inventar.json`](elster/inventar.json), explizite ERiC-/Portal-Lücken (ElsterLohn-ZIP, VaSt-ZIP, ERiC-Formularpakete) |
 
-## Bezug zu den übrigen `DE/AO`-Dokumenten
+## Bezug zu den übrigen `DE/AO`- und `DE/AStG`-Dokumenten
 
-Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`AO/formulardaten-roherfassung.md`](AO/formulardaten-roherfassung.md), [`AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`AStG/formulardaten-mitteilung-6-astg.md`](AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert.
+Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldungen stehen separat in [`AO/formulardaten-roherfassung.md`](AO/formulardaten-roherfassung.md), [`AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md`](AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) und [`AStG/formulardaten-mitteilung-6-astg.md`](AStG/formulardaten-mitteilung-6-astg.md). Die dort verwendeten Katalogwerte (z. B. DIVA-`DateibezeichnungID`, Finanzamtsnummern) sind hier definiert — siehe [`elster/kataloge/`](elster/kataloge/).
+
+**Hinweis zur ERiC-Lücke:** Die eigentlichen Formularfeldkataloge dieser Dokumente (steuerliche Erfassung, BZSt2, § 6 AStG, W-IdNr.) beruhen **nicht** auf einem ELSTER-Entwicklerpaket, sondern auf separat ausgewerteten Formularen; ein zugehöriges ELSTER-/ERiC-Entwicklerpaket liegt für diese Formulare nicht vor (siehe [`elster/README.md`](elster/README.md) Abschnitt 3.1).
 
 Die SharePoint-Listenplanung (Inhaltstypen, Spalten, Forms, Pilot-Site) liegt im Repo `steuerkanzlei` unter `sharepoint-architektur/elster-listen/`.

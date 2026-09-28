@@ -67,9 +67,13 @@ param(
     [ValidateRange(1, 10)]
     [int]$Depth = 2,
 
-    # Standardausnahmen: Teams-Kanalordner und die beiden OneNote-Notizbuecher
-    # auf oberster Ebene (siehe README.md, Bestandsaufnahme).
-    [string[]]$ExcludePath = @("General", "Steuerrecht", "Wissen"),
+    # Standardausnahmen: Teams-Kanalordner, die beiden OneNote-Notizbuecher auf
+    # oberster Ebene und das Arbeitsverzeichnis des Memory-Agenten (kein
+    # Wissensthema) - siehe README.md, Bestandsaufnahme. Die beiden
+    # OneNote-Notizbuecher werden zusaetzlich unabhaengig hiervon automatisch
+    # an der .onetoc2-Datei erkannt; diese Eintraege sind zur Klarheit trotzdem
+    # explizit gelistet.
+    [string[]]$ExcludePath = @("General", "Steuerrecht", "Wissen", "06 AI-Memory"),
 
     [string]$ReportPath = "$PSScriptRoot\dokumentenmappen-log.csv",
     [switch]$ReportOnly,

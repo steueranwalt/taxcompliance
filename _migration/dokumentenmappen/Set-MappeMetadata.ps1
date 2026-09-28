@@ -3,22 +3,28 @@
   Schritt 4: Befuellt die geteilten Spalten der Dokumentenmappen aus CSV.
 
 .DESCRIPTION
-  Schreibt Rechtsgebiet, Rechtsordnung und Schlagworte je Mappe. Weil das
+  Schreibt Rechtsgebiet (Feld "Rechtsgebiet", Termset "Themengebiet") und
+  Rechtsordnung (Feld/Termset "Rechtsordnung") je Mappe - beides bereits
+  vorhandene kanzleiweite Spalten, keine neuen "Wissen*"-Spalten. Weil das
   geteilte Spalten der Dokumentenmappe sind, schreibt SharePoint die Werte
   anschliessend selbst auf alle Dokumente in der Mappe durch - ein Wert pro
   Thema statt ein Wert pro Dokument.
 
+  Kein Schlagworte-Feld: die einzige vorhandene Kandidatenspalte
+  ("Schlagwoerter" / Termset Dokument-Verschlagwortung) klassifiziert
+  Aktendokumente (Auftrag, Berechnung, Entwurf, Memo, Stammakte, ...), keine
+  Sachthemen - siehe README.md, Abschnitt "Metadatenmodell".
+
   CSV-Format (Semikolon, UTF-8 mit BOM), mehrere Werte je Zelle mit " || ":
 
-      Pfad;Rechtsgebiet;Rechtsordnung;Schlagworte
-      02 Steuern DE/Umsatzsteuer;Indirekte Steuern;Deutschland (DE);
+      Pfad;Rechtsgebiet;Rechtsordnung
+      02 Steuern DE/Umsatzsteuer;Steuerrecht;Deutschland
 
-  Pfad ist relativ zur Bibliothekswurzel. Terme koennen als Blatt-Label
-  ("Indirekte Steuern") oder als vollstaendiger Termpfad
-  ("Wissen|Rechtsgebiet|Oeffentliches Recht|Steuerrecht|Steuerverfahrensrecht")
-  angegeben werden. Der vollstaendige Pfad ist noetig, wo ein Label mehrfach
-  vorkommt - "Steuerverfahrensrecht" haengt sowohl unter Steuerrecht als auch
-  unter Verfahrensrecht.
+  Pfad ist relativ zur Bibliothekswurzel. Rechtsgebiet ist am Feld
+  einwertig (TaxonomyFieldType) - pro Zeile genau ein Wert aus dem Termset
+  "Themengebiet". Rechtsordnung ist mehrwertig (TaxonomyFieldTypeMulti) und
+  erlaubt " || " fuer mehrere Laender/Raeume aus dem Termset "Rechtsordnung".
+  Beide Termsets sind flach (keine Hierarchie), ein Blatt-Label reicht.
 
   Leere Zellen bedeuten "nichts schreiben", nicht "Wert loeschen".
 
@@ -68,10 +74,13 @@ Import-Module PnP.PowerShell -ErrorAction Stop
 . "$PSScriptRoot\_Common.ps1"
 
 # Spalte -> internes Feld + Termset
+# Spaltenname in der CSV -> internes Feld auf der Bibliothek -> Termset-Name.
+# Feld und Termset heissen bei Rechtsgebiet bewusst unterschiedlich: die
+# Spalte heisst intern "Rechtsgebiet", ist aber an das Termset "Themengebiet"
+# gebunden (vgl. New-WissenMappeContentType.ps1).
 $FieldMap = @(
-    @{ Column = "Rechtsgebiet";  Field = "WissenRechtsgebiet";  TermSet = "Rechtsgebiet"  }
-    @{ Column = "Rechtsordnung"; Field = "WissenRechtsordnung"; TermSet = "Rechtsordnung" }
-    @{ Column = "Schlagworte";   Field = "WissenSchlagworte";   TermSet = "Schlagworte"   }
+    @{ Column = "Rechtsgebiet";  Field = "Rechtsgebiet";  TermSet = "Themengebiet";  Multi = $false }
+    @{ Column = "Rechtsordnung"; Field = "Rechtsordnung"; TermSet = "Rechtsordnung"; Multi = $true  }
 )
 
 $MultiSeparator = " || "
@@ -157,17 +166,31 @@ function Test-TaxonomyEmpty {
 }
 
 function Set-TaxonomyValues {
-    <# Schreibt einen oder mehrere Terme in ein Managed-Metadata-Feld. #>
-    param($List, $ListItem, [string]$FieldName, $Entries)
+    <#
+      Schreibt einen oder mehrere Terme in ein Managed-Metadata-Feld.
 
-    # Ein Wert: TermPath ist der zuverlaessigste Weg bei Hierarchien.
-    if ($Entries.Count -eq 1) {
-        Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName `
-                                  -TermPath $Entries[0].Path -ErrorAction Stop | Out-Null
+      Der Schreibweg richtet sich nach der FELDEIGENSCHAFT (-Multi), nicht
+      nach der Anzahl Werte in der jeweiligen CSV-Zelle. Live-Befund: bei
+      einem einwertigen Feld mit genau einem Wert schlug -TermPath allein
+      mit "Taxonomy Term not found" fehl, obwohl derselbe Term im Trockenlauf
+      korrekt aufgeloest wurde - deshalb hier ebenfalls ein Fallback.
+    #>
+    param($List, $ListItem, [string]$FieldName, $Entries, [bool]$Multi)
+
+    if (-not $Multi) {
+        $entry = $Entries[0]
+        try {
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName `
+                                      -TermPath $entry.Path -ErrorAction Stop | Out-Null
+        }
+        catch {
+            Set-PnPTaxonomyFieldValue -ListItem $ListItem -InternalFieldName $FieldName `
+                                      -TermId $entry.Id -Label $entry.Label -ErrorAction Stop | Out-Null
+        }
         return
     }
 
-    # Mehrere Werte: Hashtable Label -> TermId.
+    # Mehrwertiges Feld: Hashtable Label -> TermId.
     $terms = @{}
     foreach ($e in $Entries) { $terms[$e.Label] = $e.Id.ToString() }
     try {
@@ -203,7 +226,7 @@ foreach ($row in $rows) {
     $siteRel = "$rootSiteRel/$relPath"
     $record  = [pscustomobject]@{
         Pfad = $relPath; ItemId = 0; Rechtsgebiet = ""; Rechtsordnung = ""
-        Schlagworte = ""; Ergebnis = ""; Hinweis = ""
+        Ergebnis = ""; Hinweis = ""
     }
 
     # --- Mappe aufloesen ---
@@ -268,7 +291,7 @@ foreach ($row in $rows) {
         }
 
         try {
-            Set-TaxonomyValues -List $list -ListItem $item -FieldName $m.Field -Entries $entries
+            Set-TaxonomyValues -List $list -ListItem $item -FieldName $m.Field -Entries $entries -Multi:$m.Multi
             $anyWritten = $true
         }
         catch {

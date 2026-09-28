@@ -4,6 +4,13 @@
 
 ## Deutsches Steuerrecht (`DE/`)
 
+### ELSTER-Infrastruktur
+
+- Übersicht: [`DE/README.md`](DE/README.md)
+- [ELSTER-Transportschicht und Verfahrenstaxonomie](DE/elster-transportschicht-und-verfahren.md) — ElsterXML-Grundaufbau, Authentifizierung, Verfahren/Datenart/Vorgang je Paket
+- [ELSTER-Taxonomien und Referenzkataloge](DE/elster-taxonomien-kataloge.md) — DIVA, Fehlerliste, Bescheidnummern, Prüfziffern, Finanzamtsdaten
+- [`DE/elster/`](DE/elster/README.md) — eine Seite je Paket/Formular/Katalog (Zweck, Daten, Taxonomie, Quellen, Gaps), Rohinventar `DE/elster/inventar.json`, explizite ERiC-/Portal-Lücken
+
 ### Abgabenordnung (AO)
 
 - [Einheitliches Datenmodell: steuerliche Erfassung DE und Auslandsbezug](DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) — Pflichtlogik, Objekte, Forms-/Übergabe-Architektur
@@ -36,7 +43,11 @@ _noch keine Dokumente_
 ## Schweizer Steuerrecht (`CH/`)
 
 ### Direkte Bundessteuer (DBG)
-_noch keine Dokumente_
+
+- [Quellensteuer: Tarifformat](CH/DBG/quellensteuer-tarifformat.md) — ESTV-Satzarten, Feldlayout, Lookup
+- [Quellensteuer: Aktualisierung](CH/DBG/quellensteuer-aktualisierung.md) — Bezugskalender 2026, Weiterverbreitung ja
+- [QSt-Tarifcodes](CH/DBG/qst-tarifcodes.csv) — maschinenlesbare Codeliste
+- [Tarife 2026](CH/DBG/tarife/2026/) — Manifest und Schweiz-ZIP (Löhne + übrige Einkünfte, 26 Kantone)
 
 ### Steuerharmonisierungsgesetz (StHG)
 _noch keine Dokumente_

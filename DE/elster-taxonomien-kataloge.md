@@ -2,6 +2,16 @@
 
 **Quellen:** `DIVA_SK_ArtDesSchreibens_v21.0.0.zip` (Schlüsselkatalog „Art des Schreibens", Version 21.0.0, Stand 3.6.2026), `Fehlerliste.xml` (laufend gepflegt, ausgewertet 19.9.2026: 477 Einträge), `Bescheidnr_Januar_2026.zip` (Bescheidnummern ESt/GSt/USt), `Pruefung_der_Steuer_und_Steueridentifikatsnummer.pdf` (Stand 15.4.2026), `Finanzamtsdaten.xlsx`.
 
+**Dies ist die fachliche Übersicht.** Jeder Katalog hat seit dem Scan 2026-09-28 zusätzlich eine eigene, ausführlichere Detailseite unter [`elster/kataloge/`](elster/kataloge/) (Struktur/Schema, Umfang, Beispiele, Quellenpfade, offene Punkte je Katalog):
+
+| Katalog | Detailseite |
+|---|---|
+| DIVA Art des Schreibens | [`elster/kataloge/diva-art-des-schreibens.md`](elster/kataloge/diva-art-des-schreibens.md) |
+| Fehlerliste | [`elster/kataloge/fehlerliste.md`](elster/kataloge/fehlerliste.md) |
+| Bescheidnummern ESt/GSt/USt | [`elster/kataloge/bescheidnummern.md`](elster/kataloge/bescheidnummern.md) |
+| Prüfziffern Steuernummer/IdNr. + Grundsteuer | [`elster/kataloge/pruefziffern-steuernummer-idnr.md`](elster/kataloge/pruefziffern-steuernummer-idnr.md) |
+| Finanzamtsdaten (GEMFA) | [`elster/kataloge/finanzamtsdaten.md`](elster/kataloge/finanzamtsdaten.md) |
+
 ## A. DIVA-Schlüsselkatalog „Art des Schreibens"
 
 **Zweck (Kap. 5.1 der Doku):** Die Steuerverwaltung verwendet Schlüsselkataloge, um verfahrensübergreifend ausgetauschten Entitäten eindeutige Schlüssel und verwaltungsübliche Bezeichnungen gemäss AEAO zu § 122 Tz. 3.1.1.1 zuzuweisen. Der Katalog „Art des Schreibens" definiert die Typen von Textdokumenten (Verwaltungsakte und sonstige Mitteilungen), die von der Steuerverwaltung elektronisch bereitgestellt werden.
@@ -137,7 +147,11 @@ Bayern: Finanzamtsnummer wird in der gedruckten Steuernummer zunehmend weggelass
 
 **Quelle:** `Finanzamtsdaten.xlsx` / `Finanzamtsdaten.xml`, laufend durch ELSTER aktualisiert (mehrfach pro Quartal), ein Tabellenblatt je Bundesland. Kernspalten: `Finanzamtsnummer` (BUFA-Nr., 4-stellig), `Finanzamtsname`, `ÄnderungsInformationen` (Wert `KEIN_DELTA` oder Änderungsart — die Datei ist damit bereits diff-fähig ausgeliefert). Referenztabelle Bundesland/Länderschlüssel/BUFA-Nummern-Bereich: Kap. 9 der Prüfziffer-Dokumentation (Zeile ab „Bundesland — Finanzamtsnummer(n) — Länderschlüssel — BUFA-Nrn.").
 
-## F. Bezug zur SharePoint-Umsetzung
+## F. Übersicht aller Pakete/Formulare
+
+Gesamtindex der ELSTER-Entwicklerpakete (Transport, Verfahren, Kataloge) inkl. expliziter ERiC-/Portal-Lücken: [`elster/README.md`](elster/README.md).
+
+## G. Bezug zur SharePoint-Umsetzung
 
 Die konkreten SharePoint-Listen, Inhaltstypen und Spalten sowie der Forms-/ELSTER-Datenfluss stehen im Kanzlei-Repo:
 
