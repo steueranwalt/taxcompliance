@@ -2,18 +2,22 @@
 
 **Quelle:** `ElsterXML-Schnittstelle_V11_2026.7.20.0.zip` (Doku "Einheitliche Elster-Datenschnittstelle XML", Version 4.3.0, Stand 12.2.2026), `Verzeichnis_der_Datenarten.csv`, sowie die Fachpakete ElsterDatenabholung, ElsterKontoabfrage, ElsterObjektspeicher (OTTER), RABE-Belegdatenhaltung, ElsterLohn/Lohnsteuerbescheinigung, LAVENDEL/HMS.
 
+**Dies ist die fachliche Übersicht.** Paketspezifische Details (Endpunkte, vollständige Nutzdaten-/Message-Felder je Paket, Quellenpfade, offene Punkte je Paket) stehen jetzt unter [`elster/`](elster/): Einstiegspunkt [`elster/README.md`](elster/README.md), maschinenlesbares Rohinventar [`elster/inventar.json`](elster/inventar.json) (Scan 2026-09-28 des OneDrive-Ordners `01 Projekte/ELSTER-Entwickler`).
+
 ## A. Paketübersicht
 
-| Paket | Version | Funktion |
-|---|---|---|
-| ElsterXML-Schnittstelle (v11) | Doku 4.3.0, Stand 12.2.2026 | Basis-Transportformat (TransferHeader/NutzdatenHeader), Verschlüsselung, Datenarten-Konzept |
-| Authentifizierung / ELSTER-Token / Auth-Applet | V02.2.1 / 1.27 / v24.1 | Signatur- und Zertifikatsverfahren (Softtoken, Sicherheitsstick) |
-| ElsterDatenabholung | v31.0.6 → v32.0.1 | Empfangen: Postfach-Nachrichten, Bescheide, VaSt-Belege abholen |
-| ElsterKontoabfrage | v2.1.3 | Steuerkonto-Abfrage (offene Beträge / Ist-Buchungen / Soll-Stellungen) |
-| ElsterObjektspeicher „OTTER" | v1.4.6 | REST-Objektspeicher zum Hochladen grosser Anhänge (Push zu ELSTER) |
-| RABE-Belegdatenhaltung | v2.3 | Gegenstück zu OTTER: Belege bleiben bei der Kanzlei, Finanzverwaltung holt sie ab (Pull) |
-| ElsterLohn/Lohnsteuerbescheinigung | 1.36 | einziges Paket mit komplettem Formularvordruck (Muster mit Kennziffern) |
-| LAVENDEL Datenübermittler + HMS | 2.0.1 | Registrierung, wer (Datenübermittler) für welchen Arbeitgeber ELStAM abrufen darf |
+| Paket | Version | Funktion | Detailseite |
+|---|---|---|---|
+| ElsterXML-Schnittstelle (v11) | Doku 4.3.0, Stand 12.2.2026 | Basis-Transportformat (TransferHeader/NutzdatenHeader), Verschlüsselung, Datenarten-Konzept | [`elster/elsterxml-v11.md`](elster/elsterxml-v11.md) |
+| Authentifizierung / ELSTER-Token / Auth-Applet | V02.2.1 / 1.27 / v24.1 | Signatur- und Zertifikatsverfahren (Softtoken, Sicherheitsstick) | siehe `elster/elsterxml-v11.md` Abschnitt 3 |
+| ElsterDatenabholung | v31.0.6 → v32.0.1 (lokal nur v32) | Empfangen: Postfach-Nachrichten, Bescheide, VaSt-Belege abholen | [`elster/datenabholung.md`](elster/datenabholung.md) |
+| ElsterKontoabfrage | v2.1.3 | Steuerkonto-Abfrage (offene Beträge / Ist-Buchungen / Soll-Stellungen) | [`elster/kontoabfrage.md`](elster/kontoabfrage.md) |
+| ElsterObjektspeicher „OTTER" | v1.4.6 | REST-Objektspeicher zum Hochladen grosser Anhänge (Push zu ELSTER) | [`elster/objektspeicher-otter.md`](elster/objektspeicher-otter.md) |
+| RABE-Belegdatenhaltung (+ Infos Hersteller) | v2.3 (+ 1.3) | Gegenstück zu OTTER: Belege bleiben bei der Kanzlei, Finanzverwaltung holt sie ab (Pull) | [`elster/rabe-belegdatenhaltung.md`](elster/rabe-belegdatenhaltung.md) |
+| ElsterLohn/Lohnsteuerbescheinigung | 1.36 — **ZIP fehlt lokal** | einziges Paket mit komplettem Formularvordruck (Muster mit Kennziffern); ab VZ 2026 Nachfolger ElsterKMV/LSTMitteilung | [`elster/elsterlohn-lstb.md`](elster/elsterlohn-lstb.md) |
+| LAVENDEL Datenübermittler + HMS | 2.0.1 | Registrierung, wer (Datenübermittler) für welchen Arbeitgeber ELStAM abrufen darf | [`elster/lavendel-elstam.md`](elster/lavendel-elstam.md), [`elster/hms-mock.md`](elster/hms-mock.md) |
+| InvStG § 51 XML-Anhang | Doku v1 / Muster v3 | Maschinenlesbarer Anhang zum Feststellungsbescheid | [`elster/invstg51-feststellung-anhang.md`](elster/invstg51-feststellung-anhang.md) |
+| Serverstatus RSS | — | Ops: Annahmeserver-Status vs. eigener Fehler | [`elster/serverstatus-rss.md`](elster/serverstatus-rss.md) |
 
 ## B. ElsterXML-Grundaufbau
 
@@ -111,4 +115,12 @@ Vollständige Liste (alle Verfahren/Datenarten/Vorgänge inkl. Anmeldungssteuern
 | Identität/Vertretung | LAVENDEL/HMS (nur ELStAM), Herstellerregistrierung (HerstellerID), Datenübermittler-/Vertreterregistrierung je Mandant | Wer darf für wen senden/empfangen |
 | Validierung | Prüfziffern-Logik + Finanzamtsliste + Fehlercode-Katalog (siehe `elster-taxonomien-kataloge.md`) | gemeinsame Bibliothek für alle Schichten |
 
-**Offene Punkte:** Herstellerregistrierung (HerstellerID/Zertifikat) beim ELSTER-Herstellerforum/IMS ist in den gesichteten Unterlagen nicht beschrieben; Entscheidung ERiC-Einbindung vs. Eigenimplementierung (inkl. Verschlüsselung/Signatur) steht aus; Test-Zertifikate liegen vor (`Test_Zertifikate.zip`, `Test_Zertifikate_3072_Bit.zip`).
+**Offene Punkte:** Herstellerregistrierung (HerstellerID/Zertifikat) beim ELSTER-Herstellerforum/IMS ist in den gesichteten Unterlagen nicht beschrieben; Entscheidung ERiC-Einbindung vs. Eigenimplementierung (inkl. Verschlüsselung/Signatur) steht aus; Test-Zertifikate liegen vor (`Test_Zertifikate.zip`, `Test_Zertifikate_3072_Bit.zip`), werden aber bewusst nicht inventarisiert (keine Schlüssel/Zertifikatsinhalte in diesem Repo).
+
+## F. Gaps aus dem Scan 2026-09-28 (Zusammenfassung)
+
+Vollständige, paketweise Gap-Auflistung in [`elster/README.md`](elster/README.md) Abschnitt 3. Wichtigste Punkte:
+
+- **ElsterLohn_Lohnsteuerbescheinigung_1.36.zip (~58 MB) fehlt lokal** — enthält laut Portal/Auswertung den einzigen kompletten Kennziffern-Formularvordruck der gesichteten Pakete; Download offen (siehe [`elster/elsterlohn-lstb.md`](elster/elsterlohn-lstb.md)).
+- **VaSt-Informationen_v1.zip fehlt lokal** — Datenart `ElsterVaStDaten` ist in der Datenabholung referenziert, das zugehörige Hersteller-Infopaket selbst wurde nicht heruntergeladen (siehe [`elster/datenabholung.md`](elster/datenabholung.md) Abschnitt 5).
+- **ERiC-Formularpakete (ESt/KSt/USt-VA/GewSt/ErbSt/Grundsteuer/steuerliche Erfassung) liegen nicht im gesichteten „ELSTER-Entwickler"-Ordner** — dies ist der separate ERiC-Entwicklerbereich; die dortigen Kennziffern-Feldkataloge sind hier **nicht** erfunden. Bereits im Repo vorhandene Feldkataloge (steuerliche Erfassung, BZSt2, § 6 AStG, W-IdNr.) liegen unter [`AO/README.md`](AO/README.md) und [`AStG/formulardaten-mitteilung-6-astg.md`](AStG/formulardaten-mitteilung-6-astg.md) und beruhen **nicht** auf einem ELSTER-Entwicklerpaket.
