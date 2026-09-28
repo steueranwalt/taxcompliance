@@ -1,0 +1,154 @@
+{
+  "stand": "2026-09-28",
+  "quelle_elster_entwickler": "01 Projekte/ELSTER-Entwickler (Infrastruktur) + DE/AO Feldkataloge (Erfassung)",
+  "regel_zertifikat": {
+    "mandatsnummer_start_1": "HH (obenhaus_hh_…)",
+    "mandatsnummer_start_2": "ZH (obhs_zh_…)",
+    "profil": "Mandatsnummer-Projektnummer"
+  },
+  "formulare": [
+    {
+      "id": "steuerliche-erfassung-einzelunternehmen",
+      "label": "Fragebogen steuerliche Erfassung — Einzelunternehmen",
+      "kanal": "ELSTER-Portal (Formular-UI)",
+      "elster_verfahren_datenart": null,
+      "hinweis": "Kein ERiC-/Entwicklerpaket im Ordner ELSTER-Entwickler; Feldkatalog und Pflichtlogik aus DE/AO.",
+      "feldkatalog": "DE/AO/formulardaten-roherfassung.md#1",
+      "pflichtlogik": "DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md#2.1",
+      "pflicht_kurz": [
+        "Steuernummer oder Neuantrag",
+        "Name, Vorname, Geburtsdatum, Religion (Kz 2/3/5)",
+        "Tätigkeit Kz21",
+        "Unternehmensanschrift oder Wohnanschrift-Kennzeichnung Kz56–59",
+        "Tätigkeitsbeginn Kz69",
+        "Gründungsart/-datum Kz85",
+        "mind. eine Einkunftsart mit Jahren Kz105–107/110",
+        "Gewinnermittlungsart Kz114",
+        "Umsatzschätzung Kz130"
+      ]
+    },
+    {
+      "id": "steuerliche-erfassung-kapg",
+      "label": "Fragebogen steuerliche Erfassung — Kapitalgesellschaft / Genossenschaft",
+      "kanal": "ELSTER-Portal (Formular-UI)",
+      "elster_verfahren_datenart": null,
+      "hinweis": "Kein ERiC-Paket lokal; Feldkatalog DE/AO.",
+      "feldkatalog": "DE/AO/formulardaten-roherfassung.md#2",
+      "pflichtlogik": "DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md#2.2",
+      "pflicht_kurz": [
+        "Steuernummer oder Neuantrag",
+        "Registerfirma Kz2",
+        "Tätigkeit Kz13",
+        "notarielle Errichtung/Musterprotokoll Kz54",
+        "Rechtsform Kz63",
+        "Tätigkeitsbeginn Kz64",
+        "Grund-/Stammkapital Kz66",
+        "mind. ein Anteilseigner",
+        "Treuhand ja/nein Kz90",
+        "Bar-/Sachgründung Kz91",
+        "Gewinn Gründungsjahr Kz165",
+        "mind. ein gesetzlicher Vertreter Kz25",
+        "Umsatzschätzung Kz179"
+      ]
+    },
+    {
+      "id": "steuerliche-erfassung-persg",
+      "label": "Fragebogen steuerliche Erfassung — Personengesellschaft / -gemeinschaft",
+      "kanal": "ELSTER-Portal (Formular-UI)",
+      "elster_verfahren_datenart": null,
+      "hinweis": "Kein ERiC-Paket lokal; Feldkatalog DE/AO.",
+      "feldkatalog": "DE/AO/formulardaten-roherfassung.md#3",
+      "pflichtlogik": "DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md#2.3",
+      "pflicht_kurz": [
+        "Steuernummer oder Neuantrag",
+        "Name der Gesellschaft Kz2",
+        "Tätigkeit Kz12",
+        "Gründungsart/-datum Kz23",
+        "Rechtsform Kz31",
+        "Rechtsfähigkeit Kz33",
+        "Tätigkeitsbeginn Kz34",
+        "Gesellschaftsgewinn Kz77",
+        "Gewinnermittlungsart Kz78",
+        "Aufteilungsschlüssel Kz80",
+        "Umsatzschätzung Kz129",
+        "mind. zwei Beteiligte"
+      ]
+    },
+    {
+      "id": "steuerliche-erfassung-auslandskoerperschaft",
+      "label": "Fragebogen steuerliche Erfassung — Körperschaft nach ausländischem Recht",
+      "kanal": "ELSTER-Portal (Formular-UI)",
+      "elster_verfahren_datenart": null,
+      "hinweis": "Pflichtmatrix unvollständig; kein ERiC-Paket lokal.",
+      "feldkatalog": "DE/AO/formulardaten-roherfassung.md#4",
+      "pflichtlogik": "DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md#2.4",
+      "pflicht_kurz": [
+        "Steuernummer oder Neuantrag",
+        "Registerfirma Kz2",
+        "Tätigkeit in DE Kz12",
+        "Zustimmung § 27 AO Kz18",
+        "bereits bei anderem FA erfasst ja/nein Kz19"
+      ]
+    },
+    {
+      "id": "bzst2-138-ao",
+      "label": "BZSt2 — Mitteilung Auslandsbezug § 138 Abs. 2 AO",
+      "kanal": "ELSTER-Portal / BZSt",
+      "elster_verfahren_datenart": {
+        "datenarten": [
+          "BZSt2",
+          "BZSt2MeldungBund",
+          "BZSt2SonderfallAuslPersG",
+          "BZSt2WeiterleitungFA"
+        ]
+      },
+      "hinweis": "Feldkatalog DE/AO; kein eigenes Entwickler-ZIP im Scan.",
+      "feldkatalog": "DE/AO/formulardaten-roherfassung.md#5",
+      "pflichtlogik": "DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md#2.5",
+      "pflicht_kurz": [
+        "Mitteilungsjahr",
+        "genau eine Steuer- oder Identifikationsnummer",
+        "Person oder Firma",
+        "Nachname bzw. Firmenname",
+        "Adressart",
+        "Ort/Postfach",
+        "Mitteilungssachverhalt oder Negativmeldung"
+      ]
+    },
+    {
+      "id": "einspruch",
+      "label": "Einspruch (ELSTER-Portal)",
+      "kanal": "ELSTER-Portal (Formular-UI)",
+      "elster_verfahren_datenart": {
+        "datenarten": [
+          "Einspruch",
+          "EinspruchNachtrag",
+          "EinspruchRuecknahme"
+        ]
+      },
+      "hinweis": "UI-Doku im Notizbuch; keine Pflichtmatrix. Kein Formular-XSD im Entwickler-Ordner.",
+      "feldkatalog": null,
+      "pflichtlogik": null,
+      "pflicht_kurz": []
+    },
+    {
+      "id": "lstb",
+      "label": "Lohnsteuerbescheinigung (LStB)",
+      "kanal": "offene Schnittstelle ElsterLohn / ab VZ 2026 ElsterKMV",
+      "elster_verfahren_datenart": {
+        "verfahren": "ElsterLohn",
+        "datenart": "LStB",
+        "nachfolger_vz2026": {
+          "verfahren": "ElsterKMV",
+          "datenart": "LSTMitteilung"
+        }
+      },
+      "hinweis": "Vollständig aus lokalem ZIP dokumentiert in DE/elster/elsterlohn-lstb.md",
+      "feldkatalog": "DE/elster/elsterlohn-lstb.md",
+      "pflichtlogik": "DE/elster/elsterlohn-lstb.md",
+      "pflicht_kurz": [
+        "siehe Kennziffern-Tabelle LStB"
+      ]
+    }
+  ]
+}

@@ -10,6 +10,7 @@
 - [ELSTER-Transportschicht und Verfahrenstaxonomie](DE/elster-transportschicht-und-verfahren.md) — ElsterXML-Grundaufbau, Authentifizierung, Verfahren/Datenart/Vorgang je Paket
 - [ELSTER-Taxonomien und Referenzkataloge](DE/elster-taxonomien-kataloge.md) — DIVA, Fehlerliste, Bescheidnummern, Prüfziffern, Finanzamtsdaten
 - [`DE/elster/`](DE/elster/README.md) — eine Seite je Paket/Formular/Katalog (Zweck, Daten, Taxonomie, Quellen, Gaps), Rohinventar `DE/elster/inventar.json`, explizite ERiC-/Portal-Lücken
+- [ELSTER-Formularausfüllung: Betriebsablauf (Kanzlei-Bot)](DE/elster/elster-formularausfuellung-ablauf.md) — Formularvorschlag → Datenerfassung → ELSTER-Anmeldung HH/ZH → Absenden nur mit Freigabe → Übermittlungsprotokoll; Formularliste [`DE/elster/erfassungsformulare.json`](DE/elster/erfassungsformulare.json), Verfahren/Datenarten-Katalog [`DE/elster/katalog-verfahren-datenarten.json`](DE/elster/katalog-verfahren-datenarten.json)
 
 ### Abgabenordnung (AO)
 

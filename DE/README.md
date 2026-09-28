@@ -18,4 +18,6 @@ Feldkatalog und Pflichtlogik der Erfassungsfragebögen und der BZSt2-/AStG-Meldu
 
 **Hinweis zur ERiC-Lücke:** Die eigentlichen Formularfeldkataloge dieser Dokumente (steuerliche Erfassung, BZSt2, § 6 AStG, W-IdNr.) beruhen **nicht** auf einem ELSTER-Entwicklerpaket, sondern auf separat ausgewerteten Formularen; ein zugehöriges ELSTER-/ERiC-Entwicklerpaket liegt für diese Formulare nicht vor (siehe [`elster/README.md`](elster/README.md) Abschnitt 3.1).
 
+**Betriebsablauf für den Kanzlei-Bot** (Formularvorschlag → Datenerfassung → ELSTER-Anmeldung HH/ZH → Absenden nur mit Freigabe → Übermittlungsprotokoll ablegen): siehe [`elster/elster-formularausfuellung-ablauf.md`](elster/elster-formularausfuellung-ablauf.md) mit der Vorschlagsliste [`elster/erfassungsformulare.json`](elster/erfassungsformulare.json).
+
 Die SharePoint-Listenplanung (Inhaltstypen, Spalten, Forms, Pilot-Site) liegt im Repo `steuerkanzlei` unter `sharepoint-architektur/elster-listen/`.
