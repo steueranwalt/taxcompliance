@@ -77,25 +77,32 @@
   {
     "id": "elsterlohn-lstb-1.36",
     "name": "ElsterLohn / Lohnsteuerbescheinigung",
-    "version": "1.36 (Portal 28.08.2024) — ZIP lokal NICHT vorhanden (~58MB)",
+    "version": "1.36 (Stand 22.08.2024, Portal 28.08.2024)",
     "verfahren": "ElsterLohn (bis VZ 2025); ab VZ 2026 produktiv: ElsterKMV",
     "datenarten": [
       "LStB",
       "Lohnersatzleistung",
-      "LSTMitteilung (ElsterKMV ab VZ 2026)"
+      "LSTMitteilung (ElsterKMV ab VZ 2026, nicht im ZIP)"
     ],
     "vorgaenge": [
       "send-Auth",
       "send-Auth-Part"
     ],
     "taxonomies": [
-      "Kennziffern-Muster laut Portal/Auswertung (Muster_LSTB_2025.pdf im Paket, nicht lokal)"
+      "Kennziffern LStB 202501 (Muster_LSTB_2025.pdf + lstb202501.xsd Annotationen, ~29 nummerierte Felder / Vordruck 1–34)",
+      "LStBStorno v1/v2 (gleiche DatenArt LStB)",
+      "eTIN (Tool + Altfälle; ab LStB 202301 nicht mehr im Schema)"
     ],
     "source_files": [
-      "schnittstellen.html (Portalbeschreibung)",
-      "Auswertung_SharePoint_und_Schnittstelle.md"
+      "ElsterLohn_Lohnsteuerbescheinigung_1.36.zip",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/",
+      "ELSTERLOHN-LSTB-EXTRACT.md",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Vordruck/Muster_LSTB_2025.pdf",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Schemata/lstb202501.xsd",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Doku/SST_ElsterLohn_Verfahrensablauf.pdf",
+      "extracted/ElsterLohn_Lohnsteuerbescheinigung_1.36/ElsterLohn_Lohnsteuerbescheinigung_1.36/Doku/SST_ElsterLohn_Datenschnittstelle_LStB_202501.pdf"
     ],
-    "notes": "ZIP nicht heruntergeladen. Portal: Doku gilt bis VZ 2025; ab VZ 2026 Umstellung ElsterLohn/LStB → ElsterKMV/LSTMitteilung, neue Doku unter www.esteuer.de. Einziges Portal-Paket mit komplettem Formularvordruck (Kennziffern)."
+    "notes": "ZIP lokal extrahiert (≈56 MB / 138 MB unpacked). DatenArt LStB trägt Neu/Korrektur und Storno (Nutzdaten-Root LStBStorno). Lohnersatzleistung nur in Doku/CSV, kein Schema im ZIP. ElsterKMV/LSTMitteilung ab VZ 2026 → esteuer.de."
   },
   {
     "id": "elster-kontoabfrage-v2.1.3",

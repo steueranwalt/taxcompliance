@@ -14,7 +14,7 @@
 | ElsterKontoabfrage | v2.1.3 | Steuerkonto-Abfrage (offene Beträge / Ist-Buchungen / Soll-Stellungen) | [`elster/kontoabfrage.md`](elster/kontoabfrage.md) |
 | ElsterObjektspeicher „OTTER" | v1.4.6 | REST-Objektspeicher zum Hochladen grosser Anhänge (Push zu ELSTER) | [`elster/objektspeicher-otter.md`](elster/objektspeicher-otter.md) |
 | RABE-Belegdatenhaltung (+ Infos Hersteller) | v2.3 (+ 1.3) | Gegenstück zu OTTER: Belege bleiben bei der Kanzlei, Finanzverwaltung holt sie ab (Pull) | [`elster/rabe-belegdatenhaltung.md`](elster/rabe-belegdatenhaltung.md) |
-| ElsterLohn/Lohnsteuerbescheinigung | 1.36 — **ZIP fehlt lokal** | einziges Paket mit komplettem Formularvordruck (Muster mit Kennziffern); ab VZ 2026 Nachfolger ElsterKMV/LSTMitteilung | [`elster/elsterlohn-lstb.md`](elster/elsterlohn-lstb.md) |
+| ElsterLohn/Lohnsteuerbescheinigung | 1.36 (Stand 22.08.2024) | einziges Paket mit komplettem Formularvordruck (Muster mit Kennziffern, Kz 1–34); ab VZ 2026 Nachfolger ElsterKMV/LSTMitteilung | [`elster/elsterlohn-lstb.md`](elster/elsterlohn-lstb.md) |
 | LAVENDEL Datenübermittler + HMS | 2.0.1 | Registrierung, wer (Datenübermittler) für welchen Arbeitgeber ELStAM abrufen darf | [`elster/lavendel-elstam.md`](elster/lavendel-elstam.md), [`elster/hms-mock.md`](elster/hms-mock.md) |
 | InvStG § 51 XML-Anhang | Doku v1 / Muster v3 | Maschinenlesbarer Anhang zum Feststellungsbescheid | [`elster/invstg51-feststellung-anhang.md`](elster/invstg51-feststellung-anhang.md) |
 | Serverstatus RSS | — | Ops: Annahmeserver-Status vs. eigener Fehler | [`elster/serverstatus-rss.md`](elster/serverstatus-rss.md) |
@@ -98,7 +98,7 @@ Vollständige Liste (alle Verfahren/Datenarten/Vorgänge inkl. Anmeldungssteuern
 
 - **ElsterDatenabholung**: `PostfachStatus`, `PostfachAnfrage`, `PostfachBestaetigung` (Bestätigungspflicht binnen 24 h), `Statusabfrage`, `ElsterVaStDaten` (Anfrage/Einzelabholung/Sammelabholung).
 - **ElsterKontoabfrage**: `Kontoabfrage-O` (offene Beträge), `Kontoabfrage-I` (Ist-Buchungen), `Kontoabfrage-ZS` (Soll-Stellungen).
-- **ElsterLohn**: `LStB` (Neu/Korrektur), `LStBStorno`, `eTIN`-Ermittlung (nur Altfälle bis VZ 2022).
+- **ElsterLohn**: Datenart `LStB` trägt Neu/Korrektur **und** Storno (Nutzdaten-Root `LStBStorno`, gleiche Header-DatenArt); Datenart `Lohnersatzleistung` dokumentiert, aber ohne Schema im Paket; `eTIN` nur Altfälle (Schema bis 202201, danach entfernt).
 - **LAVENDEL**: Arbeitnehmer anmelden/abmelden, Datenübermittler-Wechsel, Änderungsliste (Anmelde-/Abmelde-/Ummeldebestätigung, Monatsliste, Bruttoliste).
 - **ElsterObjektspeicher (OTTER)**: REST-Push grosser Anhänge; Objekt-ID wird im ElsterXML referenziert; 7-Tage-Frist zur Abholung durch die Finanzverwaltung.
 - **RABE-Belegdatenhaltung**: Pull-Gegenmodell zu OTTER — Belege verbleiben auf einem Server der Kanzlei, die Finanzverwaltung holt sie dort ab.
@@ -121,6 +121,6 @@ Vollständige Liste (alle Verfahren/Datenarten/Vorgänge inkl. Anmeldungssteuern
 
 Vollständige, paketweise Gap-Auflistung in [`elster/README.md`](elster/README.md) Abschnitt 3. Wichtigste Punkte:
 
-- **ElsterLohn_Lohnsteuerbescheinigung_1.36.zip (~58 MB) fehlt lokal** — enthält laut Portal/Auswertung den einzigen kompletten Kennziffern-Formularvordruck der gesichteten Pakete; Download offen (siehe [`elster/elsterlohn-lstb.md`](elster/elsterlohn-lstb.md)).
+- **ElsterLohn_Lohnsteuerbescheinigung_1.36.zip** wurde inzwischen heruntergeladen und ausgewertet (siehe [`elster/elsterlohn-lstb.md`](elster/elsterlohn-lstb.md)) — enthält den einzigen kompletten Kennziffern-Formularvordruck (Kz 1–34) der gesichteten Pakete. Offen bleibt darin: Datenart `Lohnersatzleistung` ohne Schema/Beispiel im Paket, kein CSV-Feldkatalog, ElsterKMV/LSTMitteilung (ab VZ 2026) nicht enthalten.
 - **VaSt-Informationen_v1.zip fehlt lokal** — Datenart `ElsterVaStDaten` ist in der Datenabholung referenziert, das zugehörige Hersteller-Infopaket selbst wurde nicht heruntergeladen (siehe [`elster/datenabholung.md`](elster/datenabholung.md) Abschnitt 5).
 - **ERiC-Formularpakete (ESt/KSt/USt-VA/GewSt/ErbSt/Grundsteuer/steuerliche Erfassung) liegen nicht im gesichteten „ELSTER-Entwickler"-Ordner** — dies ist der separate ERiC-Entwicklerbereich; die dortigen Kennziffern-Feldkataloge sind hier **nicht** erfunden. Bereits im Repo vorhandene Feldkataloge (steuerliche Erfassung, BZSt2, § 6 AStG, W-IdNr.) liegen unter [`AO/README.md`](AO/README.md) und [`AStG/formulardaten-mitteilung-6-astg.md`](AStG/formulardaten-mitteilung-6-astg.md) und beruhen **nicht** auf einem ELSTER-Entwicklerpaket.

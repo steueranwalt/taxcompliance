@@ -13,7 +13,7 @@ Ausgewertet aus dem OneDrive-Ordner `01 Projekte/ELSTER-Entwickler` (Scan 2026-0
 | ElsterBasis-XML-Schnittstelle | 2026.7.20.0 / Doku 4.3.0 | Header für alle Verfahren | ja | Transport | [`elsterxml-v11.md`](elsterxml-v11.md) |
 | ElsterDatenabholung | 32.0.1 (+ Portal 31.0.6) | ElsterDatenabholung | ja | Empfang | [`datenabholung.md`](datenabholung.md) |
 | ElsterObjektspeicher (OTTER) | 1.4.6 | OTTER (REST) | ja | Objekt-Push/Pull | [`objektspeicher-otter.md`](objektspeicher-otter.md) |
-| ElsterLohn / LStB (+ ElsterKMV) | 1.36 | ElsterLohn → ab VZ 2026 ElsterKMV | **nein** (~58 MB) | Formular-Muster | [`elsterlohn-lstb.md`](elsterlohn-lstb.md) |
+| ElsterLohn / LStB (+ ElsterKMV) | 1.36 | ElsterLohn → ab VZ 2026 ElsterKMV | ja (seit Folge-Scan 2026-09-28) | Formular-Muster | [`elsterlohn-lstb.md`](elsterlohn-lstb.md) |
 | ElsterKontoabfrage | 2.1.3 | ElsterKontoabfrage | ja | Abfrage | [`kontoabfrage.md`](kontoabfrage.md) |
 | LAVENDEL Datenübermittler | 2.0.1 | ElsterLohn2 / LAVENDEL | ja | ELStAM | [`lavendel-elstam.md`](lavendel-elstam.md) |
 | HMS Hersteller-Mock | 2.0.1 | ElsterLohn2 (Test) | ja | Mock | [`hms-mock.md`](hms-mock.md) |
@@ -56,12 +56,13 @@ Diese liegen typischerweise im separaten **ERiC-Entwicklerbereich** bzw. in jäh
 
 | Datei | Priorität | Grund |
 |---|---|---|
-| `ElsterLohn_Lohnsteuerbescheinigung_1.36.zip` (~58 MB) | hoch (Muster) | Kennziffern-Feldkatalog; alternativ esteuer.de für ElsterKMV/LSTMitteilung ab VZ 2026 — siehe [`elsterlohn-lstb.md`](elsterlohn-lstb.md) |
 | `VaSt-Informationen_v1.zip` | mittel | VaSt-Abholung fachlich (Datenart `ElsterVaStDaten`) — siehe [`datenabholung.md`](datenabholung.md) |
 | `ElsterDatenabholung-v31.0.6.zip` | niedrig | parallel gültig; v32 reicht für Inventar |
 | `Fehlerliste.pdf` | niedrig | XML vorhanden ([`kataloge/fehlerliste.md`](kataloge/fehlerliste.md)) |
 | ERiC Common / Formularpakete (ESt, KSt, USt, GewSt, ErbSt, Grundsteuer, steuerliche Erfassung) | **kritisch** für Formularvollständigkeit | nicht im offenen Schnittstellen-Ordner |
-| Dokumentation ElsterKMV / LSTMitteilung (esteuer.de) | hoch ab VZ 2026 | Nachfolger LStB |
+| Dokumentation ElsterKMV / LSTMitteilung (esteuer.de) | hoch ab VZ 2026 | Nachfolger LStB, nicht im ELSTER-Entwickler-Ordner — siehe [`elsterlohn-lstb.md`](elsterlohn-lstb.md) |
+
+**Erledigt seit Folge-Scan 2026-09-28:** `ElsterLohn_Lohnsteuerbescheinigung_1.36.zip` (~56 MB) wurde heruntergeladen und extrahiert; Details und verbleibende Paket-interne Lücken (Datenart `Lohnersatzleistung` ohne Schema, kein CSV-Feldkatalog) siehe [`elsterlohn-lstb.md`](elsterlohn-lstb.md) Abschnitt 5.
 
 ### 3.3 Bewusst ausgeschlossen
 
