@@ -21,7 +21,11 @@
 | CH-F-BGG-003 | Fristwahrung | Art. 48 BGG | Eingabe spätestens letzter Tag an zulässige Stelle | elektronische Eingabe gesondert prüfen |
 | CH-F-BGG-004 | Wiederherstellung | Art. 50 BGG | 30 Tage nach Wegfall des Hindernisses | versäumte Rechtshandlung nachholen |
 
-## 2. Direkte Bundessteuer, Veranlagung und Einsprache
+## 2. Besteuerungsverfahren: Ermittlung, Veranlagung/Festsetzung und Einsprache
+
+Dieser Abschnitt bildet den allgemeinen Lebenszyklus der Steuerfestsetzung ab. Steuerartspezifische Abweichungen werden in den späteren Modulen referenziert.
+
+## 2.1 Direkte Bundessteuer, Veranlagung und Einsprache
 
 | Frist-ID | Handlung | Norm | Frist | Auslöser / Besonderheit |
 |---|---|---|---|---|
@@ -32,7 +36,21 @@
 | CH-F-DBG-005 | Weiterzug an weitere kantonale Instanz | Art. 145 DBG | nach bundesrechtlicher Verweisung/kantonalem Instanzenzug | kantonales Recht prüfen |
 | CH-F-DBG-006 | Beschwerde ans Bundesgericht | BGG, insb. Art. 100 | grundsätzlich 30 Tage | ab Eröffnung des vollständigen Entscheids |
 
-## 3. DBG Revision, Nachsteuer und Berichtigung
+## 3. Steuererhebung / Steuerbezug
+
+Zu erfassen sind Fälligkeit, Zahlung, Verzinsung, Rückerstattung, Stundung, Erlass und Sicherstellung. Bezugsfristen werden von Festsetzungs-/Veranlagungsfristen getrennt geführt.
+
+## 4. Steuervollstreckung
+
+Vollstreckungsfristen und Warte-/Reaktionsfristen sind mit dem SchKG zu verknüpfen. Sie bilden einen eigenen Prozesszweig nach Eintritt von Fälligkeit und Vollstreckbarkeit.
+
+## 5. Rechtsmittel und gerichtliches Verfahren
+
+Die allgemeinen VwVG/VGG/BGG-Fristen sowie die spezialgesetzlichen Einsprache- und Beschwerdefristen werden pro Prozessschritt referenziert. Zwischenentscheide und vorsorglicher Rechtsschutz erhalten eigene Fristobjekte.
+
+## 6. Änderungs- und Korrekturverfahren
+
+### 6.1 DBG Revision, Nachsteuer und Berichtigung
 
 | Frist-ID | Handlung | Norm | Frist | Charakter |
 |---|---|---|---|---|
@@ -42,7 +60,7 @@
 | CH-F-DBG-023 | Nachsteuer festsetzen | Art. 152 DBG | gesetzliche absolute Grenze nach Einleitung gesondert prüfen | nicht mit Einleitungsfrist vermengen |
 | CH-F-DBG-024 | Berichtigung von Rechnungs-/Schreibfehlern | Art. 150 DBG | gesetzliche Frist tatbestandsspezifisch prüfen | nur Fehlerart des Art. 150 |
 
-## 4. DBG Verjährung und Bezug
+## 6.2 DBG Verjährung und Bezug
 
 | Frist-ID | Gegenstand | Norm | Frist | Stillstand/Unterbruch |
 |---|---|---|---|---|
@@ -52,7 +70,7 @@
 | CH-F-DBG-033 | Bezugsverjährung absolut | Art. 121 DBG | absolute Grenze nach Norm | genaue Anknüpfung erfassen |
 | CH-F-DBG-034 | Steuerstrafrechtliche Verjährung | Art. 184 DBG | je Widerhandlung unterschiedlich | Rechtsstand/Tatzeit zwingend prüfen |
 
-## 5. StHG, kantonale direkte Steuern
+## 6.3 StHG, kantonale direkte Steuern
 
 Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung ist das jeweilige kantonale Steuergesetz zwingend zusätzlich zu hinterlegen.
 
@@ -65,7 +83,7 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-STHG-005 | Veranlagungsverjährung | Art. 47 StHG | harmonisierter Rahmen; kantonale Norm prüfen |
 | CH-F-STHG-006 | Steuerstrafrechtliche Verjährung | Art. 58 ff. StHG | Tatzeit/Rechtsstand beachten |
 
-## 6. Allgemeines Bundesverwaltungsverfahren / Bundesverwaltungsgericht
+## 5.1 Allgemeines Bundesverwaltungsverfahren / Bundesverwaltungsgericht
 
 | Frist-ID | Handlung | Norm | Frist |
 |---|---|---|---|
@@ -76,7 +94,7 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-VWV-024 | Revision | Art. 66 ff. VwVG | Revisionsgrund und Frist nach Norm/Spezialrecht |
 | CH-F-VGG-001 | Verfahren BVGer | Art. 37 VGG | grundsätzlich VwVG, soweit VGG nichts anderes bestimmt |
 
-## 7. Bundesgericht
+## 5.2 Bundesgericht
 
 | Frist-ID | Handlung | Norm | Frist |
 |---|---|---|---|
@@ -86,7 +104,9 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-BGG-023 | Revision Bundesgericht | Art. 124 BGG | je Revisionsgrund unterschiedliche relative Fristen | Tatbestand Art. 121–123 zuerst bestimmen |
 | CH-F-BGG-024 | Ergänzung/Berichtigung | Art. 129 BGG | tatbestandsspezifisch | von Revision trennen |
 
-## 8. Mehrwertsteuer, Erklärung und Zahlung
+## 9. Besonderheiten nach Einzelsteuerarten
+
+### 9.1 Mehrwertsteuer, Erklärung und Zahlung
 
 | Frist-ID | Handlung | Norm | Frist / Regel |
 |---|---|---|---|
@@ -96,7 +116,7 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-MWST-004 | Finalisierung Steuerperiode | MWSTG, aktuelle Fassung | gesetzliche Korrektur-/Finalisierungsfrist prüfen |
 | CH-F-MWST-005 | Einfuhrsteuer | MWSTG i.V.m. Zollrecht | zollverfahrensbezogen | separates Modul erforderlich |
 
-## 9. MWST Rechtsmittel und Verfahren
+### 9.2 MWST Rechtsmittel und Verfahren
 
 | Frist-ID | Handlung | Norm | Frist / Regel |
 |---|---|---|---|
@@ -106,7 +126,7 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-MWST-023 | Beschwerde BGer | BGG Art. 100 | grundsätzlich 30 Tage |
 | CH-F-MWST-024 | Vorsorgliche Massnahmen / aufschiebende Wirkung | VwVG/Spezialrecht | keine einheitliche Handlungsfrist; Eilbedürftigkeit |
 
-## 10. MWST Verjährung
+### 9.3 MWST Verjährung
 
 | Frist-ID | Gegenstand | Norm | Frist |
 |---|---|---|---|
@@ -116,7 +136,7 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-MWST-033 | Bezugsverjährung | Art. 91 MWSTG | relative und absolute Frist getrennt erfassen |
 | CH-F-MWST-034 | Strafverfolgungsverjährung | Art. 105 MWSTG | delikts- und rechtsstandsabhängig |
 
-## 11. Verrechnungssteuer, Erhebung und Meldung
+### 9.4 Verrechnungssteuer, Erhebung und Meldung
 
 | Frist-ID | Handlung | Norm | Frist / Regel |
 |---|---|---|---|
@@ -127,7 +147,7 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-VST-005 | Beschwerde BVGer | VStG/VwVG/VGG | grundsätzlich 30 Tage |
 | CH-F-VST-006 | Beschwerde BGer | BGG | grundsätzlich 30 Tage |
 
-## 12. Verrechnungssteuer, Rückerstattung und Verwirkung
+### 9.5 Verrechnungssteuer, Rückerstattung und Verwirkung
 
 | Frist-ID | Handlung | Norm | Frist / Regel |
 |---|---|---|---|
@@ -135,7 +155,23 @@ Das StHG harmonisiert Mindestanforderungen. Für die operative Fristberechnung i
 | CH-F-VST-021 | Nachfrist/Sonderfälle Rückerstattung | Art. 32 VStG | gesetzliche Sondertatbestände gesondert prüfen |
 | CH-F-VST-022 | Rückerstattungsentscheid / Rechtsmittel | Art. 48 ff. VStG | je zuständiger Behörde kantonaler bzw. Bundesrechtsweg |
 
-## 13. Materielle Erklärungs-, Anzeige- und Meldefristen
+### 9.6 Stempelabgaben (StG/StV)
+
+StG (SR 641.10) und StV (SR 641.101) werden als eigenes Fristenmodul inventarisiert: Deklaration, Fälligkeit/Entrichtung, Meldungen, Rückerstattung, Kontrolle, Rechtsmittel, Verjährung und Verwaltungsstrafrecht. Einzelwerte werden erst nach normenbezogener Verifikation für automatische Berechnung freigegeben.
+
+## 10. Internationales Steuerverfahren: DBA, StADG und StAhiG
+
+| Frist-ID | Verfahren | Quelle | Fristenlogik |
+|---|---|---|---|
+| CH-F-DBA-MAP-001 | Einleitung Verständigungsverfahren | konkretes DBA, Referenz Art. 25 OECD-MA | treaty-spezifisch; OECD-Modell grundsätzlich 3 Jahre ab erster Mitteilung der abkommenswidrigen Besteuerung |
+| CH-F-DBA-DECH-MAP-001 | Verständigungsverfahren Deutschland–Schweiz | DBA DE–CH einschliesslich Protokoll/Änderungen | konkrete geltende DBA-Fassung und MLI-Wirkung verifizieren; nicht aus OECD-MA ableiten |
+| CH-F-STADG-001 | innerstaatliches Verfahren zur Durchführung internationaler Steuerabkommen | StADG | je Verfahrensphase; Umsetzung einer Verständigungsvereinbarung gesondert modellieren |
+| CH-F-STAHIG-001 | internationale Amtshilfe | StAhiG SR 651.1 | Informations-, Schlussverfügungs- und Beschwerdephasen gesondert erfassen |
+| CH-F-DBA-ENTL-001 | DBA-Entlastung/Rückerstattung schweizerischer Quellensteuer | DBA + StADG/Ausführungsrecht + ESTV-Praxis | länder- und anspruchsspezifische Frist |
+
+**Quellenregel:** DBA-Fristen werden immer aus dem konkret anwendbaren Abkommen, Protokoll und allfälliger MLI-Modifikation gewonnen. OECD-MA, OECD-Kommentar und MEMAP sind Referenz-/Auslegungsquellen, nicht Ersatz für die anwendbare Treaty-Norm. ESTV-/SIF-Kreisschreiben, Wegleitungen und Praxisinformationen werden versionsbezogen als Verwaltungspraxis hinterlegt.
+
+## 11. Materielle Erklärungs-, Anzeige- und Meldefristen
 
 Für ein vollständiges Compliance-Register werden Fristen ereignisbezogen geführt, nicht nur nach Gesetz.
 
@@ -150,7 +186,7 @@ Für ein vollständiges Compliance-Register werden Fristen ereignisbezogen gefü
 | internationale Konstellation | AIA/StAhiG/DBA/StADG | Spezialgesetze | separates Modul |
 | Arbeitgeberereignis | Quellensteuer/Lohndaten | DBG/StHG + kantonales Recht | kantonal konkretisiert |
 
-## 14. Verjährungs- und Verwirkungsmatrix
+## 12. Verjährungs- und Verwirkungsmatrix
 
 | Bereich | Relative Frist | Absolute Frist | Mechanik |
 |---|---:|---:|---|
@@ -162,7 +198,7 @@ Für ein vollständiges Compliance-Register werden Fristen ereignisbezogen gefü
 | VSt Rückerstattung | grundsätzlich 3 Jahre | Verwirkungscharakter | Sonderfälle Art. 32 prüfen |
 | BGer Revision | je Grund | Art. 124 BGG | unterschiedliche Fristen |
 
-## 15. Maschinenlesbares Datenmodell
+## 13. Maschinenlesbares Datenmodell
 
 ```yaml
 frist_id:
@@ -192,7 +228,7 @@ quelle:
 pruefstatus:
 ```
 
-## 16. Ausbau für Anspruch «alle bundesrechtlich relevanten Steuerfristen»
+## 14. Ausbau für Anspruch «alle bundesrechtlich relevanten Steuerfristen»
 
 Der Kernbestand ist angelegt. Für eine tatsächlich vollständige Bundesinventur sind als nächste Module normenweise zu ergänzen:
 
@@ -208,7 +244,7 @@ Der Kernbestand ist angelegt. Für eine tatsächlich vollständige Bundesinventu
 10. Vollständige MWSTV-Inventur sämtlicher Anmelde-, Wahl-, Abrechnungs- und Nachweisfristen.
 11. 26 kantonale Verfahrensmodule als Konkretisierung des StHG.
 
-## Quellen- und Qualitätshinweis
+## 15. Quellen- und Qualitätshinweis
 
 Primärquellen: Fedlex, konsolidierte Fassungen von DBG (SR 642.11), StHG (SR 642.14), VwVG (SR 172.021), MWSTG (SR 641.20), MWSTV (SR 641.201), VStG (SR 642.21), VStV (SR 642.211), BGG (SR 173.110), VGG (SR 173.32). Die amtlichen Erlasse wurden am 29.09.2026 über den Schweizer-Recht/Fedlex-Connector identifiziert. Einzelne Fristen wurden zusätzlich gegen publizierte Rechtsprechung plausibilisiert. Ein Datensatz darf erst dann für automatische Fristberechnung freigegeben werden, wenn `pruefstatus: verifiziert` gesetzt ist.
 
