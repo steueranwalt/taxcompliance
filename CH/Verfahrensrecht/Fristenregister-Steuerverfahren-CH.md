@@ -249,3 +249,45 @@ Der Kernbestand ist angelegt. Für eine tatsächlich vollständige Bundesinventu
 Primärquellen: Fedlex, konsolidierte Fassungen von DBG (SR 642.11), StHG (SR 642.14), VwVG (SR 172.021), MWSTG (SR 641.20), MWSTV (SR 641.201), VStG (SR 642.21), VStV (SR 642.211), BGG (SR 173.110), VGG (SR 173.32). Die amtlichen Erlasse wurden am 29.09.2026 über den Schweizer-Recht/Fedlex-Connector identifiziert. Einzelne Fristen wurden zusätzlich gegen publizierte Rechtsprechung plausibilisiert. Ein Datensatz darf erst dann für automatische Fristberechnung freigegeben werden, wenn `pruefstatus: verifiziert` gesetzt ist.
 
 **Wichtig:** «alle Fristen» ist bei schweizerischem Bundessteuerrecht ein modularer Inventurauftrag. Diese Datei enthält den zentralen Kernbestand, behauptet aber noch keine Vollständigkeit über sämtliche Bundesabgaben und internationalen Spezialgesetze.
+
+## 16. SharePoint-Wissensreferenzen
+
+**Ablage:** SharePoint Site `wissen`, Bibliothek `Shared Documents`. Die folgenden internen Materialien sind als Sekundär-/Arbeitsquellen kartographiert. Primärnorm und amtliche Fassung bleiben massgeblich.
+
+| Prozess-/Fristbereich | SharePoint-Material | Verwendung |
+|---|---|---|
+| CH-F-DBG-022/023, Nachsteuer | `wiki/Steuerverfahrensrecht_CH/Nachsteuern Verfahren.md` | Verfahrensablauf, Einleitung, Folgeentscheid |
+| CH-F-DBG-022/023, Nachsteuerverjährung | `wiki/Steuerverfahrensrecht_CH/Nachsteuern Verjaehrung.md` | relative/absolute Grenzen und Verjährungslogik |
+| CH-F-DBG-020/021, Revision | `wiki/Revision/`; `wiki/Korrekturen/` | ausserordentliche Rechtsmittel und Korrekturpfade |
+| CH-F-DBG-001 ff.; CH-F-STHG-001 ff. | `wiki/Steuerverfahrensrecht_CH/Rechtsmittel-gegen-einkommens-vermoegenssteuerveranlagungen_CH_2018.md` | Einsprache/Beschwerde, Instanzenzug; historischen Rechtsstand beachten |
+| CH Steuerstrafverfahren | `wiki/Steuerverfahrensrecht_CH/Die Straftatbestände - kurz beleuchtet.md` | Verknüpfung Veranlagungs-/Nachsteuer- mit Strafverfahren |
+| CH materielle Compliance-Fristen | `wiki/Tax Compliance/Tax-Compliance-Schweiz-Pflichten.md`; `Tax_Compliance_DE_CH_2026.xlsx` | Ereignis-, Melde-, Erklärungs-, Aufzeichnungs- und Aufbewahrungsfristen |
+| CH-F-DBA-DECH-MAP-001 | `wiki/importiert/05 eigene Literatur/01 Wassermeyer DBA/01 Schweiz/Bd5-Schweiz-026_fortgeschrieben.docx` | Art. 26 DBA DE-CH: MAP, Verhältnis innerstaatliche Rechtsmittel, Antragsfrist, Umsetzung, Schiedsverfahren |
+| CH-F-STAHIG-001 / DBA-Informationsaustausch | `.../Bd5-Schweiz-027_fortgeschrieben_2026-06-27.docx`; `wiki/Amtshilfe und Rechtshilfe/`; `wiki/Informationsaustausch/` | Art. 27 DBA DE-CH, StAhiG, Informationsbeschaffung, Rechtsschutz |
+| DBA-Missbrauch/Konsultation | `.../Bd5-Schweiz-023 fortgeschrieben.docx` | Art. 23 Abs. 2 DBA DE-CH → Konsultationsverfahren Art. 26 Abs. 3 |
+| APA/Vorabverständigung | `wiki/Vorabverständigung/`; DBA-Kommentar Art. 26 | Vorabverständigungsverfahren und Übergang zu MAP/Schiedsverfahren |
+| internationale Prüfungen / TP | `General/01 Internationales Steuerrecht/Verrechnungspreise/Koelner Tage Internationale Verrechnungspreise Seminarunterlagen 2026-09-24.pdf` | gemeinsame/koordinierte Prüfungen, MAP/APA, Prüfungsabschluss und Gegenberichtigung |
+
+### 16.1 Aus DBA Art. 26 DE-CH zusätzlich zu modellierende Fristobjekte
+
+Die interne Kommentierung zu Art. 26 zeigt mehrere voneinander zu trennende Zeitobjekte: Antragsfrist des Verständigungsverfahrens, Verhältnis zu innerstaatlichen Rechtsbehelfs-/Revisions- und Festsetzungsfristen, den `Anfangszeitpunkt` des Schiedsfalls sowie den Beginn des Schiedsverfahrens grundsätzlich drei Jahre nach diesem Anfangszeitpunkt, vorbehaltlich der abkommensrechtlichen Voraussetzungen. Diese werden nicht mit der allgemeinen OECD-MA-Dreijahresfrist gleichgesetzt, sondern anhand der jeweils geltenden DBA-Fassung separat verifiziert.
+
+### 16.2 Provenienzfelder
+
+Für die spätere Bot-/Flow-Nutzung wird je Datensatz zusätzlich geführt:
+
+```yaml
+knowledge_refs:
+  - system: sharepoint
+    site: wissen
+    library: Shared Documents
+    path:
+    document_title:
+    source_type: [primaerquelle, verwaltungspraxis, kommentar, rechtsprechung, eigene_notiz, seminar]
+    source_date:
+    source_version:
+    relevant_sections: []
+    supports: []
+    conflicts_with: []
+    verification_status: [hinweis, ausgewertet, gegen_primaerquelle_verifiziert]
+```
