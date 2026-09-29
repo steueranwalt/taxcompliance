@@ -249,3 +249,50 @@ Die Karte bildet zunächst die bundesrechtlich zentralen Steuerverfahren ab. Noc
 ## 14. Quellen
 
 Amtliche konsolidierte Erlasse über Fedlex, insbesondere DBG SR 642.11, StHG SR 642.14, VwVG SR 172.021, MWSTG SR 641.20, MWSTV SR 641.201, VStG SR 642.21, VStV SR 642.211, BGG SR 173.110 und VGG SR 173.32.
+
+## 15. SharePoint-Kartographie der Wissensbasis
+
+Die Prozesslandkarte referenziert die interne SharePoint-Wissensbasis auf Dokumentebene. Die Referenz ist Provenienz, nicht Rechtsquelle eigener Art.
+
+| Prozessfamilie | Interne Wissensknoten |
+|---|---|
+| Allgemeiner Teil / Rechte im Verfahren | `wiki/Steuerverfahrensrecht_CH/`; ergänzend vergleichend `wiki/Steuerverfahrensrecht_DE/` |
+| Besteuerungsverfahren | `wiki/Steuerverfahrensrecht_CH/EinkVermSteuer_1.md`, `EinkVermSteuer_2.md`, `GewinnKapitalSteuer_1.md`, `GewinnKapitalSteuer_2.md` |
+| Rechtsmittel | `wiki/Steuerverfahrensrecht_CH/Rechtsmittel-gegen-einkommens-vermoegenssteuerveranlagungen_CH_2018.md` |
+| Revision/Korrektur | `wiki/Revision/`; `wiki/Korrekturen/` |
+| Nachsteuer | `wiki/Steuerverfahrensrecht_CH/Nachsteuern Verfahren.md`; `Nachsteuern Verjaehrung.md`; `Nachsteuersteuern Allgemeines AG.md` |
+| Steuerstrafverfahren | `wiki/Steuerverfahrensrecht_CH/Die Straftatbestände - kurz beleuchtet.md` |
+| Tax Compliance / materielle Pflichten | `wiki/Tax Compliance/Tax-Compliance-Schweiz-Pflichten.md`; `Tax_Compliance_DE_CH_2026.xlsx` |
+| MAP / DBA DE-CH | `wiki/importiert/05 eigene Literatur/01 Wassermeyer DBA/01 Schweiz/Bd5-Schweiz-026_fortgeschrieben.docx` (Art. 26) |
+| Informationsaustausch / StAhiG | `.../Bd5-Schweiz-027_fortgeschrieben_2026-06-27.docx` (Art. 27); `wiki/Amtshilfe und Rechtshilfe/`; `wiki/Informationsaustausch/` |
+| DBA-Missbrauch → Konsultation | `.../Bd5-Schweiz-023 fortgeschrieben.docx` (Art. 23 Abs. 2 → Art. 26 Abs. 3) |
+| APA | `wiki/Vorabverständigung/`; Art.-26-Kommentierung |
+| Doppelbesteuerung | `wiki/Doppelbesteuerung/` |
+| internationale/koordinierte Prüfung | `General/01 Internationales Steuerrecht/Verrechnungspreise/Koelner Tage Internationale Verrechnungspreise Seminarunterlagen 2026-09-24.pdf` |
+
+### 15.1 Erkenntnisse für das Prozessmodell
+
+Die Art.-26-Kommentierung bestätigt, dass MAP nicht als blosser Rechtsmittel-Unterfall modelliert werden darf. Zu unterscheiden sind: Verständigungsverfahren auf Antrag, Konsultationsverfahren, APA/Vorabverständigung und Schiedsverfahren. Zusätzlich sind Tatsachenfeststellung/Aussenprüfung, Informationsaustausch nach Art. 27, innerstaatliche Rechtsmittel und die innerstaatliche Umsetzung einer Verständigung als verknüpfte, aber eigenständige Prozesse abzubilden.
+
+Für das DBA DE-CH ist deshalb folgende Verfeinerung der State Machine vorgesehen:
+
+```text
+abkommenswidrige Besteuerung / drohende Besteuerung
+→ MAP-Antrag
+→ Zuständigkeits-/Zulässigkeits-/Vollständigkeitsprüfung
+→ einseitige Abhilfe möglich?
+  → ja: nationale Abhilfe
+  → nein: bilaterale Verständigung
+→ Verständigung erreicht?
+  → ja: Zustimmung/Annahme soweit erforderlich → innerstaatliche Umsetzung
+  → nein: Voraussetzungen Schiedsverfahren prüfen
+→ Schiedsverfahren
+→ bindende Lösung nach Abkommensregime
+→ innerstaatliche Umsetzung
+```
+
+Parallelzustände: innerstaatliches Rechtsmittel, Revision/Nachsteuer bzw. Festsetzungsverfahren, Informationsaustausch und gegebenenfalls Aussenprüfung.
+
+### 15.2 Quellen-Governance
+
+SharePoint-Pfade werden als stabile interne Wissensreferenzen erfasst. Für belastbare Automatisierung gilt: `eigene_notiz/seminar/kommentar → Primärquelle ermitteln → geltende Fassung bestimmen → Aussage verifizieren → verification_status = gegen_primaerquelle_verifiziert`. Historische Dokumente, etwa die Rechtsmittelübersicht 2018, werden nicht ohne Rechtsstandsprüfung als aktuelle Regelquelle verwendet.
