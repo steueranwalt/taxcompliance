@@ -1,7 +1,9 @@
 # Verfahrenslandkarte Schweizer Steuerrecht (Bund)
 
 **Rechtsstand:** 29.09.2026  
-**Zweck:** Grundlage für Rechtsanalyse, Skills/Bots und Prozessflows. Korrespondiert strukturell mit dem deutschen Verfahrens- und Fristenregister.
+**Zweck:** Grundlage für Rechtsanalyse, Skills/Bots und Prozessflows.
+
+**Metadaten:** `topic: Steuerverfahrensrecht`, `jurisdiction: CH`. Bund, Kanton und Gemeinde werden nicht als eigene Jurisdiktionen behandelt, sondern über `legal_level`, `authority_level` und `territory` nach `schema/legal-knowledge-graph.md`. Korrespondiert strukturell mit dem deutschen Verfahrens- und Fristenregister.
 
 > **Kanonische Reihenfolge:** Allgemeiner Teil → Besteuerungsverfahren (Ermittlung und Veranlagung/Festsetzung) → Steuererhebung/Bezug → Steuervollstreckung → Rechtsmittel/Prozess → Änderungsverfahren → Buchprüfung/Kontrolle → Steuer-/Verwaltungsstrafverfahren → Einzelsteuerarten → internationales Steuerverfahren → Verjährung/Verwirkung.
 
@@ -252,11 +254,11 @@ Amtliche konsolidierte Erlasse über Fedlex, insbesondere DBG SR 642.11, StHG SR
 
 ## 15. SharePoint-Kartographie der Wissensbasis
 
-Die Prozesslandkarte referenziert die interne SharePoint-Wissensbasis auf Dokumentebene. Die Referenz ist Provenienz, nicht Rechtsquelle eigener Art.
+Die Prozesslandkarte referenziert ausschliesslich CH-bezogene interne Wissensquellen auf Dokumentebene. DE-Quellen werden nicht als allgemeine Referenzen verwendet. Ein DE-Bezug erscheint nur als Bestandteil eines grenzüberschreitenden CH-Verfahrens, insbesondere beim DBA Deutschland–Schweiz. Die Referenz ist Provenienz, nicht Rechtsquelle eigener Art.
 
 | Prozessfamilie | Interne Wissensknoten |
 |---|---|
-| Allgemeiner Teil / Rechte im Verfahren | `wiki/Steuerverfahrensrecht_CH/`; ergänzend vergleichend `wiki/Steuerverfahrensrecht_DE/` |
+| Allgemeiner Teil / Rechte im Verfahren | `wiki/Steuerverfahrensrecht_CH/` |
 | Besteuerungsverfahren | `wiki/Steuerverfahrensrecht_CH/EinkVermSteuer_1.md`, `EinkVermSteuer_2.md`, `GewinnKapitalSteuer_1.md`, `GewinnKapitalSteuer_2.md` |
 | Rechtsmittel | `wiki/Steuerverfahrensrecht_CH/Rechtsmittel-gegen-einkommens-vermoegenssteuerveranlagungen_CH_2018.md` |
 | Revision/Korrektur | `wiki/Revision/`; `wiki/Korrekturen/` |
