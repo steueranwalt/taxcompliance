@@ -1,6 +1,8 @@
 # Fristenregister Schweizer Steuerverfahrensrecht
 
-**Rechtsstand:** 29.09.2026  
+**Rechtsstand:** 29.09.2026
+
+**Metadaten:** `topic: Steuerverfahrensrecht`, `jurisdiction: CH`. Föderale Geltung und Vollzug werden separat über `legal_level`, `authority_level` und `territory` modelliert. Internationale Organisationen und Vertragsinstrumente folgen `schema/legal-knowledge-graph.md`.  
 **Geltungsbereich:** schweizerisches Steuerverwaltungs- und Steuerprozessrecht auf Bundesebene. Kern: DBG, StHG, VwVG/VGG/BGG, MWSTG/MWSTV und VStG/VStV. Kantonale Ausführungsvorschriften sind zusätzlich zu prüfen.  
 **Verknüpfung:** `Verfahrenslandkarte-Steuerrecht-CH.md`.
 
@@ -252,7 +254,7 @@ Primärquellen: Fedlex, konsolidierte Fassungen von DBG (SR 642.11), StHG (SR 64
 
 ## 16. SharePoint-Wissensreferenzen
 
-**Ablage:** SharePoint Site `wissen`, Bibliothek `Shared Documents`. Die folgenden internen Materialien sind als Sekundär-/Arbeitsquellen kartographiert. Primärnorm und amtliche Fassung bleiben massgeblich.
+**Ablage:** SharePoint Site `wissen`, Bibliothek `Shared Documents`. Die folgenden CH-bezogenen internen Materialien sind als Sekundär-/Arbeitsquellen kartographiert. Allgemeine DE-Verfahrensmaterialien gehören nicht in dieses Register; DE erscheint nur bei einem grenzüberschreitenden Instrument oder Verfahren mit CH-Bezug. Primärnorm und amtliche Fassung bleiben massgeblich.
 
 | Prozess-/Fristbereich | SharePoint-Material | Verwendung |
 |---|---|---|
