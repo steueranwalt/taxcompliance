@@ -345,3 +345,24 @@ verification_date:
 ```
 
 **Modellierungsregel:** Eine DBA-Frist darf niemals allein aus OECD-Musterabkommen oder deutscher Verhandlungsgrundlage erzeugt werden. Für den konkreten Fall ist stets die anwendbare Fassung des konkreten DBA einschliesslich Protokollen, Änderungsprotokollen und Übergangsrecht massgeblich.
+
+
+## SharePoint-Wissensreferenzen
+
+Die deutsche Fristenlandkarte wird mit den vorhandenen internen Wissensknoten der SharePoint-Site `wissen` verbunden. Diese Verweise dienen als Recherche- und Kommentierungsebene; für die automatische Fristberechnung bleibt die verifizierte Primärnorm massgeblich.
+
+| Bereich | SharePoint-Referenz | Bezug |
+|---|---|---|
+| Bekanntgabe/Zugang | `wiki/Steuerverfahrensrecht_DE/3-Tages-Frist-Keine-Zugangsvermutung-bei-regelmäßig-zustellungsfreien-Tagen.md` | Bekanntgabefiktion/Zugangsvermutung; Rechtsstand insbesondere nach Umstellung auf Viertagesfiktion prüfen |
+| Ermittlung/Mitwirkung/Beweis | `wiki/Steuerverfahrensrecht_DE/1.-Beweislast,-Mitwirkungs-und-Amtsermittlungspflichten-beck-online.md` | §§ 88, 90, 93 AO und Beweis-/Mitwirkungssystem |
+| Akteneinsicht | `wiki/Steuerverfahrensrecht_DE/Akteneinsicht.md` sowie weitere Akteneinsicht-Materialien im selben Ordner | Verfahrensrechte, Prüfungsakte, Steuergeheimnis |
+| Schätzung | `wiki/Steuerverfahrensrecht_DE/Schaetzung_dem_Grunde_nach/`; `Schaetzung_der_Hoehe_nach/` | § 162 AO, Voraussetzungen und Rechtsfolgen |
+| Einspruch/Rechtsschutz | `wiki/Steuerechtsschutz_DE/`; `wiki/Steuerverfahrensrecht_DE/` | AO/FGO-Rechtsbehelfs- und Prozessfristen |
+| Revision / Korrektur | `wiki/Revision/`; `wiki/Korrekturen/` | Korrektur- und Rechtskraftdurchbrechungspfade |
+| Vollstreckung | `wiki/Steuervollstreckung_DE/` | §§ 249 ff. AO und Vollstreckungsfristen |
+| Tax Compliance | `wiki/Tax Compliance/Tax-Compliance-Deutschland-Pflichten.md`; `Tax_Compliance_DE_CH_2026.xlsx` | Erklärungs-, Anzeige-, Aufzeichnungs- und Aufbewahrungsfristen |
+| Internationale Prüfung/TP | `General/01 Internationales Steuerrecht/Verrechnungspreise/Koelner Tage Internationale Verrechnungspreise Seminarunterlagen 2026-09-24.pdf` | §§ 89a, 89b, 90 Abs. 3, 117e, 180 Abs. 1a, 200a AO sowie koordinierte/gemeinsame Prüfungen |
+| DBA DE-CH MAP | `wiki/importiert/05 eigene Literatur/01 Wassermeyer DBA/01 Schweiz/Bd5-Schweiz-026_fortgeschrieben.docx` | Art. 26 DBA DE-CH; Wechselwirkung MAP mit §§ 171, 175a AO und innerstaatlichem Rechtsschutz |
+| Informationsaustausch | `.../Bd5-Schweiz-027_fortgeschrieben_2026-06-27.docx`; `wiki/Amtshilfe und Rechtshilfe/`; `wiki/Informationsaustausch/` | Art. 27 DBA DE-CH, internationale Amts-/Rechtshilfe |
+
+**Rechtsstandsregel:** SharePoint-Material mit historischem Datum oder älterer Normfassung wird als `verification_status: hinweis` geführt, bis es gegen die für den konkreten Zeitraum geltende Normfassung verifiziert wurde.
