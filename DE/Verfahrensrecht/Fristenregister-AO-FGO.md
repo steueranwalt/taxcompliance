@@ -223,3 +223,125 @@ Dieses Register bildet den Kernbestand für AO/FGO ab. Der Anspruch **„alle Fr
 ## Quellen- und Rechtsstandshinweis
 
 Primär geprüft gegen die am 29.09.2026 über den Connector **Deutsches Recht** verfügbaren Bundesrechtsquellen (NeuRIS/Rechtsinformationsportal des Bundes, ergänzend Open Legal Data). Das Rechtsinformationsportal befindet sich laut Quelle in einer Testphase und bezeichnet den bereitgestellten Datensatz als nicht vollständig. Deshalb sind automatisierte Fristberechnungen erst nach einer normenbezogenen Schlussprüfung freizugeben.
+
+
+## 18. Verbindliche Architektur der Verfahrenslandkarte
+
+Die Wissensbasis folgt soweit möglich dem Aufbau von AO und FGO. Sie dient zugleich als Rechtswissensbasis für Skills/Bots und als Grundlage für ausführbare Prozessflows. Deshalb werden Verfahren, Verfahrensschritte, Ereignisse, Entscheidungen, Fristen und Übergänge mit stabilen IDs und zeitlichem Rechtsstand geführt.
+
+### 18.1 Allgemeiner Teil
+- Verfahrensgrundsätze und Beteiligte
+- Zuständigkeit
+- Verwaltungsakt, Bekanntgabe und Zustellung
+- Fristberechnung, Fristverlängerung und Wiedereinsetzung
+- Steuergeheimnis und Steuerdatenschutz
+- Rechtsbehelfsgrundlagen
+
+### 18.2 Besteuerungsverfahren
+- Ermittlung der Besteuerungsgrundlagen
+- Mitwirkung, Auskunft und Beweismittel
+- Steuererklärungs- und Anmeldungsverfahren
+- Festsetzungsverfahren
+- Feststellungsverfahren
+- gesonderte und gesonderte/einheitliche Feststellung
+- Korrektur- und Änderungsverfahren
+- Festsetzungs- und Feststellungsverjährung
+
+### 18.3 Erhebungsverfahren
+- Fälligkeit
+- Zahlung
+- Stundung
+- Aufrechnung
+- Erlass
+- Säumnis
+- Zahlungsverjährung
+
+### 18.4 Vollstreckungsverfahren
+- Vollstreckungsvoraussetzungen
+- Mahnung
+- Vollstreckung in bewegliches und unbewegliches Vermögen
+- Forderungspfändung
+- Vollstreckungsaufschub und sonstiger Rechtsschutz
+- Rechtsbehelfe und gerichtlicher Eilrechtsschutz
+
+### 18.5 Besondere Verfahren nach AO
+- steuerliche Aussenprüfung
+- Nachschauverfahren
+- verbindliche Auskunft und sonstige besondere Antragsverfahren
+- Haftungs- und Duldungsverfahren
+- Steuerstrafverfahren
+- Steuerordnungswidrigkeitenverfahren
+- Steuerfahndung
+- Steuerdatenschutzverfahren
+
+### 18.6 Finanzgerichtsbarkeit nach FGO
+- Klageverfahren erster Instanz
+- Aussetzung/Aufhebung der Vollziehung
+- einstweilige Anordnung
+- Beschwerde
+- Nichtzulassungsbeschwerde
+- Revision
+- Anhörungsrüge
+- Erinnerungs- und Kostenverfahren
+- sonstige Nebenverfahren
+
+### 18.7 Besonderheiten der Einzelsteuergesetze
+Die allgemeinen AO-/FGO-Verfahrensobjekte werden nicht dupliziert. UStG/UStDV, EStG, KStG, GewStG, ErbStG, GrEStG, AStG und weitere Einzelgesetze erhalten nur eigene Verfahrens-, Ereignis- und Fristdatensätze, soweit sie vom allgemeinen Modell abweichen oder zusätzliche Pflichten auslösen.
+
+## 19. Grenzüberschreitende Abkommensverfahren und DBA-Fristen
+
+Abkommensverfahren bilden einen eigenen Verfahrenszweig. Innerstaatliche Rechtsbehelfe und DBA-Verfahren sind als parallele, miteinander verknüpfte Prozesspfade zu modellieren.
+
+### 19.1 Referenzquellen
+
+Für jeden DBA-Datensatz sind mindestens zu referenzieren:
+1. das konkret anwendbare Doppelbesteuerungsabkommen und seine Protokolle;
+2. für die Referenz DE/CH das DBA Deutschland–Schweiz in der für den Fall geltenden Fassung;
+3. die deutsche Verhandlungsgrundlage für Doppelbesteuerungsabkommen in der einschlägigen Fassung;
+4. das OECD-Musterabkommen, insbesondere Art. 25, mit dem einschlägigen OECD-Kommentar;
+5. einschlägige BMF-Verwaltungsanweisungen zu Verständigungs- und Schiedsverfahren;
+6. gegebenenfalls EU-Streitbeilegungsrecht und nationale Umsetzungsvorschriften;
+7. jeweiliger Rechtsstand, Anwendungszeitraum und Übergangsrecht.
+
+### 19.2 DBA Deutschland–Schweiz: Art. 26 als Referenzfall
+
+**Quelle:** DBA Deutschland–Schweiz, RS 0.672.913.62, Art. 26, konsolidierter Stand nach Inkrafttreten des Änderungsprotokolls 2023 am 27.11.2025.
+
+| Ereignis / Verfahren | Norm | Frist / Regel |
+|---|---|---|
+| Unterbreitung eines Verständigungsfalls | Art. 26 Abs. 1 DBA DE–CH | innerhalb von 3 Jahren nach der ersten Mitteilung der Massnahme, die zu einer dem Abkommen nicht entsprechenden Besteuerung führt |
+| Zuständige Behörde erhält die für die materielle Beurteilung nötigen Informationen | Art. 26 Abs. 6 Buchst. b DBA DE–CH | Ereignis zur Bestimmung des „Anfangszeitpunkts“; massgeblich ist der früheste Zeitpunkt, in dem beide zuständigen Behörden die nötigen Informationen erhalten haben |
+| Schiedsreife | Art. 26 Abs. 5 und 6 DBA DE–CH | grundsätzlich nach 3 Jahren ab Anfangszeitpunkt, soweit die tatbestandlichen Voraussetzungen erfüllt sind und keine abweichende Einigung besteht |
+| Antrag auf Schiedsverfahren | Art. 26 Abs. 6 Buchst. c DBA DE–CH | grundsätzlich frühestens 3 Jahre nach Anfangszeitpunkt; zuständige Behörden können einvernehmlich eine Antragsfrist setzen; Versäumung führt zum Ausschluss des Schiedsverfahrens |
+| Annahme der umsetzenden Verständigung | Art. 26 Abs. 6 Buchst. e DBA DE–CH | 60 Tage nach Übermittlung; ohne Annahme innerhalb dieser Frist gilt die Verständigungsvereinbarung als abgelehnt |
+
+### 19.3 Datenmodell für DBA-Verfahren
+
+Zusätzlich zu den allgemeinen Verfahrensfeldern:
+```yaml
+treaty_id:
+treaty_article:
+protocol_version:
+applicable_from:
+applicable_to:
+reference_model: [OECD-MA, deutsche_Verhandlungsgrundlage]
+domestic_parallel_proceeding:
+competent_authority_DE:
+competent_authority_other_state:
+first_notification_event:
+map_submission_deadline:
+map_start_event:
+information_complete_DE:
+information_complete_other_state:
+arbitration_start_point:
+arbitration_eligibility_date:
+arbitration_request_deadline:
+acceptance_deadline:
+interaction_with_domestic_limitation:
+interaction_with_domestic_remedies:
+bmf_guidance:
+source_version:
+verification_date:
+```
+
+**Modellierungsregel:** Eine DBA-Frist darf niemals allein aus OECD-Musterabkommen oder deutscher Verhandlungsgrundlage erzeugt werden. Für den konkreten Fall ist stets die anwendbare Fassung des konkreten DBA einschliesslich Protokollen, Änderungsprotokollen und Übergangsrecht massgeblich.
