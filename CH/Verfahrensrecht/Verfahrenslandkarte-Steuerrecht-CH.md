@@ -1,11 +1,135 @@
 # Verfahrenslandkarte Schweizer Steuerrecht (Bund)
 
 **Rechtsstand:** 29.09.2026  
-**Zweck:** Prozesslandkarte vom Auslöser bis zum letzten ordentlichen bzw. ausserordentlichen Rechtsmittel. Die Landkarte ist mit dem Fristenregister `Fristenregister-Steuerverfahren-CH.md` zu verwenden.
+**Zweck:** Grundlage für Rechtsanalyse, Skills/Bots und Prozessflows. Korrespondiert strukturell mit dem deutschen Verfahrens- und Fristenregister.
 
-> **Systematik:** Auslöser → Verwaltungsverfahren → Verfügung/Entscheid → Einsprache bzw. internes Rechtsmittel → gerichtliche Beschwerde → Bundesgericht → ausserordentliche Rechtsmittel/Vollstreckung. Kantonale Organisations- und Verfahrensregeln werden nur insoweit abgebildet, wie das Bundesrecht (insb. DBG/StHG) Mindestvorgaben macht.
+> **Kanonische Reihenfolge:** Allgemeiner Teil → Besteuerungsverfahren (Ermittlung und Veranlagung/Festsetzung) → Steuererhebung/Bezug → Steuervollstreckung → Rechtsmittel/Prozess → Änderungsverfahren → Buchprüfung/Kontrolle → Steuer-/Verwaltungsstrafverfahren → Einzelsteuerarten → internationales Steuerverfahren → Verjährung/Verwirkung.
 
-## 1. Verfahrensmatrix
+## 1. Allgemeiner Teil
+
+Querschnitt: Zuständigkeit, Parteistellung, Vertretung, rechtliches Gehör, Akteneinsicht, Mitwirkung/Edition, Beweis, Verfügung/Entscheid, Eröffnung/Zustellung, Fristberechnung, Fristenstillstand, Wiederherstellung und Rechtskraft.
+
+## 2. Besteuerungsverfahren
+
+### 2.1 Ermittlung der Besteuerungsgrundlagen
+```text
+steuerlich relevantes Ereignis
+→ Erklärung/Meldung oder Ermittlung von Amtes wegen
+→ Mitwirkung/Edition
+→ Sachverhalts- und Beweiserhebung
+→ Bemessungsgrundlage
+→ Veranlagung/Festsetzung/Verfügung
+```
+
+### 2.2 Veranlagung/Festsetzung und Einsprache
+Ordentliche Veranlagung, Ermessensveranlagung, Selbstdeklaration, Feststellungsverfügung und Einsprache werden als unterscheidbare Prozesszweige geführt.
+
+## 3. Steuererhebung / Steuerbezug
+
+Fälligkeit → Zahlung/Verrechnung → Verzinsung → ggf. Stundung/Ratenzahlung → Erlass → Sicherstellung → Rückerstattung → Bezugsverjährung.
+
+## 4. Steuervollstreckung
+
+Nicht erfüllte vollstreckbare Steuerforderung → Mahn-/Betreibungsphase → Rechtsöffnung bzw. steuerrechtliche Vollstreckungswirkung → Sicherungsmassnahmen → Abschluss. Schnittstellen zum SchKG werden explizit referenziert.
+
+## 5. Rechtsmittel und Steuerprozess
+
+Einsprache und spezialgesetzliche interne Rechtsbehelfe → kantonale Justizbehörden bzw. Bundesverwaltungsgericht → Bundesgericht. Eigene Zweige: Zwischenentscheide, aufschiebende Wirkung, vorsorgliche Massnahmen, Rechtsverweigerung/Rechtsverzögerung und ausserordentliche Rechtsmittel.
+
+## 6. Änderungs- und Korrekturverfahren
+
+Revision, Nachsteuer, Berichtigung und die innerstaatliche Umsetzung internationaler Verständigungsvereinbarungen werden als eigenständige State Machines geführt. Rechtskraftdurchbrechung, relative und absolute Fristen sind getrennte Zustände.
+
+## 7. Steuerliche Buchprüfungen und Kontrollen
+
+```text
+Prüfungsanlass
+→ Ankündigung/Anordnung soweit vorgesehen
+→ Mitwirkung/Edition
+→ Prüfung/Kontrolle
+→ Feststellungen
+→ rechtliches Gehör
+→ steuerartspezifische Folgehandlung
+→ Verfügung/Veranlagung/Nachsteuer/Strafverfahren
+→ Rechtsmittel
+```
+
+## 8. Steuerstraf- und Verwaltungsstrafverfahren
+
+Getrennte Prozessfamilien für DBG/StHG, MWSTG, VStG, StG und VStrR. Der Übergang aus einem Besteuerungs- oder Kontrollverfahren in ein Strafverfahren ist als Ereignis mit eigenem Rechte- und Fristenregime abzubilden.
+
+## 9. Besonderheiten nach Einzelsteuerarten
+
+Direkte Bundessteuer/StHG, MWST, Verrechnungssteuer und Stempelabgaben erhalten jeweils eigene Unterflows für Festsetzung/Veranlagung, Bezug, Kontrolle, Rechtsmittel, Korrektur, Verjährung und Strafverfahren.
+
+## 10. Internationales Steuerverfahren
+
+### 10.1 DBA / Verständigungsverfahren
+```text
+bestehende oder drohende abkommenswidrige Besteuerung
+→ anwendbares DBA und Protokoll bestimmen
+→ Antragsfrist bestimmen
+→ MAP-Antrag bei zuständiger Behörde
+→ Eintretens-/Vollständigkeitsprüfung
+→ zwischenstaatliche Verhandlung
+→ Verständigungsvereinbarung
+→ Annahme/Zustimmung soweit erforderlich
+→ innerstaatliche Umsetzung nach StADG
+→ ggf. Umsetzungsverfügung und Rechtsmittel
+```
+
+### 10.2 DBA Deutschland–Schweiz
+Das DBA DE–CH wird als Referenzabkommen vollständig verfahrensbezogen inventarisiert. Erfasst werden MAP, gegebenenfalls Schiedsverfahren, Verhältnis zu innerstaatlichen Rechtsmitteln, Quellen-/Verrechnungssteuerentlastung, Rückerstattung und alle Fristen aus Abkommen, Protokoll, Änderungsprotokollen und einschlägiger Verwaltungspraxis. Die jeweilige geltende Fassung ist versionsbezogen zu bestimmen.
+
+### 10.3 OECD-Musterabkommen
+Art. 25 OECD-MA und die OECD-MAP-Praxis werden als Referenzmodell hinterlegt. Fristen daraus werden nicht automatisch auf ein konkretes DBA übertragen.
+
+### 10.4 StADG
+Das StADG wird als eigene Verfahrensschicht modelliert: Verständigungsverfahren, Umsetzung von Verständigungsvereinbarungen, DBA-bezogene Entlastungs-/Erstattungsverfahren und weitere vom Gesetz erfasste internationale Abkommensverfahren.
+
+### 10.5 ESTV/SIF-Verwaltungspraxis
+Kreisschreiben, Rundschreiben, Wegleitungen, Länderinformationen und sonstige Praxispublikationen werden mit Dokument-ID, Version/Gültigkeitsdatum und betroffenen Prozess-/Frist-IDs referenziert. Sie dürfen Gesetz oder DBA nicht überschreiben.
+
+### 10.6 Internationale Amtshilfe
+StAhiG-Verfahren bleiben von MAP getrennt: Ersuchen → Informationsbeschaffung → Information/Parteirechte → Schlussverfügung → BVGer → gegebenenfalls BGer.
+
+## 11. Verjährung und Verwirkung
+
+Jede Verjährung/Verwirkung wird als Zustandsmaschine modelliert: Start-Ereignis → Lauf relative Frist → Stillstand → Unterbrechung/Neubeginn → relative Frist → absolute Höchstfrist → Rechtsfolge.
+
+## 12. Prozessdatenmodell
+
+```yaml
+process_id:
+parent_process_id:
+procedure_family:
+tax_type:
+trigger:
+entry_conditions:
+authority:
+party_role:
+states:
+  - state_id:
+    event:
+    action:
+    deadline_ids: []
+    limitation_ids: []
+    required_inputs: []
+    decision_gate:
+    next_states: []
+decision_type:
+remedy_ids: []
+parallel_process_ids: []
+legal_sources: []
+administrative_guidance: []
+valid_from:
+valid_to:
+verification_status:
+```
+
+## 13. Detailmatrix
+
+### 13.1 Bestehende Verfahrensmatrix
 
 | ID | Verfahren | Typischer Auslöser | Verwaltungsstufe | Erstentscheidung | Rechtsmittelkette bis letzte Instanz | Fristenanker |
 |---|---|---|---|---|---|---|
@@ -36,7 +160,7 @@
 | CH-P-REV-01 | Revision Bundesverwaltungsverfahren | Revisionsgrund | zuständige Instanz | Revisionsentscheid | nach einschlägigem Instanzenzug | VwVG 66 ff. bzw. Spezialgesetz |
 | CH-P-REV-02 | Revision Bundesgericht | Revisionsgrund | BGer | Revisionsurteil | kein ordentliches nationales Rechtsmittel | BGG 121 ff., Fristen Art. 124 |
 
-## 2. Standardabläufe
+### 13.2 Bestehende Standardabläufe
 
 ### 2.1 Direkte Bundessteuer
 ```text
@@ -99,7 +223,7 @@ rechtskräftiger Entscheid
 → Rechtsmittel nach anwendbarem Verfahrensrecht
 ```
 
-## 3. Verbindung zum Fristenregister
+### 13.3 Verbindung zum Fristenregister
 
 Jeder Prozessschritt soll mindestens folgende Schlüssel tragen:
 
@@ -118,10 +242,10 @@ rechtsstand:
 pruefstatus:
 ```
 
-## 4. Abgrenzung und Ausbau
+### 13.4 Abgrenzung und Ausbau
 
 Die Karte bildet zunächst die bundesrechtlich zentralen Steuerverfahren ab. Noch separat zu inventarisieren sind insbesondere Stempelabgaben, internationale Amtshilfe (StAhiG), automatischer Informationsaustausch, Verständigungs-/Schiedsverfahren nach DBA und StADG, Zoll/Einfuhrsteuer-Sonderverfahren, Wehrpflichtersatz, Schwerverkehrsabgaben sowie kantonale Besonderheiten aller 26 Kantone. Bei StHG-Verfahren ist stets das kantonale Verfahrensrecht zusätzlich zu prüfen.
 
-## Quellen
+## 14. Quellen
 
 Amtliche konsolidierte Erlasse über Fedlex, insbesondere DBG SR 642.11, StHG SR 642.14, VwVG SR 172.021, MWSTG SR 641.20, MWSTV SR 641.201, VStG SR 642.21, VStV SR 642.211, BGG SR 173.110 und VGG SR 173.32.
