@@ -190,3 +190,82 @@ Ein einzelnes MS Forms-Formular kann Verzweigungen, aber keine belastbaren, dyna
 - Je Formulartyp die technischen XML-/ERiC-Feldbezeichner gegen einen exportierten Musterfall prüfen. Die sichtbare Kz ersetzt keinen technischen Feldpfad.
 - Bedingungen für Folgefelder als Entscheidungsregeln dokumentieren, insbesondere Gründungsform, Treuhand, Organschaft, Umsatzsteuer, Bauleistungen, Onlinehandel und Auslandsbezug.
 - Höchstzahl und Bearbeitung wiederholbarer Objekte festlegen. Bei mehr als zehn Betriebsstätten verweisen die ELSTER-Formulare auf einen PDF-Anhang.
+
+
+---
+
+## 9. Ergänzte Mandanten-Erhebungsmatrix (20.10.2026): Rechtsformen und Auslandssachverhalte
+
+**Ziel:** Vollständige fachliche Intake-Checkliste für steuerliche Erfassungen/Anzeigen. Die Datenerhebung erfolgt unabhängig von einer produktiven ELSTER-Schnittstelle. Frühere Tabellen in den Abschnitten 2–8 und der [formulardaten-roherfassung.md](formulardaten-roherfassung.md) bleiben gültige Quellbasis. **Status:** \`B\` belegtes unbedingtes Feld laut ausgewerteter ELSTER-Fehlerliste, \`F\` als Formularfrage im Rohkatalog belegt und fallabhängig relevant, \`E\` ergänzende Kanzlei-Frage ohne nachgewiesene amtliche Formular-Pflicht, \`I\` interner Prozesswert. Ein E-Feld ist **nicht** als gesetzliches Pflichtfeld auszugeben.
+
+### 9.1 Fallentscheidung und Rechtsformmatrix
+
+| Fall | Formularkanal/Erhebungsweg | Zusatzfragen | Status |
+|---|---|---|---|
+| Einzelunternehmen / Freiberufler / e.K. / Land- und Forstwirtschaft | Fragebogen Einzelunternehmen | persönliche Daten, Tätigkeit, Gründungs-/Beginn, Steuerprognosen | B/F |
+| GmbH, UG (haftungsbeschränkt), AG, SE, KGaA, eG | Fragebogen Kapitalgesellschaft/Genossenschaft | Satzung, Register, Kapital, Gesellschafter, Vertretung, ggf. Organschaft | B/F/E |
+| GbR/eGbR, OHG, KG, GmbH & Co. KG, PartG/PartG mbB, Gemeinschaften | Fragebogen Personengesellschaft/-gemeinschaft, nach Sachverhaltsqualifikation | Mitunternehmer, Quoten, Gewinnverteilung, Rechtsfähigkeit, Sonderbetrieb | B/F/E |
+| Erbengemeinschaft, stille Gesellschaft, vermögensverwaltende Gemeinschaft | zuerst Steuer- und Verfahrensstatus klären | Mitunternehmerschaft oder Überschusseinkünfte, gesonderte Feststellung, Beteiligte | E |
+| Verein (e.V./n.e.V.), Stiftung, gemeinnützige/mildtätige/kirchliche Körperschaften, sonstige Körperschaft privaten Rechts | **gesonderten ELSTER-Fragebogen** zur Gründung eines Vereins/einer anderen Körperschaft privaten Rechts berücksichtigen | Satzung, Zwecke, tatsächliche Tätigkeit, Vorstand, Gemeinnützigkeitsprüfung, Geschäftsjahr, wirtschaftliche Geschäftsbetriebe | E: bisherige Rohfassung enthält diesen Fragebogen nicht |
+| Ausländische Kapitalgesellschaft (AG, Ltd., Inc., BV, Sàrl etc.) | Fragebogen Körperschaft ausländischen Rechts, wenn zutreffend | Heimatstaat und Register, Ort tatsächlicher Leitung, DE-Tätigkeit, ständige Vertreter, inländische Einrichtung, Steuerarten | B/F/E; Pflichtliste in Quelle abgeschnitten |
+| Ausländische Partnership, LLP, LLC oder hybride Rechtsform | zunächst Rechtstypenvergleich und steuerliche Einordnung; nicht automatisch ausländische Körperschaft | Gesellschafter, ausländische Steuertransparenz, deutsche Tätigkeiten, Betriebsstätten, Steuerpflicht | E |
+| Deutsche Gesellschaft mit **ausländischer Betriebsstätte** oder Auslandsbeteiligung | inländischer Rechtsform-Fragebogen und eigenständiges Auslandsmodul | Standort, Aufgaben, Personal, Vertretung, Dauer, ausländische Register-/Steuerdaten, ggf. eigenständige §-138-AO-Meldung | F/E |
+| Ausländische Gesellschaft mit deutscher Zweigniederlassung/Bau-/Montage-/Vertreter-/Geschäftsleitungsstätte | Auslandsrechtsform-Fragebogen bzw. steuerartspezifische Registrierung nach Prüfung | Standort und Nutzung, Tätigkeiten, Projektzeitraum, Abschlussvollmacht, Ort der Geschäftsleitung, inländische Umsätze/Löhne | F/E |
+| Ausländischer Rechtsträger ohne inländische Betriebsstätte, aber mit inländischen Umsätzen/Einkünften | zuerst Registrierungsanlass und Steuerarten bestimmen | USt-Registrierung, inländische Einkünfte, Steuerschuldnerschaft, frühere Steuernummer | E |
+| Juristische Person öffentlichen Rechts / Betrieb gewerblicher Art | separate ertrag- und umsatzsteuerliche Erfassungsroute prüfen | Träger, Rechtsgrundlage, BgA, Leistungen, Umsätze | E |
+
+### 9.2 Gemeinsamer Stammblock
+
+| Feldgruppe | Vom Mandanten zu erheben | Quelle/Status |
+|---|---|---|
+| Fallführung | Fallnummer, Anlass (Neugründung/Übernahme/Umwandlung/Verlagerung/Neuregistrierung), Richtung DE/ausländische Tätigkeit, Bearbeitungsjahr, Zielsteuerarten, gewünschtes Datum | I/E |
+| Rechtsträger | voller Name/Firma, Rechtsform genau, Gründungsstaat, Sitz, Unternehmensgegenstand, Gründungs-/Tätigkeitsbeginn, ggf. Rechtstypenvergleich | B/F/E |
+| Identifikation | vorhandene DE-Steuernummer/Finanzamt oder Neuantrag, IdNr. natürlicher Personen, W-IdNr. soweit bekannt, USt-IdNr., ausländische Steuer-IDs, Registergericht/Registernummer | B/F/E |
+| Adressen separat | Wohnsitz, Unternehmensanschrift, Satzungssitz, Ort tatsächlicher Geschäftsleitung, Zustelladresse; Inland/Ausland mit Strasse, Nummer, PLZ, Ort, Staat, Gültigkeitsdauer | B/F/E |
+| Tätigkeit | genaue Branche/Tätigkeitsbeschreibung, Produktions-/Dienstleistungsorte, Vorbereitungshandlungen, Beginn, wesentliche Kunden-/Lieferstaaten, vermögensverwaltend ja/nein | B/F/E |
+| Personen | Einzelunternehmer, gesetzliche Vertreter, Geschäftsführer, Vorstände, vertretungsberechtigte Gesellschafter, Berater, Empfangsbevollmächtigte; Namen, Geburtsdatum und Identifikationsdaten soweit zulässig/abgefragt, Anschriften, Vertretungsmacht | B/F/E |
+| Beteiligte | sämtliche Gesellschafter/Genossen/Partner, Identifikation, natürliche/juristische Person, direkte/mittelbare Quote und Stimmrechte, Eintritt/Austritt, Treuhand, wirtschaftlich relevante Sonderverhältnisse | B/F/E |
+| Gründung/Historie | Vertrags-/Urkundendatum, Registerstatus und Datum, Bar-/Sachgründung, Kapital, Vorinhaber, Umwandlung, zuvor ausgeübte Tätigkeiten, Konzernbezug, Vorregistrierung | B/F |
+| Bank/Kontakt | IBAN, ggf. BIC, Inhaber, SEPA-Wunsch, Telefon, Webadresse, freiwillige Rückfrage-E-Mail | F/E |
+| Ertragsteuer/Prognosen | voraussichtlicher Gewinn/Verlust und Einkünfte im Gründungs- und Folgejahr, Gewinnermittlung, Wirtschaftsjahr, abweichendes WJ, Verteilungsschlüssel | B/F |
+| Umsatzsteuer | Umsatz je Eröffnungs- und Folgejahr, USt-Schuld/Überschuss, Kleinunternehmerstatus und Verzicht soweit zulässig, Soll-/Ist-Besteuerung, steuerfreie und ermässigte Umsätze, Nullsteuersatz, Durchschnittssatz, Reverse-Charge-Fälle, Organschaft, OSS, USt-IdNr., Handel über Webshops/Plattformen und soziale Medien, Bau-/Reinigungsleistungen | B/F/E |
+| Lohnsteuer | Zahl der Beschäftigten (inkl. geringfügig/Familie), erste Entgeltzahlung, Lohnsteuerschätzung, lohnsteuerliche Betriebsstätte, grenzüberschreitende Personaleinsätze | F/E |
+| Unterlagen | Satzung/Vertrag, Registerauszug, Gesellschafterliste, Vertretungsnachweise, Übernahme-/Umwandlungsdokumente, Bank-/Vollmachtsbelege, ausländische Dokumente/Übersetzungen soweit fallrelevant | F/E |
+
+### 9.3 Im Quellmodell unbedingt dokumentierte Pflichtblöcke (Kz jeweils formularbezogen)
+
+- **Einzelunternehmen:** Steuernummer oder Neuantrag; Name/Vorname/Geburtsdatum/Religion (2, 3, 5), Tätigkeit (21), Betriebsadresse oder Wohnsitz-Identität (56–59), Beginn (69), Gründungsart und Datum (85), mindestens eine relevante Einkunftsart samt Prognose (105–107, 110), Gewinnermittlung (114), Umsatzschätzung (130).
+- **Kapitalgesellschaft/Genossenschaft:** Steuernummer oder Neuantrag; Firma (2), Tätigkeit (13), notarielle Errichtung (54), Rechtsform (63), Tätigkeitsbeginn (64), Grund-/Stammkapital (66), mindestens ein Anteilseigner (69 oder 72), Treuhand ja/nein (90), Bar-/Sachgründung (91), voraussichtlicher Gewinn (165), gesetzlicher Vertreter (25), Umsatzschätzung (im Basismodell Kz 179 **unsicher**).
+- **Personengesellschaft/-gemeinschaft:** Steuernummer oder Neuantrag; Name (2), Tätigkeit (12), Gründungsart/Datum (23), Rechtsform (31), Rechtsfähigkeit (33), Beginn (34), Gewinn beider Jahre (77), Gewinnermittlung (78), Aufteilungsschlüssel (80), Umsatz (129), mindestens zwei Beteiligte (82–99).
+- **Ausländische Körperschaft:** Steuernummer oder Neuantrag; Firma (2), DE-Tätigkeit (12), Zustimmung zur Zuständigkeitsvereinbarung nach § 27 AO (18), Vorregistrierung anderes deutsches FA ja/nein (19). **Achtung:** die ausgewertete Fehlerliste ist unvollständig, weitere Pflichtfelder dürfen nicht ausgeschlossen werden.
+- **Verein/Stiftung/sonstige Körperschaft privaten Rechts:** noch **keine belegte Pflichtfeldliste**; amtlichen gesonderten Fragebogen erfassen und ergänzen. Vorläufig Satzung, Zweck, Vorstand, Sitz/Leitung, Tätigkeitsbereiche, Steuerbegünstigungsbegehren, Umsatz-/Ertragsprognose als Intake-Fragen (E).
+
+### 9.4 Wiederholbares Auslandsmodul
+
+| Erhebungsobjekt | Daten | Zweck/Status |
+|---|---|---|
+| Standort/Betriebsstätte | Staat, vollständige Anschrift, Art (Büro, Filiale, Werk, Lager, Bau/Montage, Homeoffice, Server usw.), Eröffnung/Schliessung, Nutzungsrecht, Personal, Tätigkeiten | F/E |
+| Projekte Bau/Montage | Projektname, Auftraggeber, Verträge, Einsatz-/Unterbrechungs-/Enddaten, Subunternehmer, Dauer | E |
+| Geschäftsleitung | tatsächlicher Entscheidort, Geschäftsführer/Entscheider, Zeitraum, Sitzungen, Beschluss-/Vertragsunterlagen | E |
+| Vertreter | Person/Firma, Staat, Tätigkeiten, Vertragsverhandlungen/Abschlüsse, Vollmachten, Abhängigkeit, Zeitraum | E |
+| Beteiligung Ausland | Gesellschaft, Rechtsform, Land, Register-/Steuer-ID, Erwerbs-/Änderungsdatum, direkte/mittelbare Quoten, Stimmrechte, Beherrschungsmöglichkeiten, Mitinhaber | F/E |
+| Steuerstatus | DE- und ausländische Steuernummer, Ansässigkeitsstaat, Register, vorhandene Ansässigkeitsbelege, Steuer- und DBA-Positionen, Umsatzsteuer-Registrierung | E |
+| Betriebsstättenprüfung | **separate** sachverhaltsabhängige Einschätzung für § 12 AO, DBA-Art.-5-Betriebsstätte, USt-feste Niederlassung und lohnsteuerliche Betriebsstätte; nicht in einem Bool-Wert vermengen | E; fachliche Prüfung, nicht formularische Pflicht |
+| § 138 Abs. 2 AO / BZSt2 | Mitteilungsjahr; meldepflichtige Person/Firma samt Steuer-/IdNr. und Adresse; Ereignis (Auslandsbetrieb/-Betriebsstätte, Personengesellschafts-/Kapitalgesellschaftsbeteiligung, Drittstaat-Beherrschung); Datum, Auslandseinheit, Beteiligte/Quoten; Negativmeldung nur bei tatsächlicher Relevanz | B/F/E; **eigenständiger Prozess**, kein Ersatz für Erfassungsfragebogen |
+| Sonstige Anzeigen | weitere in Frage kommende Anzeigepflichten, etwa § 138 Abs. 3 AO oder § 6 AStG, im **gesonderten** Prüf-/Meldeprozess klären | E |
+
+### 9.5 Ablauf im LP_Beratung
+
+1. Interne Fallweiche: Rechtsform, Gründungs-/Ansässigkeitsstaat, Tätigkeit in DE, vorhandene Registrierung, betroffene Steuerarten.
+2. Mandantenfragebogen modular: Stammblock immer, danach Rechtsform, Beteiligte, Betriebsstätten, Ertrag-/USt-/Lohnsteuer, Unterlagen. Bedingte Felder nur bei passendem Sachverhalt.
+3. Beteiligte, Vertreter, Standorte und Dokumente als eigene **wiederholbare Datensätze**, jeweils Fall-ID, Objekt-ID, Ort, Staat und zeitlichem Bezug.
+4. Auslandsmodul für jede ausländische Einrichtung/Einheit, getrennte Prüfung inländischer Anmeldung und möglicher Outbound-Anzeige nach § 138 AO.
+5. Plausibilitätsprüfung auf Zeiträume, Rechtsform, Beteiligungsquoten, Kapital, Registerbelege, Identifikationsnummern, Betriebsbeginn, Ertrags- und Umsatzprognosen.
+6. Fehlende Daten dokumentieren und gezielt anfordern; Fall für korrekte amtliche Erfassungsmaske vorbereiten.
+7. Fachliche Freigabe durch verantwortliche Berufsperson. **Keine produktive XML-/ERiC-Schnittstelle erforderlich oder behauptet.**
+
+**Minimaler Feldkatalog pro Eintrag:** \`case_id | form_type | object_type | object_id | field_key | field_label | value | data_type | required_status | condition | elster_kz | source | verification_date\`. Zulässige Pflichtstatus: \`belegt_unbedingt\`, \`belegt_bedingt\`, \`intake_empfohlen\`, \`amtlich_ungeprüft\`.
+
+**Offene Verifikation:** gesonderter Vereins-/Körperschaftsfragebogen und seine Pflichtfelder; ausländische Partnerships/LLCs, volle Pflichtliste Auslandskörperschaften, aktueller Formularstand 2026, KapG-Kz 179, §-138-AO-Einzelfallfristen. E-Felder sind nicht als amtlich zwingend zu kommunizieren.
+
+**Provenienz:** Basismodell und \`DE/AO/formulardaten-roherfassung.md\` aus diesem Repository; OneDrive \`01 Projekte/ELSTER-Entwickler/SharePoint_Listenschema_ELSTER_Meldungen_2026-09-19.md\` (interner Projektentwurf). Status B/F beruht auf dort dokumentierter Formularauswertung; Status E auf ergänzender kanzleiinterner Datenerhebungslogik.
