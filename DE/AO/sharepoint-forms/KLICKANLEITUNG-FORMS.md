@@ -72,6 +72,8 @@ Am Ende des Formulars (Textabschnitt statt Frage: über **„+ Neu hinzufügen"*
 
 > „Vielen Dank. Bitte fahren Sie je nach Ihrer Auswahl mit folgenden Formularen fort: [Linkliste gemäss README Abschnitt E.9]."
 
+**Zugangscode nicht vergessen:** Formular 0 selbst fragt keinen Zugangscode ab — der fallanlegende Flow (bzw. die Kanzleiperson) setzt `access_code` direkt in `0_Fallsteuerung`, sobald das Element angelegt ist, und baut die Links zu den Formularen 1–8 mit `case_id` **und** `access_code` auf (README Abschnitt D1). Ohne Flow: `access_code` manuell in der Liste eintragen, bevor der Formularlink an den Mandanten geht.
+
 Danach: Schritte A–D für die Formulare 1–8 identisch wiederholen, mit den Fragenlisten aus `README.md` Abschnitte E.1–E.8. Die dortigen Zeilen sind bereits im selben Format (Frage / Typ / Pflicht / Branching-Bedingung) gehalten und lassen sich 1:1 in die Tabellenspalten dieser Klickanleitung übertragen.
 
 ## F. Reihenfolge und Zeitaufwand
@@ -79,10 +81,10 @@ Danach: Schritte A–D für die Formulare 1–8 identisch wiederholen, mit den F
 Empfohlene Bearbeitungsreihenfolge (steigende Komplexität, Formular 0 zuerst als Routing-Ausgangspunkt):
 
 1. Formular 0 (8 Fragen, ca. 10 Min.)
-2. Formular 1 (31 Fragen, ca. 25 Min.)
+2. Formular 1 (34 Fragen, ca. 25 Min.)
 3. Formular 8 (5 Fragen, ca. 5 Min. — Datei-Upload-Hinweis beachten)
-4. Formular 3, 5, 6 (12–17 Fragen, je ca. 15 Min.)
-5. Formular 2, 4, 7 (16–20 Fragen, je ca. 20 Min., meiste Branching-Fälle)
+4. Formular 3, 5, 6 (13–18 Fragen, je ca. 15 Min.)
+5. Formular 2, 4, 7 (18–24 Fragen, je ca. 20 Min., meiste Branching-Fälle)
 
 Gesamtaufwand grob 2–2,5 Stunden für alle 9 Formulare inkl. Testklicks in der Vorschau.
 
@@ -90,4 +92,5 @@ Gesamtaufwand grob 2–2,5 Stunden für alle 9 Formulare inkl. Testklicks in der
 
 - Jedes Formular per **„Antworten" → „..." → „In Excel öffnen"** einmal leer testen, um zu prüfen, dass die Spaltenreihenfolge zur Ziel-SharePoint-Liste passt.
 - Testdurchlauf mit Dummy-Daten gemäss README Abschnitt F.4, bevor echte Mandanten die Links erhalten.
-- Optional: Power-Automate-Flow „Bei neuer Forms-Antwort → Element in SharePoint-Liste erstellen" je Formular/Liste-Paar (README Abschnitt F.3) einrichten, um die manuelle Übertragung der Antworten zu vermeiden.
+- Optional: Power-Automate-Flow „Bei neuer Forms-Antwort → Element in SharePoint-Liste erstellen" je Formular/Liste-Paar (README Abschnitt F.3) einrichten, um die manuelle Übertragung der Antworten zu vermeiden. Diesen Flow so gestalten, dass er `case_id` + `access_code` vor der Elementanlage prüft und bei Fehlschlag stattdessen einen Eintrag in `Eingang_Fehler` anlegt (README Abschnitt D1/F.3).
+- `Eingang_Fehler` (interne Liste, kein Formular) regelmässig sichten, um fehlgeschlagene Übernahmen zeitnah zu entdecken und nachzubearbeiten.
