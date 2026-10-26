@@ -176,6 +176,8 @@ Ein einzelnes MS Forms-Formular kann Verzweigungen, aber keine belastbaren, dyna
 - `conditional_trigger`
 - `validation_status`
 
+Umsetzung: SharePoint-Liste `Technische_Mindestfelder` in [`sharepoint-forms/New-SteuerlicheErfassungListen.ps1`](sharepoint-forms/New-SteuerlicheErfassungListen.ps1); seit der Abschnitt-9-Erweiterung zusätzlich um die Spalten des Feldkatalogs 9.5 ergänzt (`object_id`, `field_key`, `field_label`, `data_type`, `required_status`, `source`, `verification_date`). `condition` aus 9.5 wird dort durch das bereits vorhandene `conditional_trigger` abgebildet, nicht dupliziert.
+
 ## 7. Übergabeprinzip für ELSTER und BZSt
 
 1. Forms/Listen speichern fachlich normalisierte Daten, nicht bloss ELSTER-Feldnamen.
@@ -267,5 +269,7 @@ Ein einzelnes MS Forms-Formular kann Verzweigungen, aber keine belastbaren, dyna
 **Minimaler Feldkatalog pro Eintrag:** \`case_id | form_type | object_type | object_id | field_key | field_label | value | data_type | required_status | condition | elster_kz | source | verification_date\`. Zulässige Pflichtstatus: \`belegt_unbedingt\`, \`belegt_bedingt\`, \`intake_empfohlen\`, \`amtlich_ungeprüft\`.
 
 **Offene Verifikation:** gesonderter Vereins-/Körperschaftsfragebogen und seine Pflichtfelder; ausländische Partnerships/LLCs, volle Pflichtliste Auslandskörperschaften, aktueller Formularstand 2026, KapG-Kz 179, §-138-AO-Einzelfallfristen. E-Felder sind nicht als amtlich zwingend zu kommunizieren.
+
+**Umsetzungsstand SharePoint/Forms:** [`sharepoint-forms/README.md`](sharepoint-forms/README.md) Abschnitt E/E.9 bildet 9.1-9.4 für die bereits belegten Formulartypen (Einzelunternehmen, Kapitalgesellschaft/Genossenschaft, Personengesellschaft/-gemeinschaft, Körperschaft ausländischen Rechts, BZSt2) ab, inkl. Stimmrechte, Rechtsfähigkeit, Aufteilungsschlüssel, § 27 AO-Zustimmung, SEPA-Wunsch, Rückfrage-E-Mail und Soll-/Ist-Besteuerung. Für Vereine/Stiftungen/sonstige Körperschaften privaten Rechts sowie juristische Personen öffentlichen Rechts (siehe 9.1) existiert bewusst **noch kein** eigenes Formular/keine eigene Liste, solange der zugehörige amtliche Pflichtfeldkatalog nicht verifiziert ist.
 
 **Provenienz:** Basismodell und \`DE/AO/formulardaten-roherfassung.md\` aus diesem Repository; OneDrive \`01 Projekte/ELSTER-Entwickler/SharePoint_Listenschema_ELSTER_Meldungen_2026-09-19.md\` (interner Projektentwurf). Status B/F beruht auf dort dokumentierter Formularauswertung; Status E auf ergänzender kanzleiinterner Datenerhebungslogik.
