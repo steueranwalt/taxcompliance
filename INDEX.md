@@ -39,6 +39,12 @@ _noch keine Dokumente_
 - [Formulardaten: ASt-Mitteilung nach § 6 AStG](DE/AStG/formulardaten-mitteilung-6-astg.md) — Wegzugsbesteuerung / Stundungsmitteilung (ggf. InvStG)
 - Übersicht: [`DE/AStG/README.md`](DE/AStG/README.md)
 
+### Substanzprüfung Holding-KG
+
+- [Einheitliches Datenmodell: Substanzprüfung Holding-KG](DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md) — Kern-Datenmodell Person/Tätigkeit/Ort/Asset, Listenkatalog, Abdeckungstabelle, Wiederverwendung AO-Listen, Leitfragen-Nachweis
+- SharePoint-Umsetzung (Listen, Forms): [`DE/Substanz-Holding-KG/sharepoint-forms/`](DE/Substanz-Holding-KG/sharepoint-forms/README.md)
+- Übersicht: [`DE/Substanz-Holding-KG/README.md`](DE/Substanz-Holding-KG/README.md)
+
 ---
 
 ## Schweizer Steuerrecht (`CH/`)
