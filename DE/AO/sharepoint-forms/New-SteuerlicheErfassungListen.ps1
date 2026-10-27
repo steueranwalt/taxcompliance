@@ -470,7 +470,7 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "general_partner_
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_date" -DisplayName "Handelsregister - Datum (beantragt am / Tag der Eintragung)" -Type DateOnly
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_structure" -DisplayName "Betriebsaufspaltung" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_company_name" -DisplayName "Bezeichnung des Besitzunternehmens" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_asset_description" -DisplayName "Bezeichnung des genutzten Wirtschaftsguts (Betriebsaufspaltung)" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_asset_description" -DisplayName "Bezeichnung des ueberlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage, Betriebsaufspaltung)" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_usage_start" -DisplayName "Beginn der tatsaechlichen Nutzung (Betriebsaufspaltung)" -Type DateOnly
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_address_or_tax_number" -DisplayName "Anschrift und/oder Steuernummer des Besitzunternehmens" -Type Note
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption" -DisplayName "Koerperschaftsteuerbefreiung nach Paragraf 5 KStG" -Type Boolean
@@ -481,10 +481,12 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_sub
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "tax_group_parent_name" -DisplayName "Name/Firma des Organtraegers" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_vat_group_member" -DisplayName "Umsatzsteuerliche Organschaft" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "vat_group_start_date" -DisplayName "Beginn der umsatzsteuerlichen Organschaft" -Type DateOnly
-# split_ownership_asset_description (Zeile 135 in fsekapg-202401): der exakte
-# ELSTER-Feldname ist aus der Fehlerliste allein nicht eindeutig (nur
-# "Bezeichnung" ohne weiteren Kontext) - siehe offene Frage in README.md
-# Abschnitt G.
+# split_ownership_asset_description (Zeile 135 in fsekapg-202401): Kanzleientscheid
+# Nils 27.10.2026 - Feld wird gefuehrt als "Bezeichnung des ueberlassenen
+# Wirtschaftsguts (wesentliche Betriebsgrundlage)". Der genaue Wortlaut laut
+# ELSTER-Fehlerliste war nur "Bezeichnung" ohne weiteren Kontext; die
+# Bezeichnung oben ist Kanzleientscheid, nicht im Portal verifiziert.
+# Interner Feldname unveraendert (idempotent).
 
 # ---------------------------------------------------------------------------
 # Liste 3: Personen und Vertretung
