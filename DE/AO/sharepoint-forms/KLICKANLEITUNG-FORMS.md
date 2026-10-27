@@ -81,16 +81,19 @@ Danach: Schritte A–D für die Formulare 1–8 identisch wiederholen, mit den F
 Empfohlene Bearbeitungsreihenfolge (steigende Komplexität, Formular 0 zuerst als Routing-Ausgangspunkt):
 
 1. Formular 0 (8 Fragen, ca. 10 Min.)
-2. Formular 1 (34 Fragen, ca. 25 Min.)
-3. Formular 8 (5 Fragen, ca. 5 Min. — Datei-Upload-Hinweis beachten)
-4. Formular 3, 5, 6 (13–18 Fragen, je ca. 15 Min.)
-5. Formular 2, 4, 7 (18–24 Fragen, je ca. 20 Min., meiste Branching-Fälle)
+2. Formular 8 (5 Fragen, ca. 5 Min. — Datei-Upload-Hinweis beachten)
+3. Formular 3, 5 (13–15 Fragen, je ca. 15 Min.)
+4. Formular 1 (34 Fragen, ca. 25 Min.)
+5. Formular 4, 7 (16–18 Fragen, je ca. 20 Min.)
+6. Formular 6 (33 Fragen, ca. 30 Min. — seit Update 2 inkl. USt-Befreiungsblock, viele Branching-Fälle)
+7. Formular 2 (42 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle)
 
-Gesamtaufwand grob 2–2,5 Stunden für alle 9 Formulare inkl. Testklicks in der Vorschau.
+Gesamtaufwand grob 3–3,5 Stunden für alle 9 Formulare inkl. Testklicks in der Vorschau (seit Update 2 durch Formular 2/6 erhöht gegenüber ursprünglich 2–2,5 Stunden).
 
 ## G. Nach Fertigstellung
 
 - Jedes Formular per **„Antworten" → „..." → „In Excel öffnen"** einmal leer testen, um zu prüfen, dass die Spaltenreihenfolge zur Ziel-SharePoint-Liste passt.
 - Testdurchlauf mit Dummy-Daten gemäss README Abschnitt F.4, bevor echte Mandanten die Links erhalten.
 - Optional: Power-Automate-Flow „Bei neuer Forms-Antwort → Element in SharePoint-Liste erstellen" je Formular/Liste-Paar (README Abschnitt F.3) einrichten, um die manuelle Übertragung der Antworten zu vermeiden. Diesen Flow so gestalten, dass er `case_id` + `access_code` vor der Elementanlage prüft und bei Fehlschlag stattdessen einen Eintrag in `Eingang_Fehler` anlegt (README Abschnitt D1/F.3).
+- Für Formular 1 (Bankangaben, § 27 AO-Zustimmung) zusätzlich die beiden Prüfregeln aus README Abschnitt E.10 im Flow umsetzen (Steuernummer/Land bei anderem Finanzamt; BIC bei bestimmten Nicht-SEPA-Ländern) — diese zwei Bedingungen kann Forms-Branching nicht abbilden, bei Verstoss Eintrag in `Eingang_Fehler` statt stiller Übernahme.
 - `Eingang_Fehler` (interne Liste, kein Formular) regelmässig sichten, um fehlgeschlagene Übernahmen zeitnah zu entdecken und nachzubearbeiten.

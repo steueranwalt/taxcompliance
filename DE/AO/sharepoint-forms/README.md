@@ -197,6 +197,38 @@ Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort p
     - Branching: nur bei Formulartyp = Personengesellschaft oder -gemeinschaft (Kontextfrage aus Formular 0 wiederholen; Datenmodell Kz 33, dort für diesen Formulartyp unbedingtes Pflichtfeld)
 24. Aufteilungsschlüssel (Gewinn-/Verlustverteilung) — Text
     - Branching: wie 23 (Datenmodell Kz 80, dort unbedingtes Pflichtfeld)
+25. Gründungsnotar — Name — Text
+    - Hinweistext in die Frage aufnehmen: „Falls ausgefüllt, bitte auch die Adresse in der folgenden Frage angeben“ (ELSTER-Portalprüfung 26.10.2026: sobald ein Notar genannt ist, wird dessen Adresse bedingt Pflicht — Forms kann eine Pflicht nicht von einem vorangehenden Freitext abhängig machen, siehe Datenmodell Abschnitt 9.6)
+26. Gründungsnotar — Adresse — Text lang
+    - Hinweistext wie 25
+27. Komplementärin einer KG — Choice Ja/Nein
+28. Bezeichnung der KG — Text
+    - Branching: nur bei Frage 27 = Ja
+29. Handelsregister — Datum (beantragt am / Tag der Eintragung) — Date
+    - Branching: nur bei Frage 11 ≠ beabsichtigt
+30. Betriebsaufspaltung — Choice Ja/Nein
+31. Bezeichnung des Besitzunternehmens — Text
+    - Branching: nur bei Frage 30 = Ja
+32. Bezeichnung des genutzten Wirtschaftsguts — Text
+    - Branching: wie 31 (ELSTER-Fehlerliste nennt für dieses Feld nur „Bezeichnung“ ohne weiteren Kontext — genaue Bedeutung vor Produktivsetzung im ELSTER-Formular pruefen, siehe Datenmodell Abschnitt 9.6, offene Frage)
+33. Beginn der tatsächlichen Nutzung — Date
+    - Branching: wie 31
+34. Anschrift und/oder Steuernummer des Besitzunternehmens — Text lang
+    - Branching: wie 31
+35. Körperschaftsteuerbefreiung nach § 5 KStG — Choice Ja/Nein
+36. Nummer nach § 5 Absatz 1 KStG — Text
+    - Branching: nur bei Frage 35 = Ja
+37. Feststellung nach § 60a AO — Choice Ja/Nein
+38. Zweck der Körperschaft — Text lang
+    - Branching: nur bei Frage 37 = Ja
+39. Organgesellschaft (körperschaftsteuerliche Organschaft) — Choice Ja/Nein
+40. Name/Firma des Organträgers — Text
+    - Branching: nur bei Frage 39 = Ja
+41. Umsatzsteuerliche Organschaft — Choice Ja/Nein
+42. Beginn der umsatzsteuerlichen Organschaft — Date
+    - Branching: nur bei Frage 41 = Ja
+
+Fragen 25-42 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelder, Status `belegt_bedingt`. Keine dieser Spalten ist in SharePoint bedingungslos `-Required`, da die Pflicht jeweils an die genannte Auswahl geknüpft ist — Details siehe Datenmodell Abschnitt 9.6.
 
 ### E.3 Formular 3 — Personen und Vertretung (wenn vorhanden bzw. Pflicht)
 
@@ -297,6 +329,34 @@ Hinweis: je Betriebsstätte/Einrichtung eine Antwort.
 17. Voraussichtliche Lohnsteuer — Number
     - Branching: wie 16
 18. Freistellungsbescheinigung § 48b EStG — Choice Ja/Nein
+19. Steuerfreie Umsätze nach § 4 UStG — Choice Ja/Nein
+20. Art des Umsatzes (steuerfrei) — Text
+    - Branching: nur bei Frage 19 = Ja
+21. Ermässigter Steuersatz — Choice Ja/Nein
+22. Art des Umsatzes (ermässigter Satz) — Text
+    - Branching: nur bei Frage 21 = Ja
+23. Nullsteuersatz — Choice Ja/Nein
+24. Art des Umsatzes (Nullsteuersatz) — Text
+    - Branching: nur bei Frage 23 = Ja
+25. Rechtsvorschrift zum Nullsteuersatz — Text
+    - Branching: wie 24
+26. Durchschnittssatzbesteuerung § 24 UStG (Land-/Forstwirtschaft) — Choice Ja/Nein
+27. Art des Umsatzes (§ 24 UStG) — Text
+    - Branching: nur bei Frage 26 = Ja
+28. Durchschnittssatzbesteuerung beibehalten oder Verzicht — Choice: Durchschnittssatzbesteuerung beibehalten / Verzicht auf Durchschnittssatzbesteuerung
+    - Branching: wie 27
+29. Vorsteuervergütung beantragt — Choice Ja/Nein
+    - Branching: nur bei Formulartyp = Körperschaft nach ausländischem Recht (Kontextfrage aus Formular 0 wiederholen; nur in diesem Formulartyp laut ELSTER-Portalprüfung bestätigt)
+30. Datum der Vorsteuervergütung — Date
+    - Branching: nur bei Frage 29 = Ja
+31. Aktenzeichen Vorsteuervergütung — Text
+    - Branching: wie 30
+32. Internetadresse (URL) des Webshops — Text
+    - Branching: nur bei Frage 12 = Ja (Eigener Webshop)
+33. Identifikationsmerkmal der elektronischen Schnittstelle — Text
+    - Branching: nur bei Frage 13 ausgefüllt (Elektronische Schnittstelle)
+
+Fragen 19-33 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelder, Status `belegt_bedingt`, keine Spalte bedingungslos `-Required` — Details siehe Datenmodell Abschnitt 9.6.
 
 ### E.7 Formular 7 — Auslandsmitteilung BZSt2 (nur Outbound)
 
@@ -355,6 +415,15 @@ Formularende von Formular 0 als Textblock mit bedingten Linklisten (Forms selbst
 
 **Manueller Prüfschritt (Kanzleientscheid 26.10.2026, siehe Datenmodell Abschnitt 9.1 Status `M`):** Bei ausländischen Partnerships, LLPs, LLCs oder hybriden Rechtsformen entscheidet die Kanzlei den Rechtstypenvergleich und die steuerliche Einordnung **manuell**, bevor Formular 0 ausgefüllt wird — dafür gibt es bewusst keine Automatisierung in Formularen oder Listen. Je nach Ergebnis des manuellen Vergleichs wird der Fall anschliessend ganz regulär als „Personengesellschaft oder -gemeinschaft“ oder als „Körperschaft nach ausländischem Recht“ in Formular 0 erfasst.
 
+### E.10 Prüfregeln für Power-Automate-Flows (bedingte Pflichtfelder, die Forms nicht abbilden kann)
+
+Die meisten in Datenmodell Abschnitt 9.6 gelisteten bedingten Pflichtfelder (Update 2, ELSTER-Portalprüfung 26.10.2026) lassen sich über reguläres Forms-Branching abbilden (siehe Fragen 25-42 in E.2 und 19-33 in E.6 oben). Zwei Bedingungen kann Forms grundsätzlich nicht abbilden und müssen stattdessen als Prüfregel im jeweiligen Power-Automate-Flow (Formular-Antwort → Element erstellen) umgesetzt werden:
+
+1. **Steuernummer/Land bei anderem Finanzamt** (Formular 1, Fragen 23/24 „Art der Steuernummer-Angabe“/„Steuernummer“ in Kombination mit Formular 1 Frage 34 „Zustimmung § 27 AO“ **und** Formular 0 Frage 3 „Bereits steuerlich erfasst“): Die Bedingung verknüpft ein Feld aus Formular 0 mit einem Feld aus Formular 1 — Forms-Branching wirkt nur innerhalb eines Formulars, nicht formularübergreifend. **Prüfregel:** Der Flow, der Formular-1-Antworten nach `1_Allgemeiner_Stammblock` überträgt, soll vor dem „Element erstellen“-Schritt per „Element abrufen“ aus `0_Fallsteuerung` prüfen, ob `par27_ao_agreement` = Ja **und** `already_registered` = Ja gilt; ist dann `existing_tax_number` oder `tax_office_country` leer, Element stattdessen in `Eingang_Fehler` anlegen (`form_no` = 1, `reason` = „Steuernummer/Land bei anderem Finanzamt fehlt trotz § 27 AO-Zustimmung“, `payload` = Rohantwort) statt den unvollständigen Datensatz kommentarlos zu übernehmen.
+2. **BIC nur bei bestimmten IBAN-Ländern** (Formular 1, Frage 30 „Bank – BIC“): Forms kann den Inhalt eines Textfelds nicht inspizieren, um eine Frage bedingt einzublenden. **Prüfregel:** Der Flow soll nach Übertragung prüfen, ob `bank_iban` mit einem der Länderpräfixe `AL`, `MD`, `MC`, `ME`, `MK`, `SM`, `CH` beginnt; falls ja und `bank_bic` leer ist, Element in `Eingang_Fehler` anlegen (`form_no` = 1, `reason` = „BIC fehlt bei nicht-SEPA-IBAN“) statt nur die bestehende Hinweistext-Lösung in Frage 30 zu verlassen.
+
+Beide Prüfregeln ersetzen **nicht** die reguläre Übertragung — sie laufen zusätzlich, bevor bzw. nachdem der Flow das Element in der Zielliste anlegt, und dienen ausschliesslich dazu, unvollständige Fälle sichtbar zu machen statt sie unbemerkt zu übernehmen.
+
 ## F. Freigabe und Rollout
 
 1. Je Formular unter „…“ → Einstellungen → „Wer kann antworten“ → **„Jeder mit dem Link kann antworten“** aktivieren (Ausnahme Formular 8 bei Datei-Upload, siehe Hinweis oben).
@@ -368,7 +437,8 @@ Formularende von Formular 0 als Textblock mit bedingten Linklisten (Forms selbst
 - Schreibzugriff des Microsoft_365-Konnektors (`Sites.ReadWrite.All`, delegiert) fehlt noch — siehe Abschnitt A.
 - Fall-ID-Vergabe (Abschnitt D) ist bis zur Power-Automate-Automatisierung manuell; ein künftiger Auto-Nummerierungs-Flow muss `case_id` vor der Elementanlage berechnen (siehe Abschnitt D, da `case_id` Pflicht **und** eindeutig ist).
 - Datei-Upload in Formular 8 erfordert Anmeldung — Alternativlösung mit dem Mandat abstimmen (Abschnitt E.8).
-- **Bedingte Pflichtfelder der Körperschaft ausländischen Rechts:** Die ELSTER-Portalprüfung vom 26.10.2026 (verification_date 2026-10-26, Formular fsekapgaus-202401) hat die **unbedingten** Pflichtfelder vollständig bestätigt (5 Felder, deckungsgleich mit Datenmodell Kz 2/12/18/19). Offen bleiben nur *bedingte* Pflichtfelder, die im leeren Formular nicht sichtbar sind und erst nach Auswahl bestimmter Antworten erscheinen — dafür ist ein weiterer Prüflauf mit Testdaten nötig.
+- **Nicht vollständig getestete bedingte Pfade (Update 2):** Die ELSTER-Portalprüfung 26.10.2026 hat 23 (Auslandskörperschaft) bzw. 27 (Kapitalgesellschaft/Genossenschaft) bedingte Auslöser ermittelt und in Datenmodell Abschnitt 9.6 dokumentiert — damit ist der vormals offene Punkt „bedingte Pflichtfelder“ weitestgehend geschlossen. Laut den Quelldateien selbst blieben einige Pfade ungetestet (u. a. Auslandskörperschaft: Betriebsstätte Ausland/nicht fest, unabhängige Person, Bauausführung; Kapitalgesellschaft: nicht natürlicher Vertreter, Notar-Staat/Register-Optionen einzeln, USt-IdNr.-Grund Option 2/3) — siehe Datenmodell Abschnitt 9.6 für die vollständige Liste.
+- **`split_ownership_asset_description` (Betriebsaufspaltung, Formular 2 Frage 32):** Die ELSTER-Fehlerliste nennt für dieses Feld nur „Bezeichnung“ ohne weiteren Kontext; die genaue fachliche Bedeutung (z. B. genutztes Wirtschaftsgut) ist daraus allein nicht sicher zu bestimmen und wurde bewusst nicht erfunden. Vor Produktivsetzung im ELSTER-Formular (Zeile 135) nachsehen.
 - **`case_id`/`access_code` bei bereits produktiv genutzten Listen:** Falls das Skript gegen eine Site läuft, auf der `0_Fallsteuerung` bereits Datensätze enthält, kann „eindeutige Werte erzwingen“ fehlschlagen, falls Altdaten doppelte oder leere `case_id`-Werte enthalten; das Skript warnt in diesem Fall nur, behebt die Duplikate aber nicht automatisch (siehe Abschnitt C).
 - **Lookup-Löschverhalten `Restrict`:** SharePoint Online unterstützt das nachträgliche Setzen von `RelationshipDeleteBehavior` auf bereits bestehenden Lookup-Feldern nur eingeschränkt; bei einer bereits produktiv befüllten Installation ggf. manuell im Listenadmin prüfen, ob die Einstellung tatsächlich greift (das Skript warnt, bricht aber nicht ab).
 
@@ -377,3 +447,4 @@ Formularende von Formular 0 als Textblock mit bedingten Linklisten (Forms selbst
 - Verein/Stiftung/sonstige Körperschaft privaten Rechts sowie juristische Person des öffentlichen Rechts/Betrieb gewerblicher Art: Kanzleientscheid — bewusst ausgeschlossen, praktisch ohne Relevanz (Datenmodell 9.1 Status `X`, siehe Abschnitt E.9 oben).
 - Ausländische Partnerships/LLPs/LLCs/hybride Rechtsformen: Kanzleientscheid — Rechtstypenvergleich ist ein definierter manueller Prüfschritt der Kanzlei vor Formular 0, keine Automatisierung vorgesehen (Datenmodell 9.1 Status `M`, siehe Abschnitt E.9 oben).
 - KapG-Kz 179 (Umsatzschätzung Eröffnungs- **und** Folgejahr): durch ELSTER-Portalprüfung 26.10.2026 (verification_date 2026-10-26) als unbedingtes Pflichtfeld bestätigt; beide Felder (`estimated_revenue_opening_year`, `estimated_revenue_following_year` in Liste 6) sind bereits `-Required`, kein Skriptänderungsbedarf.
+- Bedingte Pflichtfelder (Update 2): 50 Auslöser (23 Auslandskörperschaft + 27 Kapitalgesellschaft/Genossenschaft) durch ELSTER-Portalprüfung 26.10.2026 ermittelt, in Datenmodell Abschnitt 9.6 dokumentiert und als 33 neue, nicht `-Required` gesetzte Spalten in `New-SteuerlicheErfassungListen.ps1` (Liste 2 und Liste 6) sowie als Forms-Fragen mit Branching (E.2 Fragen 25-42, E.6 Fragen 19-33) bzw. Power-Automate-Prüfregeln (E.10) nachgezogen. Residuale, laut Quelldateien nicht getestete Einzelpfade bleiben als kleinerer offener Punkt oben stehen.

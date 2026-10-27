@@ -458,6 +458,33 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_distribut
 # legal_capacity ist bei form_type = Personengesellschaft/-gemeinschaft laut
 # Datenmodell Kz 33 unbedingt, bei anderen Formulartypen nicht einschlaegig;
 # deshalb ohne -Required, Pflicht ueber Forms-Branching (siehe README.md E.2).
+# --- Abschnitt 9.6 ergaenzt (Update 2, ELSTER-Portalpruefung 26.10.2026):
+# bedingte Pflichtfelder aus fsekapgaus-202401 und fsekapg-202401, Status
+# belegt_bedingt. Keines dieser Felder ist bedingungslos -Required, da die
+# Pflicht jeweils an eine andere Auswahl geknuepft ist (siehe Datenmodell
+# Abschnitt 9.6 und README.md Abschnitt E.2 fuer die genaue Bedingung je Feld). ---
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notary_name" -DisplayName "Gruendungsnotar - Name" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notary_address" -DisplayName "Gruendungsnotar - Adresse" -Type Note
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_general_partner_of_kg" -DisplayName "Komplementaerin einer KG" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "general_partner_kg_name" -DisplayName "Bezeichnung der KG (falls Komplementaerin)" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_date" -DisplayName "Handelsregister - Datum (beantragt am / Tag der Eintragung)" -Type DateOnly
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_structure" -DisplayName "Betriebsaufspaltung" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_company_name" -DisplayName "Bezeichnung des Besitzunternehmens" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_asset_description" -DisplayName "Bezeichnung des genutzten Wirtschaftsguts (Betriebsaufspaltung)" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_usage_start" -DisplayName "Beginn der tatsaechlichen Nutzung (Betriebsaufspaltung)" -Type DateOnly
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_address_or_tax_number" -DisplayName "Anschrift und/oder Steuernummer des Besitzunternehmens" -Type Note
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption" -DisplayName "Koerperschaftsteuerbefreiung nach Paragraf 5 KStG" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption_number" -DisplayName "Nummer nach Paragraf 5 Absatz 1 KStG" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_determination" -DisplayName "Feststellung nach Paragraf 60a AO" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_purpose" -DisplayName "Zweck der Koerperschaft (Paragraf 60a AO)" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_subsidiary" -DisplayName "Organgesellschaft (koerperschaftsteuerliche Organschaft)" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "tax_group_parent_name" -DisplayName "Name/Firma des Organtraegers" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_vat_group_member" -DisplayName "Umsatzsteuerliche Organschaft" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "vat_group_start_date" -DisplayName "Beginn der umsatzsteuerlichen Organschaft" -Type DateOnly
+# split_ownership_asset_description (Zeile 135 in fsekapg-202401): der exakte
+# ELSTER-Feldname ist aus der Fehlerliste allein nicht eindeutig (nur
+# "Bezeichnung" ohne weiteren Kontext) - siehe offene Frage in README.md
+# Abschnitt G.
 
 # ---------------------------------------------------------------------------
 # Liste 3: Personen und Vertretung
@@ -568,6 +595,30 @@ Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "employees_total
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "payroll_start_date" -DisplayName "Beginn Lohnzahlungen" -Type DateOnly
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_payroll_tax" -DisplayName "Voraussichtliche Lohnsteuer" -Type Number
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "exemption_certificate_construction" -DisplayName "Freistellungsbescheinigung Paragraf 48b EStG" -Type Boolean
+# --- Abschnitt 9.6 ergaenzt (Update 2, ELSTER-Portalpruefung 26.10.2026):
+# bedingte Pflichtfelder aus fsekapgaus-202401 und fsekapg-202401 (beide
+# Formulare zeigen denselben USt-Block), Status belegt_bedingt, siehe
+# Datenmodell Abschnitt 9.6 / README.md Abschnitt E.6 fuer die Bedingung je Feld. ---
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_tax_free_sales" -DisplayName "Steuerfreie Umsaetze nach Paragraf 4 UStG" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_tax_free_sales_type" -DisplayName "Art des Umsatzes (steuerfrei)" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_reduced_rate_sales" -DisplayName "Ermaessigter Steuersatz" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_reduced_rate_sales_type" -DisplayName "Art des Umsatzes (ermaessigter Satz)" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_sales" -DisplayName "Nullsteuersatz" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_sales_type" -DisplayName "Art des Umsatzes (Nullsteuersatz)" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_legal_basis" -DisplayName "Rechtsvorschrift zum Nullsteuersatz" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture" -DisplayName "Durchschnittssatzbesteuerung Paragraf 24 UStG (Land-/Forstwirtschaft)" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture_type" -DisplayName "Art des Umsatzes (Paragraf 24 UStG)" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture_choice" -DisplayName "Durchschnittssatzbesteuerung oder Verzicht" -Type Choice `
+    -Choices @("Durchschnittssatzbesteuerung beibehalten", "Verzicht auf Durchschnittssatzbesteuerung")
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_requested" -DisplayName "Vorsteuerverguetung beantragt" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_date" -DisplayName "Datum der Vorsteuerverguetung" -Type DateOnly
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_reference" -DisplayName "Aktenzeichen Vorsteuerverguetung" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "webshop_url" -DisplayName "Internetadresse (URL) des Webshops" -Type URL
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "electronic_interface_identifier" -DisplayName "Identifikationsmerkmal der elektronischen Schnittstelle" -Type Text
+# own_webshop/electronic_interface existierten bereits; webshop_url und
+# electronic_interface_identifier ergaenzen die laut ELSTER zusaetzlich
+# bedingt erforderlichen Detailangaben (URL bzw. Identifikationsmerkmal,
+# z. B. Accountname), ohne die bestehenden Felder zu veraendern oder zu loeschen.
 
 # ---------------------------------------------------------------------------
 # Liste 7: Auslandsmitteilung (BZSt2, nur Outbound)
