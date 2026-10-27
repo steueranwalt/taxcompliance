@@ -64,6 +64,23 @@ Danach wie gewohnt:
 
 `Connect-PnPOnline -Interactive` öffnet ein Anmeldefenster; die anmeldende Person benötigt mindestens Mitgliedsrechte auf der Zielsite.
 
+### C2. Prüfskript und bekannte PnP-3.x-Fallen
+
+**`Test-SteuerlicheErfassungListen.ps1`** (gleicher Ordner) prüft rein lesend, ob eine Zielsite tatsächlich dem Soll-Stand aus `New-SteuerlicheErfassungListen.ps1` entspricht:
+
+```powershell
+.\Test-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>"
+```
+
+Es liest die Soll-Felder direkt aus `New-SteuerlicheErfassungListen.ps1` (per Parse des Skripts, nicht per Dot-Sourcing/Ausführung — letzteres würde sofort live verbinden und Änderungen vornehmen), damit es **keine zweite, von Hand gepflegte Feldliste** gibt, die aus dem Takt geraten könnte. Geprüft werden je Feld: Existenz, Feldtyp (inkl. `DateOnly` vs. `DateTime`), Vollständigkeit der Auswahlwerte, bei Lookups mit Löschverhalten `Restrict`/`Cascade` Indizierung + tatsächliches `RelationshipDeleteBehavior`, sowie `EnforceUniqueValues` dort, wo das Hauptskript es verlangt (aktuell `case_id` und `access_code` in `0_Fallsteuerung`). SharePoint-Systemfelder (`Title`, `TaxKeyword`, `Author`, `Editor`, `Created`, `Modified`, `ContentType`, `Attachments`, `ID` usw.) werden nie geprüft, da sie nicht aus einem `Add-Field`-Aufruf stammen. Ausgabe: eine Soll/Ist-Tabelle je Prüfung; Exit-Code `0` ohne Abweichungen, `1` bei mindestens einer Abweichung.
+
+**Bekannte PnP.PowerShell-3.x-Fallen (gefunden im echten Testlauf 27.10.2026, PnP.PowerShell 3.4.1 / PowerShell 7.6.9 gegen `steueranwaltskanzlei`):** `Set-PnPField -Values @{...}` kann bei zwei Eigenschaftstypen den gelieferten Wert nicht zuverlässig konvertieren und gibt dabei nur eine **Warnung** aus (`"... Value will be ignored."`), **keinen Fehler** — ein Skript ohne `-WarningAction Stop` läuft weiter und meldet fälschlich Erfolg:
+
+1. **`RelationshipDeleteBehavior`** (Lookup-Löschverhalten): ein String wie `"Restrict"` wird nicht in den Enum-Typ `Microsoft.SharePoint.Client.RelationshipDeleteBehaviorType` konvertiert. Zusätzlich verlangt SharePoint für `Restrict`/`Cascade` einen **indizierten** Lookup — das Skript indizierte Lookups vor dieser Korrektur nicht automatisch mit. Fix (seit diesem Update): zuerst indizieren, dann den Enum-Wert direkt per CSOM setzen (`$ctx.CastTo[Microsoft.SharePoint.Client.FieldLookup](...)`, `UpdateAndPushChanges($true)`), danach zurücklesen und verifizieren.
+2. **`Choices`** (Auswahlwerte bei bestehenden Choice-Feldern): ein PowerShell-Array aus `@($existingChoices) + @($missingChoices)` ist zur Laufzeit `System.Object[]`, nicht `System.String[]`, und wird ebenfalls nur mit einer Warnung abgelehnt. Fix: das Array explizit als `[string[]]` typisieren; schlägt das trotzdem fehl, Fallback direkt per CSOM (`FieldChoice.Choices`).
+
+**Allgemeine Regel im Skript seit diesem Update:** jeder `Set-PnPField`-Aufruf läuft mit `-WarningAction Stop` (jede Warnung wird zum fangbaren Fehler) und jede Erfolgsmeldung erfolgt erst, nachdem der Wert erneut gelesen und mit dem Sollwert verglichen wurde — nie mehr "Erfolg", nur weil der Cmdlet-Aufruf selbst keine Exception geworfen hat.
+
 ## D. Fall-ID-Generator
 
 `case_id` in Liste 0 ist ein einzeiliges Textfeld ohne serverseitige Auto-Nummerierung, jetzt **indiziert und mit „eindeutige Werte erzwingen“** versehen (fachliche Prüfung Punkt 2: `case_id` war weder indiziert noch eindeutig). Empfehlung: Format `JJJJ-NNNN` (z. B. `2026-0001`), vergeben durch die Kanzlei bei Fallanlage, oder ergänzend ein Power-Automate-Flow „Bei Erstellung eines Elements in 0_Fallsteuerung → berechne case_id aus ID-Spalte + Jahr → Element aktualisieren“.
@@ -439,7 +456,7 @@ Beide Prüfregeln ersetzen **nicht** die reguläre Übertragung — sie laufen z
 - Datei-Upload in Formular 8 erfordert Anmeldung — Alternativlösung mit dem Mandat abstimmen (Abschnitt E.8).
 - **Nicht vollständig getestete bedingte Pfade (Update 2):** Die ELSTER-Portalprüfung 26.10.2026 hat 23 (Auslandskörperschaft) bzw. 27 (Kapitalgesellschaft/Genossenschaft) bedingte Auslöser ermittelt und in Datenmodell Abschnitt 9.6 dokumentiert — damit ist der vormals offene Punkt „bedingte Pflichtfelder“ weitestgehend geschlossen. Laut den Quelldateien selbst blieben einige Pfade ungetestet (u. a. Auslandskörperschaft: Betriebsstätte Ausland/nicht fest, unabhängige Person, Bauausführung; Kapitalgesellschaft: nicht natürlicher Vertreter, Notar-Staat/Register-Optionen einzeln, USt-IdNr.-Grund Option 2/3) — siehe Datenmodell Abschnitt 9.6 für die vollständige Liste.
 - **`case_id`/`access_code` bei bereits produktiv genutzten Listen:** Falls das Skript gegen eine Site läuft, auf der `0_Fallsteuerung` bereits Datensätze enthält, kann „eindeutige Werte erzwingen“ fehlschlagen, falls Altdaten doppelte oder leere `case_id`-Werte enthalten; das Skript warnt in diesem Fall nur, behebt die Duplikate aber nicht automatisch (siehe Abschnitt C).
-- **Lookup-Löschverhalten `Restrict`:** SharePoint Online unterstützt das nachträgliche Setzen von `RelationshipDeleteBehavior` auf bereits bestehenden Lookup-Feldern nur eingeschränkt; bei einer bereits produktiv befüllten Installation ggf. manuell im Listenadmin prüfen, ob die Einstellung tatsächlich greift (das Skript warnt, bricht aber nicht ab).
+- **Nachlauf nach dem echten Testlauf 27.10.2026 nötig:** Der Lauf gegen `steueranwaltskanzlei` (PnP.PowerShell 3.4.1 / PowerShell 7.6.9) fand zwei echte Fehler, die das Skript vor diesem Update fälschlich als Erfolg meldete (siehe Abschnitt C2) — dadurch stehen auf dieser Site aktuell vermutlich noch alle Lookups (`case_id` in Liste 1-8 und `Technische_Mindestfelder`, die vier Lookups in `8_Unterlagen`) auf `Indexed=False`/`RelationshipDeleteBehavior=None`, und bei bestehenden Choice-Feldern fehlen ergänzte Auswahlwerte. Das korrigierte Skript einmal erneut gegen diese Site laufen lassen (Angleichungsmodus, nichts geht verloren) und danach mit `Test-SteuerlicheErfassungListen.ps1` (Abschnitt C2) verifizieren, dass keine Abweichungen mehr gemeldet werden.
 
 **Keine offenen Punkte mehr (per 26.10.2026 entschieden/verifiziert):**
 
