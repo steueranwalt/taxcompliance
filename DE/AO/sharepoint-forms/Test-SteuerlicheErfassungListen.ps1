@@ -1,0 +1,262 @@
+#Requires -Modules PnP.PowerShell
+<#
+    .SYNOPSIS
+    Vergleicht die SharePoint-Listenfamilie "Steuerliche Erfassung DE / Auslandsbezug"
+    auf einer Zielsite gegen die Soll-Felder aus
+    New-SteuerlicheErfassungListen.ps1 und meldet Abweichungen.
+
+    .DESCRIPTION
+    Rein lesendes Pruefskript, keine Aenderung auf der Zielsite. Es fuehrt
+    KEINE Add-PnP*/Set-PnP*/New-PnP*-Aufrufe aus.
+
+    Die Soll-Felder werden NICHT ein zweites Mal von Hand eingetragen (keine
+    Dubliziert-Liste, die aus dem Takt geraten koennte). Stattdessen parst
+    dieses Skript New-SteuerlicheErfassungListen.ps1 als Abstract Syntax Tree
+    (AST) und liest die tatsaechlichen "Add-Field"-Aufrufe dort per
+    `.SafeGetValue()` aus - das ist dieselbe Definitionsquelle, nur statisch
+    ausgewertet statt ausgefuehrt. Ein echtes Dot-Sourcing des Hauptskripts
+    kommt nicht in Frage, weil dessen oberste Ebene sofort Connect-PnPOnline
+    und alle Add-Field-Aufrufe LIVE gegen die Zielsite ausfuehren wuerde -
+    genau das soll dieses Pruefskript nicht tun.
+
+    Geprueft wird pro Soll-Feld:
+      - Existiert die Spalte ueberhaupt?
+      - Entspricht der SharePoint-Feldtyp (inkl. DateOnly vs. DateTime) dem Soll?
+      - Bei Choice-Feldern: sind alle Soll-Auswahlwerte vorhanden (zusaetzliche,
+        nicht im Soll stehende Werte sind laut Design des Hauptskripts erlaubt
+        und werden nicht als Abweichung gewertet)?
+      - Bei Lookup-Feldern mit Loeschverhalten Restrict/Cascade: ist das Feld
+        indiziert und steht RelationshipDeleteBehavior auf dem Sollwert?
+      - EnforceUniqueValues, wo im Hauptskript mit -EnforceUniqueValues definiert
+        (aktuell case_id und access_code in 0_Fallsteuerung).
+      - DateOnly-Felder: DisplayFormat tatsaechlich "DateOnly", nicht "DateTime".
+
+    SharePoint-Systemfelder (z. B. Title, TaxKeyword, Author, Editor, Created,
+    Modified, ContentType, Attachments, ID) werden nie geprueft, da sie nicht
+    aus Add-Field-Aufrufen stammen und folglich nie Teil der Soll-Liste sind.
+
+    .PARAMETER SiteUrl
+    Zielsite, siehe New-SteuerlicheErfassungListen.ps1 / README.md Abschnitt B.
+
+    .PARAMETER ClientId
+    Siehe New-SteuerlicheErfassungListen.ps1 / README.md Abschnitt C1.
+
+    .EXAMPLE
+    .\Test-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei" -ClientId "<Entra-App-ClientId>"
+
+    .NOTES
+    Exit-Code 0: keine Abweichungen. Exit-Code 1: mindestens eine Abweichung
+    (siehe Tabelle in der Konsolenausgabe) oder ein Laufzeitfehler.
+#>
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$SiteUrl,
+
+    [Parameter(Mandatory = $true, HelpMessage = "ClientId einer tenant-eigenen Entra-App-Registrierung mit delegierter Berechtigung 'AllSites.FullControl' (siehe README.md Abschnitt C1).")]
+    [string]$ClientId
+)
+
+$ErrorActionPreference = "Stop"
+
+# ---------------------------------------------------------------------------
+# Soll-Felder aus New-SteuerlicheErfassungListen.ps1 per AST einlesen
+# (keine Dubliziert-Definition, keine Ausfuehrung des Hauptskripts)
+# ---------------------------------------------------------------------------
+
+function Get-FieldDefinitionsFromScript {
+    param([Parameter(Mandatory = $true)][string]$ScriptPath)
+
+    if (-not (Test-Path -LiteralPath $ScriptPath)) {
+        throw "Hauptskript nicht gefunden: $ScriptPath"
+    }
+
+    $tokens = $null
+    $parseErrors = $null
+    $ast = [System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$parseErrors)
+    if ($parseErrors.Count -gt 0) {
+        throw "Hauptskript '$ScriptPath' enthaelt Parse-Fehler, Abbruch: $($parseErrors -join '; ')"
+    }
+
+    $commandAsts = $ast.FindAll(
+        { param($node) $node -is [System.Management.Automation.Language.CommandAst] -and $node.GetCommandName() -eq 'Add-Field' },
+        $true)
+
+    foreach ($cmd in $commandAsts) {
+        $params = @{}
+        $elements = $cmd.CommandElements
+        for ($i = 1; $i -lt $elements.Count; $i++) {
+            $el = $elements[$i]
+            if ($el -is [System.Management.Automation.Language.CommandParameterAst]) {
+                $paramName = $el.ParameterName
+                if ($el.Argument) {
+                    # Form "-Param wert" als ein Token (selten in diesem Skript)
+                    $params[$paramName] = $el.Argument.SafeGetValue()
+                }
+                elseif (($i + 1) -lt $elements.Count -and $elements[$i + 1] -isnot [System.Management.Automation.Language.CommandParameterAst]) {
+                    # Form "-Param <naechstes Element>" (Normalfall in diesem Skript)
+                    $params[$paramName] = $elements[$i + 1].SafeGetValue()
+                    $i++
+                }
+                else {
+                    # Bare Switch-Parameter ohne folgenden Wert, z. B. -Required, -Indexed
+                    $params[$paramName] = $true
+                }
+            }
+        }
+        [PSCustomObject]@{
+            List                = $params['List']
+            InternalName        = $params['InternalName']
+            DisplayName         = $params['DisplayName']
+            Type                = $params['Type']
+            Required            = [bool]$params['Required']
+            Choices             = @($params['Choices'])
+            LookupList          = $params['LookupList']
+            LookupField         = $params['LookupField']
+            DeleteBehavior      = if ($params.ContainsKey('DeleteBehavior') -and $params['DeleteBehavior']) { $params['DeleteBehavior'] } else { 'None' }
+            Indexed             = [bool]$params['Indexed']
+            EnforceUniqueValues = [bool]$params['EnforceUniqueValues']
+            Min                 = $params['Min']
+            Max                 = $params['Max']
+        }
+    }
+}
+
+function Test-SollTypeMatchesIst {
+    <#
+      Ordnet den im Hauptskript verwendeten logischen -Type-Werten den
+      SharePoint-Feldtyp (TypeAsString) sowie bei Datumsfeldern das
+      DisplayFormat zu und vergleicht gegen das tatsaechliche Feld.
+    #>
+    param($SollType, $IstField)
+    switch ($SollType) {
+        "DateOnly" { return ($IstField.TypeAsString -eq "DateTime" -and $IstField.DisplayFormat -eq "DateOnly") }
+        "DateTime" { return ($IstField.TypeAsString -eq "DateTime" -and $IstField.DisplayFormat -eq "DateTime") }
+        "Note" { return ($IstField.TypeAsString -eq "Note") }
+        "URL" { return ($IstField.TypeAsString -eq "URL") }
+        default { return ($IstField.TypeAsString -eq $SollType) }
+    }
+}
+
+function Format-IstTypeForDisplay {
+    param($IstField)
+    if ($IstField.TypeAsString -eq "DateTime") {
+        return "DateTime (DisplayFormat=$($IstField.DisplayFormat))"
+    }
+    return $IstField.TypeAsString
+}
+
+# ---------------------------------------------------------------------------
+# Verbindung (rein lesend - dieses Skript aendert nichts auf der Zielsite)
+# ---------------------------------------------------------------------------
+
+$mainScriptPath = Join-Path -Path $PSScriptRoot -ChildPath "New-SteuerlicheErfassungListen.ps1"
+Write-Host "Lese Soll-Felder aus: $mainScriptPath"
+$sollFelder = @(Get-FieldDefinitionsFromScript -ScriptPath $mainScriptPath)
+Write-Host "Soll-Felder gelesen: $($sollFelder.Count) ueber $(($sollFelder | Select-Object -ExpandProperty List -Unique).Count) Listen"
+
+Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
+$ctx = Get-PnPContext
+
+$ergebnisse = [System.Collections.Generic.List[object]]::new()
+
+function Add-Ergebnis {
+    param([string]$List, [string]$InternalName, [string]$Check, $Soll, $Ist, [bool]$Ok)
+    $ergebnisse.Add([PSCustomObject]@{
+            Liste    = $List
+            Feld     = $InternalName
+            Pruefung = $Check
+            Soll     = $Soll
+            Ist      = $Ist
+            Status   = if ($Ok) { "OK" } else { "ABWEICHUNG" }
+        })
+}
+
+$listenNamen = $sollFelder | Select-Object -ExpandProperty List -Unique
+foreach ($listenName in $listenNamen) {
+    $listObj = Get-PnPList -Identity $listenName -ErrorAction SilentlyContinue
+    $felderDieserListe = $sollFelder | Where-Object { $_.List -eq $listenName }
+
+    if (-not $listObj) {
+        foreach ($def in $felderDieserListe) {
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Liste vorhanden" -Soll "vorhanden" -Ist "Liste fehlt komplett" -Ok $false
+        }
+        continue
+    }
+
+    # Alle Ist-Felder dieser Liste EINMAL laden (Hashtable nach InternalName),
+    # statt pro Soll-Feld einen eigenen Get-PnPField-Aufruf zu machen. Felder,
+    # die hier auftauchen, aber nicht im Soll stehen (SharePoint-Systemfelder
+    # wie Title, TaxKeyword, Author, Editor, Created, Modified, ContentType,
+    # Attachments, ID, Guid usw.), werden nie geprueft - diese Funktion iteriert
+    # ausschliesslich ueber die Soll-Liste, nie ueber alle Ist-Felder.
+    $istFelderDieserListe = @{}
+    foreach ($f in (Get-PnPField -List $listenName)) {
+        $istFelderDieserListe[$f.InternalName] = $f
+    }
+
+    foreach ($def in $felderDieserListe) {
+        if (-not $istFelderDieserListe.ContainsKey($def.InternalName)) {
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Spalte vorhanden" -Soll "vorhanden" -Ist "fehlt" -Ok $false
+            continue
+        }
+        $istFeld = $istFelderDieserListe[$def.InternalName]
+
+        $typOk = Test-SollTypeMatchesIst -SollType $def.Type -IstField $istFeld
+        Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Feldtyp" `
+            -Soll $def.Type -Ist (Format-IstTypeForDisplay -IstField $istFeld) -Ok $typOk
+
+        if ($def.Type -eq "Choice" -and $def.Choices) {
+            $istChoices = @($istFeld.Choices)
+            $fehlendeChoices = $def.Choices | Where-Object { $istChoices -notcontains $_ }
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Auswahlwerte vollstaendig" `
+                -Soll ($def.Choices -join ", ") -Ist ($istChoices -join ", ") -Ok (-not $fehlendeChoices)
+        }
+
+        # Restrict/Cascade verlangen einen indizierten Lookup (siehe Hauptskript
+        # Set-LookupDeleteBehavior) - unabhaengig davon, ob -Indexed am
+        # Add-Field-Aufruf selbst gesetzt wurde.
+        $sollIndexed = $def.Indexed -or ($def.Type -eq "Lookup" -and $def.DeleteBehavior -in @("Restrict", "Cascade"))
+        if ($sollIndexed) {
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Indexed" `
+                -Soll $true -Ist $istFeld.Indexed -Ok ([bool]$istFeld.Indexed -eq $true)
+        }
+
+        if ($def.EnforceUniqueValues) {
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "EnforceUniqueValues" `
+                -Soll $true -Ist $istFeld.EnforceUniqueValues -Ok ([bool]$istFeld.EnforceUniqueValues -eq $true)
+        }
+
+        if ($def.Type -eq "Lookup" -and $def.DeleteBehavior -in @("Restrict", "Cascade")) {
+            try {
+                $lookupField = $ctx.CastTo[Microsoft.SharePoint.Client.FieldLookup]($istFeld)
+                $ctx.Load($lookupField)
+                Invoke-PnPQuery
+                $istBehavior = $lookupField.RelationshipDeleteBehavior.ToString()
+                Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Lookup-Loeschverhalten" `
+                    -Soll $def.DeleteBehavior -Ist $istBehavior -Ok ($istBehavior -eq $def.DeleteBehavior)
+            }
+            catch {
+                Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Lookup-Loeschverhalten" `
+                    -Soll $def.DeleteBehavior -Ist "nicht lesbar: $_" -Ok $false
+            }
+        }
+    }
+}
+
+Write-Host ""
+Write-Host "=== Soll/Ist-Tabelle (alle Pruefungen) ==="
+$ergebnisse | Sort-Object Liste, Feld, Pruefung | Format-Table -AutoSize -Wrap
+
+$abweichungen = @($ergebnisse | Where-Object { $_.Status -eq "ABWEICHUNG" })
+Write-Host ""
+if ($abweichungen.Count -eq 0) {
+    Write-Host "Ergebnis: keine Abweichungen. $($ergebnisse.Count) Pruefungen ueber $($listenNamen.Count) Listen, alle OK."
+    exit 0
+}
+else {
+    Write-Host "=== Abweichungen ($($abweichungen.Count) von $($ergebnisse.Count) Pruefungen) ==="
+    $abweichungen | Sort-Object Liste, Feld, Pruefung | Format-Table -AutoSize -Wrap
+    Write-Host "Ergebnis: $($abweichungen.Count) Abweichung(en) gefunden - siehe Tabelle oben."
+    exit 1
+}
