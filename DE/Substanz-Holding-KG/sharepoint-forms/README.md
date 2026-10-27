@@ -1,8 +1,8 @@
-# SharePoint-Listen + Microsoft-Forms-Familie „Substanzprüfung Holding-KG" (Version 3, Update 2)
+# SharePoint-Listen + Microsoft-Forms-Familie „Substanzprüfung Holding-KG" (Version 3, Update 3)
 
-Quellen: [`../Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md`](../Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md), [`../Fragenkatalog-Substanzpruefung-Holding-KG.md`](../Fragenkatalog-Substanzpruefung-Holding-KG.md), [`../feldkatalog/feldkatalog.json`](../feldkatalog/feldkatalog.json), Erfassungsbogen Holding-KG Version 3 (Nils Obenhaus, 27.10.2026, Projekt 22032-2), Anhang B1-B4.
+Quellen: [`../Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md`](../Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md), [`../Fragenkatalog-Substanzpruefung-Holding-KG.md`](../Fragenkatalog-Substanzpruefung-Holding-KG.md), [`../feldkatalog/feldkatalog.json`](../feldkatalog/feldkatalog.json), Erfassungsbogen Holding-KG Version 3 (Nils Obenhaus, 27.10.2026, Projekt 22032-2), Anhang B1-B4, sowie die Entscheidungen von Nils zu den fünf offenen Punkten aus Update 2 (siehe Datenmodell, Abschnitt 8).
 
-**Update 2 ersetzt die Version-2-Forms-Spezifikation (7 Formulare F0-F7) vollständig durch die Version-3-Struktur mit Aufgaben als Bezugseinheit (5 Formularblätter).**
+**Update 2 ersetzte die Version-2-Forms-Spezifikation (7 Formulare F0-F7) vollständig durch die Version-3-Struktur mit Aufgaben als Bezugseinheit (5 Formularblätter). Update 3 ergänzt darauf aufbauend: Erfassungsreferenz + Formular-Enddatum als Schutz der öffentlichen Formulare (Abschnitt D/E), `InterneBewertungen_<Standort>` statt einer einzelnen `InterneBewertungen`-Liste (Abschnitt C/I), eine Flow-Prüfregel zur H-Handlungs-Spaltenexklusivität sowie `Aufgabenorte.bezugsart`/`.funktion` statt `.rollenbezug` (Abschnitt C/F).**
 
 Vorbild und Konventionsquelle für Idempotenz/Spaltentypen: [`DE/AO/sharepoint-forms/README.md`](../../AO/sharepoint-forms/README.md) (PR #16).
 
@@ -22,11 +22,17 @@ Dieselbe Zielsite wie beim AO-Modul (siehe `DE/AO/sharepoint-forms/README.md` Ab
 # Voraussetzung (einmalig, falls noch nicht geschehen):
 .\..\..\AO\sharepoint-forms\New-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>"
 
-# Danach:
+# Danach (Default: nur InterneBewertungen_ZH, keine Gruppen berechtigt -> Warnung statt Fehler):
 .\New-SubstanzHoldingKGListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>"
+
+# Mit explizit benannten Standorten und Berechtigungsgruppen:
+.\New-SubstanzHoldingKGListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>" `
+    -Standort ZH, HH `
+    -StandortGruppen @{ ZH = "Substanzpruefung ZH"; HH = "Substanzpruefung HH" } `
+    -GesamtGruppe "steueranwaltskanzlei"
 ```
 
-Legt an bzw. gleicht an: die 25 Listen aus dem Datenmodell (Abschnitt 2) sowie die Dokumentbibliothek `Substanznachweise`, in der im Skript berechneten, abhängigkeitssicheren Reihenfolge (`feldkatalog.json`, Schlüssel `erstellungsreihenfolge_sharepoint_listen`).
+Legt an bzw. gleicht an: die 24 gemeinsamen Listen aus dem Datenmodell (Abschnitt 2) sowie die Dokumentbibliothek `Substanznachweise`, in der im Skript berechneten, abhängigkeitssicheren Reihenfolge (`feldkatalog.json`, Schlüssel `erstellungsreihenfolge_sharepoint_listen`), gefolgt von einer `InterneBewertungen_<Standort>`-Liste je Eintrag in `-Standort` (Default nur `ZH`, siehe Abschnitt C2).
 
 **Idempotenz/Angleichung:** identisches Verhalten wie `New-SteuerlicheErfassungListen.ps1` (DE/AO).
 
@@ -36,13 +42,29 @@ Legt an bzw. gleicht an: die 25 Listen aus dem Datenmodell (Abschnitt 2) sowie d
 
 **R26 als sechs Einzelfragen.** Die Vorgabe verlangt für R26 ausdrücklich separate Ja/Nein/unbekannt-Fragen statt einer MultiChoice; das Skript legt entsprechend sechs eigene Choice-Spalten an (`r26_eigener_zugang`, `r26_zugang_ohne_anmeldung`, `r26_fest_zugewiesen`, `r26_eigene_ablage`, `r26_abschliessbare_aufbewahrung`, `r26_nur_nach_buchung`).
 
-**H-Handlungen (45 Einzelhandlungen).** In Forms als Einzelfragen (ausgeführt/nicht ausgeführt/nicht bekannt) je Bereich gestellt; im Skript kompakt als drei MultiChoice-Spalten auf `Personeneinsaetze` abgelegt (`handlungen_ausgefuehrt`, `handlungen_nicht_ausgefuehrt`, `handlungen_unbekannt`).
+**H-Handlungen (45 Einzelhandlungen).** In Forms als Einzelfragen (ausgeführt/nicht ausgeführt/nicht bekannt) je Bereich gestellt; im Skript kompakt als drei MultiChoice-Spalten auf `Personeneinsaetze` abgelegt (`handlungen_ausgefuehrt`, `handlungen_nicht_ausgefuehrt`, `handlungen_unbekannt`). Ein Handlungscode, der in **keiner** der drei Spalten steht, bedeutet "nicht gefragt" (der zugehörige Bereich wurde in S07 nicht ausgewählt) — nicht "nicht bekannt". Siehe Abschnitt G.1 zur Flow-Prüfregel gegen Mehrfachablage desselben Codes.
+
+**`Aufgabenorte.bezugsart`/`.funktion` (Update 3, ersetzt `.rollenbezug`).** `bezugsart` ist Pflicht und unterscheidet `ARBEITSZEIT_ORT` (O01/O02, mit Stunden/Prozentanteil) von `FUNKTIONSORT` (O06, ohne Stunden/Prozentanteil); bei `FUNKTIONSORT` wird zusätzlich `funktion` (Vorbereitung/Verhandlung/Entscheidung/Freigabe) erfasst. Siehe Abschnitt G.1 zur Validierung gegen Doppelzählung.
 
 **`Title` ist überall optional**, wie im AO-Modul.
 
 ### C1. ClientId / tenant-eigene Entra-App-Registrierung
 
 Identisch zum AO-Modul — siehe [`DE/AO/sharepoint-forms/README.md`](../../AO/sharepoint-forms/README.md) Abschnitt C1.
+
+### C2. `InterneBewertungen_<Standort>` — eigene Liste je Standort (Update 3)
+
+Entscheidung Nils: Die Gruppe `steueranwaltskanzlei` sieht alle internen Bewertungen, die Standorte ZH und HH jeweils nur ihre eigenen. Umgesetzt über eine eigene physische Liste je Standort statt Item-Level-Berechtigung:
+
+- **`-Standort`** (`string[]`, `ValidateSet('ZH','HH')`, Default `@('ZH')`): für welche Standorte eine `InterneBewertungen_<Standort>`-Liste angelegt/angeglichen wird. Default nur ZH, da laut Nils fast ausschliesslich ZH-Fälle vorkommen.
+- **`-StandortGruppen`** (`hashtable`, Default `@{}`): Zuordnung Standort → SharePoint-Gruppenname, der Lesezugriff auf die jeweilige Standort-Liste erhält, z. B. `@{ ZH = 'Substanzpruefung ZH'; HH = 'Substanzpruefung HH' }`.
+- **`-GesamtGruppe`** (`string`, Default `''`): SharePoint-Gruppenname, der auf **allen** angelegten `InterneBewertungen_<Standort>`-Listen Lesezugriff erhält (z. B. `'steueranwaltskanzlei'`).
+
+Für jede in `-Standort` genannte Liste bricht das Skript die Rechtevererbung, **ohne** bestehende Site-Berechtigungen zu kopieren (`BreakRoleInheritance($false, $false)`) — die Liste ist danach für alle ausser Site Collection Administrators unsichtbar, bis eine Gruppe berechtigt wird ("fail closed"). Fehlt für einen Standort sowohl ein Eintrag in `-StandortGruppen` als auch eine `-GesamtGruppe`, gibt das Skript nur eine `Write-Warning` aus und lässt die Liste gesperrt — **es wird nie ohne benannte Gruppe automatisch Zugriff gewährt.**
+
+Idempotent: ein späterer Lauf mit zusätzlichem `-Standort`-Wert (z. B. zuerst nur `ZH`, später `ZH,HH`) legt nur die fehlende Liste neu an; bestehende Listen/Berechtigungen bleiben unverändert.
+
+Die übrigen 24 Fachlisten (Mandantendaten) bleiben gemeinsam/ungetrennt — siehe Datenmodell, Abschnitt 9, offener Punkt 1, falls auch dort eine Standorttrennung benötigt werden sollte.
 
 ## D. Fehlerprotokoll (`Eingang_Fehler`, DE/AO, wiederverwendet)
 
@@ -56,13 +78,18 @@ Nummerierungskonvention für `form_no` dieses Moduls (Version 3), um Kollision m
 | Formular 4 — Ressourcen und Kosten | 304 |
 | Formular 5 — Nachweise und Abschluss | 305 |
 
-Kein `access_code` vorgesehen (Anhang B3: "Erfassungsreferenzen sind keine Berechtigungsnachweise" — siehe Datenmodell, offene Frage 1). `case_id_raw` nimmt die rohe `ErfassungID`-Antwort auf.
+**Schutz der öffentlichen Formulare (Update 3, Entscheidung Nils):** Die Formulare bleiben öffentlich ("Jeder mit dem Link kann antworten", keine Gästekonten für externe Mandanten). Statt eines `access_code`-Mechanismus trägt jedes Formular ein Pflichtfeld **Erfassungsreferenz** (`referenzcode`, siehe `Erfassungen.referenzcode`). Vor jeder Elementanlage prüft der Flow:
+
+1. Existiert zur eingegebenen Erfassungsreferenz ein `Erfassungen`-Datensatz? Wenn nicht: Ablage in `Eingang_Fehler`.
+2. Ist der Status dieser Erfassung nicht `abgeschlossen` (siehe `Erfassungen.status`)? Ist er `abgeschlossen`, ebenfalls Ablage in `Eingang_Fehler` statt in den Fachlisten.
+
+Diese Prüfung ist **ausdrücklich eine Plausibilitätsprüfung, kein Berechtigungsnachweis** (Anhang B3: "Erfassungsreferenzen sind keine Berechtigungsnachweise"). Die eigentliche Absicherung erfolgt organisatorisch: der Formular-Link wird ausschliesslich an den jeweiligen Mandanten versendet, und Microsoft Forms gewährt Antwortenden ohnehin keinerlei Leserecht auf die SharePoint-Listen — niemand kann über das Formular fremde Erfassungen einsehen, unabhängig von der Referenzprüfung. Zusätzlich wird je Formular ein **Formular-Enddatum** (`Erfassungen.formular_enddatum`, in Microsoft Forms unter Einstellungen → Start- und Enddatum einzutragen) nach Ende des jeweiligen Erhebungszeitraums gesetzt, sodass das Formular nach Fristablauf automatisch keine Antworten mehr annimmt.
 
 ## E. Forms-Aufteilung (Anhang B1) — fünf Blätter
 
 Statische Forms-Listen müssen gepflegt werden. Automatische Live-Abfrage, beliebige Wiederholgruppen, automatische Datenübernahme zwischen Formularen und sichere Vorbelegung sind **keine** vorausgesetzten Funktionen (B3). Bei separaten Formularen werden bestehende Aufgaben über eine bereitgestellte Referenz (Text, intern aufgelöst) zugeordnet — keine erneute Tätigkeitsbeschreibung.
 
-Jedes Formular beginnt mit **Fall-ID** (`ErfassungID`, Text, Pflicht).
+Jedes Formular beginnt mit der **Erfassungsreferenz** (`referenzcode`, Text, Pflicht) statt der rohen internen `ErfassungID` — siehe Abschnitt D zur Plausibilitätsprüfung durch den Flow.
 
 ### E.1 Formular 1 — Personenblatt (S01, S03-S07, H01a-H08f)
 
@@ -115,8 +142,10 @@ Identischer Ablauf wie in der Version-2-Fassung (Antwort abrufen → Codes/IDs a
 4. **Ressourcenanteile nicht ungeprüft aus Arbeitszeitanteilen übernehmen.** `Ressourcennutzungen.a25_menge` wird eigenständig erfasst, nicht automatisch aus `Personeneinsaetze`/`Zeitverteilungen` abgeleitet.
 5. **Kaufpreis und Abschreibung nicht als doppelte laufende Kosten addieren** — getrennte `Kosten`-Kostenarten je Komponente.
 6. **Rechnungsstellung, ursprüngliche Zahlung und Erstattung getrennt dokumentieren** (`Kosten.zahlende_gesellschaft_ref` vs. `Kostenverteilungen.empfaenger_gesellschaft_ref`/`.rechnungsempfaenger_ref`).
-7. **`ErfassungID`-Prüfung** vor jeder Elementanlage: unbekannte/fehlende `ErfassungID` → Eintrag in `Eingang_Fehler`.
+7. **Erfassungsreferenz-Prüfung** (Update 3) vor jeder Elementanlage: unbekannte/fehlende `referenzcode`-Antwort oder Erfassung mit Status `abgeschlossen` → Eintrag in `Eingang_Fehler` statt in den Fachlisten (siehe Abschnitt D). Dies ist eine Plausibilitäts-, keine Berechtigungsprüfung.
 8. **Formularübergreifende Kontextbedingungen** (z. B. D/V/K-Zeilen setzen eine bereits über Formular 2 angelegte `Aufgaben`-Zeile voraus): findet der Flow keine passende Zeile, Eintrag in `Eingang_Fehler` statt verwaistem Datensatz.
+9. **H-Handlungen: Spaltenexklusivität** (Update 3). Derselbe Handlungscode (z. B. `H_PERSONAL_01_BEWERBER_AUSGEWAEHLT`) darf nicht gleichzeitig in mehr als einer der drei Spalten `handlungen_ausgefuehrt`/`handlungen_nicht_ausgefuehrt`/`handlungen_unbekannt` stehen. Verletzt eine Formularantwort dies (z. B. durch einen Bedienfehler bei der Übernahme), legt der Flow **keinen** stillschweigend bereinigten Datensatz an, sondern einen Eintrag in `Eingang_Fehler` bzw. `OffenePunkte`. Auswertungen je einzelner Handlung müssen entsprechend alle drei Spalten auflösen: ein Code ohne Eintrag in irgendeiner der drei Spalten bedeutet "nicht gefragt", nicht "nicht bekannt".
+10. **`Aufgabenorte`: keine Doppelzählung zwischen Arbeitszeit-Ort und Funktionsort** (Update 3). Zeilen mit `bezugsart = FUNKTIONSORT` dürfen keine Werte in `o02_status`/`o02_stunden`/`o02_prozent` tragen (diese Spalten sind ausschliesslich für `bezugsart = ARBEITSZEIT_ORT` bestimmt). Der Flow weist eine Formularantwort, die beides gleichzeitig befüllt, ab (Eintrag in `Eingang_Fehler`), statt die Stunden stillschweigend zu übernehmen.
 
 ## H. Datei-Upload (keine nativen Forms-Uploads)
 
@@ -124,13 +153,14 @@ Wie in Version 2: kein nativer Forms-Datei-Upload. Jede Frage mit Anlagenreferen
 
 ## I. Freigabe und Rollout
 
-1. Je Formular „Jeder mit dem Link kann antworten".
-2. Je Formular/Liste-Paar ein Power-Automate-Flow gemäss Abschnitt G.
-3. Testdurchlauf mit Dummy-Erfassung vor Versand an echte Mandanten/Mitarbeitende.
-4. `Eingang_Fehler` regelmässig sichten (gemeinsam mit dem AO-Modul).
-5. `display_label`-Felder durch den jeweiligen Flow nach Elementanlage befüllen.
-6. `InterneBewertungen`-Berechtigungen manuell nachprüfen (siehe Datenmodell, Abschnitt 6).
+1. Je Formular „Jeder mit dem Link kann antworten" — Link wird ausschliesslich an den jeweiligen Mandanten versendet (siehe Abschnitt D).
+2. Je Formular in Microsoft Forms unter Einstellungen → Start- und Enddatum ein **Formular-Enddatum** nach Ende des jeweiligen Erhebungszeitraums eintragen (siehe Abschnitt D, `Erfassungen.formular_enddatum`).
+3. Je Formular/Liste-Paar ein Power-Automate-Flow gemäss Abschnitt G, inklusive der Erfassungsreferenz-/Status-Prüfung (G.1, Regel 7) und der H-Handlungs-Spaltenexklusivitätsprüfung (G.1, Regel 9).
+4. Testdurchlauf mit Dummy-Erfassung vor Versand an echte Mandanten/Mitarbeitende.
+5. `Eingang_Fehler` regelmässig sichten (gemeinsam mit dem AO-Modul).
+6. `display_label`-Felder durch den jeweiligen Flow nach Elementanlage befüllen.
+7. `InterneBewertungen_<Standort>`-Berechtigungen prüfen: beim Skriptlauf `-StandortGruppen`/`-GesamtGruppe` mit den tatsächlichen SharePoint-Gruppennamen übergeben (siehe Abschnitt C2); ohne benannte Gruppe bleibt die jeweilige Liste gesperrt (Warnung statt Fehler).
 
 ## J. Offene Punkte
 
-Siehe Datenmodell, Abschnitt 8 — insbesondere Zugriffsschutz der öffentlichen Formulare, `InterneBewertungen`-Berechtigungsgruppe, Granularität von R26 und der H-Handlungs-Ablage.
+Siehe Datenmodell, Abschnitt 9 — insbesondere, ob neben `InterneBewertungen` auch die Mandantendaten-Fachlisten eine Standorttrennung benötigen (als offener Punkt gemeldet, nicht umgesetzt), sowie die konkreten SharePoint-Gruppennamen für `-StandortGruppen`/`-GesamtGruppe`. Zugriffsschutz der öffentlichen Formulare, `InterneBewertungen`-Standorttrennung, R26-Granularität und H-Handlungs-Ablage sind durch die Entscheidungen Nils' in Update 3 bereits geklärt (siehe Datenmodell, Abschnitt 8).

@@ -41,7 +41,7 @@ _noch keine Dokumente_
 
 ### Substanzprüfung Holding-KG
 
-- [Einheitliches Datenmodell: Substanzprüfung Holding-KG (Version 3)](DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md) — Tagesgeschäft statt Einzelvorgang, 25 Listen + Dokumentbibliothek, Listensplit-Begründungen, Wiederverwendung AO-Listen, Berechtigungskonzept `InterneBewertungen`, Änderungsprotokoll V2→V3
+- [Einheitliches Datenmodell: Substanzprüfung Holding-KG (Version 3)](DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md) — Tagesgeschäft statt Einzelvorgang, 24 gemeinsame Listen + Dokumentbibliothek + `InterneBewertungen_<Standort>`, Listensplit-Begründungen, Wiederverwendung AO-Listen, Erfassungsreferenz-Schutz, Berechtigungskonzept `InterneBewertungen_ZH`/`InterneBewertungen_HH`, Änderungsprotokoll V2→V3 und Update 2→Update 3
 - [Fragenkatalog (Version 3)](DE/Substanz-Holding-KG/Fragenkatalog-Substanzpruefung-Holding-KG.md) — alle Fragen (S/H/T/D/V/K/G/P/Z/O/R/A/C/N) mit stabilen IDs, Mandantensicht/interner Hinweis getrennt
 - [Feldkatalog (maschinenlesbar, SchemaVersion 3)](DE/Substanz-Holding-KG/feldkatalog/feldkatalog.json) — Formular/Frage-ID/Antworttyp/Auswahlcode/ZielListe/ZielSpalte + Codebooks
 - SharePoint-Umsetzung (Listen, Forms): [`DE/Substanz-Holding-KG/sharepoint-forms/`](DE/Substanz-Holding-KG/sharepoint-forms/README.md)

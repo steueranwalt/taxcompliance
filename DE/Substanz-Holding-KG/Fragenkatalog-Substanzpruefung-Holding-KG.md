@@ -1,6 +1,6 @@
 # Fragenkatalog: Personen und tatsächlich ausgeübte Managementtätigkeiten (Version 3)
 
-**Stand:** 27.10.2026 (Update 2). **Fachliche Vorgabe:** Nils Obenhaus, Erfassungsbogen Holding-KG, **Version 3**, Projekt 22032-2 «Atwork wg Holding-KG». Version 3 **ersetzt** die Versionen 1 und 2 vollständig. Kernänderung: Gegenstand ist das **Tagesgeschäft**, nicht einzelne Vorgänge; Bezugseinheit ist die tatsächlich ausgeübte Aufgabe je Person, Gesellschaft und Zeitraum.
+**Stand:** 27.10.2026 (Update 3). **Fachliche Vorgabe:** Nils Obenhaus, Erfassungsbogen Holding-KG, **Version 3**, Projekt 22032-2 «Atwork wg Holding-KG». Version 3 **ersetzt** die Versionen 1 und 2 vollständig. Kernänderung: Gegenstand ist das **Tagesgeschäft**, nicht einzelne Vorgänge; Bezugseinheit ist die tatsächlich ausgeübte Aufgabe je Person, Gesellschaft und Zeitraum.
 
 **Zweck dieses Dokuments:** vollständiger Fragenkatalog mit stabilen Frage-IDs, für jede Frage getrennt in **Mandantensicht** (Wortlaut und Auswahlwerte, wie sie im jeweiligen Formular erscheinen) und **internen Hinweis** (Antworttyp, Verzweigungs-/Datenmodellbezug — erscheint nicht im Mandanten-Formular). Die maschinenlesbare Entsprechung steht in [`feldkatalog/feldkatalog.json`](feldkatalog/feldkatalog.json) (SchemaVersion 3); das Datenmodell in [`Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md`](Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md). Interne Anhänge A–E (siehe unten) erscheinen **nie** in der Mandantensicht.
 
@@ -15,6 +15,8 @@ Mit diesen Angaben erfassen wir, wie die Holding-KG tatsächlich arbeitet. Bitte
 Beginnen Sie mit einer Person. Danach werden nur die für deren Aufgaben passenden Fragen benötigt. Angaben zu Räumen, Arbeitsmitteln und Kosten können die dafür zuständigen Personen ergänzen. Bereits erfasste Aufgaben und bereits übermittelte Unterlagen müssen nicht nochmals eingegeben werden.
 
 Auswahlfelder enthalten bei Bedarf «anderes, bitte angeben», «nicht bekannt» oder «nicht zutreffend». Diese Antworten werden getrennt gespeichert.
+
+Jedes Formular beginnt mit der **Erfassungsreferenz**, die Sie von der Kanzlei erhalten haben. Dieses Feld ist eine Plausibilitätsprüfung und dient der korrekten Zuordnung Ihrer Angaben; es ersetzt keinen Berechtigungsnachweis. Ihre Angaben sind für andere ausfüllende Personen nicht einsehbar.
 
 ## 1. Person und Aufgabenüberblick (Formular 1 — Personenblatt)
 
@@ -432,7 +434,7 @@ Diese Angaben einmal je Person erfassen. Mehrere Vertragsverhältnisse werden ge
 **O01.** An welchen Orten führte die Person die erfassten Aufgaben aus?
 
 - *Mandantensicht:* KG-Büro / Räume einer Beteiligung / Homeoffice / Räume der Schweizer Gesellschaft / beim Geschäftspartner / unterwegs / anderer Ort. Je Standort Adresse oder Ort und Land erfassen, bekannte Orte übernehmen.
-- *Interner Hinweis:* Ziel: `Aufgabenorte.ort_ref` (`rollenbezug=AUSUEBUNG`).
+- *Interner Hinweis:* Ziel: `Aufgabenorte.ort_ref` (`bezugsart=ARBEITSZEIT_ORT`).
 
 **O02.** Wie viel Arbeitszeit entfiel auf den jeweiligen Ort?
 
@@ -457,7 +459,7 @@ Diese Angaben einmal je Person erfassen. Mehrere Vertragsverhältnisse werden ge
 **O06.** Wo üben die jeweils zuständigen Personen Vorbereitung, Verhandlung, Entscheidung und Freigabe regelmässig aus?
 
 - *Mandantensicht:* Je Aufgaben- oder Entscheidungsart die beteiligten Personen und deren tatsächliche Arbeitsorte zuordnen. Vorhandene Standortangaben übernehmen. Bei Telefon- und Videobesprechungen zählt der Aufenthaltsort der jeweiligen Person. Wechselnde Orte und abweichende Zuständigkeiten kennzeichnen. Keine Rekonstruktion einzelner Geschäftsfälle verlangen.
-- *Interner Hinweis:* **Geänderte Bedeutung gegenüber V2** (dort `Fallbeteiligungen.schritt`/`.ort_ref`, gebunden an einen konkreten Fall). Ziel: `Aufgabenorte.rollenbezug` (VORBEREITUNG/VERHANDLUNG/ENTSCHEIDUNG/FREIGABE), `.entscheidung_ref`/`.vertrag_ref`/`.kontrolle_ref` (polymorph), `.person_ref`, `.ort_ref`.
+- *Interner Hinweis:* **Geänderte Bedeutung gegenüber V2** (dort `Fallbeteiligungen.schritt`/`.ort_ref`, gebunden an einen konkreten Fall). Ziel: `Aufgabenorte.bezugsart=FUNKTIONSORT` plus `.funktion` (VORBEREITUNG/VERHANDLUNG/ENTSCHEIDUNG/FREIGABE, Pflicht-Unterauswahl, Entscheidung Nils, Update 3), `.entscheidung_ref`/`.vertrag_ref`/`.kontrolle_ref` (polymorph), `.person_ref`, `.ort_ref`. Zeilen mit `bezugsart=FUNKTIONSORT` tragen keine Stunden/Prozentangaben (keine Doppelzählung mit O01/O02).
 
 **O07.** Warum wurde für diese Arbeit das Homeoffice genutzt?
 

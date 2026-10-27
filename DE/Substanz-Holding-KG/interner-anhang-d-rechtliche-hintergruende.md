@@ -2,7 +2,7 @@
 
 **Ausschliesslich für die Kanzlei, nicht im Mandantenfragebogen.** Auswertungshilfen, keine vorweggenommene Einzelfallbeurteilung. Quelle: Erfassungsbogen-Entwurf Nils Obenhaus, 27.10.2026, Projekt 22032-2 — ursprünglich "Interner Anhang A" in der Arbeitsfassung V1 (`uploads/erfassungsbogen-entwurf-27-10-2026.md`), in **Version 3 unverändert als Anhang D mit D1–D7 nummeriert** (Vorgabe V3: "Unverändert = «Interner Anhang A» (A1–A7) in `erfassungsbogen-entwurf-27-10-2026.md` (V1). In V3 als D1–D7 nummeriert."). Quellen und Wortlaut unverändert aus der Vorgabe übernommen.
 
-**Hinweis zur Verwendung:** Dieses Dokument liegt bewusst **getrennt** von [`Fragenkatalog-Substanzpruefung-Holding-KG.md`](Fragenkatalog-Substanzpruefung-Holding-KG.md) (Mandantenfragen V3) und den Forms-Spezifikationen. Es wird nicht an Mandanten versendet und erscheint nicht in Formulartexten. Verknüpfung mit konkreten Aufgaben erfolgt über die Liste `InterneBewertungen` (eingeschränkte Berechtigungen, siehe [`sharepoint-forms/README.md`](sharepoint-forms/README.md), Abschnitt "InterneBewertungen").
+**Hinweis zur Verwendung:** Dieses Dokument liegt bewusst **getrennt** von [`Fragenkatalog-Substanzpruefung-Holding-KG.md`](Fragenkatalog-Substanzpruefung-Holding-KG.md) (Mandantenfragen V3) und den Forms-Spezifikationen. Es wird nicht an Mandanten versendet und erscheint nicht in Formulartexten. Verknüpfung mit konkreten Aufgaben erfolgt über die je Standort getrennte Liste `InterneBewertungen_ZH`/`InterneBewertungen_HH` (eingeschränkte Berechtigungen, siehe [`sharepoint-forms/README.md`](sharepoint-forms/README.md), Abschnitt C2).
 
 ---
 
@@ -37,6 +37,6 @@ Quellen: <https://www.oecd.org/en/publications/oecd-transfer-pricing-guidelines-
 
 ---
 
-## Verwendung in `InterneBewertungen`
+## Verwendung in `InterneBewertungen_<Standort>`
 
-Die Liste `InterneBewertungen` (eingeschränkte Berechtigungen) verknüpft einzelne `Aufgaben`-, `Entscheidungsbefugnisse`-, `Vertragszustaendigkeiten`- oder `Kontrollaufgaben`-Datensätze mit einem Prüfungszusammenhang aus diesem Anhang (Spalte `pruefungszusammenhang`, Freitext mit Verweis z. B. "D2 - tatsächliche Verwaltung" oder "D5 - VP-Zuordnungstabelle"), einer vorläufigen Einordnung (`einordnung`) und einer Begründung (`begruendung`). Die Spalte `quellen` verweist auf die jeweiligen Abschnitte D1-D7 dieses Dokuments, statt die Fundstellen in jedem Datensatz zu wiederholen.
+Die je Standort getrennte Liste `InterneBewertungen_ZH`/`InterneBewertungen_HH` (eingeschränkte Berechtigungen) verknüpft einzelne `Aufgaben`-, `Entscheidungsbefugnisse`-, `Vertragszustaendigkeiten`- oder `Kontrollaufgaben`-Datensätze mit einem Prüfungszusammenhang aus diesem Anhang (Spalte `pruefungszusammenhang`, Freitext mit Verweis z. B. "D2 - tatsächliche Verwaltung" oder "D5 - VP-Zuordnungstabelle"), einer vorläufigen Einordnung (`einordnung`) und einer Begründung (`begruendung`). Die Spalte `quellen` verweist auf die jeweiligen Abschnitte D1-D7 dieses Dokuments, statt die Fundstellen in jedem Datensatz zu wiederholen.

@@ -1,4 +1,4 @@
-# Klickanleitung: Microsoft-Forms-Formulare manuell anlegen (Version 3, Update 2 — fünf Blätter)
+# Klickanleitung: Microsoft-Forms-Formulare manuell anlegen (Version 3, Update 3 — fünf Blätter)
 
 Diese Anleitung ergänzt [`README.md`](README.md) und übernimmt die allgemeine Klick-Mechanik aus [`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md`](../../AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md) (Abschnitte A-D dort). Die Fragentexte und Auswahlwerte stehen vollständig in [`../Fragenkatalog-Substanzpruefung-Holding-KG.md`](../Fragenkatalog-Substanzpruefung-Holding-KG.md) — **nur die Mandantensicht-Abschnitte eintragen, nicht die internen Hinweise.**
 
@@ -6,7 +6,8 @@ Diese Anleitung ergänzt [`README.md`](README.md) und übernimmt die allgemeine 
 
 1. Browser öffnen, `forms.office.com` aufrufen, mit dem Kanzlei-Microsoft-Konto anmelden.
 2. **„Neues Formular"** klicken. Titel z. B. „1 – Personenblatt – Substanzprüfung Holding-KG (V3)".
-3. Erste Frage immer: „Fall-ID" (Text, Pflicht).
+3. Erste Frage immer: „Erfassungsreferenz" (Text, Pflicht) — **nicht** die interne `ErfassungID`/Fall-ID; der Flow prüft diese Referenz als Plausibilitätsprüfung (siehe `README.md` Abschnitt D).
+4. Unter **„Einstellungen"** (Zahnrad-Symbol oben rechts) → „Start- und Enddatum" das **Formular-Enddatum** nach Ende des jeweiligen Erhebungszeitraums eintragen (`README.md` Abschnitt D/I).
 
 ## B. Eine Frage hinzufügen
 
@@ -53,6 +54,6 @@ Gesamtaufwand grob 2-2,5 Stunden für das Grundgerüst aller fünf Formulare (oh
 
 - Jedes Formular per „Antworten" → „..." → „In Excel öffnen" einmal leer testen.
 - Testdurchlauf mit Dummy-Erfassung gemäss `README.md` Abschnitt I.
-- Power-Automate-Flows je Formular/Liste-Paar einrichten (`README.md` Abschnitt G), inkl. Code-Auflösung, `FormID+ResponseID`-Übernahmeschlüssel und `Eingang_Fehler`-Fallback.
-- `InterneBewertungen`-Berechtigungsgruppe manuell nachtragen (Datenmodell, Abschnitt 6).
+- Power-Automate-Flows je Formular/Liste-Paar einrichten (`README.md` Abschnitt G), inkl. Code-Auflösung, `FormID+ResponseID`-Übernahmeschlüssel, Erfassungsreferenz-/Status-Prüfung, H-Handlungs-Spaltenexklusivitätsprüfung und `Eingang_Fehler`-Fallback.
+- `InterneBewertungen_<Standort>`-Berechtigungen beim PnP-Skriptlauf über `-StandortGruppen`/`-GesamtGruppe` mit den tatsächlichen SharePoint-Gruppennamen setzen (Datenmodell, Abschnitt 6; `README.md` Abschnitt C2) — kein manuelles Nachtragen mehr nötig, sofern die Gruppennamen beim Lauf übergeben werden.
 - `Eingang_Fehler` (geteilt mit dem AO-Modul) regelmässig sichten.
