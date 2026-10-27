@@ -1,412 +1,193 @@
-# Einheitliches Datenmodell: Datenerhebung zur Substanzprüfung einer Holding-KG
+# Einheitliches Datenmodell: Substanzprüfung Holding-KG
 
-**Stand:** 27.10.2026
+**Stand:** 27.10.2026, **Update 1** (ersetzt die Grobvorgabe-basierte Erstfassung vom 27.10.2026 vollständig).
 
-**Fachliche Vorgabe:** Nils Obenhaus, 27.10.2026 ("Erfassungsbogen Substanz und Managementtätigkeit Holding-KG").
+**Fachliche Vorgabe:** Nils Obenhaus, ausgearbeiteter Erfassungsbogen-Entwurf „Personen und tatsächlich ausgeübte Managementtätigkeiten", Projekt 22032-2 «Atwork wg Holding-KG», Arbeitsfassung 27.10.2026 (`uploads/erfassungsbogen-entwurf-27-10-2026.md`, Anhänge A und B1-B6).
 
-**Zweck:** strukturierte Datenerhebung zur **tatsächlichen Substanz** einer Holding-KG und zur **tatsächlich ausgeübten Managementtätigkeit**, als Nachweisgrundlage für die steuerliche Anerkennung der Holding-KG (z. B. gegen den Vorwurf einer funktionslosen Zwischenholding, Geschäftsleitungsort-/Betriebsstättenfragen, Missbrauchsprüfung).
-
-**Ausdrücklich nicht Gegenstand:** die Konzernstruktur als solche (Beteiligungsquoten, Organigramm, Gesellschafterkette). Wo eine Beteiligungsgesellschaft benannt werden muss, wird sie als Bezug (Lookup/Freitext) referenziert, nicht neu strukturell erhoben — siehe Abschnitt "Wiederverwendung".
-
-**Leitlogik** (durchgehend aus der Vorgabe übernommen): *Was gibt es? → Wer nutzt es? → Wann? → Wo? → Wie? → Wofür? → Wer macht was? → Wie lässt sich das belegen?*
-
-**Verwandtes Vorbild:** [`DE/AO/sharepoint-forms/`](../AO/sharepoint-forms/README.md) (PnP-Skript, Datenmodell, Forms-Klickanleitung für die steuerliche Erfassung DE/Auslandsbezug). Dieses Modul übernimmt dessen Konventionen (Namensgebung, Idempotenz, Spaltentypen, Flow-Muster, Umlautschreibweise) und nutzt zwei seiner Listen mit, siehe Abschnitt "Wiederverwendung".
+**Zweck:** strukturierte Datenerhebung zur personellen, sachlichen und organisatorischen Ausstattung der Holding-KG und zur tatsächlich ausgeübten Managementtätigkeit — als Nachweisgrundlage für die steuerliche Anerkennung der Holding-KG. Geht vollständig von der vorhandenen Konzernstruktur weg: Beteiligungsverhältnisse werden nicht nochmals abgefragt (siehe Abschnitt 4, Wiederverwendung).
 
 **Rollen der Dokumente in `DE/Substanz-Holding-KG/`:**
 
 | Dokument | Rolle |
 |---|---|
-| dieses Datenmodell | Kern-Datenmodell, Listenkatalog, Abdeckungstabelle, Wiederverwendungsentscheidungen, Leitfragen-Nachweis |
-| [`sharepoint-forms/README.md`](sharepoint-forms/README.md) | SharePoint-Listen- und Forms-Architektur, Flow-Zuordnung, Prüfregeln |
-| [`sharepoint-forms/KLICKANLEITUNG-FORMS.md`](sharepoint-forms/KLICKANLEITUNG-FORMS.md) | Klickanleitung für die manuelle Forms-Erstellung |
-| [`sharepoint-forms/New-SubstanzHoldingKGListen.ps1`](sharepoint-forms/New-SubstanzHoldingKGListen.ps1) | idempotentes PnP-PowerShell-Skript, legt Listen SH0-SH11 an |
+| dieses Datenmodell | Architektur, Listenkatalog, Wiederverwendungsentscheidungen, Berechtigungskonzept |
+| [`Fragenkatalog-Substanzpruefung-Holding-KG.md`](Fragenkatalog-Substanzpruefung-Holding-KG.md) | alle Fragen (P/E/V/K/G/R/A/C/N) mit stabilen IDs, Mandantensicht und internem Hinweis getrennt, inkl. P09-Handlungstabelle |
+| [`interner-anhang-a-auswertungslogik.md`](interner-anhang-a-auswertungslogik.md) | NUR INTERN: Auswertungslogik, Rechtsprechung, VP-Zuordnungstabelle (A1-A7) |
+| [`feldkatalog/feldkatalog.json`](feldkatalog/feldkatalog.json) | maschinenlesbarer Feldkatalog (B3): Formular, Frage-ID, Unterfeld-Suffix, Text, Antworttyp, Auswahlcode, Pflichtbedingung, ZielListe, ZielSpalte, Version + Codebooks |
+| [`sharepoint-forms/README.md`](sharepoint-forms/README.md) | Forms-Aufteilung (B1), Flow-Spezifikation und Prüfregeln (B4), Datei-Upload-Konzept (B5) |
+| [`sharepoint-forms/KLICKANLEITUNG-FORMS.md`](sharepoint-forms/KLICKANLEITUNG-FORMS.md) | Klickanleitung für die 7 Formulare |
+| [`sharepoint-forms/New-SubstanzHoldingKGListen.ps1`](sharepoint-forms/New-SubstanzHoldingKGListen.ps1) | idempotentes PnP-PowerShell-Skript, erzeugt aus dem Feldkatalog, legt 20 Listen + Dokumentbibliothek an |
 
-## 1. Kern-Datenmodell
+**Was sich mit Update 1 ändert:** Die frühere Listenfamilie `SH0_Substanzfall` bis `SH11_Belege` (12 Listen, eigenes Fragenschema ohne stabile IDs) wird **vollständig ersetzt** durch die 20 Listen aus Anhang B2 plus Dokumentbibliothek `Substanznachweise`, mit stabilen Frage-IDs, stabilen Auswahlcodes und einem maschinenlesbaren Feldkatalog als Single Source of Truth für Formulare, Flows und Skript.
 
-Vier wiederkehrende Kerndatensätze, miteinander verknüpft (wörtlich aus der Vorgabe):
+## 1. Architekturprinzipien (aus Anhang A und B1-B6 übernommen)
 
-| Kerndatensatz | Liste | Rolle |
-|---|---|---|
-| **Person** | `SH1_Personen` | wer ist für die Holding-KG tätig |
-| **Tätigkeit** | `SH3_Managementtaetigkeiten` | was wird gemacht (22 Managementtätigkeiten, einheitliche Unterstruktur) |
-| **Ort** | `SH4_Orte` | wo (Geschäftsraum/Bereich) |
-| **Asset** | `SH5_Assets` + `SH6_Asset_Nutzung` | womit (Arbeitsmittel + deren Nutzung) |
+- **Zwei Achsen statt starrer Dreiteilung** (Anhang A1): *Handlung* (laufende Geschäftsführung, Entscheidung/Umsetzung, Vorbereitung/Beratung, Aufsicht/Kontrolle, Vorgabe, Schulung, administrative Ausführung, Gesellschafterrechte) und *Zuordnung* (Auftrag der KG für eine Beteiligung, eigene Organisation der KG, eigene Beteiligungsaufgaben, Arbeiten für die Schweizer Mutter, sonstige/gemischte Empfänger) werden getrennt erfasst, nicht als ein einziges Klassifikationsfeld vermischt. Auftraggeber, Arbeitgeber, handelnde Gesellschaft, Vertragsgesellschaft, unmittelbarer Empfänger und Kostenträger bleiben eigenständige Felder (siehe `Taetigkeiten`, Abschnitt 2).
+- **Keine Konzernstrukturerhebung.** `Gesellschaften` führt nur Name und Rolle im Bestand, keine Quoten (siehe Abschnitt 4).
+- **Stabile IDs statt Freitextbezug.** Jede Frage behält ihre Frage-ID auch bei künftigen Textänderungen (B3); jede geschlossene Antwortmöglichkeit hat einen stabilen Code (z. B. `FREQ_DAILY`), die deutsche Beschriftung ist nur Anzeigetext im Formular. „Unbekannt" wird nie als `0`/`false` gespeichert, sondern als eigener Code (z. B. `..._UNBEKANNT`) oder eigener Choice-Wert — deshalb sind mehrere Felder, die auf den ersten Blick wie Ja/Nein-Fragen wirken, als Choice mit drei Werten (Ja/Nein/unbekannt) statt als SharePoint-Boolean angelegt (z. B. `Kostenverteilungen.weiterberechnet`).
+- **Generische n:m-Verknüpfung statt Spezialfelder.** Prozentuale Verteilungen (Orte, Empfänger, Ressourcennutzung) und Beleg-Verknüpfungen sind eigene Listen mit Dimension/Bezugstyp-Feldern, nicht feste benannte Spalten je möglichem Gegenwert (`Zeitverteilungen`, `Ressourcennutzungen`, `Belegverknuepfungen`).
+- **Datei-Upload nicht über Forms** (B5): Microsoft Forms verlangt für Datei-Upload-Fragen ein Microsoft-Konto der eigenen Organisation; ein extern zugänglicher Bogen darf sich darauf nicht verlassen. Stattdessen: separater Kanzlei-Uploadweg, im Formular nur Anlagenreferenz/Dateiname (siehe `sharepoint-forms/README.md`, Abschnitt G).
 
-**Verknüpfung (n:m):** `SH3_Managementtaetigkeiten` ist die zentrale Verknüpfungsliste des Modells. Jede Zeile verbindet eine Tätigkeit über Lookup-Spalten mit genau einer Person (`handled_by_ref`), optional einer Beteiligungsgesellschaft (`participation_ref`, wiederverwendet aus der steuerlichen Erfassung) und optional einem Ort (`location_ref`). Sind mehrere Personen/Orte an derselben Tätigkeit beteiligt, entstehen mehrere Zeilen mit demselben `activity_type` — das ist die n:m-Auflösung "Person-Tätigkeit" aus dem Auftrag, realisiert als Verknüpfungsliste statt als Mehrfach-Lookup (bessere Auswertbarkeit in Power Automate/Forms, konsistent mit dem AO-Vorbild, das ebenfalls keine Mehrfach-Lookups verwendet).
+## 2. Kern-Datenmodell: 20 Listen + Dokumentbibliothek
 
-Analog für Assets: `SH6_Asset_Nutzung` ist die im Auftrag ausdrücklich geforderte Verknüpfungsliste **Asset → Standort → Nutzer → Tätigkeit → Nutzungsumfang** (je Zeile eine Nutzungsinstanz eines Assets).
+### 2.1 Stammdatenlisten (listenübergreifend, nicht erfassungsgebunden)
 
+| Liste | Rolle |
+|---|---|
+| `Gesellschaften` | bekannter Gesellschaftsbestand (Name, Rolle) — Lookup-Ziel für praktisch jede andere Liste |
+| `Personen` | Personen, die für die Holding-KG tätig sind (P01-P02 Übersicht) |
+
+### 2.2 Fallsteuerung
+
+| Liste | Rolle |
+|---|---|
+| `Erfassungen` | eine Zeile je Substanzprüfungs-Erfassung (Zeitraum, Status, Abschluss, Abstimmungsstatus C06, Abschlusserklärung N05) |
+
+### 2.3 Person, Vertrag, Einsatz (Abschnitte 1 und 3 des Fragenkatalogs)
+
+| Liste | Rolle |
+|---|---|
+| `Personenbindungen` | vertragliche Bindung je Person × Gesellschaft (P02 je Funktion, P03-P05) |
+| `Personeneinsaetze` | Arbeitszeit, Weisungsgeber, Vertretung, Büropräsenz je Person (P06-P08, P19-P20, P23-P24) |
+
+### 2.4 Tätigkeit (Abschnitt 2, mit G- und K-Unterstruktur)
+
+| Liste | Rolle |
+|---|---|
+| `Taetigkeiten` | zentrale Verknüpfungsliste Person × Tätigkeit × Beteiligung (P09-P18; G01-G05 und K01-K03/K05 als Unterstruktur je nach `bereich_code`) |
+| `Orte` | Standortkatalog (P16/P22 referenzieren; eigenständig von `Raeume`, siehe Abschnitt 2.6) |
+| `Zeitverteilungen` | n:m-Verknüpfung Zeitanteile auf Ort/Empfänger (P16, P21, P22), Summe je Bezug = 100 % |
+
+### 2.5 Entscheidung, Vertrag, Steuerung (Abschnitte 4-6)
+
+| Liste | Rolle |
+|---|---|
+| `Entscheidungsfaelle` | Entscheidungsfälle (E01-E08) sowie Kontroll-/Anweisungs-/Schulungsfälle (K05) — gemeinsames `art_code`-Codebook |
+| `Vertragsvorgaenge` | Vertragsverhandlungen und Abschlussreife (V01-V02, V05-V06, V08-V09) |
+| `Fallbeteiligungen` | Rolle/Schritte/Orte je beteiligter Person, polymorph zu `Entscheidungsfaelle` ODER `Vertragsvorgaenge` (E03/E04/E07; V03/V04/V07/V08) |
+| `Steuerungsbeziehungen` | Steuerung von Mitarbeitenden/Dienstleistern (K04) |
+
+### 2.6 Raum, Arbeitsmittel, Nutzung (Abschnitte 8-9)
+
+| Liste | Rolle |
+|---|---|
+| `Raeume` | Geschäftsräume und tatsächliche Nutzung (R01-R06); referenziert `Orte` für den Standort |
+| `Arbeitsmittel` | Arbeitsmittel, Fahrzeuge, IT und Software (A01-A02, A05-A07) |
+| `Ressourcennutzungen` | n:m-Verknüpfung Raum/Mittel × Person × Tätigkeit × Nutzungsanteil (R04; A03-A04) |
+
+### 2.7 Kosten und Abrechnung (Abschnitt 10)
+
+| Liste | Rolle |
+|---|---|
+| `Kosten` | Personal-, Sach- und Gemeinkosten (C01-C04; A08; R06) |
+| `Kostenverteilungen` | Weiterberechnung von Kosten auf Empfängergesellschaften (C02) |
+| `Abrechnungen` | tatsächlich gestellte Abrechnungen/Leistungsvereinbarungen (G06, C05) |
+
+### 2.8 Belege und interne Bewertung (Abschnitt 11, Anhang A)
+
+| Liste/Bibliothek | Rolle |
+|---|---|
+| `Substanznachweise` (Dokumentbibliothek) | zentrale Belegablage; Datei-Upload-Ersatz nach B5 |
+| `Belegverknuepfungen` | generische Verknüpfung Nachweis → beliebige Zielliste (N02-N04), polymorph über `ziel_typ`/`ziel_id` |
+| `InterneBewertungen` | **nur intern, eingeschränkte Berechtigungen** — Auswertungshilfen zu Anhang A (A1-A7), siehe Abschnitt 5 |
+
+### 2.9 Beziehungsdiagramm (vereinfacht)
+
+```text
+Gesellschaften ◄──────────────┐  (Lookup-Ziel fast aller Listen, keine Quoten)
+Personen ◄──────────────┐     │
+                         │     │
+Personenbindungen ───────┘     │   (P02-P05, je Person x Gesellschaft)
+Personeneinsaetze ───────┘     │   (P06-P08, P19-P24, je Person)
+                                │
+Taetigkeiten ───────────────────┘  (zentral: Person x Bereich x Empfaenger x Beteiligung)
+  ├─► Zeitverteilungen (P16/P21/P22: Ort- und Empfaengerverteilung, je 100 %)
+  ├─► Steuerungsbeziehungen (K04)
+  └─► InterneBewertungen (nur intern)
+
+Entscheidungsfaelle ──┐
+Vertragsvorgaenge ────┼─► Fallbeteiligungen (polymorph: bezug_typ=ENTSCHEIDUNG|VERTRAG)
+                      └─► InterneBewertungen (nur intern)
+
+Raeume ──► Ressourcennutzungen ◄── Arbeitsmittel
+Kosten ──► Kostenverteilungen
+
+Substanznachweise ◄── Belegverknuepfungen (polymorph: ziel_typ/ziel_id auf jede der 20 Listen)
 ```
-Person (SH1) ──┐
-               ├─ handled_by_ref ──┐
-Ort (SH4) ─────┤                   │
-               ├─ location_ref ────┼──► Tätigkeit (SH3)  ──► Beteiligungsgesellschaft
-Asset (SH5) ───┤                   │       (participation_ref, Lookup auf
-               ├─ asset_ref ───────┘        4_Beteiligte_und_Quoten, DE/AO)
-               └─ user_ref/location_ref ──► Asset-Nutzung (SH6)
-```
 
-Alle Fachlisten hängen zusätzlich per Pflicht-Lookup `case_id` (Löschverhalten `Restrict`) an der Fallsteuerung `SH0_Substanzfall` — ein Substanzfall kann nicht gelöscht werden, solange Folgedatensätze existieren (identisches Muster zu `0_Fallsteuerung` im AO-Modell).
+## 3. Listenübersicht mit Spaltenzahl
 
-### 1.1 Technisches Muster: Referenzen auf Person/Ort/Asset/Beteiligung
+Spaltenzahl = Anzahl SharePoint-Spalten laut Feldkatalog (ohne das native `Title`-Feld), automatisiert aus `feldkatalog/feldkatalog.json` ausgezählt und gegen das PnP-Skript geprüft (keine Duplikate, keine fehlenden Codebook-Referenzen).
 
-Microsoft Forms kann keine Live-Lookups auf SharePoint-Listenzeilen anzeigen (dieselbe Einschränkung wie im AO-Modell, dort dokumentiert in `DE/AO/sharepoint-forms/README.md` Abschnitt E, Zeile "Nachschlagefeld (Lookup)"). Jede Spalte, die im Kern-Datenmodell auf `SH1_Personen`, `SH4_Orte`, `SH5_Assets` oder `4_Beteiligte_und_Quoten` verweist, besteht deshalb modulweit aus **zwei Spalten**:
-
-- `<feld>_text` — die eigentliche Forms-Frage, Freitext (Name/Bezeichnung, wie in der Ursprungsliste erfasst). Diese Spalte trägt die Vorgabe-Frage.
-- `<feld>_ref` — SharePoint-Lookup-Spalte auf die Zielliste (`ShowField = display_label`), **kein Forms-Feld**. Wird nach Elementanlage manuell oder durch einen erweiterten Power-Automate-Flow aus `<feld>_text` aufgelöst (identisches Muster zu `related_object_text`/`related_person`/`related_participation`/`related_site` in `8_Unterlagen`, DE/AO).
-
-Diese Zweiteilung ist in der Abdeckungstabelle unten so vermerkt: die Vorgabe-Frage ist der `_text` Spalte zugeordnet, die `_ref`-Spalte ist eine abgeleitete Normalisierung ohne eigene Forms-Frage.
-
-## 2. Listenübersicht
-
-| # | Liste | Formular | Neu/Wiederverwendet | Spalten (ohne `Title`) | Vorgabe-Abschnitt |
-|---|---|---|---|---|---|
-| SH0 | `SH0_Substanzfall` | F0 (intern) | neu | 10 | Fallsteuerung (kein eigener Vorgabe-Abschnitt) |
-| SH1 | `SH1_Personen` | F1 | neu | 20 | 1. Personen |
-| SH2 | `SH2_Entscheidungsprozesse` | F2 | neu | 15 | 3. Entscheidungen |
-| SH3 | `SH3_Managementtaetigkeiten` | F3 | neu | 17 | 2. Managementtätigkeiten |
-| SH4 | `SH4_Orte` | F4 | neu | 22 | 4. Geschäftsräume |
-| SH5 | `SH5_Assets` | F5 | neu | 8 | 5. Arbeitsplätze und Sachmittel (Stammdaten) |
-| SH6 | `SH6_Asset_Nutzung` | F6 | neu | 13 | 5. Arbeitsplätze und Sachmittel (Nutzung) |
-| SH7 | `SH7_Tagesgeschaeft_Praesenz` | F7 | neu | 15 | 6. Tagesgeschäft/Präsenz |
-| SH8 | `SH8_Zusammenarbeit_Beteiligungen` | F8 | neu | 17 | 7. Zusammenarbeit Beteiligungsgesellschaften |
-| SH9 | `SH9_Geschaeftsvorgaenge` | F9 | neu | 16 | 8. Konkrete Geschäftsvorgänge |
-| SH10 | `SH10_Kosten` | F10 | neu | 17 | 9. Kosten |
-| SH11 | `SH11_Belege` | F11 | neu | 11 | Belegfragen, Querschnitt (Punkt 5 des Auftrags) |
-| — | `Eingang_Fehler` | — (kein Formular) | **wiederverwendet** (DE/AO) | unverändert | Fehlerprotokoll Formularübernahme |
-| — | `4_Beteiligte_und_Quoten` | — (kein Formular) | **wiederverwendet** (DE/AO) | unverändert | Lookup-Ziel "Beteiligungsgesellschaft" |
-| — | `3_Personen_und_Vertretung`, `5_Betriebsstaetten` | — (kein Formular) | **nur als optionaler Cross-Reference-Lookup** (DE/AO) | unverändert | siehe Abschnitt "Wiederverwendung" |
-
-**Gesamt: 12 neue Listen, 181 neue Spalten, 11 Formulare für Mandanten/Kanzlei-Erfassung + 1 internes Formular (F0) = 12 Formulare.** Keine neue Liste dupliziert eine bestehende AO-Liste; die Wiederverwendungsprüfung in Abschnitt 4 begründet jede Entscheidung einzeln.
-
-## 3. Listen im Detail (Felder, Typen, Herkunft je Frage)
-
-Legende: **P** = Pflicht (`-Required` im Skript), **B** = bedingt/optional, **Lookup\*** = Lookup-Spalte ohne eigene Forms-Frage (siehe Abschnitt 1.1).
-
-### 3.1 `SH0_Substanzfall` (Formular 0, intern — Fallsteuerung)
-
-Kein eigener Vorgabe-Abschnitt; Analogon zu `0_Fallsteuerung` (DE/AO), aber eigenständige Liste (Begründung: Abschnitt 4).
-
-| Spalte | Typ | Pflicht | Bedeutung |
+| Liste | Formular (B1) | Spalten | Erfassungsgebunden? |
 |---|---|---|---|
-| `case_id` | Text, indiziert, eindeutig | P | Fall-ID Substanzprüfung, Format empfohlen `SH-JJJJ-NNNN` |
-| `access_code` | Text, indiziert, eindeutig | B | Zugangscode Mandantenprüfung (Muster wie `0_Fallsteuerung.access_code`) |
-| `holding_name` | Text | P | Name der Holding-KG |
-| `holding_tax_number` | Text | B | Steuernummer/IdNr. der Holding-KG, falls bekannt |
-| `related_erfassung_case` | Lookup\* → `0_Fallsteuerung.case_id` | B | Bezug auf vorhandenen AO-Erfassungsfall (ermöglicht Wiederverwendung von `4_Beteiligte_und_Quoten`) |
-| `review_period_from` / `review_period_to` | DateOnly | B | Prüfungszeitraum |
-| `engagement_contact` | Text | B | mandatsverantwortliche Person (Kanzlei) |
-| `processing_note` | Note | B | Bearbeitungsnotiz |
-| `case_status` | Choice (offen / in Bearbeitung / vollständig / ausgewertet) | P | Bearbeitungsstatus |
+| `Erfassungen` | intern (Fallanlage) | 15 | — (ist selbst die Fallsteuerung) |
+| `Gesellschaften` | intern (Stammdatenpflege) | 5 | Nein (Stammdaten) |
+| `Substanznachweise` (Bibliothek) | alle (Belege) | 7 | Ja |
+| `Personen` | 1 — Personenblatt | 5 | Nein (Stammdaten) |
+| `Personenbindungen` | 1 — Personenblatt | 16 | über Person/Gesellschaft |
+| `Personeneinsaetze` | 1 — Personenblatt | 23 | Ja |
+| `Orte` | 2 — Tätigkeitsblatt | 7 | über Gesellschaften |
+| `Taetigkeiten` | 2 — Tätigkeitsblatt (+ 3, 4) | 45 | Ja |
+| `Zeitverteilungen` | 1, 2 | 13 | über Einsatz/Tätigkeit |
+| `Entscheidungsfaelle` | 3 — Entscheidungs-/Vertrags-/Kontrollblatt | 21 | Ja |
+| `Vertragsvorgaenge` | 3 | 13 | Ja |
+| `Fallbeteiligungen` | 3 | 19 | über Entscheidung/Vertrag |
+| `Steuerungsbeziehungen` | 3 | 12 | Ja |
+| `Raeume` | 5 — Raumblatt | 18 | Ja |
+| `Arbeitsmittel` | 6 — Arbeitsmittelblatt | 27 | Ja |
+| `Ressourcennutzungen` | 5, 6 | 17 | Ja |
+| `Kosten` | 7 — Kosten- und Belegblatt (+ 5, 6) | 22 | Ja |
+| `Kostenverteilungen` | 7 | 9 | über Kosten |
+| `Abrechnungen` | 7 (+ 4) | 18 | Ja |
+| `Belegverknuepfungen` | 7 | 13 | über Nachweis |
+| `InterneBewertungen` | — (nur intern) | 11 | über Tätigkeit/Fall |
 
-### 3.2 `SH1_Personen` (Formular 1) — Vorgabe Abschnitt 1
+**Gesamt: 20 Listen + 1 Dokumentbibliothek, 336 Spalten, 7 Mandanten-/Kanzlei-Formulare.**
 
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `person_name` | Text | P | Name |
-| `function_title` | Text | P | Funktion / Stellenbezeichnung |
-| `employer_company_text` | Text | P | Bei welcher Gesellschaft angestellt oder vertraglich gebunden? |
-| `employer_participation_ref` | Lookup\* → `4_Beteiligte_und_Quoten` | B | (Auflösung von `employer_company_text`, kein eigener Forms-Schritt) |
-| `vertretung_ref` | Lookup\* → `3_Personen_und_Vertretung` | B | Zusatzfeld, Cross-Reference zur Wiederverwendung (nicht aus Vorgabe-Frage) |
-| `actual_tasks` | Note | P | Welche Aufgaben übernimmt die Person tatsächlich für die Holding-KG? |
-| `tasks_since` | DateOnly | B | Seit wann? |
-| `work_frequency` | Choice (Häufigkeitsskala) | P | Wie häufig arbeitet sie für die Holding-KG? |
-| `work_time_share` | Text | B | Wie viel Arbeitszeit entfällt ungefähr auf Aufgaben der Holding-KG? |
-| `work_locations` | Note | B | An welchen Orten führt die Person diese Aufgaben aus? |
-| `office_presence_frequency` | Choice (Häufigkeitsskala) | B | Wie häufig arbeitet die Person in den Geschäftsräumen der Holding-KG? |
-| `decisions_own` | Note | B | Welche Entscheidungen trifft die Person selbst? |
-| `decisions_prepared_only` | Note | B | Welche Entscheidungen bereitet sie nur vor? |
-| `signing_authority` | Note | B | Welche Verträge oder sonstigen Unterlagen darf sie unterschreiben? |
-| `staff_or_vendors_managed` | Note | B | Welche Mitarbeiter oder Dienstleister steuert sie? |
-| `tools_used` | Note | B | Welche Arbeitsmittel nutzt sie? (Freitext-Zusammenfassung; strukturiert in `SH6_Asset_Nutzung.user_ref`) |
-| `typical_week_description` | Note | P | Offene Frage: typische Arbeitswoche/Monat |
-| `evidence_note` | Note | B | Belegfrage (Punkt 5): Hinweis Datei-Upload/Dokumentbibliothek |
-| `display_label` | Text | B | kein Forms-Feld, Lookup-Anzeigefeld (Flow befüllt nach Anlage) |
+## 4. Wiederverwendung bestehender AO-Listen (neu begründet für Update 1)
 
-**Häufigkeitsskala** (modulweit einheitlich verwendet, wörtlich aus Frage "Wie häufig arbeitet sie für die Holding-KG?"): `täglich`, `mehrmals pro Woche`, `wöchentlich`, `monatlich`, `nur bei Bedarf`.
-
-### 3.3 `SH3_Managementtaetigkeiten` (Formular 3) — Vorgabe Abschnitt 2
-
-22 Tätigkeiten als Choice-Katalog (`activity_type`), **einheitliche Unterstruktur** je Zeile, identisch zur Vorgabe-Unterstruktur:
-
-> "Wird die Aufgabe von der Holding-KG tatsächlich wahrgenommen? Wer bearbeitet sie? Was wird konkret gemacht? Wie häufig? Für welche Beteiligungsgesellschaft? Wo wird sie ausgeübt? Welche Unterlagen entstehen? Wer trifft die abschliessende Entscheidung?"
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `activity_type` | Choice (22 Werte) | P | Tätigkeit (Katalog, siehe unten) |
-| `other_activity_description` | Text | B | Bezeichnung, falls "sonstige Managementaufgaben" |
-| `actually_performed` | Boolean | P | Wird die Aufgabe von der Holding-KG tatsächlich wahrgenommen? |
-| `handled_by_text` | Text | P | Wer bearbeitet sie? |
-| `handled_by_ref` | Lookup\* → SH1 | B | (Auflösung von `handled_by_text`) |
-| `description_concrete` | Note | P | Was wird konkret gemacht? |
-| `frequency` | Choice (Häufigkeitsskala) | P | Wie häufig? |
-| `participation_text` | Text | B | Für welche Beteiligungsgesellschaft? |
-| `participation_ref` | Lookup\* → `4_Beteiligte_und_Quoten` | B | (Auflösung, wiederverwendete Liste) |
-| `location_text` | Text | B | Wo wird sie ausgeübt? |
-| `location_ref` | Lookup\* → SH4 | B | (Auflösung von `location_text`) |
-| `documents_created` | Note | B | Welche Unterlagen entstehen? |
-| `evidence_note` | Note | B | Belegfrage (Punkt 5) |
-| `final_decision_text` | Text | B | Wer trifft die abschliessende Entscheidung? |
-| `final_decision_ref` | Lookup\* → SH1 | B | (Auflösung von `final_decision_text`) |
-| `display_label` | Text | B | kein Forms-Feld |
-
-**22 Managementtätigkeiten** (Choice-Katalog `activity_type`, wörtlich aus der Vorgabe): Geschäftsplanung / Unternehmenssteuerung; Strategie und Unternehmensplanung; Budgetplanung; Controlling; Liquiditätsplanung; Finanzierung; Investitionen; Geschäftsführung / Unterstützung der Geschäftsleitung; Vertriebssteuerung; Marketing; Preisgestaltung; Einkauf; Personalplanung; Einstellungen und Vergütungen; Organisation; Rechnungswesen; Steuern; Recht; Compliance; IT; Produktentwicklung / F&E; sonstige Managementaufgaben.
-
-Ziel laut Vorgabe: **Tätigkeitsprofil statt Funktionsliste** — jede Zeile ist eine konkrete, belegbare Ausübungsinstanz, nicht nur eine abstrakte Zuständigkeit.
-
-### 3.4 `SH4_Orte` (Formular 4) — Vorgabe Abschnitt 4
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `address` | Note | P | Anschrift |
-| `room_number` | Text | B | Raum / Raumnummer |
-| `size_sqm` | Number | B | Grösse |
-| `room_type` | Choice (Büro/Besprechungsraum/Empfang/Lager/Home-Office/Sonstige) | B | Art des Raums (Kanzleientscheid: geschlossener Katalog statt Freitext, siehe Abschnitt 7) |
-| `betriebsstaette_text` / `betriebsstaette_ref` | Text / Lookup\* → `5_Betriebsstaetten` | B | Zusatzfeld, Cross-Reference zur Wiederverwendung (nicht aus Vorgabe-Frage) |
-| `used_by` | Note | B | Wer nutzt ihn? (Zusammenfassung; strukturiert in `SH3.location_ref`/`SH6.location_ref`) |
-| `usage_frequency` | Choice (Häufigkeitsskala) | B | Wie häufig? |
-| `used_for_activities` | Note | B | Für welche Tätigkeiten? |
-| `exclusively_for_holding` | Boolean | P | Ausschliesslich für Holding-KG? |
-| `other_users_if_not_exclusive` | Text | B | Wenn nein, wer sonst? |
-| `availability_for_holding` | Note | B | Wann steht er der Holding-KG zur Verfügung? |
-| `workstations` | Note | B | Welche Arbeitsplätze? |
-| `equipment` | Note | B | Welche Ausstattung? |
-| `access_persons` | Note | B | Wer hat Zugang? |
-| `access_credentials` | Note | B | Schlüssel/Zugangskarten/Berechtigungen? |
-| `floor_plan_available` | Boolean | B | Grundriss vorhanden? (Belegfrage Punkt 5) |
-| `floor_plan_link` | URL | B | Verweis auf Grundriss (Belegfrage Punkt 5) |
-| `photos_available` | Boolean | B | Fotos vorhanden? (Belegfrage Punkt 5) |
-| `photos_link` | URL | B | Verweis auf Fotos (Belegfrage Punkt 5) |
-| `display_label` | Text | B | kein Forms-Feld |
-
-### 3.5 `SH5_Assets` (Formular 5) — Vorgabe Abschnitt 5 (Stammdaten "was ist vorhanden")
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `asset_category` | Choice (12 Kategorien) | P | Kategorie (Katalog, siehe unten) |
-| `asset_description` | Text | P | Was ist vorhanden? |
-| `owner_text` | Text | B | Wem gehört es? |
-| `cost_bearing_company_text` | Text | P | Welche Gesellschaft trägt die Kosten? |
-| `cost_bearing_company_ref` | Lookup\* → `4_Beteiligte_und_Quoten` | B | (Auflösung von `cost_bearing_company_text`) |
-| `evidence_note` | Note | B | Belegfrage (Punkt 5) |
-| `display_label` | Text | B | kein Forms-Feld |
-
-**12 Asset-Kategorien** (wörtlich aus der Vorgabe): Schreibtische und Arbeitsplätze; Büromöbel; Computer; Bildschirme; Mobiltelefone; Drucker; Server / Netzwerk; Software; Fahrzeuge; Fahrräder; Besprechungsräume; sonstige technische Ausstattung.
-
-Die Fragen "Wo befindet es sich? Wer nutzt es? Wie häufig? Für welche Tätigkeit? Ausschliesslich für Holding-KG? Wenn nein, wer noch?" stehen **bewusst nicht** hier, sondern in `SH6_Asset_Nutzung` — siehe 3.6 (Vorgabe: *"Datenmodell: Asset → Standort → Nutzer → Tätigkeit → Nutzungsumfang"*, ein Asset kann mehrere Nutzungsinstanzen haben).
-
-### 3.6 `SH6_Asset_Nutzung` (Formular 6) — Vorgabe Abschnitt 5 (Nutzung, n:m-Verknüpfungsliste)
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `asset_text` | Text | P | Welches Arbeitsmittel/Asset? |
-| `asset_ref` | Lookup\* → SH5 | B | (Auflösung) |
-| `location_text` | Text | B | Wo befindet es sich? |
-| `location_ref` | Lookup\* → SH4 | B | (Auflösung) |
-| `user_text` | Text | P | Wer nutzt es? |
-| `user_ref` | Lookup\* → SH1 | B | (Auflösung) |
-| `usage_frequency` | Choice (Häufigkeitsskala) | P | Wie häufig? |
-| `used_for_activity` | Choice (22 Tätigkeiten) | B | Für welche Tätigkeit? |
-| `exclusively_for_holding` | Boolean | P | Ausschliesslich für Holding-KG? |
-| `other_users_if_not_exclusive` | Text | B | Wenn nein, wer noch? |
-| `usage_extent_note` | Note | B | Nutzungsumfang |
-| `display_label` | Text | B | kein Forms-Feld |
-
-### 3.7 `SH2_Entscheidungsprozesse` (Formular 2) — Vorgabe Abschnitt 3
-
-12 Entscheidungsarten als Choice-Katalog (`decision_type`), einheitliche Unterstruktur je Zeile:
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `decision_type` | Choice (12 Werte) | P | Art der Entscheidung (Katalog, siehe unten) |
-| `who_first_involved_text` / `_ref` | Text / Lookup\* → SH1 | B | Wer beschäftigt sich zuerst damit? |
-| `who_prepares_text` / `_ref` | Text / Lookup\* → SH1 | B | Wer bereitet vor? |
-| `who_recommends_text` / `_ref` | Text / Lookup\* → SH1 | B | Wer gibt Empfehlung ab? |
-| `who_decides_final_text` / `_ref` | Text (P) / Lookup\* → SH1 | P | Wer trifft die endgültige Entscheidung? |
-| `decision_maker_location` | Text | B | Wo befindet sich diese Person bei der Entscheidung? |
-| `decision_channel` | Choice (Meeting/E-Mail/Telefonisch/Anders) | B | Meeting / E-Mail / telefonisch / anders? |
-| `documented_in_writing` | Boolean | B | Schriftlich festgehalten? |
-| `documentation_location` | Note | B | Wenn ja, wo? (inkl. Belegfrage Punkt 5) |
-| `display_label` | Text | B | kein Forms-Feld |
-
-**12 Entscheidungsarten** (wörtlich aus der Vorgabe): Budget; Investitionen; Finanzierung; Personal; Geschäftsführung; wichtige Verträge; Preisgestaltung; Vertrieb; Produkte; strategische Projekte; Ausschüttungen; Erwerb oder Verkauf von Beteiligungen.
-
-### 3.8 `SH7_Tagesgeschaeft_Praesenz` (Formular 7) — Vorgabe Abschnitt 6
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `location_text` / `location_ref` | Text / Lookup\* → SH4 | B | Zusatzfeld: optionaler Bezug zum Geschäftsraum |
-| `typical_days_per_month` | Number | B | An wie vielen Tagen pro Monat sind Personen der Holding-KG typischerweise vor Ort? |
-| `persons_onsite_text` | Note | P | Welche Personen? |
-| `activities_onsite` | Note | P | Was tun sie dort konkret? |
-| `management_meetings_held` | Boolean | B | Finden dort Managementbesprechungen statt? |
-| `meeting_frequency` | Choice (Häufigkeitsskala) | B | Wie häufig? |
-| `meeting_participants` | Note | B | Wer nimmt teil? |
-| `documents_created_or_signed` / `_note` | Boolean / Note | B | Werden dort Unterlagen erstellt oder unterschrieben? (inkl. Belegfrage) |
-| `emails_or_transactions_handled` | Boolean | B | Werden von dort E-Mails versandt oder Geschäftsvorgänge bearbeitet? |
-| `stakeholder_calls_held` | Boolean | B | Werden von dort Gespräche mit Geschäftsführern, Vorständen, Banken, Kunden oder Beratern geführt? |
-| `tasks_done_elsewhere` | Note | B | Welche Aufgaben werden regelmässig von anderen Orten aus erledigt? |
-| `display_label` | Text | B | kein Forms-Feld |
-
-Zweck laut Vorgabe: tatsächliche Präsenz von bloss vorhandener Infrastruktur unterscheiden.
-
-### 3.9 `SH8_Zusammenarbeit_Beteiligungen` (Formular 8) — Vorgabe Abschnitt 7
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `participation_text` / `participation_ref` | Text (P) / Lookup\* → `4_Beteiligte_und_Quoten` | P | Beteiligungsgesellschaft (wiederverwendete Liste) |
-| `typical_service_type` | Choice (22 Tätigkeiten, optional) | B | Zuordnung zu einer Managementtätigkeit (Konsistenzfeld, keine eigene Vorgabe-Frage) |
-| `typical_service_description` | Text | P | (Bezeichnung der) typische(n) Managementleistung, je typische Managementleistung erfasst |
-| `contact_initiator_text` / `_ref` | Text (P) / Lookup\* → SH1 | P | Wer bei der Holding-KG nimmt Kontakt auf? |
-| `counterpart_text` | Text | B | Mit wem wird dort gesprochen? |
-| `frequency` | Choice (Häufigkeitsskala) | B | Wie häufig? |
-| `topic` | Note | P | Was wird besprochen? |
-| `guidance_given` | Note | B | Welche Vorgaben oder Empfehlungen gibt die Holding-KG? |
-| `information_received` | Note | B | Welche Informationen erhält sie zurück? |
-| `documents_exchanged` | Note | B | Welche Unterlagen werden ausgetauscht? (inkl. Belegfrage) |
-| `outcome_next_steps` | Note | B | Was passiert anschliessend? |
-| `control_person_text` / `_ref` | Text / Lookup\* → SH1 | B | Wer kontrolliert die Umsetzung? |
-| `display_label` | Text | B | kein Forms-Feld |
-
-Hinweis laut Vorgabe: nach echten Abläufen fragen, nicht nach Vertragsformulierungen.
-
-### 3.10 `SH9_Geschaeftsvorgaenge` (Formular 9) — Vorgabe Abschnitt 8
-
-3-5 Beispiele je Fall (`sequence_number` 1-5).
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `sequence_number` | Number (1-5) | P | laufende Nummer des Beispiels |
-| `subject` | Note | P | Worum ging es? |
-| `participation_text` / `_ref` | Text (P) / Lookup\* → `4_Beteiligte_und_Quoten` | P | Welche Beteiligungsgesellschaft? |
-| `involved_person_text` / `_ref` | Text (P) / Lookup\* → SH1 | P | Wer auf Seiten der Holding-KG beteiligt? |
-| `action_taken` | Note | P | Was hat diese Person konkret gemacht? |
-| `event_date` | DateOnly | P | Wann? |
-| `location_text` / `location_ref` | Text / Lookup\* → SH4 | B | Wo? |
-| `decision_made` | Note | B | Welche Entscheidung wurde getroffen? |
-| `documents_created` | Note | B | Welche Unterlagen entstanden? (inkl. Belegfrage) |
-| `implemented_by_text` / `_ref` | Text / Lookup\* → SH1 | B | Wer setzte die Entscheidung um? |
-| `display_label` | Text | B | kein Forms-Feld |
-
-### 3.11 `SH10_Kosten` (Formular 10) — Vorgabe Abschnitt 9
-
-| Spalte | Typ | Pflicht | Vorgabe-Frage |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `cost_category` | Choice (Personen/Räume/Arbeitsmittel/externe Dienstleister) | P | Kategorisierung der vier Kostenarten-Fragen |
-| `related_person_text` / `_ref` | Text / Lookup\* → SH1 | B | Welche Personen verursachen Kosten für die Holding-KG? |
-| `related_location_text` / `_ref` | Text / Lookup\* → SH4 | B | Welche Räume werden genutzt? |
-| `related_asset_text` / `_ref` | Text / Lookup\* → SH5 | B | Welche Arbeitsmittel? |
-| `external_provider_name` | Text | B | Welche externen Dienstleister? |
-| `cost_description` | Note | P | Welche Kosten entstehen daraus? |
-| `cost_amount` / `cost_currency` | Number / Text | B | Betrag (Ergänzung zur Kostenbeschreibung, nicht wörtlich gefragt, aber für Auswertbarkeit nötig) |
-| `paying_company_initially` | Text | P | Welche Gesellschaft bezahlt zunächst? |
-| `allocation_method` | Note | P | Wie werden sie der Holding-KG zugeordnet? |
-| `recharged` | Boolean | B | Werden sie weiterberechnet? |
-| `recharge_note` | Note | B | Weiterberechnung — Details (Ergänzung zu `recharged`) |
-| `display_label` | Text | B | kein Forms-Feld |
-
-### 3.12 `SH11_Belege` (Formular 11) — Belegfragen, Querschnitt (Punkt 5 des Auftrags)
-
-Strukturell identisch zu `8_Unterlagen` (DE/AO), aber eigenständige Liste — Begründung siehe Abschnitt 4.
-
-| Spalte | Typ | Pflicht | Bedeutung |
-|---|---|---|---|
-| `case_id` | Lookup → SH0 | P | (Fallzuordnung) |
-| `document_type` | Choice (8 Werte, siehe unten) | P | Dokumenttyp |
-| `related_object_text` | Text | B | Bezug zu Objekt (Freitext, da kein Live-Lookup in Forms) |
-| `related_person` | Lookup\* → SH1 | B | Auflösung (optional) |
-| `related_activity` | Lookup\* → SH3 | B | Auflösung (optional) |
-| `related_location` | Lookup\* → SH4 | B | Auflösung (optional) |
-| `related_asset` | Lookup\* → SH5 | B | Auflösung (optional) |
-| `note` | Note | B | Hinweis |
-| `required` / `uploaded` | Boolean (Default 0) | B | intern, kein Forms-Feld |
-| `file_link` | URL | B | Link zur Datei, falls extern abgelegt |
-
-Datei-Upload erfolgt wie bei `8_Unterlagen` über den nativen Forms-/SharePoint-Anhang (kein eigenes Feld) bzw. über `file_link`, falls extern abgelegt — siehe `sharepoint-forms/README.md` Abschnitt E.11 für den Hinweis zur Anmeldepflicht bei Forms-Datei-Upload.
-
-**Dokumenttypen** (`document_type`): Nachweis Managementtätigkeit; Protokoll / Beschlussdokumentation; Vertrag / Vollmacht; Grundriss; Foto Geschäftsraum; Foto Arbeitsmittel; Rechnung / Kostenbeleg; Sonstiges.
-
-## 4. Wiederverwendung bestehender AO-Listen
-
-Prüfung je Liste/Kandidat aus dem Auftrag ("Fall/Mandant mit case_id, access_code, Eingang_Fehler, Personen/Vertreter, Anschriften, Beteiligungen"):
+Die Anhang-B2-Modellierung verlangt zwei eigene, listenübergreifende Stammdatenlisten (`Gesellschaften`, `Personen`) anstelle einer Übernahme bestehender AO-Listen. Prüfung je Kandidat:
 
 | Kandidat (DE/AO) | Entscheidung | Begründung |
 |---|---|---|
-| `0_Fallsteuerung` (Fall/Mandant, case_id/access_code) | **Nicht wiederverwendet** — eigene Liste `SH0_Substanzfall` mit identischem Muster | `0_Fallsteuerung` erzwingt unbedingte Pflichtfelder, die für eine Substanzprüfung fachfremd wären (`direction` Inbound/Outbound, `already_registered`, `tax_office_country`, `tax_office` — alle `-Required`). Eine Substanzprüfung ist zudem kein einmaliger Erfassungsvorgang, sondern ein wiederkehrender Prüfzeitraum für eine bereits bestehende Gesellschaft. Eine Zweckentfremdung würde entweder bedeutungslose Pflichtwerte erzwingen oder das produktiv genutzte Pflichtfeld-Schema von PR #16 verändern. Das bewährte **Muster** (`case_id`/`access_code`, indiziert + eindeutig, idempotente Angleichung) wird deshalb 1:1 in `SH0_Substanzfall` übernommen, nicht die Liste selbst. `SH0_Substanzfall.related_erfassung_case` verlinkt optional auf einen bestehenden `0_Fallsteuerung`-Datensatz, um die Beteiligungs-Wiederverwendung unten zu ermöglichen. |
-| `Eingang_Fehler` | **Wiederverwendet** (keine neue Liste) | Generisches, modul-unabhängiges Fehlerprotokoll (`form_no`, `case_id_raw`, `reason`, `payload`, `status`) ohne Fachfeld-Bindung an die AO-Erfassung. Dieses Modul nutzt sie für fehlgeschlagene Formular-Übernahmen (unbekannte `case_id`/`access_code`, Validierungsfehler) mit — siehe Nummerierungskonvention in `sharepoint-forms/README.md` Abschnitt D1 (Formular-Nr. 101-111, um Kollision mit den AO-Formular-Nr. 0-8 zu vermeiden). |
-| `3_Personen_und_Vertretung` (Personen/Vertreter) | **Nicht wiederverwendet** — eigene Liste `SH1_Personen`, nur optionaler Cross-Reference-Lookup | `3_Personen_und_Vertretung` bildet die **rechtliche Vertretungsrolle** einer Person gegenüber dem Finanzamt ab (`role`: Gesetzlicher Vertreter / Ständiger Vertreter / Empfangsbevollmächtigter / Steuerliche Beratung / Ehegatte-Lebenspartner) mit Pflicht-Lookup auf `0_Fallsteuerung`. Die Substanzprüfung braucht dagegen ein **operatives Tätigkeitsprofil** (Aufgaben, Häufigkeit, Arbeitszeitanteil, Entscheidungsbefugnisse, Unterschriftsvollmacht, gesteuerte Mitarbeiter) — ein strukturell anderer Fragenkatalog, zudem an einen anderen Fall-Typ gebunden (ein SharePoint-Lookup-Feld kann nur eine Zielliste referenzieren, `3_Personen_und_Vertretung.case_id` zeigt zwingend auf `0_Fallsteuerung`, nicht auf `SH0_Substanzfall`). `SH1_Personen.vertretung_ref` verweist optional auf eine dort bereits erfasste Person (z. B. identischer Geschäftsführer), um Doppelerfassung bei der Mandatsarbeit sichtbar zu machen. |
-| `4_Beteiligte_und_Quoten` (Beteiligungen) | **Wiederverwendet als Lookup-Ziel** (keine neue Beteiligungs-Stammliste) | Die Vorgabe schliesst Fragen zur Konzernstruktur als solcher ausdrücklich aus — es wird nirgends nach Beteiligungsquoten gefragt. Wo eine Beteiligungsgesellschaft nur *benannt* werden muss (Tätigkeit, Zusammenarbeit, Geschäftsvorgang, Asset-Kostenträger, Personen-Arbeitgeber), verweisen `participation_ref`/`employer_participation_ref`/`cost_bearing_company_ref` optional auf `4_Beteiligte_und_Quoten.display_label` — identisches Lookup-Muster wie `related_participation` in `8_Unterlagen` (DE/AO). Eine eigene "Beteiligungsgesellschaften-Stammliste" entfiele damit vollständig; steht kein `4_Beteiligte_und_Quoten`-Eintrag zur Verfügung (z. B. Holding-KG ohne AO-Erfassungsfall im System), bleibt der parallele `_text`-Freitext die massgebliche Angabe. |
-| `5_Betriebsstaetten` (keine explizite Vorgabe, aber naheliegend für "Ort") | **Nicht wiederverwendet** — eigene Liste `SH4_Orte`, nur optionaler Cross-Reference-Lookup | `5_Betriebsstaetten` bildet eine **steuerlich/rechtlich gemeldete Einheit je Standort** ab (Land, Eigentumsverhältnis, umsatz-/lohnsteuerliche Relevanz) auf Unternehmensebene, nicht die raumscharfen Substanzmerkmale (Raumnummer, Grösse, Zugang/Schlüssel, Ausstattung, Grundriss, Fotos), die die Vorgabe für "Geschäftsräume/Bereiche" verlangt. `SH4_Orte.betriebsstaette_ref` verweist optional auf eine bereits gemeldete Betriebsstätte, falls Deckungsgleichheit besteht. |
-| "Anschriften" (eigenständige Liste) | **Nicht vorhanden, daher nichts wiederzuverwenden** | Das AO-Modell führt keine eigenständige Anschriften-Liste; Adressen sind Felder je Objekt (`1_Allgemeiner_Stammblock.street`/`postal_code_city`, `3_Personen_und_Vertretung.address`, `5_Betriebsstaetten.address`). Dieses Modul übernimmt dasselbe Muster (`SH4_Orte.address` als Note-Feld je Geschäftsraum) statt eine neue, bislang nicht existierende Konvention einzuführen. |
-| `8_Unterlagen` (Belege) | **Nicht wiederverwendet** — eigene, strukturell identische Liste `SH11_Belege` | `8_Unterlagen.case_id` ist ein **Required**-Lookup fest auf `0_Fallsteuerung` konfiguriert; eine SharePoint-Lookup-Spalte kann nur eine Zielliste referenzieren. Eine Umwidmung auf zwei Fall-Typen (AO-Erfassung und Substanzprüfung) würde das produktiv genutzte Pflichtfeld aus PR #16 brechen. `SH11_Belege` übernimmt deshalb das vollständige Muster (`document_type`-Choice, `related_object_text` + sekundäre optionale Lookups, `required`/`uploaded`, `file_link`), bindet `case_id` aber an `SH0_Substanzfall`. |
-| `Technische_Mindestfelder` | **Nicht einschlägig** | Diese Liste bildet ELSTER-/BZSt2-Kz-Referenzen (amtliche Formular-Kennziffern) ab; die Substanzprüfung hat keinen amtlichen Formularbezug dieser Art, daher kein Analogon nötig. |
+| `Eingang_Fehler` | **Wiederverwendet** (unverändert, keine neue Liste) | Generisches, modul-unabhängiges Fehlerprotokoll (`form_no`, `case_id_raw`, `reason`, `payload`, `status`). Dieses Modul nutzt es weiterhin für fehlgeschlagene Formular-Übernahmen (unbekannte/fehlende `ErfassungID`, Validierungsfehler) — Formular-Nr.-Konvention siehe `sharepoint-forms/README.md`, Abschnitt D. |
+| `4_Beteiligte_und_Quoten` (Gesellschaften-Bestand) | **Nicht wiederverwendet als Stammliste — nur optionaler Cross-Reference-Lookup** | Anhang B2 modelliert `Gesellschaften` als eigenständige, erfassungsübergreifende Stammliste mit genau zwei fachlichen Spalten (Name, Rolle) — bewusst **ohne** Beteiligungsquote, da die Vorgabe Beteiligungsverhältnisse ausdrücklich nicht nochmals abfragt. `4_Beteiligte_und_Quoten` bildet dagegen Beteiligungsquoten **innerhalb eines bestimmten AO-Erfassungsfalls** ab (`case_id`-Lookup auf `0_Fallsteuerung`, Required) — ein anderer Zweck und eine andere Bindung. Eine direkte Wiederverwendung als Lookup-Ziel für die zahlreichen Gesellschaftsbezüge in diesem Modul (nahezu jede der 20 Listen referenziert `Gesellschaften`) würde entweder die AO-Liste zweckentfremden oder deren `case_id`-Pflichtbindung verletzen. Stattdessen: `Gesellschaften.ao_participation_ref` verweist **optional** auf einen bereits vorhandenen `4_Beteiligte_und_Quoten`-Datensatz (Lookup auf `display_label`), damit eine Kanzleiperson beim Anlegen des Gesellschaftsbestands auf bereits erfasste Beteiligungsgesellschaften zurückgreifen kann, ohne deren Quote zu wiederholen. |
+| `3_Personen_und_Vertretung`, `5_Betriebsstaetten` | **Entfallen** (kein Cross-Reference mehr) | Anhang B2 sieht für dieses Redesign keine entsprechenden Querverweise vor (anders als die frühere SH0-SH11-Fassung). `Personen` und `Orte`/`Raeume` sind jetzt eigenständige, von Anhang B2 vollständig spezifizierte Stammdaten-/Fachlisten mit eigenem Fragenbezug; eine Verknüpfung zu den AO-Rollenlisten wäre zusätzliche Komplexität ohne Vorgabe-Grundlage. Bei Bedarf lässt sich ein analoger optionaler Lookup wie `ao_participation_ref` nachträglich ergänzen. |
+| `0_Fallsteuerung`, `8_Unterlagen` | **Weiterhin nicht wiederverwendet** (Begründung unverändert) | `Erfassungen` und `Substanznachweise` ersetzen diese Rolle mit eigenem Fall-/Belegbegriff; `0_Fallsteuerung`s unbedingte AO-spezifische Pflichtfelder (Richtung, Finanzamt usw.) passen weiterhin nicht zu einer Substanzprüfung; `8_Unterlagen.case_id` bleibt ein Required-Lookup auf `0_Fallsteuerung`. |
 
-**Zusammenfassung:** 2 von 7 geprüften Kandidaten werden tatsächlich physisch mitgenutzt (`Eingang_Fehler` vollständig, `4_Beteiligte_und_Quoten` als Lookup-Ziel ohne neue Beteiligungs-Stammdaten); 2 weitere (`3_Personen_und_Vertretung`, `5_Betriebsstaetten`) werden über optionale Cross-Reference-Lookups verknüpft, ohne ihre Fachlisten direkt zu übernehmen; die übrigen Kandidaten sind entweder nicht einschlägig oder existieren im Quellmodell nicht.
+**Zusammenfassung Update 1:** Von den geprüften AO-Listen wird nur `Eingang_Fehler` vollständig mitgenutzt; `4_Beteiligte_und_Quoten` dient als optionales Lookup-Ziel für die Gesellschaften-Stammdatenpflege, ohne dass dessen Quote übernommen wird. Die in Update 0 noch vorgesehenen Cross-Reference-Lookups zu `3_Personen_und_Vertretung` und `5_Betriebsstaetten` entfallen, da Anhang B2 sie nicht vorsieht.
 
-## 5. Leitfragen-Nachweis
+## 5. InterneBewertungen: eingeschränkte Berechtigungen
 
-Leitfrage laut Auftrag: *"Wer macht was, wann, wie häufig, wo, mit welchen Mitteln, für welche Beteiligung und mit welchem Ergebnis?"* — muss **pro Tätigkeit** aus den Daten beantwortbar sein.
+Punkt 2 des Auftrags verlangt für `InterneBewertungen` eine eigene, eingeschränkte Berechtigung (Rechtevererbung brechen oder separate Site). **Umsetzung in diesem Modul:** Rechtevererbung brechen (Option a), dokumentiert wie folgt:
 
-### 5.1 Datenpfad je Tätigkeits-Zeile
+- Das PnP-Skript bricht die Rechtevererbung von `InterneBewertungen` über `List.BreakRoleInheritance($true, $false)` (CSOM), **kopiert dabei zunächst die bisherigen Zuweisungen**, damit der Lauf niemanden sofort aussperrt, und gibt danach eine Warnung aus.
+- **Nach dem Lauf ist zwingend manuell nachzuarbeiten:** eine berechtigte Person muss die automatisch kopierten (zu weiten) Berechtigungen entfernen und nur eine definierte, enge Kanzlei-internen Prüfergruppe (z. B. "Substanzprüfung — interne Auswertung") mit Lese-/Schreibzugriff stehen lassen. Das Skript kann diesen Gruppennamen nicht automatisch bestimmen, da er tenant-/site-spezifisch ist (siehe `sharepoint-forms/README.md`, Abschnitt F).
+- **Alternative Option b (separate Site):** falls die Kanzlei eine vollständige Site-Trennung bevorzugt (z. B. weil interne rechtliche Einordnungen grundsätzlich nicht auf derselben Site wie Mandantendaten liegen sollen), müsste `InterneBewertungen` auf eine zweite, enger berechtigte Site verlagert werden; die Lookup-Spalten `taetigkeit_ref`/`fall_ref` könnten dann nicht als native SharePoint-Lookups auf eine andere Site zeigen (SharePoint-Lookups sind site-lokal) und müssten durch Text-Referenzen (ID + Linkliste) ersetzt werden. Diese Alternative ist **nicht** umgesetzt, da sie das gesamte Modul architektonisch verändern würde; sie ist als offene Frage an Nils vermerkt (Abschnitt 7).
 
-Eine einzelne Zeile in `SH3_Managementtaetigkeiten` beantwortet die Leitfrage direkt bzw. über einen kurzen Join:
+## 6. Belegkonzept (B5)
 
-| Leitfrage-Element | Spalte/Quelle |
-|---|---|
-| **Wer** macht es | `SH3.handled_by_text` (Rohantwort) bzw. `SH3.handled_by_ref` → `SH1_Personen` (Name, Funktion, Arbeitszeitanteil) |
-| **Was** macht die Person | `SH3.activity_type` (Katalogwert) + `SH3.description_concrete` (konkrete Beschreibung) |
-| **Wann** / **wie häufig** | `SH3.frequency` (Häufigkeitsskala); ergänzend `SH1_Personen.tasks_since` (seit wann die Person überhaupt tätig ist) |
-| **Wo** | `SH3.location_text`/`location_ref` → `SH4_Orte` (Anschrift, Raum, Ausstattung) |
-| **Mit welchen Mitteln** | Join über `SH6_Asset_Nutzung` gefiltert auf `user_ref = SH3.handled_by_ref` **und** `used_for_activity = SH3.activity_type` → liefert die konkret genutzten Assets (`SH6.asset_ref` → `SH5_Assets.asset_description`) |
-| **Für welche Beteiligung** | `SH3.participation_text`/`participation_ref` → `4_Beteiligte_und_Quoten` (Name der Beteiligungsgesellschaft, ohne Quote/Struktur) |
-| **Mit welchem Ergebnis** | `SH3.documents_created` (entstandene Unterlagen) + `SH3.final_decision_text`/`final_decision_ref` (wer abschliessend entschieden hat) + verknüpfte Belege in `SH11_Belege` (gefiltert auf `related_activity = SH3.display_label`) |
+Microsoft Forms verlangt für Datei-Upload-Fragen ein Microsoft-Konto der eigenen Organisation (B5-Quelle: Microsoft-Support-Dokumentation, Abruf 27.10.2026) — ein extern zugänglicher Bogen darf sich darauf nicht verlassen. Umsetzung:
 
-### 5.2 Beispielhafte Beantwortung (fiktive Beispielzeile)
-
-Angenommen, `SH3_Managementtaetigkeiten` enthält folgende Zeile für `case_id = SH-2026-0001`:
-
-| Spalte | Beispielwert |
-|---|---|
-| `activity_type` | Controlling |
-| `actually_performed` | Ja |
-| `handled_by_text` | Anna Berger |
-| `description_concrete` | monatliche Soll-Ist-Analyse und Reporting an die Geschäftsleitung der Beteiligungsgesellschaft |
-| `frequency` | monatlich |
-| `participation_text` | Muster-Beteiligungs-GmbH |
-| `location_text` | Geschäftsraum Zürich, Büro 2 |
-| `documents_created` | Reporting-Deck (PDF), Protokoll Soll-Ist-Besprechung |
-| `final_decision_text` | Anna Berger (operative Freigabe) |
-
-Ergänzt durch einen gefilterten Blick in `SH6_Asset_Nutzung` (`user_text = Anna Berger`, `used_for_activity = Controlling`) ergibt sich z. B. "Laptop Controlling-Team" und "Reporting-Software" als genutzte Mittel, und ein gefilterter Blick in `SH11_Belege` (`related_object_text` enthält den Tätigkeitsbezug) liefert das hochgeladene Reporting-Deck als Beleg.
-
-**Antwort auf die Leitfrage für diese Zeile:** *Anna Berger (wer) führt monatlich (wann/wie häufig) im Büro 2 des Geschäftsraums Zürich (wo) mit Laptop und Reporting-Software (Mittel) das Controlling (was) für die Muster-Beteiligungs-GmbH (Beteiligung) durch und erstellt dazu ein Reporting-Deck, das sie selbst operativ freigibt (Ergebnis).*
-
-Dieser Nachweis ist für jede der 22 Tätigkeiten identisch herleitbar, da alle Zeilen in `SH3_Managementtaetigkeiten` dieselbe Unterstruktur tragen (siehe Abschnitt 3.3).
-
-## 6. Belegkonzept (Querschnitt, Punkt 5 des Auftrags)
-
-Zwei sich ergänzende Mechanismen, konsistent mit dem AO-Vorbild:
-
-1. **Direkte Boolean-/Note-Hinweisfelder je Bereich**, wo die Vorgabe wörtlich danach fragt: `SH4_Orte.floor_plan_available`/`floor_plan_link` (Grundriss), `SH4_Orte.photos_available`/`photos_link` (Fotos), sowie `evidence_note`/`documents_created`-Felder in `SH1`, `SH3`, `SH5`, `SH7`-`SH9` für "welche Unterlagen entstehen"-Fragen.
-2. **Zentrale Belege-Liste `SH11_Belege`** (Formular 11) als Datei-Ablage mit Dokumenttyp-Katalog, optionalen Lookups auf Person/Tätigkeit/Ort/Asset und nativer Dateianlage bzw. `file_link` für extern abgelegte Dateien — strukturell identisch zu `8_Unterlagen` (DE/AO), siehe Abschnitt 4 für die Begründung der eigenständigen Liste.
-
-Damit ist jede Beleg-/Nachweisfrage aus dem Auftrag einer Spalte zugeordnet, ohne pro Bereich eine eigene Dokumentbibliothek anzulegen.
+1. **Formulare fragen nur eine Anlagenreferenz/Dateiname als Text** (kein Datei-Upload-Fragetyp in den Mandanten-Formularen).
+2. **Separater Kanzlei-Uploadweg** (z. B. bestehender Kanzlei-Dateitransferdienst oder eine interne SharePoint-Freigabe mit Gastzugriff) nimmt die eigentliche Datei entgegen.
+3. Die Datei landet als Eintrag in der Dokumentbibliothek **`Substanznachweise`** (nativer Anhang/Dokument) bzw. wird über `dateilink` (URL) referenziert, falls sie extern verbleibt.
+4. **`Belegverknuepfungen`** verknüpft einen `Substanznachweise`-Eintrag mit einer beliebigen Zielzeile (`ziel_typ` + `ziel_id`) und der jeweiligen Frage-ID (N02-N04) — ein Dokument kann so mehrere Angaben belegen, ohne mehrfach hochgeladen zu werden.
 
 ## 7. Offene Fragen an Nils
 
-1. **Raumart-Katalog (`SH4_Orte.room_type`):** Die Vorgabe fragt "Art des Raums" ohne vorgegebenen Katalog. Kanzleientscheid in diesem Entwurf: geschlossene Choice-Liste (Büro/Besprechungsraum/Empfang/Lager/Home-Office/Sonstige) statt Freitext, um Auswertbarkeit zu sichern — bitte bestätigen oder anderen Katalog vorgeben.
-2. **Kostenwährung/-betrag (`SH10_Kosten.cost_amount`/`cost_currency`):** Die Vorgabe fragt nur nach "welche Kosten entstehen" als Freitext; für eine auswertbare Kostenübersicht wurden `cost_amount` (Zahl) und `cost_currency` ergänzt. Bitte bestätigen, ob eine strukturierte Betragsangabe gewünscht ist oder ob ausschliesslich die Freitextbeschreibung (`cost_description`) genügen soll.
-3. **Geschäftsvorgänge-Obergrenze:** Die Vorgabe nennt "drei bis fünf" Beispiele; `sequence_number` ist mit `Min 1`/`Max 5` begrenzt. Falls mehr als 5 Geschäftsvorgänge dokumentiert werden sollen (z. B. bei umfangreicheren Mandaten), bitte die Grenze freigeben.
-4. **`SH0_Substanzfall.case_id`-Format:** Es wird (wie bei `0_Fallsteuerung`) kein serverseitiger Nummerngenerator angelegt. Empfehlung in diesem Entwurf: `SH-JJJJ-NNNN`, um Kollisionen mit AO-Fall-IDs (`JJJJ-NNNN`) sicher auszuschliessen. Bitte Namenskonvention bestätigen, insbesondere falls ein gemeinsamer Fall-ID-Raum über beide Module gewünscht ist.
-5. **Formular 8 (Zusammenarbeit mit Beteiligungsgesellschaften) — Granularität:** Die Vorgabe spricht von "je typischer Managementleistung"; `typical_service_type` ist in diesem Entwurf optional an den 22-Tätigkeiten-Katalog angelehnt (Konsistenzfeld). Bitte bestätigen, ob diese Zuordnung sinnvoll ist oder ob "typische Managementleistung" bewusst freier/feingranularer als die 22 Tätigkeiten gefasst werden soll.
-6. **Zugriffsrechte/Vertraulichkeit:** Wie bei der steuerlichen Erfassung enthalten diese Listen potenziell sensible operative Detaildaten (Gehaltsnahe Arbeitszeitangaben, Zugangsberechtigungen, Kostenzuordnungen). Soll dieselbe Zielsite (`steueranwaltskanzlei`) verwendet werden, oder ist eine separate, enger berechtigte Site für die Substanzprüfungsdaten vorzuziehen?
+### Durch Update 1 erledigt (vormals offen)
+
+- **Betrag/Währung:** jetzt durchgehend strukturiert vorgegeben (`Kosten.betrag`/`.waehrung`, `Abrechnungen.betrag`/`.waehrung` usw.) statt als Kanzleientscheid ergänzt — erledigt.
+- **Raumart-Katalog:** R01 gibt den Katalog selbst vor (`Raeume.raumart`, 9 Werte) — erledigt, keine Kanzleientscheidung mehr nötig.
+- **Obergrenze Geschäftsvorgänge:** entfällt; N01 sieht "je tatsächlich ausgeübtem wesentlichem Bereich ein Fall" vor, ohne feste Obergrenze (`Entscheidungsfaelle.n01_bereich` als MultiChoice, beliebig viele referenzierte Fälle über `Belegverknuepfungen`) — erledigt.
+
+### Neu bzw. weiterhin offen
+
+1. **Zugriffsschutz der öffentlichen Formulare:** B4 stellt ausdrücklich fest, dass öffentliche Formularparameter (`ErfassungID`, `ResponseID`) kein Berechtigungsnachweis sind, ohne ein Gegenmittel vorzugeben (anders als das `access_code`-Muster der steuerlichen Erfassung, DE/AO). Es wurde bewusst **kein** `access_code`-Feld ergänzt, da Anhang B2 keines vorsieht. Bitte bestätigen, ob ein Zugangscode-Mechanismus (analog `0_Fallsteuerung.access_code`) ergänzt werden soll, oder ob eine andere Absicherung (z. B. nur Freigabe über personalisierte Links, kein offener "Jeder mit dem Link"-Zugang) ausreicht.
+2. **`InterneBewertungen` — Berechtigungsgruppe:** Das Skript bricht die Rechtevererbung, kann die zulässige Prüfergruppe aber nicht automatisch bestimmen (siehe Abschnitt 5). Bitte Namen/Kennung der vorgesehenen internen Gruppe mitteilen, oder bestätigen, dass dies manuell nach dem ersten Lauf erledigt wird.
+3. **`Vertragsvorgaenge` — "FallID"-Spalte in Anhang B2:** B2 listet für `Vertragsvorgaenge` eine Spalte "FallID", obwohl kein Vorgabetext einen Vertragsvorgang mit einem Entscheidungsfall verknüpft. Dieses Modul interpretiert die Spalte als allgemeinen Erfassungsbezug (`erfassung_ref` → `Erfassungen`), nicht als Fremdschlüssel auf `Entscheidungsfaelle`. Bitte bestätigen oder korrigieren.
+4. **Stammdaten-Reichweite von `Gesellschaften`/`Personen` über mehrere Erfassungen hinweg:** Anhang B2 bindet beide Listen nicht an eine `ErfassungID`. Dieses Modul behandelt sie deshalb als über mehrere Erfassungszeiträume desselben Mandats hinweg wiederverwendbare Stammdaten (mit optionalem `project_id`/`project_id_text`-Feld zur Mehrmandantentrennung auf derselben Site, über B2 hinaus ergänzt). Bitte bestätigen, ob das der Absicht entspricht, oder ob stattdessen je Erfassungszeitraum ein frischer Gesellschafts-/Personenbestand gewünscht ist.
+5. **`N01`-Bereichscodes vs. 22-Tätigkeiten-Katalog (Update 0):** N01 verwendet einen eigenen, kleineren 7-Werte-Katalog (`N01_BEREICH`: Kundengeschäft, Lieferantengeschäft, Personalentscheidung, Finanzierung, betriebliche Steuerung, Budget/Investition, andere Tätigkeit) statt der feingranularen P09-Bereiche/Handlungen. Das ist wörtlich aus der Vorgabe übernommen; bitte bestätigen, dass dieser bewusst gröbere Beispiel-Katalog so bleiben soll.
+6. **Separate Site für `InterneBewertungen` (Alternative b, Abschnitt 5):** falls eine vollständige Site-Trennung gewünscht ist, sind die betroffenen Lookup-Spalten (`taetigkeit_ref`, `fall_ref`) durch Text-Referenzen zu ersetzen (SharePoint-Lookups sind site-lokal) — bitte vor einer Umsetzung entscheiden, da dies das Skript strukturell ändert.

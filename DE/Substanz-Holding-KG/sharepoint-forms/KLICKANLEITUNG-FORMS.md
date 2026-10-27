@@ -1,86 +1,61 @@
-# Klickanleitung: Microsoft-Forms-Formulare manuell anlegen (Substanzprüfung Holding-KG)
+# Klickanleitung: Microsoft-Forms-Formulare manuell anlegen (Update 1 — sieben Blätter)
 
-Diese Anleitung ergänzt [`README.md`](README.md), Abschnitt E, und übernimmt die allgemeine Mechanik unverändert aus [`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md`](../../AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md) (Abschnitte A-D dort). Hier wird sie kurz wiederholt und danach auf Formular 0 (Fallanlage) als vollständig ausformuliertes Muster angewendet; für die Formulare 1-11 gelten dieselben Klickschritte, angewendet auf die Fragenlisten in `README.md` Abschnitte E.1-E.11.
+Diese Anleitung ergänzt [`README.md`](README.md) und übernimmt die allgemeine Klick-Mechanik aus [`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md`](../../AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md) (Abschnitte A-D dort). Die Fragentexte und Auswahlwerte für die sieben Formulare stehen vollständig in [`../Fragenkatalog-Substanzpruefung-Holding-KG.md`](../Fragenkatalog-Substanzpruefung-Holding-KG.md) — **nur die Mandantensicht-Abschnitte dort eintragen, nicht die internen Hinweise.**
 
 ## A. Formular anlegen (einmalig pro Formular)
 
-1. Browser öffnen, `forms.office.com` aufrufen, mit dem Kanzlei-Microsoft-Konto anmelden (dem Konto mit Zugriff auf die Zielsite, siehe `README.md` Abschnitt B).
-2. Oben links **„Neues Formular"** klicken.
-3. Titelfeld: Formulartitel eintragen (z. B. „1 – Personen – Substanzprüfung Holding-KG"). Im Beschreibungsfeld optional einen Hinweistext ergänzen, bei mehrfach ausfüllbaren Formularen zusätzlich: „Bitte für jede(n) [Person/Tätigkeit/...] eine eigene Antwort einreichen (Formular mehrfach ausfüllen)."
-4. Formular wird automatisch fortlaufend gespeichert.
+1. Browser öffnen, `forms.office.com` aufrufen, mit dem Kanzlei-Microsoft-Konto anmelden.
+2. **„Neues Formular"** klicken. Titel z. B. „1 – Personenblatt – Substanzprüfung Holding-KG".
+3. Im Beschreibungsfeld: „Bitte für jede Person eine eigene Antwort einreichen (Formular mehrfach ausfüllen)." (bzw. die passende Wiederholungslogik laut `README.md` Abschnitt E).
+4. Erste Frage immer: „Fall-ID" (Text, Pflicht).
 
-## B. Eine Frage hinzufügen (pro Frage wiederholen)
+## B. Eine Frage hinzufügen
 
-Identische Zuordnungstabelle wie im AO-Modul:
-
-| Spaltentyp aus Datenmodell | Klick in Forms |
+| Interner Antworttyp (Fragenkatalog) | Klick in Forms |
 |---|---|
-| Einzeiler Text | **„Text"** → Schalter „Lange Antwort" **AUS** lassen |
-| Mehrzeiliger Text (Note) | **„Text"** → Schalter **„Lange Antwort"** aktivieren |
-| Auswahl (Choice) | **„Auswahl"** |
-| Ja/Nein (Boolean) | **„Auswahl"** mit genau 2 Optionen „Ja" / „Nein" |
-| Datum (DateOnly) | **„Datum"** |
-| Zahl (Number) | **„Text"** → unten **„Einschränkungen"** → **„Zahl"** wählen |
-| Anhang / Datei-Upload | **„Datei-Upload"** |
+| T (Einzeiler) | **„Text"** → „Lange Antwort" **AUS** |
+| T (mehrzeilig, z. B. Beschreibungen) | **„Text"** → „Lange Antwort" **EIN** |
+| E (Einfachauswahl) | **„Auswahl"** |
+| M (Mehrfachauswahl) | **„Auswahl"** → „Mehrere Antworten zulassen" **EIN** |
+| D (Datum) | **„Datum"** |
+| Z (Zahl) | **„Text"** → „Einschränkungen" → „Zahl" |
+| Anlagenreferenz | **„Text"** (NICHT „Datei-Upload" — siehe `README.md` Abschnitt H) |
 
-Pflicht-/Bedingt-Logik, Auswahloptionen eintragen und Branching: identisch zu `DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md` Abschnitte B und C (Schritte 1:1 übertragbar, hier nicht wiederholt).
+**Wichtig:** Die Auswahloptionen in Forms zeigen die **deutsche Beschriftung** aus dem Fragenkatalog (Mandantensicht), nicht den internen Code (z. B. „täglich", nicht `FREQ_DAILY`). Der Flow übersetzt die Forms-Antwort später in den Code (siehe `README.md` Abschnitt C und G).
 
-## C. Branching (Verzweigung) einrichten
+Pflicht-/Bedingt-Logik: laut `README.md` (Pflichtbedingung aus `feldkatalog.json`) den Schalter „Erforderlich" nur bei `unbedingt` aktivieren.
 
-Identische Mechanik wie im AO-Modul (`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md` Abschnitt C): Branching funktioniert nur auf Auswahl-Fragen als Auslöser und wirkt nur vorwärts. Für die Mehrfachauslöser-Situation in Formular 10 (eine Auswahl-Frage „Kostenkategorie" mit vier sich ausschliessenden Folgefragen) gilt dieselbe Technik wie bei den BZSt2-Auswahlfragen im AO-Modul: pro Antwortoption auf die jeweils passende Folgefrage verzweigen, alle anderen Kategorie-Folgefragen überspringen.
+## C. Branching (Verzweigung)
 
-## D. Freigabe „Jeder mit dem Link kann antworten" aktivieren
+Identische Mechanik wie im AO-Modul. Zusätzlich für dieses Modul:
 
-Identische Schritte wie `DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md` Abschnitt D. Für Formulare mit Datei-Upload (1, 3, 4, 11) gilt derselbe Hinweis zur Anmeldepflicht (siehe `README.md` Abschnitt E.11).
+- **Formular 2 (Tätigkeitsblatt):** Frage „Bereich" (P09-Auswahl, am Anfang wiederholt) löst eine Verzweigung zur passenden **Handlungstabelle** aus (siehe Fragenkatalog, Abschnitt 2). Je Bereich eine eigene Auswahl-Frage mit den zugehörigen Handlungen aus der Tabelle; nur die zum gewählten Bereich passende Frage bleibt sichtbar, alle anderen werden übersprungen.
+- **Formular 3 (Entscheidungs-/Vertrags-/Kontrollblatt):** Einstiegsfrage „Worum geht es?" (Entscheidung / Vertragsverhandlung / Aufsicht-Kontrolle-Schulung) verzweigt zu den E-, V- bzw. K-Fragenblöcken.
+- **Formular 6 (Arbeitsmittelblatt):** A01 „Art des Arbeitsmittels" verzweigt zu A05 (Fahrzeug), A06 (Smartphone/IT) bzw. A07 (Software).
+- **Formular 7 (Kosten- und Belegblatt):** Einstiegsfrage „Kostenangabe oder Beleg/Beispiel nachreichen?" verzweigt zu den C- bzw. N-Fragenblöcken; N05 (Abschlussangabe) erscheint unabhängig davon am Formularende.
 
-## E. Formular 0 — Substanzfall (Muster, vollständig ausformuliert)
+## D. Freigabe „Jeder mit dem Link kann antworten"
 
-Titel: „0 – Substanzfall – Substanzprüfung Holding-KG"
+Identische Schritte wie `DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md` Abschnitt D. **Keine** Datei-Upload-Fragen in diesen sieben Formularen (siehe `README.md` Abschnitt H) — daher ist die Anmeldepflicht-Problematik für dieses Modul durchgängig vermieden.
 
-| # | Frage | Typ (Klick gemäss B) | Optionen (bei Auswahl) | Pflicht/Bedingt | Branching (gemäss C) |
-|---|---|---|---|---|---|
-| 1 | Name der Holding-KG | Text (kurz) | — | Pflicht | — |
-| 2 | Steuernummer/Identifikationsnummer der Holding-KG (falls bekannt) | Text (kurz) | — | Nein | — |
-| 3 | Bezug: Fall der steuerlichen Erfassung (DE/AO, Fall-ID, falls vorhanden) | Text (kurz) | — | Nein | — |
-| 4 | Prüfungszeitraum — von | Datum | — | Nein | — |
-| 5 | Prüfungszeitraum — bis | Datum | — | Nein | — |
-| 6 | Mandatsverantwortliche Person (Kanzlei) | Text (kurz) | — | Nein | — |
-| 7 | Persönliche Bearbeitungsnotiz | Text (lang) | — | Nein | — |
+## E. Reihenfolge und Zeitaufwand
 
-Am Ende des Formulars (Abschnitt → nur Beschreibungstext ohne Frage) folgende Routing-Hinweise als Fliesstext einfügen, mit den Links aus den bereits angelegten Formularen 1-11 (`README.md` Abschnitt E.12):
+1. Formular 1 — Personenblatt (ca. 20 Min. je Person)
+2. Formular 2 — Tätigkeitsblatt (ca. 25 Min. je Tätigkeit — Handlungstabelle sorgfältig nach Bereich verzweigen, 90 Handlungen gesamt)
+3. Formular 5 — Raumblatt (ca. 20 Min. je Raum)
+4. Formular 6 — Arbeitsmittelblatt (ca. 20 Min. je Gegenstand/Software)
+5. Formular 3 — Entscheidungs-/Vertrags-/Kontrollblatt (ca. 20-25 Min. je Fall, abhängig vom gewählten Abschnitt E/V/K)
+6. Formular 4 — Organisationsblatt (ca. 15 Min. je Zeitraum)
+7. Formular 7 — Kosten- und Belegblatt (ca. 20-25 Min., inkl. N05-Abschlussangabe)
 
-> „Vielen Dank. Bitte fahren Sie mit folgenden Formularen fort: [Linkliste]. Formulare 4 (Geschäftsräume), 5/6 (Assets) und 9 (Geschäftsvorgänge) nur ausfüllen, soweit einschlägig; Formular 9 mit drei bis fünf Beispielen."
+Gesamtaufwand grob 2,5-3 Stunden für das Grundgerüst aller sieben Formulare (ohne die je Person/Tätigkeit/Fall wiederholten Ausfüllungen selbst).
 
-**Zugangscode nicht vergessen:** Formular 0 fragt keinen Zugangscode ab — der fallanlegende Flow (bzw. die Kanzleiperson) setzt `access_code` direkt in `SH0_Substanzfall`, sobald das Element angelegt ist, und baut die Links zu F1-F11 mit `case_id` **und** `access_code` auf (`README.md` Abschnitt D).
+**Wichtig beim Eintragen der Handlungstabelle (Formular 2):** Alle 90 Handlungen aus der P09-Handlungstabelle (Fragenkatalog, Abschnitt 2) müssen **zeichengenau** wie dort angegeben eingetragen werden, gruppiert nach den zwölf Bereichen. Reihenfolge innerhalb eines Bereichs wie in der Tabelle.
 
-Danach: Schritte A-D für die Formulare 1-11 identisch wiederholen, mit den Fragenlisten aus `README.md` Abschnitte E.1-E.11. Jedes dieser Formulare beginnt zusätzlich mit „Fall-ID" (Text, Pflicht) und „Zugangscode" (Text, Pflicht) als Fragen 1 und 2 (in der README-Nummerierung bereits so geführt).
+## F. Nach Fertigstellung
 
-## F. Reihenfolge und Zeitaufwand
-
-Empfohlene Bearbeitungsreihenfolge (Formular 0 zuerst als Routing-Ausgangspunkt, danach stammdatennah vor verknüpfungslastig):
-
-1. Formular 0 (7 Fragen, ca. 10 Min.)
-2. Formular 5 — Assets Stammdaten (7 Fragen, ca. 10 Min.)
-3. Formular 4 — Geschäftsräume (21 Fragen inkl. Branching, ca. 20 Min.)
-4. Formular 1 — Personen (18 Fragen, ca. 20 Min.)
-5. Formular 11 — Belege (6 Fragen, ca. 10 Min.)
-6. Formular 6 — Asset-Nutzung (10 Fragen, ca. 15 Min.)
-7. Formular 2 — Entscheidungsprozesse (11 Fragen inkl. Branching, ca. 15 Min.)
-8. Formular 7 — Tagesgeschäft/Präsenz (14 Fragen inkl. Branching, ca. 15 Min.)
-9. Formular 3 — Managementtätigkeiten (13 Fragen inkl. Branching, ca. 20 Min. — wichtigstes Formular, 22-Werte-Auswahlliste sorgfältig eintragen)
-10. Formular 8 — Zusammenarbeit Beteiligungen (14 Fragen, ca. 15 Min.)
-11. Formular 9 — Geschäftsvorgänge (12 Fragen, ca. 15 Min.)
-12. Formular 10 — Kosten (14 Fragen inkl. Mehrfach-Branching, ca. 15 Min.)
-
-Gesamtaufwand grob 3-3,5 Stunden für alle 12 Formulare inkl. Testklicks in der Vorschau (vergleichbar mit dem AO-Modul).
-
-**Wichtig beim Eintragen der Auswahllisten:** Die 22 Managementtätigkeiten (Formulare 3, 6, 8), die 12 Entscheidungsarten (Formular 2) und die 12 Asset-Kategorien (Formular 5) müssen **zeichengenau** wie im Datenmodell (Abschnitt 3) bzw. im Skript (`New-SubstanzHoldingKGListen.ps1`) eingetragen werden — inklusive Umlauten (z. B. „Geschäftsführung / Unterstützung der Geschäftsleitung", „Büromöbel") und ohne „ß" (Schweizer Schreibweise). Abweichende Schreibweisen führen dazu, dass der Flow die Forms-Antwort nicht auf den passenden SharePoint-Choice-Wert abbilden kann.
-
-## G. Nach Fertigstellung
-
-- Jedes Formular per „Antworten" → „..." → „In Excel öffnen" einmal leer testen, um die Spaltenreihenfolge gegen die Ziel-SharePoint-Liste zu prüfen.
-- Testdurchlauf mit Dummy-Fall gemäss `README.md` Abschnitt F.4, vor Versand an echte Mandanten/Mitarbeitende der Holding-KG.
-- Power-Automate-Flows je Formular/Liste-Paar einrichten (`README.md` Abschnitt F.3), inkl. `case_id`/`access_code`-Prüfung und `Eingang_Fehler`-Fallback (`README.md` Abschnitt D1/G).
-- Für Formular 10 zusätzlich die Prüfregel zu den gegenseitig ausschliessenden Kostenkategorie-Feldern umsetzen (`README.md` Abschnitt G, Punkt 3).
-- `display_label`- und `_ref`-Lookup-Auflösung je Liste einrichten (`README.md` Abschnitt F, Punkte 6-7).
+- Jedes Formular per „Antworten" → „..." → „In Excel öffnen" einmal leer testen.
+- Testdurchlauf mit Dummy-Erfassung gemäss `README.md` Abschnitt I.
+- Power-Automate-Flows je Formular/Liste-Paar einrichten (`README.md` Abschnitt G), inkl. Code-Auflösung, `FormID+ResponseID`-Übernahmeschlüssel und `Eingang_Fehler`-Fallback.
+- `InterneBewertungen`-Berechtigungsgruppe manuell nachtragen (Datenmodell, Abschnitt 5).
 - `Eingang_Fehler` (geteilt mit dem AO-Modul) regelmässig sichten.

@@ -41,7 +41,9 @@ _noch keine Dokumente_
 
 ### Substanzprüfung Holding-KG
 
-- [Einheitliches Datenmodell: Substanzprüfung Holding-KG](DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md) — Kern-Datenmodell Person/Tätigkeit/Ort/Asset, Listenkatalog, Abdeckungstabelle, Wiederverwendung AO-Listen, Leitfragen-Nachweis
+- [Einheitliches Datenmodell: Substanzprüfung Holding-KG](DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md) — 20 Listen + Dokumentbibliothek nach Anhang B2, Wiederverwendung AO-Listen, Berechtigungskonzept `InterneBewertungen`
+- [Fragenkatalog](DE/Substanz-Holding-KG/Fragenkatalog-Substanzpruefung-Holding-KG.md) — alle Fragen (P/E/V/K/G/R/A/C/N) mit stabilen IDs, Mandantensicht/interner Hinweis getrennt
+- [Feldkatalog (maschinenlesbar)](DE/Substanz-Holding-KG/feldkatalog/feldkatalog.json) — Formular/Frage-ID/Antworttyp/Auswahlcode/ZielListe/ZielSpalte + Codebooks
 - SharePoint-Umsetzung (Listen, Forms): [`DE/Substanz-Holding-KG/sharepoint-forms/`](DE/Substanz-Holding-KG/sharepoint-forms/README.md)
 - Übersicht: [`DE/Substanz-Holding-KG/README.md`](DE/Substanz-Holding-KG/README.md)
 
