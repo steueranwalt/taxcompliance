@@ -10,7 +10,9 @@ Vertraulichkeit: Dieses Verzeichnis enthält ausschliesslich Schema-/Metadaten. 
 
 ## A. Status
 
-Noch nicht gegen einen Tenant ausgeführt. Dieses Modul nutzt `Eingang_Fehler` (DE/AO) mit und verweist optional auf `4_Beteiligte_und_Quoten` (DE/AO). **Voraussetzung:** `DE/AO/sharepoint-forms/New-SteuerlicheErfassungListen.ps1` muss auf derselben Zielsite bereits gelaufen sein.
+**Erster echter Lauf (Nils, 27.10.2026) gegen `https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei` ist abgebrochen** (siehe Abschnitt C3) — auf dieser Site existiert dadurch vermutlich bereits die Liste `Substanznachweise` mit dem Feld `nachweis_id`, aber kein `erfassung_ref`-Lookup und keine weiteren Listen. Das korrigierte Skript (Angleichungsmodus, idempotent) muss einmal erneut gegen diese Site laufen, um den Stand sauber fortzusetzen; dabei geht nichts verloren, bereits vorhandene Listen/Felder werden übersprungen bzw. angeglichen.
+
+Dieses Modul nutzt `Eingang_Fehler` (DE/AO) mit und verweist optional auf `4_Beteiligte_und_Quoten` (DE/AO). **Voraussetzung:** `DE/AO/sharepoint-forms/New-SteuerlicheErfassungListen.ps1` muss auf derselben Zielsite bereits gelaufen sein.
 
 ## B. Zielsite
 
@@ -78,6 +80,22 @@ Für jede in `-Standort` genannte Liste bricht das Skript zusätzlich die Rechte
 Idempotent: ein späterer Lauf mit zusätzlichem `-Standort`-Wert (z. B. zuerst nur `ZH`, später `ZH,HH`) legt nur die fehlende Liste neu an; bestehende Listen/Berechtigungen bleiben unverändert.
 
 Die übrigen 24 Fachlisten (Mandantendaten) bleiben gemeinsam/ungetrennt — siehe Datenmodell, Abschnitt 9, offener Punkt 1, falls auch dort eine Standorttrennung benötigt werden sollte.
+
+### C3. Echter Testlauf 27.10.2026 — behobener Fehler und bekannte PnP-3.x-Fallen
+
+**Der erste echte Lauf durch Nils** (PnP.PowerShell aktuell, PowerShell 7.6.9, gegen `https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei`) brach beim Anlegen von `Substanznachweise` ab, direkt nach dem ersten Feld (`nachweis_id`), mit dem Fehler "Dieses Nachschlagefeld kann kein Verhalten für Beziehungen erzwingen, weil es nicht indiziert ist" beim `Add-PnPFieldFromXml`-Aufruf für einen `erfassung_ref`-Lookup.
+
+**Ursache:** Das Skript setzte `RelationshipDeleteBehavior="Restrict"` bislang **inline in der FieldXml bei der Erstanlage** eines Lookup-Felds. SharePoint verlangt für `Restrict`/`Cascade` aber einen bereits **indizierten** Lookup — ein neu angelegtes Feld ist zum Anlagezeitpunkt noch nicht indiziert, also schlägt die Anlage fehl. Dasselbe Problem besteht grundsätzlich auch im `DE/AO`-Modul (siehe dort README Abschnitt C2) für die dort bereits bestehenden Lookups; dort war es im Testlauf vom 27.10.2026 nicht aufgefallen, da die betroffenen Felder auf der Testsite bereits aus einem früheren Lauf existierten (nur der Angleichungspfad, nicht die Erstanlage, wurde durchlaufen) — bei diesem Modul war es der allererste Lauf überhaupt.
+
+**Fix (nach dem im `DE/AO`-Modul etablierten Muster, README dort Abschnitt C2):**
+
+1. **Lookup-Erstanlage ohne `RelationshipDeleteBehavior`:** `Add-Field` erzeugt neue Lookup-/LookupMulti-Felder jetzt immer **ohne** dieses Attribut in der initialen `FieldXml`. Das Löschverhalten wird ausschliesslich im zweiten Schritt gesetzt.
+2. **`Set-LookupDeleteBehavior` indiziert zuerst, dann CSOM, dann Verifikation:** Nach jeder Feldanlage/-angleichung ruft `Add-Field` unbedingt `Set-LookupDeleteBehavior` auf (für neue **und** bereits bestehende Lookup-Felder mit `-DeleteBehavior Restrict`/`Cascade` gleichermassen). Diese Funktion indiziert das Feld zuerst über `Set-FieldIndexAndUniqueness`, setzt danach den Enum-Wert `RelationshipDeleteBehaviorType` direkt per CSOM (`$ctx.CastTo[Microsoft.SharePoint.Client.FieldLookup](...)`, `UpdateAndPushChanges($true)` statt `Set-PnPField -Values`, da Letzteres den String nur mit einer **Warnung** statt eines Fehlers ablehnt — siehe Punkt 4), und liest den Wert danach zurück, um ihn mit dem Sollwert zu vergleichen, bevor Erfolg gemeldet wird.
+3. **Idempotente Fortsetzung eines teilweise angelegten Stands:** Da die Prüfung/Indizierung/CSOM-Setzung unbedingt bei **jedem** Lauf für **jeden** betroffenen Lookup erfolgt (nicht nur bei der Erstanlage), wird ein bereits teilweise angelegter Stand (z. B. `Substanznachweise` mit `nachweis_id`, aber ohne den fehlgeschlagenen `erfassung_ref`) beim nächsten Lauf sauber fortgesetzt: `New-ListIfMissing`/`Add-Field` überspringen bereits vorhandene Listen/Felder, legen fehlende neu an, und `Set-LookupDeleteBehavior` gleicht Indizierung und Löschverhalten für **alle** `erfassung_ref`-Lookups an — unabhängig davon, ob sie in diesem oder einem früheren Lauf entstanden sind.
+4. **`-WarningAction Stop` und Zurücklesen vor jeder Erfolgsmeldung (übernommen aus `DE/AO`):** Alle `Set-PnPField`-Aufrufe (`Title`, `Required`, `Indexed`, `EnforceUniqueValues`, `Choices`) laufen jetzt mit `-WarningAction Stop`, damit eine von PnP nur als Warnung gemeldete, in Wahrheit fehlgeschlagene Eigenschaftsänderung (bekannte PnP-3.x-Falle: `"... Value will be ignored."`) zu einem fangbaren Fehler wird, statt vom Skript fälschlich als Erfolg gemeldet zu werden. Jede Erfolgsmeldung erfolgt erst nach einem erneuten `Get-PnPField`-Aufruf und Vergleich mit dem Sollwert.
+5. **`Choices` explizit als `[string[]]`:** Beim Ergänzen von Auswahlwerten auf bereits bestehenden Choice-/MultiChoice-Feldern wird das zusammengeführte Array explizit als `[string[]]` typisiert (zur Laufzeit sonst `System.Object[]`, was `Set-PnPField` ebenfalls nur mit einer Warnung ablehnt); schlägt das dennoch fehl, greift ein CSOM-Fallback über `FieldChoice.Choices`.
+
+Keines dieser Felder im Feldkatalog wurde verändert (weiterhin 367 Spalten, 89 Codebooks) — der Fix betrifft ausschliesslich die Hilfsfunktionen im Skript.
 
 ## D. Fehlerprotokoll (`Eingang_Fehler`, DE/AO, wiederverwendet)
 

@@ -106,16 +106,29 @@ function New-ListIfMissing {
 }
 
 function Set-TitleOptional {
+    <#
+      Testlauf 27.10.2026 (DE/AO, PnP.PowerShell 3.4.1 / PowerShell 7.6.9) ergab:
+      eine Set-PnPField-Eigenschaftsaenderung kann intern nur eine WARNUNG werfen
+      ("Value will be ignored") statt eines Fehlers, und das Skript meldete
+      danach faelschlich Erfolg. Deshalb -WarningAction Stop (macht jede
+      PnP-Warnung zu einem fangbaren Fehler) UND ein Rueckgelesen-Vergleich vor
+      jeder Erfolgsmeldung. Gleiches Muster wie DE/AO/sharepoint-forms/
+      New-SteuerlicheErfassungListen.ps1 (siehe README dort, Abschnitt C2).
+    #>
     param([string]$List)
     try {
         $titleField = Get-PnPField -List $List -Identity "Title" -ErrorAction Stop
         if ($titleField.Required) {
-            Set-PnPField -List $List -Identity "Title" -Values @{ Required = $false } | Out-Null
-            Write-Host "  'Title' auf optional gesetzt: $List"
+            Set-PnPField -List $List -Identity "Title" -Values @{ Required = $false } -WarningAction Stop | Out-Null
+            $verify = Get-PnPField -List $List -Identity "Title" -ErrorAction Stop
+            if ($verify.Required) {
+                throw "Rueckgelesen ist 'Title' weiterhin Pflicht (Required=$($verify.Required))."
+            }
+            Write-Host "  'Title' auf optional gesetzt und verifiziert: $List"
         }
     }
     catch {
-        Write-Warning "  Konnte 'Title' in '$List' nicht auf optional pruefen/setzen: $_"
+        Write-Warning "  Konnte 'Title' in '$List' nicht auf optional setzen/verifizieren: $_"
     }
 }
 
@@ -125,6 +138,24 @@ function Get-XmlEscaped {
 }
 
 function Set-FieldIndexAndUniqueness {
+    <#
+      EnforceUniqueValues verlangt auf SharePoint-Seite einen indizierten Lookup
+      (Referenz: "Hinzufuegen" schlaegt sonst fehl); Restrict/Cascade-Loeschver-
+      halten auf Lookup-Feldern verlangt ebenfalls einen indizierten Lookup
+      (siehe Set-LookupDeleteBehavior, die diese Funktion deshalb immer zuerst
+      aufruft). Falls das Setzen von EnforceUniqueValues fehlschlaegt (z. B. weil
+      bei einem frueheren, nicht-idempotenten Lauf bereits doppelte Werte
+      existieren), wird dies nur als Warnung ausgegeben, damit der Rest des
+      Skripts weiterlaeuft.
+
+      Testlauf 27.10.2026 (DE/AO, PnP.PowerShell 3.4.1 / PowerShell 7.6.9) ergab:
+      eine Set-PnPField-Eigenschaftsaenderung kann intern nur eine WARNUNG werfen
+      ("Value will be ignored") statt eines Fehlers, und das Skript meldete
+      danach faelschlich Erfolg. Deshalb jetzt -WarningAction Stop (macht jede
+      PnP-Warnung zu einem fangbaren Fehler) UND ein Rueckgelesen-Vergleich vor
+      jeder Erfolgsmeldung. Gleiches Muster wie DE/AO/sharepoint-forms/
+      New-SteuerlicheErfassungListen.ps1 (siehe README dort, Abschnitt C2).
+    #>
     param(
         [Parameter(Mandatory = $true)][string]$List,
         [Parameter(Mandatory = $true)][string]$InternalName,
@@ -133,23 +164,68 @@ function Set-FieldIndexAndUniqueness {
     try {
         $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
         if (-not $field.Indexed) {
-            Set-PnPField -List $List -Identity $InternalName -Values @{ Indexed = $true } | Out-Null
-            Write-Host "  Feld indiziert: $List / $InternalName"
+            Set-PnPField -List $List -Identity $InternalName -Values @{ Indexed = $true } -WarningAction Stop | Out-Null
+            $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+            if (-not $field.Indexed) {
+                throw "Rueckgelesen ist das Feld weiterhin nicht indiziert (Indexed=$($field.Indexed))."
+            }
+            Write-Host "  Feld indiziert und verifiziert: $List / $InternalName"
         }
         if ($EnforceUniqueValues) {
             $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
             if (-not $field.EnforceUniqueValues) {
-                Set-PnPField -List $List -Identity $InternalName -Values @{ EnforceUniqueValues = $true } | Out-Null
-                Write-Host "  Feld auf eindeutige Werte gesetzt: $List / $InternalName"
+                Set-PnPField -List $List -Identity $InternalName -Values @{ EnforceUniqueValues = $true } -WarningAction Stop | Out-Null
+                $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+                if (-not $field.EnforceUniqueValues) {
+                    throw "Rueckgelesen hat das Feld weiterhin keine eindeutigen Werte (EnforceUniqueValues=$($field.EnforceUniqueValues))."
+                }
+                Write-Host "  Feld auf eindeutige Werte gesetzt und verifiziert: $List / $InternalName"
             }
         }
     }
     catch {
-        Write-Warning "  Konnte Index/Eindeutigkeit fuer $List/$InternalName nicht setzen (ggf. vorhandene Duplikate zuerst bereinigen): $_"
+        Write-Warning "  Konnte Index/Eindeutigkeit fuer $List/$InternalName nicht setzen/verifizieren (ggf. vorhandene Duplikate zuerst bereinigen): $_"
     }
 }
 
 function Set-LookupDeleteBehavior {
+    <#
+        Wird u. a. fuer erfassung_ref-Lookups auf allen Fachlisten verwendet
+        (RelationshipDeleteBehavior="Restrict"): ein Erfassungs-Datensatz kann
+        nicht geloescht werden, solange noch Folgedatensaetze referenzieren.
+
+        Testlauf-Fehler 27.10.2026 (PnP.PowerShell 3.4.1 / PowerShell 7.6.9,
+        Nils, gegen steueranwaltskanzlei): "Dieses Nachschlagefeld kann kein
+        Verhalten fuer Beziehungen erzwingen, weil es nicht indiziert ist" beim
+        Add-PnPFieldFromXml-Aufruf fuer ein NEUES Lookup-Feld, dessen FieldXml
+        das RelationshipDeleteBehavior-Attribut bereits inline enthielt, obwohl
+        das Feld zu diesem Zeitpunkt noch nicht indiziert war. Behoben nach dem
+        Muster aus DE/AO/sharepoint-forms/New-SteuerlicheErfassungListen.ps1
+        (README dort, Abschnitt C2, Fix aus Testlauf 27.10.2026 fuer
+        RelationshipDeleteBehavior):
+          1. Add-Field erzeugt neue Lookup-/LookupMulti-Felder IMMER OHNE
+             RelationshipDeleteBehavior-Attribut in der initialen FieldXml
+             (siehe dort) -- das Loeschverhalten wird ausschliesslich hier,
+             NACH der Feldanlage, gesetzt.
+          2. Set-PnPField kann den String "Restrict"/"Cascade" ausserdem NICHT
+             zuverlaessig in den Enum-Typ
+             Microsoft.SharePoint.Client.RelationshipDeleteBehaviorType
+             konvertieren - es kommt nur eine WARNUNG ("Value will be
+             ignored."), waehrend das Skript faelschlich Erfolg melden wuerde.
+             Deshalb wird der Enum-Wert direkt per CSOM gesetzt (FieldLookup-
+             Objekt via ClientContext.CastTo), nicht ueber Set-PnPFields
+             generische -Values-Eigenschaftszuweisung.
+          3. Restrict/Cascade verlangen ausserdem einen INDIZIERTEN Lookup;
+             deshalb wird hier IMMER zuerst Set-FieldIndexAndUniqueness
+             aufgerufen, unabhaengig davon, ob der Add-Field-Aufruf -Indexed
+             gesetzt hat oder das Feld neu oder bereits vorhanden ist (deckt
+             auch einen bereits teilweise angelegten, nicht-indizierten Stand
+             aus einem frueheren, fehlgeschlagenen Lauf idempotent ab).
+        Nach dem Setzen wird der Wert in jedem Fall zurueckgelesen und mit dem
+        Sollwert verglichen, bevor Erfolg gemeldet wird. Gilt fuer neue und
+        bestehende Felder gleichermassen, da diese Funktion nach jeder
+        Feldanlage/-angleichung unbedingt aufgerufen wird (siehe Add-Field).
+    #>
     param(
         [Parameter(Mandatory = $true)][string]$List,
         [Parameter(Mandatory = $true)][string]$InternalName,
@@ -157,11 +233,42 @@ function Set-LookupDeleteBehavior {
     )
     if ($DeleteBehavior -eq "None") { return }
     try {
-        Set-PnPField -List $List -Identity $InternalName -Values @{ RelationshipDeleteBehavior = $DeleteBehavior } | Out-Null
-        Write-Host "  Loeschverhalten gesetzt ($DeleteBehavior): $List / $InternalName"
+        # Restrict/Cascade verlangen einen indizierten Lookup (siehe oben).
+        Set-FieldIndexAndUniqueness -List $List -InternalName $InternalName
+
+        $ctx = Get-PnPContext
+        $targetEnum = [Microsoft.SharePoint.Client.RelationshipDeleteBehaviorType]$DeleteBehavior
+
+        $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+        $lookupField = $ctx.CastTo[Microsoft.SharePoint.Client.FieldLookup]($field)
+        $ctx.Load($lookupField)
+        Invoke-PnPQuery
+
+        if (-not ($lookupField.Indexed -and $lookupField.RelationshipDeleteBehavior -eq $targetEnum)) {
+            $lookupField.RelationshipDeleteBehavior = $targetEnum
+            # UpdateAndPushChanges($true) statt Update(): noetig, damit SharePoint
+            # die Aenderung auch bei einem bereits bestehenden (ggf. befuellten)
+            # Lookup-Feld auf die abhaengigen Listenbeziehungen anwendet.
+            $lookupField.UpdateAndPushChanges($true)
+            Invoke-PnPQuery
+        }
+
+        # Zurueck lesen und verifizieren, bevor Erfolg gemeldet wird - NIE blind
+        # "gesetzt" melden, nur weil Set-PnPField/CSOM keinen Fehler geworfen hat.
+        $verifyField = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+        $verifyLookup = $ctx.CastTo[Microsoft.SharePoint.Client.FieldLookup]($verifyField)
+        $ctx.Load($verifyLookup)
+        Invoke-PnPQuery
+        if (-not $verifyLookup.Indexed) {
+            throw "Rueckgelesen ist der Lookup weiterhin nicht indiziert (Indexed=$($verifyLookup.Indexed)); Restrict/Cascade greift ohne Index nicht."
+        }
+        if ($verifyLookup.RelationshipDeleteBehavior -ne $targetEnum) {
+            throw "Rueckgelesenes Loeschverhalten '$($verifyLookup.RelationshipDeleteBehavior)' entspricht nicht dem Sollwert '$DeleteBehavior'."
+        }
+        Write-Host "  Loeschverhalten gesetzt und verifiziert ($DeleteBehavior): $List / $InternalName"
     }
     catch {
-        Write-Warning "  Konnte Loeschverhalten fuer $List/$InternalName nicht auf '$DeleteBehavior' setzen: $_"
+        Write-Warning "  Konnte Loeschverhalten fuer $List/$InternalName nicht auf '$DeleteBehavior' setzen/verifizieren: $_"
     }
 }
 
@@ -203,9 +310,15 @@ function Add-Field {
                 Add-PnPFieldFromXml -List $List -FieldXml $fieldXml | Out-Null
             }
             "Lookup" {
+                # WICHTIG: RelationshipDeleteBehavior wird hier bewusst NICHT inline
+                # gesetzt (Testlauf-Fehler 27.10.2026: "Dieses Nachschlagefeld kann
+                # kein Verhalten fuer Beziehungen erzwingen, weil es nicht indiziert
+                # ist" - ein neues Feld ist zum Anlagezeitpunkt noch nicht indiziert).
+                # Das Loeschverhalten wird stattdessen unbedingt NACH der Anlage ueber
+                # Set-LookupDeleteBehavior gesetzt (siehe Aufruf am Ende dieser
+                # Funktion), die zuerst indiziert und dann per CSOM setzt/verifiziert.
                 $targetList = Get-PnPList -Identity $LookupList
-                $deleteBehaviorAttr = if ($DeleteBehavior -ne "None") { " RelationshipDeleteBehavior='$DeleteBehavior'" } else { "" }
-                $fieldXml = "<Field Type='Lookup' Name='$InternalName' StaticName='$InternalName' DisplayName='$escapedDisplayName' Required='$requiredAttr' List='{$($targetList.Id)}' ShowField='$LookupField'$deleteBehaviorAttr />"
+                $fieldXml = "<Field Type='Lookup' Name='$InternalName' StaticName='$InternalName' DisplayName='$escapedDisplayName' Required='$requiredAttr' List='{$($targetList.Id)}' ShowField='$LookupField' />"
                 Add-PnPFieldFromXml -List $List -FieldXml $fieldXml | Out-Null
             }
             "LookupMulti" {
@@ -266,8 +379,12 @@ function Add-Field {
 
         if ($existing.Title -ne $DisplayName) {
             try {
-                Set-PnPField -List $List -Identity $InternalName -Values @{ Title = $DisplayName } | Out-Null
-                Write-Host "    Anzeigename angeglichen -> '$DisplayName'"
+                Set-PnPField -List $List -Identity $InternalName -Values @{ Title = $DisplayName } -WarningAction Stop | Out-Null
+                $verify = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+                if ($verify.Title -ne $DisplayName) {
+                    throw "Rueckgelesener Anzeigename '$($verify.Title)' entspricht nicht dem Sollwert '$DisplayName'."
+                }
+                Write-Host "    Anzeigename angeglichen und verifiziert -> '$DisplayName'"
             }
             catch {
                 Write-Warning "    Konnte Anzeigename fuer $List/$InternalName nicht angleichen: $_"
@@ -276,8 +393,12 @@ function Add-Field {
 
         if ($Type -ne "Lookup" -and $Type -ne "LookupMulti" -and [bool]$existing.Required -ne [bool]$Required) {
             try {
-                Set-PnPField -List $List -Identity $InternalName -Values @{ Required = [bool]$Required } | Out-Null
-                Write-Host "    Pflichtstatus angeglichen -> Required=$Required"
+                Set-PnPField -List $List -Identity $InternalName -Values @{ Required = [bool]$Required } -WarningAction Stop | Out-Null
+                $verify = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+                if ([bool]$verify.Required -ne [bool]$Required) {
+                    throw "Rueckgelesener Pflichtstatus '$($verify.Required)' entspricht nicht dem Sollwert '$Required'."
+                }
+                Write-Host "    Pflichtstatus angeglichen und verifiziert -> Required=$Required"
             }
             catch {
                 Write-Warning "    Konnte Pflichtstatus fuer $List/$InternalName nicht angleichen: $_"
@@ -288,10 +409,36 @@ function Add-Field {
             $existingChoices = @($existing.Choices)
             $missingChoices = $Choices | Where-Object { $existingChoices -notcontains $_ }
             if ($missingChoices) {
+                # Testlauf 27.10.2026 ergab: Set-PnPField konnte "Choices" bei
+                # bestehenden Feldern nicht setzen ("Object of type
+                # 'System.Object[]' cannot be converted to type
+                # 'System.String[]'. Value will be ignored."), waehrend das
+                # Skript trotzdem "ergaenzt" meldete. Fix: das Array explizit
+                # als [string[]] typisieren (nicht als generisches Object[]),
+                # -WarningAction Stop, und bei erneutem Fehlschlag per CSOM
+                # (FieldChoice.Choices) direkt setzen. Immer zurueck lesen und
+                # verifizieren, bevor Erfolg gemeldet wird.
+                [string[]]$unionChoices = @($existingChoices) + @($missingChoices)
                 try {
-                    $unionChoices = @($existingChoices) + @($missingChoices)
-                    Set-PnPField -List $List -Identity $InternalName -Values @{ Choices = $unionChoices } | Out-Null
-                    Write-Host "    Auswahlwerte ergaenzt (nichts entfernt): $($missingChoices -join ', ')"
+                    try {
+                        Set-PnPField -List $List -Identity $InternalName -Values @{ Choices = $unionChoices } -WarningAction Stop | Out-Null
+                    }
+                    catch {
+                        Write-Host "    Set-PnPField konnte Auswahlwerte nicht setzen, versuche CSOM-Fallback: $_"
+                        $ctx = Get-PnPContext
+                        $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+                        $choiceField = $ctx.CastTo[Microsoft.SharePoint.Client.FieldChoice]($field)
+                        $choiceField.Choices = $unionChoices
+                        $choiceField.Update()
+                        Invoke-PnPQuery
+                    }
+                    $verify = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+                    $verifyChoices = @($verify.Choices)
+                    $stillMissing = $Choices | Where-Object { $verifyChoices -notcontains $_ }
+                    if ($stillMissing) {
+                        throw "Nach dem Schreiben fehlen weiterhin Auswahlwerte: $($stillMissing -join ', ')."
+                    }
+                    Write-Host "    Auswahlwerte ergaenzt und verifiziert (nichts entfernt): $($missingChoices -join ', ')"
                 }
                 catch {
                     Write-Warning "    Konnte Auswahlwerte fuer $List/$InternalName nicht ergaenzen: $_"
