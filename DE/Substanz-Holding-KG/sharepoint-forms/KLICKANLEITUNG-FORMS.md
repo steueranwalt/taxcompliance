@@ -1,61 +1,58 @@
-# Klickanleitung: Microsoft-Forms-Formulare manuell anlegen (Update 1 — sieben Blätter)
+# Klickanleitung: Microsoft-Forms-Formulare manuell anlegen (Version 3, Update 2 — fünf Blätter)
 
-Diese Anleitung ergänzt [`README.md`](README.md) und übernimmt die allgemeine Klick-Mechanik aus [`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md`](../../AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md) (Abschnitte A-D dort). Die Fragentexte und Auswahlwerte für die sieben Formulare stehen vollständig in [`../Fragenkatalog-Substanzpruefung-Holding-KG.md`](../Fragenkatalog-Substanzpruefung-Holding-KG.md) — **nur die Mandantensicht-Abschnitte dort eintragen, nicht die internen Hinweise.**
+Diese Anleitung ergänzt [`README.md`](README.md) und übernimmt die allgemeine Klick-Mechanik aus [`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md`](../../AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md) (Abschnitte A-D dort). Die Fragentexte und Auswahlwerte stehen vollständig in [`../Fragenkatalog-Substanzpruefung-Holding-KG.md`](../Fragenkatalog-Substanzpruefung-Holding-KG.md) — **nur die Mandantensicht-Abschnitte eintragen, nicht die internen Hinweise.**
 
 ## A. Formular anlegen (einmalig pro Formular)
 
 1. Browser öffnen, `forms.office.com` aufrufen, mit dem Kanzlei-Microsoft-Konto anmelden.
-2. **„Neues Formular"** klicken. Titel z. B. „1 – Personenblatt – Substanzprüfung Holding-KG".
-3. Im Beschreibungsfeld: „Bitte für jede Person eine eigene Antwort einreichen (Formular mehrfach ausfüllen)." (bzw. die passende Wiederholungslogik laut `README.md` Abschnitt E).
-4. Erste Frage immer: „Fall-ID" (Text, Pflicht).
+2. **„Neues Formular"** klicken. Titel z. B. „1 – Personenblatt – Substanzprüfung Holding-KG (V3)".
+3. Erste Frage immer: „Fall-ID" (Text, Pflicht).
 
 ## B. Eine Frage hinzufügen
 
-| Interner Antworttyp (Fragenkatalog) | Klick in Forms |
+| Interner Antworttyp | Klick in Forms |
 |---|---|
 | T (Einzeiler) | **„Text"** → „Lange Antwort" **AUS** |
-| T (mehrzeilig, z. B. Beschreibungen) | **„Text"** → „Lange Antwort" **EIN** |
+| T (mehrzeilig) | **„Text"** → „Lange Antwort" **EIN** |
 | E (Einfachauswahl) | **„Auswahl"** |
 | M (Mehrfachauswahl) | **„Auswahl"** → „Mehrere Antworten zulassen" **EIN** |
 | D (Datum) | **„Datum"** |
 | Z (Zahl) | **„Text"** → „Einschränkungen" → „Zahl" |
 | Anlagenreferenz | **„Text"** (NICHT „Datei-Upload" — siehe `README.md` Abschnitt H) |
 
-**Wichtig:** Die Auswahloptionen in Forms zeigen die **deutsche Beschriftung** aus dem Fragenkatalog (Mandantensicht), nicht den internen Code (z. B. „täglich", nicht `FREQ_DAILY`). Der Flow übersetzt die Forms-Antwort später in den Code (siehe `README.md` Abschnitt C und G).
+**Wichtig — H-Handlungen (Formular 1, Abschnitt 1.2):** Jede der 45 Handlungen wird als **eigene Auswahl-Frage** mit genau drei Optionen angelegt: „ausgeführt" / „nicht ausgeführt" / „nicht bekannt" — **nicht** als eine grosse Mehrfachauswahl-Liste. Je gewähltem Bereich aus S07 nur die zugehörigen 4-6 Handlungs-Einzelfragen einblenden (Verzweigung, siehe Abschnitt C).
 
-Pflicht-/Bedingt-Logik: laut `README.md` (Pflichtbedingung aus `feldkatalog.json`) den Schalter „Erforderlich" nur bei `unbedingt` aktivieren.
+**Wichtig — R26 (Formular 4):** Sechs **einzelne** Ja/Nein/nicht-bekannt-Fragen (eigener Zugang, Zugang ohne Anmeldung, fest zugewiesene Arbeitsplätze, eigene Ablage, abschliessbare Aufbewahrung, nur nach Buchung) — nicht als eine MultiChoice-Liste.
+
+Die Auswahloptionen in Forms zeigen die **deutsche Beschriftung** (Mandantensicht); der Flow übersetzt später in den stabilen Code (siehe `README.md` Abschnitt C/G).
 
 ## C. Branching (Verzweigung)
 
 Identische Mechanik wie im AO-Modul. Zusätzlich für dieses Modul:
 
-- **Formular 2 (Tätigkeitsblatt):** Frage „Bereich" (P09-Auswahl, am Anfang wiederholt) löst eine Verzweigung zur passenden **Handlungstabelle** aus (siehe Fragenkatalog, Abschnitt 2). Je Bereich eine eigene Auswahl-Frage mit den zugehörigen Handlungen aus der Tabelle; nur die zum gewählten Bereich passende Frage bleibt sichtbar, alle anderen werden übersprungen.
-- **Formular 3 (Entscheidungs-/Vertrags-/Kontrollblatt):** Einstiegsfrage „Worum geht es?" (Entscheidung / Vertragsverhandlung / Aufsicht-Kontrolle-Schulung) verzweigt zu den E-, V- bzw. K-Fragenblöcken.
-- **Formular 6 (Arbeitsmittelblatt):** A01 „Art des Arbeitsmittels" verzweigt zu A05 (Fahrzeug), A06 (Smartphone/IT) bzw. A07 (Software).
-- **Formular 7 (Kosten- und Belegblatt):** Einstiegsfrage „Kostenangabe oder Beleg/Beispiel nachreichen?" verzweigt zu den C- bzw. N-Fragenblöcken; N05 (Abschlussangabe) erscheint unabhängig davon am Formularende.
+- **Formular 1:** S07 (Bereichsauswahl) verzweigt zu den 4-8 Handlungs-Einzelfragen je gewähltem Bereich (Abschnitt 1.2). S05 ≠ "ja"/"bereits beendet" überspringt S06.
+- **Formular 2:** D01 ≠ "keine" schaltet D02-D10 frei; V10 ≠ "keine" schaltet V11-V18 frei; K10 ≠ "keine Kontrollaufgaben" schaltet K11 frei; `bereich_code` = eigene Verwaltung/Beteiligungen schaltet G10-G15 frei.
+- **Formular 3:** O01 = Homeoffice schaltet O07/O08 frei; O03 ≠ "nie" schaltet O04/O05 frei.
+- **Formular 4:** R20 (Gateway) blendet nur die zu den gewählten Auskunftsbereichen passenden Unterabschnitte (5.1-5.3) ein; A20 steuert A26-A32 wie in `README.md` Abschnitt F beschrieben; C24 = ja/noch offen schaltet C25-C27 frei.
 
 ## D. Freigabe „Jeder mit dem Link kann antworten"
 
-Identische Schritte wie `DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md` Abschnitt D. **Keine** Datei-Upload-Fragen in diesen sieben Formularen (siehe `README.md` Abschnitt H) — daher ist die Anmeldepflicht-Problematik für dieses Modul durchgängig vermieden.
+Identisch zu `DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md` Abschnitt D. Keine Datei-Upload-Fragen in diesen fünf Formularen.
 
 ## E. Reihenfolge und Zeitaufwand
 
-1. Formular 1 — Personenblatt (ca. 20 Min. je Person)
-2. Formular 2 — Tätigkeitsblatt (ca. 25 Min. je Tätigkeit — Handlungstabelle sorgfältig nach Bereich verzweigen, 90 Handlungen gesamt)
-3. Formular 5 — Raumblatt (ca. 20 Min. je Raum)
-4. Formular 6 — Arbeitsmittelblatt (ca. 20 Min. je Gegenstand/Software)
-5. Formular 3 — Entscheidungs-/Vertrags-/Kontrollblatt (ca. 20-25 Min. je Fall, abhängig vom gewählten Abschnitt E/V/K)
-6. Formular 4 — Organisationsblatt (ca. 15 Min. je Zeitraum)
-7. Formular 7 — Kosten- und Belegblatt (ca. 20-25 Min., inkl. N05-Abschlussangabe)
+1. Formular 1 — Personenblatt (ca. 20-30 Min. je Person, inkl. 45 Handlungs-Einzelfragen über Verzweigung)
+2. Formular 2 — Aufgabenblatt (ca. 20-25 Min. je Aufgabe, abhängig von D/V/K/G-Verzweigungen)
+3. Formular 3 — Arbeitsorganisation, Zeit und Ort (ca. 20 Min. je Person)
+4. Formular 4 — Ressourcen und Kosten (ca. 15-20 Min. je Raum/Mittel/Kostenposition, rollenbezogen)
+5. Formular 5 — Nachweise und Abschluss (ca. 15 Min.)
 
-Gesamtaufwand grob 2,5-3 Stunden für das Grundgerüst aller sieben Formulare (ohne die je Person/Tätigkeit/Fall wiederholten Ausfüllungen selbst).
-
-**Wichtig beim Eintragen der Handlungstabelle (Formular 2):** Alle 90 Handlungen aus der P09-Handlungstabelle (Fragenkatalog, Abschnitt 2) müssen **zeichengenau** wie dort angegeben eingetragen werden, gruppiert nach den zwölf Bereichen. Reihenfolge innerhalb eines Bereichs wie in der Tabelle.
+Gesamtaufwand grob 2-2,5 Stunden für das Grundgerüst aller fünf Formulare (ohne die je Person/Aufgabe wiederholten Ausfüllungen selbst).
 
 ## F. Nach Fertigstellung
 
 - Jedes Formular per „Antworten" → „..." → „In Excel öffnen" einmal leer testen.
 - Testdurchlauf mit Dummy-Erfassung gemäss `README.md` Abschnitt I.
 - Power-Automate-Flows je Formular/Liste-Paar einrichten (`README.md` Abschnitt G), inkl. Code-Auflösung, `FormID+ResponseID`-Übernahmeschlüssel und `Eingang_Fehler`-Fallback.
-- `InterneBewertungen`-Berechtigungsgruppe manuell nachtragen (Datenmodell, Abschnitt 5).
+- `InterneBewertungen`-Berechtigungsgruppe manuell nachtragen (Datenmodell, Abschnitt 6).
 - `Eingang_Fehler` (geteilt mit dem AO-Modul) regelmässig sichten.

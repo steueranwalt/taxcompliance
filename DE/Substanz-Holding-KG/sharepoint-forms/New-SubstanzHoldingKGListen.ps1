@@ -1,21 +1,25 @@
 ﻿#Requires -Modules PnP.PowerShell
 <#
     .SYNOPSIS
-    Legt die SharePoint-Listenfamilie "Substanzpruefung Holding-KG" (20 Listen
-    Erfassungen bis InterneBewertungen plus Dokumentbibliothek
-    Substanznachweise) nach Anhang B2 des Erfassungsbogen-Entwurfs
-    (Nils Obenhaus, 27.10.2026, Projekt 22032-2) an bzw. gleicht eine
-    bestehende Installation an den aktuellen Feldkatalog an.
+    Legt die SharePoint-Listenfamilie "Substanzpruefung Holding-KG" nach
+    VERSION 3 des Erfassungsbogen-Entwurfs (Nils Obenhaus, 27.10.2026,
+    Projekt 22032-2, Anhang B1-B4) an bzw. gleicht eine bestehende
+    Installation an den aktuellen Feldkatalog an. Gegenstand ist das
+    Tagesgeschaeft (wiederkehrende Aufgabe je Person/Gesellschaft/Zeitraum),
+    NICHT der Einzelvorgang.
 
-    ERSETZT die fruehere SH0-SH11-Modellierung (Update 1 von PR #18) vollstaendig.
-    Nutzt zwei Listen der steuerlichen Erfassung (DE/AO) mit
-    (Eingang_Fehler, 4_Beteiligte_und_Quoten) und referenziert zwei weitere
-    optional (3_Personen_und_Vertretung, 5_Betriebsstaetten) -- siehe
-    DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md,
-    Abschnitt "Wiederverwendung".
+    ERSETZT Version 2 (Update 1 von PR #18) vollstaendig: die dortigen
+    Vorgangslisten Taetigkeiten, Entscheidungsfaelle, Vertragsvorgaenge und
+    Fallbeteiligungen sowie die FallID-Frage entfallen ersatzlos.
+    Siehe DE/Substanz-Holding-KG/Einheitliches-Datenmodell-Substanzpruefung-Holding-KG.md,
+    Abschnitt "Aenderungsprotokoll V2 -> V3".
+
+    Nutzt eine Liste der steuerlichen Erfassung (DE/AO) mit (Eingang_Fehler)
+    und referenziert eine weitere optional (4_Beteiligte_und_Quoten) --
+    siehe Datenmodell, Abschnitt "Wiederverwendung".
 
     Feldkatalog (B3, maschinenlesbar, einzige Quelle fuer dieses Skript):
-      DE/Substanz-Holding-KG/feldkatalog/feldkatalog.json
+      DE/Substanz-Holding-KG/feldkatalog/feldkatalog.json (SchemaVersion 3)
 
     .DESCRIPTION
     Uebernimmt Parameter-, Verbindungs- und Idempotenzlogik unveraendert vom
@@ -25,13 +29,13 @@
         Pflichtstatus, fehlende Auswahlwerte werden ERGAENZT, nie entfernt).
       - Es werden NIE Spalten, Listen oder Auswahlwerte geloescht.
       - Choice/MultiChoice-Spalten speichern STABILE CODES (z. B. FREQ_DAILY)
-        als Wert, nicht die deutsche Beschriftung. Das Mapping Code -> Text
-        steht im Feldkatalog (codebooks) und wird vom Power-Automate-Flow
-        verwendet, um die in Forms gewaehlte deutsche Bezeichnung vor der
-        Elementanlage in den stabilen Code zu uebersetzen (B3: "Mandant sieht
-        deutsche Beschriftungen"; "unbekannt nie als 0" -- deshalb UNBEKANNT-
-        Codes statt Boolean, wo die Vorgabe eine dritte Antwortmoeglichkeit
-        neben Ja/Nein vorsieht).
+        als Wert, nicht die deutsche Beschriftung; Mapping im Feldkatalog.
+      - "Nicht bekannt", "nicht zutreffend" und Null sind getrennte Zustaende
+        (B4) -- deshalb Choice mit UNBEKANNT-Code statt Boolean, wo die
+        Vorgabe neben Ja/Nein eine dritte Antwortmoeglichkeit vorsieht.
+      - H-Handlungen (45 Einzelhandlungen) werden in Forms als Einzelfragen
+        ausgefuehrt/nicht ausgefuehrt/nicht bekannt gestellt (B3), im Skript
+        kompakt als drei MultiChoice-Spalten auf Personeneinsaetze abgelegt.
       - InterneBewertungen erhaelt eigene, eingeschraenkte Berechtigungen
         (Rechtevererbung gebrochen); eine berechtigte Person muss danach
         manuell die zulaessige Pruefergruppe eintragen (siehe README.md).
@@ -287,16 +291,6 @@ function Add-Field {
 }
 
 function Set-RestrictedPermission {
-    <#
-      Bricht die Rechtevererbung einer Liste, damit sie NICHT mehr die
-      Standard-Site-Berechtigungen erbt (Auftrag Punkt 2: InterneBewertungen
-      braucht eingeschraenkte Berechtigungen). Das Skript kopiert zunaechst
-      die bisherigen Zuweisungen (CopyRoleAssignments=$true), damit der Lauf
-      niemanden sofort aussperrt; eine berechtigte Person MUSS danach manuell
-      pruefen und nur die zulaessige Pruefergruppe stehen lassen (siehe
-      sharepoint-forms/README.md, Abschnitt "InterneBewertungen").
-      Idempotent: ueberspringt Listen, die bereits eigene Berechtigungen haben.
-    #>
     param([Parameter(Mandatory = $true)][string]$List)
     try {
         $listObj = Get-PnPList -Identity $List -Includes HasUniqueRoleAssignments
@@ -317,121 +311,204 @@ function Set-RestrictedPermission {
 
 
 # ---------------------------------------------------------------------------
+# Liste: Personen
+# Personen, die fuer die Holding-KG taetig sind (S03)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Personen"
+Add-Field -List "Personen" -InternalName "person_name" -DisplayName 'Welche Person wird beschrieben?' -Type Text -Required
+# person_name: Bekannte Person auswählen / weitere Person ergänzen.
+Add-Field -List "Personen" -InternalName "person_id" -DisplayName 'Person-ID (intern vergeben)' -Type Text -Required `
+    -Indexed -EnforceUniqueValues
+Add-Field -List "Personen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
 # Liste: Erfassungen
-# Fallsteuerung je Substanzpruefung (Vorbild: 0_Fallsteuerung, DE/AO; eigene Liste, Begruendung siehe Datenmodell)
+# Fallsteuerung je Substanzpruefung; Auskunftsperson aus N24 statt S02 (gestrichen)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Erfassungen"
 Add-Field -List "Erfassungen" -InternalName "case_id" -DisplayName 'Fall-ID der Substanzprüfung (intern vergeben)' -Type Text -Required `
     -Indexed -EnforceUniqueValues
-# case_id: Indiziert, eindeutig. Empfehlung: SH-JJJJ-NNNN.
 Add-Field -List "Erfassungen" -InternalName "project_id" -DisplayName 'Projektkennung (z. B. 22032-2)' -Type Text
-# project_id: Ergänzung über B2 hinaus: Mehrprojektfähigkeit derselben Site.
-Add-Field -List "Erfassungen" -InternalName "period_from" -DisplayName 'Erfassungszeitraum - Beginn' -Type DateOnly -Required
-Add-Field -List "Erfassungen" -InternalName "period_to" -DisplayName 'Erfassungszeitraum - Ende' -Type DateOnly
-# period_to: Leer, falls Zeitraum noch läuft.
-Add-Field -List "Erfassungen" -InternalName "reference_date" -DisplayName 'Stichtag (falls abweichend vom Zeitraum)' -Type DateOnly
+Add-Field -List "Erfassungen" -InternalName "period_from" -DisplayName 'Für welchen Zeitraum gelten die Angaben? - Beginn' -Type DateOnly -Required
+Add-Field -List "Erfassungen" -InternalName "period_to" -DisplayName 'Für welchen Zeitraum gelten die Angaben? - Ende' -Type DateOnly -Required
+Add-Field -List "Erfassungen" -InternalName "period_confirmed" -DisplayName 'Vorgegebener Zeitraum bestätigt oder korrigiert' -Type Boolean -Required
+# period_confirmed: Nur bestaetigen/korrigieren (2 Zustaende) - kein 'nicht bekannt' im Quelltext.
+Add-Field -List "Erfassungen" -InternalName "schema_version" -DisplayName 'Schema-Version des Erfassungsbogens' -Type Number -Required `
+    -DefaultValue '3'
 Add-Field -List "Erfassungen" -InternalName "status" -DisplayName 'Status der Erfassung' -Type Choice -Required `
     -Choices @('ERFASSUNG_STATUS_OFFEN', 'ERFASSUNG_STATUS_IN_BEARBEITUNG', 'ERFASSUNG_STATUS_VOLLSTAENDIG', 'ERFASSUNG_STATUS_ABGESCHLOSSEN')
-Add-Field -List "Erfassungen" -InternalName "completion_date" -DisplayName 'Abschlussdatum' -Type DateOnly
-Add-Field -List "Erfassungen" -InternalName "version_number" -DisplayName 'Versionsnummer (Fortschreibung)' -Type Number
-# version_number: Übernahmeschlüssel B4: ErfassungID+PersonID+Zeitraum+Version.
-Add-Field -List "Erfassungen" -InternalName "compiler_name" -DisplayName 'Wer hat die Angaben zusammengestellt?' -Type Text -Required
-Add-Field -List "Erfassungen" -InternalName "knowledgeable_contact" -DisplayName 'Fachlich auskunftsfähige Ansprechperson' -Type Text -Required
-Add-Field -List "Erfassungen" -InternalName "processing_date" -DisplayName 'Datum der Bearbeitung' -Type DateOnly -Required
-Add-Field -List "Erfassungen" -InternalName "confirmation_given" -DisplayName 'Bestätigung der Richtigkeit nach bestem Wissen' -Type Choice -Required `
-    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
-# confirmation_given: Fixtext: 'Die Angaben beschreiben die tatsächlichen Verhältnisse nach unserem derzeitigen Kenntnisstand. Schätzungen und geplante Tätigkeiten sind gekennzeichnet.' Als Ja/Nein-Haken umgesetzt (Boolean), da hier echte Bestätigung statt Status gefragt ist.
-Add-Field -List "Erfassungen" -InternalName "reconciliation_status" -DisplayName 'Stimmen Angaben, Buchhaltung und Abrechnung überein?' -Type Choice -Required `
-    -Choices @('C06_STATUS_JA', 'C06_STATUS_TEILWEISE', 'C06_STATUS_NEIN', 'C06_STATUS_NOCH_NICHT_ABGESTIMMT')
-Add-Field -List "Erfassungen" -InternalName "reconciliation_notes" -DisplayName 'Differenzen, unentgeltliche Bereitstellungen, offene Erstattungen' -Type Note
-Add-Field -List "Erfassungen" -InternalName "reconciliation_related_costs_text" -DisplayName 'Betroffene Kostenpositionen (Bezeichnung/ID)' -Type Text
+Add-Field -List "Erfassungen" -InternalName "auskunftsperson_ref" -DisplayName 'Rückfragekontakt (aus N24, zuletzt übermittelte Angabe)' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+# auskunftsperson_ref: Ersetzt S02 (gestrichen); N24 kann je Modul abweichen, hier wird der zuletzt gemeldete Kontakt gefuehrt.
+Add-Field -List "Erfassungen" -InternalName "auskunftsperson_text" -DisplayName 'Rückfragekontakt, falls nicht aus Personen-Bestand' -Type Text
+Add-Field -List "Erfassungen" -InternalName "confirmation_status" -DisplayName 'Entsprechen die Angaben dem derzeitigen Kenntnisstand?' -Type Choice -Required `
+    -Choices @('N25_STATUS_VOLLSTAENDIG', 'N25_STATUS_UNVOLLSTAENDIG')
+Add-Field -List "Erfassungen" -InternalName "missing_evidence_status" -DisplayName 'Gibt es für eine wesentliche Angabe noch keinen passenden Nachweis?' -Type Choice -Required `
+    -Choices @('N26_STATUS_NEIN', 'N26_STATUS_JA', 'N26_STATUS_UNBEKANNT')
 
 # ---------------------------------------------------------------------------
 # Liste: Gesellschaften
-# Bekannter Gesellschaftsbestand (Rolle), keine neue Strukturerhebung - Beteiligungsverhaeltnisse werden nicht abgefragt
+# Bekannter Gesellschaftsbestand (Rolle), keine neue Strukturerhebung
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Gesellschaften"
 Add-Field -List "Gesellschaften" -InternalName "company_id" -DisplayName 'Gesellschafts-ID (intern vergeben)' -Type Text -Required `
     -Indexed -EnforceUniqueValues
-Add-Field -List "Gesellschaften" -InternalName "project_id_text" -DisplayName 'Projektkennung (Mehrprojektfähigkeit)' -Type Text
-# project_id_text: Ergänzung über B2 hinaus.
 Add-Field -List "Gesellschaften" -InternalName "company_name" -DisplayName 'Bekannter Name der Gesellschaft' -Type Text -Required
 Add-Field -List "Gesellschaften" -InternalName "company_role" -DisplayName 'Rolle im vorhandenen Bestand' -Type Choice -Required `
     -Choices @('GESELLSCHAFT_ROLLE_HOLDING_KG', 'GESELLSCHAFT_ROLLE_BETEILIGUNG', 'GESELLSCHAFT_ROLLE_SCHWEIZER_MUTTER', 'GESELLSCHAFT_ROLLE_ANDERE', 'GESELLSCHAFT_ROLLE_UNBEKANNT')
-# company_role: Keine neue Strukturerhebung - Beteiligungsverhältnisse werden nicht abgefragt.
+# company_role: Bestehende Struktur nicht erneut erheben (B1).
 Add-Field -List "Gesellschaften" -InternalName "ao_participation_ref" -DisplayName 'Bezug: bereits in der steuerlichen Erfassung geführte Beteiligung (DE/AO, optional)' -Type Lookup `
     -LookupList "4_Beteiligte_und_Quoten" -LookupField "display_label"
+Add-Field -List "Gesellschaften" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
+# Liste: Orte
+# Standortkatalog (O01 referenziert)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Orte"
+Add-Field -List "Orte" -InternalName "ort_id" -DisplayName 'Ort-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Orte" -InternalName "ort_kategorie" -DisplayName 'Ortskategorie' -Type Choice -Required `
+    -Choices @('ORT_KATEGORIE_KG_BUERO', 'ORT_KATEGORIE_BETEILIGUNG_RAEUME', 'ORT_KATEGORIE_HOMEOFFICE', 'ORT_KATEGORIE_SCHWEIZER_RAEUME', 'ORT_KATEGORIE_GESCHAEFTSPARTNER', 'ORT_KATEGORIE_UNTERWEGS', 'ORT_KATEGORIE_ANDERER_ORT')
+Add-Field -List "Orte" -InternalName "standortgesellschaft_ref" -DisplayName 'Standortgesellschaft, soweit zutreffend' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Orte" -InternalName "adresse" -DisplayName 'Adresse bzw. Ort und Land' -Type Note
+Add-Field -List "Orte" -InternalName "land" -DisplayName 'Land' -Type Text
+Add-Field -List "Orte" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Substanznachweise
-# Dokumentbibliothek fuer Belege/Nachweise (B5: Datei-Upload nicht ueber Forms)
+# Dokumentbibliothek fuer Belege (B3/B4: kein nativer Forms-Upload)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Substanznachweise" -Template "DocumentLibrary"
 Add-Field -List "Substanznachweise" -InternalName "nachweis_id" -DisplayName 'Nachweis-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "Substanznachweise" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
     -LookupList "Erfassungen" -LookupField "case_id" `
     -DeleteBehavior Restrict
+Add-Field -List "Substanznachweise" -InternalName "dokumentart" -DisplayName 'Welche Unterlage können Sie einer Angabe zuordnen?' -Type Choice -Required `
+    -Choices @('N20_DOKUMENTART_VERTRAG_NACHTRAG', 'N20_DOKUMENTART_STELLENBESCHREIBUNG', 'N20_DOKUMENTART_VOLLMACHT_KOMPETENZORDNUNG', 'N20_DOKUMENTART_EMAIL_GESPRAECHSNOTIZ', 'N20_DOKUMENTART_KALENDER_ZEITERFASSUNG', 'N20_DOKUMENTART_PLAN_BERICHT', 'N20_DOKUMENTART_BESCHLUSS_FREIGABE', 'N20_DOKUMENTART_SCHULUNGSUNTERLAGE', 'N20_DOKUMENTART_RECHNUNG_BUCHUNG', 'N20_DOKUMENTART_ZAHLUNGSNACHWEIS', 'N20_DOKUMENTART_RAUM_GERAETENACHWEIS', 'N20_DOKUMENTART_ANDERE')
+Add-Field -List "Substanznachweise" -InternalName "dokumenttitel_text" -DisplayName 'Dokumenttitel' -Type Text -Required
 Add-Field -List "Substanznachweise" -InternalName "dokumentdatum" -DisplayName 'Dokumentdatum' -Type DateOnly
-Add-Field -List "Substanznachweise" -InternalName "gesellschaft_ref" -DisplayName 'Betroffene Gesellschaft' -Type Lookup `
+Add-Field -List "Substanznachweise" -InternalName "gesellschaft_ref" -DisplayName 'Betroffene Gesellschaft, soweit zuordenbar' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Substanznachweise" -InternalName "dokumentart" -DisplayName 'Dokumentart' -Type Choice -Required `
-    -Choices @('N02_UNTERLAGENART_VERTRAG', 'N02_UNTERLAGENART_VOLLMACHT', 'N02_UNTERLAGENART_EMAIL_VERLAUF', 'N02_UNTERLAGENART_KALENDER_NOTIZ', 'N02_UNTERLAGENART_BERICHT_PLANUNG', 'N02_UNTERLAGENART_BESCHLUSS_FREIGABE', 'N02_UNTERLAGENART_ARBEITSPRODUKT', 'N02_UNTERLAGENART_ZEITERFASSUNG', 'N02_UNTERLAGENART_RECHNUNG_BUCHUNG', 'N02_UNTERLAGENART_ZAHLUNG', 'N02_UNTERLAGENART_RAUM_GERAETENACHWEIS', 'N02_UNTERLAGENART_SONSTIGE_UNTERLAGE', 'N02_UNTERLAGENART_KEIN_BELEG', 'N02_UNTERLAGENART_WIRD_NACHGEREICHT')
 Add-Field -List "Substanznachweise" -InternalName "dateilink" -DisplayName 'Link zur Datei, falls extern abgelegt' -Type URL
-# dateilink: B5: Datei-Upload nicht über Forms, sondern separater Kanzlei-Uploadweg + Anlagenreferenz/Dateiname im Formular.
-Add-Field -List "Substanznachweise" -InternalName "nachreichstatus" -DisplayName 'Nachreichstatus' -Type Choice -Required `
-    -Choices @('ALLG_STATUS_NICHT_BEKANNT', 'ALLG_STATUS_NICHT_VORHANDEN', 'ALLG_STATUS_WIRD_NACHGEREICHT', 'ALLG_STATUS_NICHT_ZUTREFFEND', 'ALLG_STATUS_VORHANDEN')
+# dateilink: B3/B4: kein nativer Forms-Upload; separater Kanzlei-Uebermittlungsweg + Anlagenreferenz.
+Add-Field -List "Substanznachweise" -InternalName "verfuegbarkeit" -DisplayName 'Wie ist die Unterlage verfügbar?' -Type Choice -Required `
+    -Choices @('N22_VERFUEGBARKEIT_WIRD_UEBERMITTELT', 'N22_VERFUEGBARKEIT_BEREITS_UEBERMITTELT', 'N22_VERFUEGBARKEIT_KANN_NACHGEREICHT_WERDEN', 'N22_VERFUEGBARKEIT_DERZEIT_NICHT_AUFFINDBAR', 'N22_VERFUEGBARKEIT_NICHT_VORHANDEN', 'N22_VERFUEGBARKEIT_UNBEKANNT')
 
 # ---------------------------------------------------------------------------
-# Liste: Personen
-# Personen, die fuer die Holding-KG taetig sind (P01-P02 Uebersicht)
+# Liste: Funktionen
+# Navigationsebene Person x Gesellschaft x Stellenbezeichnung (S04) - eigenstaendig von Personenbindungen (siehe Datenmodell)
 # ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Personen"
-Add-Field -List "Personen" -InternalName "person_name" -DisplayName 'Wie heisst die Person?' -Type Text -Required
-# person_name: Bereits bekannte Personen können ausgewählt werden (vorbereiteter Bestand).
-Add-Field -List "Personen" -InternalName "functions_overview" -DisplayName 'Welche Funktion oder Stellenbezeichnung hat die Person? (Übersicht)' -Type MultiChoice -Required `
-    -Choices @('P02_FUNKTION_GESCHAEFTSFUEHRER', 'P02_FUNKTION_VORSTAND', 'P02_FUNKTION_VERWALTUNGSRAT', 'P02_FUNKTION_CFO', 'P02_FUNKTION_KAUFM_LEITUNG', 'P02_FUNKTION_PERSONALVERANTWORTLICHER', 'P02_FUNKTION_BEREICHS_PROJEKTLEITUNG', 'P02_FUNKTION_SACHBEARBEITUNG', 'P02_FUNKTION_EXTERNER_BERATER', 'P02_FUNKTION_ANDERE')
-# functions_overview: Je Funktion die betreffende Gesellschaft gesondert in Personenbindungen.
-Add-Field -List "Personen" -InternalName "functions_other_text" -DisplayName 'Andere Funktion - bitte benennen' -Type Text
-Add-Field -List "Personen" -InternalName "person_id" -DisplayName 'Person-ID (intern vergeben)' -Type Text -Required `
-    -Indexed -EnforceUniqueValues
-Add-Field -List "Personen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+New-ListIfMissing -Title "Funktionen"
+Add-Field -List "Funktionen" -InternalName "funktion_id" -DisplayName 'Funktions-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Funktionen" -InternalName "person_ref" -DisplayName 'Bezug: Person' -Type Lookup -Required `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Funktionen" -InternalName "gesellschaft_ref" -DisplayName 'Welche Funktion hat diese Person? - Gesellschaft' -Type Lookup -Required `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Funktionen" -InternalName "stellenbezeichnung_text" -DisplayName 'Stellenbezeichnung' -Type Text -Required
+# stellenbezeichnung_text: Mehrere Funktionen moeglich - je Funktion ein Funktionen-Datensatz.
+Add-Field -List "Funktionen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Personenbindungen
-# Vertragliche Bindung je Person x Gesellschaft (P02 je Funktion, P03-P05)
+# Vertragliche Bindung und allgemeine Arbeitsorganisation (P30-P38)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Personenbindungen"
 Add-Field -List "Personenbindungen" -InternalName "bindung_id" -DisplayName 'Bindungs-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "Personenbindungen" -InternalName "person_ref" -DisplayName 'Bezug: Person' -Type Lookup -Required `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Personenbindungen" -InternalName "funktion_code" -DisplayName 'Funktion für diese Gesellschaft' -Type Choice `
-    -Choices @('P02_FUNKTION_GESCHAEFTSFUEHRER', 'P02_FUNKTION_VORSTAND', 'P02_FUNKTION_VERWALTUNGSRAT', 'P02_FUNKTION_CFO', 'P02_FUNKTION_KAUFM_LEITUNG', 'P02_FUNKTION_PERSONALVERANTWORTLICHER', 'P02_FUNKTION_BEREICHS_PROJEKTLEITUNG', 'P02_FUNKTION_SACHBEARBEITUNG', 'P02_FUNKTION_EXTERNER_BERATER', 'P02_FUNKTION_ANDERE')
-Add-Field -List "Personenbindungen" -InternalName "funktion_andere_text" -DisplayName 'Andere Funktion - bitte benennen' -Type Text
-Add-Field -List "Personenbindungen" -InternalName "company_ref" -DisplayName 'Bei welcher Gesellschaft oder welchem Auftraggeber besteht eine Anstellung oder andere vertragliche Bindung?' -Type Lookup -Required `
+Add-Field -List "Personenbindungen" -InternalName "gesellschaft_ref" -DisplayName 'Mit welcher Gesellschaft besteht ein Vertrag für die Tätigkeit der Person?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-# company_ref: Auswahl je Vertragsverhältnis; bei mehreren Bindungen je ein Personenbindungen-Datensatz.
-Add-Field -List "Personenbindungen" -InternalName "company_status" -DisplayName 'Status, falls keine konkrete Gesellschaft zutrifft' -Type Choice `
-    -Choices @('GESELLSCHAFT_STATUS_ANDERE', 'GESELLSCHAFT_STATUS_KEINE', 'GESELLSCHAFT_STATUS_UNBEKANNT', 'GESELLSCHAFT_STATUS_NICHT_EINDEUTIG')
-# company_status: Belegt 'keine vertragliche Bindung'/'nicht bekannt', wenn GesellschaftRef leer bleibt.
-Add-Field -List "Personenbindungen" -InternalName "basis_code" -DisplayName 'Auf welcher Grundlage arbeitet die Person?' -Type Choice -Required `
-    -Choices @('P04_GRUNDLAGE_ARBEITSVERTRAG', 'P04_GRUNDLAGE_GF_VORSTANDSVERTRAG', 'P04_GRUNDLAGE_MANDATS_DIENSTLEISTUNGSVERTRAG', 'P04_GRUNDLAGE_GESELLSCHAFTER_OHNE_DIENSTVERTRAG', 'P04_GRUNDLAGE_ANDERE_VEREINBARUNG', 'P04_GRUNDLAGE_NUR_MUENDLICH', 'P04_GRUNDLAGE_UNBEKANNT')
-Add-Field -List "Personenbindungen" -InternalName "basis_other_text" -DisplayName 'Andere Vereinbarung - bitte benennen' -Type Text
-Add-Field -List "Personenbindungen" -InternalName "contract_status" -DisplayName 'Liegt dazu ein schriftlicher Vertrag vor?' -Type Choice -Required `
-    -Choices @('P05_VERTRAGSSTATUS_UNTERZEICHNET', 'P05_VERTRAGSSTATUS_NUR_ENTWURF', 'P05_VERTRAGSSTATUS_VORHANDEN_NICHT_VERFUEGBAR', 'P05_VERTRAGSSTATUS_KEIN_VERTRAG', 'P05_VERTRAGSSTATUS_UNBEKANNT')
-Add-Field -List "Personenbindungen" -InternalName "evidence_ref" -DisplayName 'Vertrag, Nachträge, Stellenbeschreibung, Vereinbarung zum Einsatz bei anderen Gesellschaften' -Type Lookup `
+Add-Field -List "Personenbindungen" -InternalName "gesellschaft_status" -DisplayName 'Status, falls kein/mehrere Vertragsverhältnisse' -Type Choice `
+    -Choices @('GESELLSCHAFT_STATUS_KG_SELBST', 'GESELLSCHAFT_STATUS_BETEILIGUNG', 'GESELLSCHAFT_STATUS_SCHWEIZER_MUTTER', 'GESELLSCHAFT_STATUS_ANDERE', 'GESELLSCHAFT_STATUS_KEIN_VERTRAG', 'GESELLSCHAFT_STATUS_MEHRERE', 'GESELLSCHAFT_STATUS_UNBEKANNT')
+# gesellschaft_status: Bei mehreren Vertragsverhaeltnissen je ein Personenbindungen-Datensatz.
+Add-Field -List "Personenbindungen" -InternalName "vertragsart" -DisplayName 'Welche Art von Vertrag besteht?' -Type Choice `
+    -Choices @('P31_VERTRAGSART_ARBEITSVERTRAG', 'P31_VERTRAGSART_GF_VORSTANDSVERTRAG', 'P31_VERTRAGSART_MANDATS_DIENSTLEISTUNGSVERTRAG', 'P31_VERTRAGSART_ANDERE', 'P31_VERTRAGSART_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "schriftform" -DisplayName 'Welcher schriftliche Stand liegt vor?' -Type Choice -Required `
+    -Choices @('P32_SCHRIFTFORM_UNTERZEICHNET', 'P32_SCHRIFTFORM_NUR_ENTWURF', 'P32_SCHRIFTFORM_NICHT_VERFUEGBAR', 'P32_SCHRIFTFORM_NUR_MUENDLICH', 'P32_SCHRIFTFORM_KEINE', 'P32_SCHRIFTFORM_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "nachweis_ref" -DisplayName 'Anlage (Vertrag)' -Type Lookup `
     -LookupList "Substanznachweise" -LookupField "display_label"
-# evidence_ref: Anlagenreferenz; Datei-Upload separat (B5), nicht über Forms.
-Add-Field -List "Personenbindungen" -InternalName "contract_start" -DisplayName 'Vertragsbeginn' -Type DateOnly
-Add-Field -List "Personenbindungen" -InternalName "contract_end" -DisplayName 'Vertragsende, falls bekannt' -Type DateOnly
-Add-Field -List "Personenbindungen" -InternalName "actual_start_date" -DisplayName 'Seit wann übernimmt die Person tatsächlich Aufgaben im Zusammenhang mit der KG?' -Type DateOnly -Required
-Add-Field -List "Personenbindungen" -InternalName "actual_start_precision" -DisplayName 'Datum genau oder ungefähr bekannt?' -Type Choice -Required `
-    -Choices @('GENAUIGKEIT_GENAU', 'GENAUIGKEIT_UNGEFAEHR')
-Add-Field -List "Personenbindungen" -InternalName "task_change_text" -DisplayName 'Beginn und Ende je Aufgabenbereich bei Wechsel' -Type Note
+Add-Field -List "Personenbindungen" -InternalName "beginn" -DisplayName 'Seit wann besteht das Vertragsverhältnis?' -Type DateOnly -Required
+Add-Field -List "Personenbindungen" -InternalName "beginn_genauigkeit" -DisplayName 'Datumsgenauigkeit' -Type Choice -Required `
+    -Choices @('GENAUIGKEIT_GENAU', 'GENAUIGKEIT_UNGEFAEHR', 'GENAUIGKEIT_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "ende" -DisplayName 'Enddatum, falls beendet' -Type DateOnly
+Add-Field -List "Personenbindungen" -InternalName "weisungsgeber_ref" -DisplayName 'Wer legt im Arbeitsalltag die Aufgaben und Prioritäten fest?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Personenbindungen" -InternalName "weisungsgeber_status" -DisplayName 'Status, falls keine konkrete Person' -Type Choice `
+    -Choices @('PERSON_STATUS_SELBST', 'PERSON_STATUS_BENANNTE_PERSON', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_NIEMAND', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "anweisungsbefugter_ref" -DisplayName 'Wer kann der Person konkrete Arbeitsanweisungen geben?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Personenbindungen" -InternalName "anweisungsbefugter_status" -DisplayName 'Status, falls abweichend von P34' -Type Choice `
+    -Choices @('PERSON_STATUS_SELBST', 'PERSON_STATUS_BENANNTE_PERSON', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_NIEMAND', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "abwesenheit_genehmiger_ref" -DisplayName 'Wer genehmigt Abwesenheiten?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Personenbindungen" -InternalName "abwesenheit_genehmiger_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('PERSON_STATUS_SELBST', 'PERSON_STATUS_BENANNTE_PERSON', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_NIEMAND', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "beurteiler_ref" -DisplayName 'Wer beurteilt die Arbeit der Person?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Personenbindungen" -InternalName "beurteiler_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('PERSON_STATUS_SELBST', 'PERSON_STATUS_BENANNTE_PERSON', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_NIEMAND', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_UNBEKANNT')
+Add-Field -List "Personenbindungen" -InternalName "vertretung_ref" -DisplayName 'Wer vertritt die Person bei Abwesenheit?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Personenbindungen" -InternalName "vertretung_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('PERSON_STATUS_SELBST', 'PERSON_STATUS_BENANNTE_PERSON', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_NIEMAND', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_UNBEKANNT')
 Add-Field -List "Personenbindungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
+# Liste: Aufgaben
+# Zentrale Liste: wiederkehrende Aufgabe je Person x Bereich (T01-T09, T16; G10/G12/D01 Gateway)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Aufgaben"
+Add-Field -List "Aufgaben" -InternalName "aufgabe_id" -DisplayName 'Aufgabe-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Aufgaben" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
+    -LookupList "Erfassungen" -LookupField "case_id" `
+    -DeleteBehavior Restrict
+Add-Field -List "Aufgaben" -InternalName "person_ref" -DisplayName 'Bezug: Person' -Type Lookup -Required `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Aufgaben" -InternalName "bereich_code" -DisplayName 'Bestätigten Aufgabenbereich auswählen' -Type Choice -Required `
+    -Choices @('S07_BEREICH_KUNDEN_LIEFERANTEN', 'S07_BEREICH_PERSONAL', 'S07_BEREICH_FINANZEN_BERATER', 'S07_BEREICH_PROJEKTE_PLANUNG', 'S07_BEREICH_BERICHTE_KONTROLLE', 'S07_BEREICH_VORGABEN_SCHULUNG', 'S07_BEREICH_EIGENE_VERWALTUNG', 'S07_BEREICH_BETEILIGUNG_MUTTER', 'S07_BEREICH_ANDERER_BEREICH', 'S07_BEREICH_NICHT_BEKANNT')
+Add-Field -List "Aufgaben" -InternalName "handlungen_bezug" -DisplayName 'Zugrundeliegende bestätigte Handlungen' -Type MultiChoice `
+    -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
+# handlungen_bezug: Aggregation bestaetigter Handlungen zu dieser Aufgabe (Abschnitt 1.2, letzter Absatz).
+Add-Field -List "Aufgaben" -InternalName "t01_text" -DisplayName 'Welche Aufgabe übernimmt die Person im Tagesgeschäft? (konkretisiert)' -Type Note -Required
+# t01_text: Beispiel: 'Finanzleitung der Gesellschaft A'.
+Add-Field -List "Aufgaben" -InternalName "t02_art" -DisplayName 'Wie ist die Person in diesem Aufgabenbereich tätig?' -Type Choice -Required `
+    -Choices @('T02_ART_DAUERHAFT', 'T02_ART_REGELMAESSIG', 'T02_ART_VERTRETUNG', 'T02_ART_FALLWEISE', 'T02_ART_PROJEKT', 'T02_ART_GEPLANT', 'T02_ART_UNBEKANNT')
+# t02_art: Geaenderte Bedeutung gegenueber V2 (dort T02 = Auftrag/Funktion-Frage).
+Add-Field -List "Aufgaben" -InternalName "t02_anlass_text" -DisplayName 'Üblicher Anlass (bei fallweiser Tätigkeit)' -Type Text
+Add-Field -List "Aufgaben" -InternalName "t03_beginn" -DisplayName 'Seit wann übt die Person diese Aufgabe aus?' -Type DateOnly
+Add-Field -List "Aufgaben" -InternalName "t03_beginn_genauigkeit" -DisplayName 'Datumsgenauigkeit' -Type Choice `
+    -Choices @('GENAUIGKEIT_GENAU', 'GENAUIGKEIT_UNGEFAEHR', 'GENAUIGKEIT_UNBEKANNT')
+Add-Field -List "Aufgaben" -InternalName "t03_ende" -DisplayName 'Ende (bei beendeter Tätigkeit)' -Type DateOnly
+Add-Field -List "Aufgaben" -InternalName "t05_taetigkeiten" -DisplayName 'Welche Tätigkeiten führt die Person dabei selbst aus?' -Type MultiChoice -Required `
+    -Choices @('T05_TAETIGKEIT_INFORMATIONEN_AUSWERTEN', 'T05_TAETIGKEIT_ENTSCHEIDUNGEN_VORBEREITEN', 'T05_TAETIGKEIT_VERTRAEGE_VERHANDELN', 'T05_TAETIGKEIT_ENTSCHEIDUNGEN_TREFFEN', 'T05_TAETIGKEIT_VERBINDLICHE_EINZELANWEISUNGEN', 'T05_TAETIGKEIT_UMSETZUNG_STEUERN', 'T05_TAETIGKEIT_ARBEITSERGEBNISSE_KONTROLLIEREN', 'T05_TAETIGKEIT_BERATEN', 'T05_TAETIGKEIT_SCHULEN', 'T05_TAETIGKEIT_ADMINISTRATIVE_ARBEITEN', 'T05_TAETIGKEIT_ANDERE')
+# t05_taetigkeiten: Auswahl wird anhand der bestaetigten Handlungen eingegrenzt (Forms-Filter).
+Add-Field -List "Aufgaben" -InternalName "t07_auftrag" -DisplayName 'In wessen Auftrag übernimmt die Person diese Aufgaben?' -Type Choice -Required `
+    -Choices @('T07_AUFTRAG_KG', 'T07_AUFTRAG_BETEILIGUNG', 'T07_AUFTRAG_SCHWEIZER_MUTTER', 'T07_AUFTRAG_ANDERER', 'T07_AUFTRAG_KEINE', 'T07_AUFTRAG_UNBEKANNT')
+Add-Field -List "Aufgaben" -InternalName "t08_funktion_ref" -DisplayName 'In welcher Funktion ist die Person tätig?' -Type Lookup `
+    -LookupList "Funktionen" -LookupField "display_label"
+Add-Field -List "Aufgaben" -InternalName "t08_funktion_status" -DisplayName 'Status der Funktionsangabe' -Type Choice -Required `
+    -Choices @('T08_FUNKTION_STATUS_BEKANNT', 'T08_FUNKTION_STATUS_ANDERE', 'T08_FUNKTION_STATUS_MEHRERE', 'T08_FUNKTION_STATUS_UNBEKANNT')
+Add-Field -List "Aufgaben" -InternalName "t08_andere_text" -DisplayName 'Andere Funktion - bitte benennen' -Type Text
+Add-Field -List "Aufgaben" -InternalName "t09_zusammenarbeit" -DisplayName 'Mit welchen Personen oder Stellen arbeitet sie regelmässig zusammen?' -Type MultiChoice -Required `
+    -Choices @('T09_ZUSAMMENARBEIT_GESCHAEFTSLEITUNG', 'T09_ZUSAMMENARBEIT_FACHABTEILUNGEN', 'T09_ZUSAMMENARBEIT_MITARBEITENDE', 'T09_ZUSAMMENARBEIT_KUNDEN', 'T09_ZUSAMMENARBEIT_LIEFERANTEN', 'T09_ZUSAMMENARBEIT_BANKEN', 'T09_ZUSAMMENARBEIT_BUCHHALTUNG_STEUERBERATUNG', 'T09_ZUSAMMENARBEIT_ANDERE_BERATER', 'T09_ZUSAMMENARBEIT_GESELLSCHAFTER', 'T09_ZUSAMMENARBEIT_ANDERE_STELLEN')
+Add-Field -List "Aufgaben" -InternalName "t09_zusammenarbeit_text" -DisplayName 'Zugehörige Gesellschaft/Organisation je Punkt' -Type Note
+Add-Field -List "Aufgaben" -InternalName "t16_haeufigkeit" -DisplayName 'Wie häufig arbeitet die Person in diesem Aufgabenbereich?' -Type Choice -Required `
+    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NICHT_TAETIG', 'FREQ_UNBEKANNT')
+Add-Field -List "Aufgaben" -InternalName "g10_aufgabenart" -DisplayName 'Welche Aufgaben betreffen die eigene Organisation oder Beteiligungsverwaltung der KG?' -Type MultiChoice `
+    -Choices @('G10_AUFGABENART_BUCHFUEHRUNG_STEUERN', 'G10_AUFGABENART_EIGENES_PERSONAL', 'G10_AUFGABENART_EIGENE_RAEUME_AUSSTATTUNG', 'G10_AUFGABENART_EIGENE_IT', 'G10_AUFGABENART_EIGENE_FINANZIERUNG', 'G10_AUFGABENART_ABRECHNUNG_MANAGEMENTLEISTUNGEN', 'G10_AUFGABENART_UEBERWACHUNG_BETEILIGUNGEN', 'G10_AUFGABENART_VORBEREITUNG_STIMMABGABEN', 'G10_AUFGABENART_ANDERE', 'G10_AUFGABENART_KEINE')
+# g10_aufgabenart: Nur bei bereich_code=EIGENE_VERWALTUNG.
+Add-Field -List "Aufgaben" -InternalName "g12_mutterarbeiten" -DisplayName 'Welche laufenden Arbeiten werden für die Schweizer Mutter erledigt?' -Type MultiChoice `
+    -Choices @('G12_MUTTERARBEITEN_EIGENER_ABSCHLUSS_MUTTER', 'G12_MUTTERARBEITEN_KONZERNABSCHLUSS', 'G12_MUTTERARBEITEN_STEUERERKLAERUNGEN_MUTTER', 'G12_MUTTERARBEITEN_SITZUNGSUNTERLAGEN', 'G12_MUTTERARBEITEN_BERICHTE_ANTEILSEIGNER', 'G12_MUTTERARBEITEN_FINANZIERUNG_BETEILIGUNGSERWERB', 'G12_MUTTERARBEITEN_ANDERE', 'G12_MUTTERARBEITEN_KEINE')
+# g12_mutterarbeiten: Nur bei bereich_code=BETEILIGUNG_MUTTER.
+Add-Field -List "Aufgaben" -InternalName "d01_rollen" -DisplayName 'Welche Entscheidungsaufgaben übernimmt die Person tatsächlich?' -Type MultiChoice `
+    -Choices @('D01_ROLLE_ENTSCHEIDET_SELBST', 'D01_ROLLE_ENTSCHEIDET_GEMEINSAM', 'D01_ROLLE_BEREITET_VOR', 'D01_ROLLE_ZUSTIMMUNG', 'D01_ROLLE_UMSETZT', 'D01_ROLLE_KONTROLLIERT', 'D01_ROLLE_KEINE', 'D01_ROLLE_UNBEKANNT')
+# d01_rollen: 'keine' exklusiv; steuert, ob Entscheidungsbefugnisse-Zeilen erfasst werden.
+Add-Field -List "Aufgaben" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
 # Liste: Personeneinsaetze
-# Arbeitszeit, Weisungsgeber, Vertretung, Praesenz je Person (P06-P08, P19-P20, P23-P24)
+# Person x Erfassungszeitraum: S05-S07, H-Handlungsbestaetigungen (45 Handlungen als 3 MultiChoice), Z01-Z07, O03-O05
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Personeneinsaetze"
 Add-Field -List "Personeneinsaetze" -InternalName "einsatz_id" -DisplayName 'Einsatz-ID (intern vergeben)' -Type Text -Required
@@ -440,345 +517,378 @@ Add-Field -List "Personeneinsaetze" -InternalName "erfassung_ref" -DisplayName '
     -DeleteBehavior Restrict
 Add-Field -List "Personeneinsaetze" -InternalName "person_ref" -DisplayName 'Bezug: Person' -Type Lookup -Required `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Personeneinsaetze" -InternalName "weisungsgeber_ref" -DisplayName 'Wer legt im Arbeitsalltag die Aufgaben und Prioritäten dieser Person fest?' -Type LookupMulti `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Personeneinsaetze" -InternalName "weisungsgeber_status" -DisplayName 'Status, falls keine konkrete Person zutrifft' -Type Choice `
-    -Choices @('PERSON_STATUS_ANDERE', 'PERSON_STATUS_MEHRERE', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_UNBEKANNT')
-Add-Field -List "Personeneinsaetze" -InternalName "weisungsgeber_text" -DisplayName 'Wer kann Anweisungen geben, Abwesenheiten genehmigen, Arbeit beurteilen?' -Type Note
-Add-Field -List "Personeneinsaetze" -InternalName "vertretung_ref" -DisplayName 'Wer vertritt die Person bei Abwesenheit?' -Type Lookup `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Personeneinsaetze" -InternalName "vertretung_status" -DisplayName 'Status, falls keine konkrete Vertretung zutrifft' -Type Choice `
-    -Choices @('P08_VERTRETUNG_BENANNT', 'P08_VERTRETUNG_WECHSELND', 'P08_VERTRETUNG_KEINE', 'P08_VERTRETUNG_UNBEKANNT')
-Add-Field -List "Personeneinsaetze" -InternalName "liegengebliebene_aufgaben_text" -DisplayName 'Welche Aufgaben bleiben gegebenenfalls liegen?' -Type Note
-Add-Field -List "Personeneinsaetze" -InternalName "overall_frequency" -DisplayName 'Wie häufig arbeitet die Person insgesamt an Aufgaben im Zusammenhang mit der KG?' -Type Choice -Required `
-    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NONE')
-# overall_frequency: Codes: FREQ_DAILY, FREQ_MULTI_WEEK, FREQ_WEEKLY, FREQ_MONTHLY, FREQ_ON_DEMAND, FREQ_NONE.
-Add-Field -List "Personeneinsaetze" -InternalName "total_hours" -DisplayName 'Gesamte Wochenstunden oder gesamte Stunden im Bezugszeitraum' -Type Number
-Add-Field -List "Personeneinsaetze" -InternalName "kg_hours" -DisplayName 'Davon Stunden im Auftrag der KG' -Type Number
-Add-Field -List "Personeneinsaetze" -InternalName "kg_share_pct" -DisplayName 'Daraus ungefährer Prozentanteil' -Type Number `
-    -Min 0 `
-    -Max 100
-Add-Field -List "Personeneinsaetze" -InternalName "basis_code" -DisplayName 'Grundlage der Angabe' -Type Choice `
-    -Choices @('NUTZUNGSGRUNDLAGE_AUFZEICHNUNG', 'NUTZUNGSGRUNDLAGE_SCHAETZUNG', 'NUTZUNGSGRUNDLAGE_ANDERE_GRUNDLAGE')
-Add-Field -List "Personeneinsaetze" -InternalName "separate_activity_text" -DisplayName 'Eigene Tätigkeiten für Beteiligungen ausserhalb eines KG-Auftrags' -Type Note
-Add-Field -List "Personeneinsaetze" -InternalName "office_frequency" -DisplayName 'Wie häufig und wie lange arbeitet die Person tatsächlich im KG-Büro?' -Type Choice -Required `
-    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NONE')
-# office_frequency: Codes: FREQ_DAILY, FREQ_MULTI_WEEK, FREQ_WEEKLY, FREQ_MONTHLY, FREQ_RARELY, FREQ_NEVER.
-Add-Field -List "Personeneinsaetze" -InternalName "office_days_per_month" -DisplayName 'Ungefähre Tage im Monat im KG-Büro' -Type Number `
-    -Min 0 `
-    -Max 31
-Add-Field -List "Personeneinsaetze" -InternalName "office_hours_per_visit" -DisplayName 'Stunden je Anwesenheit im KG-Büro' -Type Number
-Add-Field -List "Personeneinsaetze" -InternalName "office_typical_tasks_text" -DisplayName 'Typische Tätigkeiten im KG-Büro' -Type Note
-Add-Field -List "Personeneinsaetze" -InternalName "variation_type" -DisplayName 'Gibt es erhebliche zeitliche Schwankungen oder Änderungen?' -Type Choice -Required `
-    -Choices @('P24_AENDERUNG_NEIN', 'P24_AENDERUNG_SAISONAL', 'P24_AENDERUNG_PROJEKTBEDINGT', 'P24_AENDERUNG_FUNKTIONSWECHSEL', 'P24_AENDERUNG_ANDERE')
-Add-Field -List "Personeneinsaetze" -InternalName "variation_text" -DisplayName 'Betroffene Zeiträume und abweichende Stunden oder Orte' -Type Note
-Add-Field -List "Personeneinsaetze" -InternalName "travel_time_text" -DisplayName 'Reisezeiten (gesondert, nicht als Arbeitszeit am Zielort)' -Type Note
+Add-Field -List "Personeneinsaetze" -InternalName "taetigkeit_status" -DisplayName 'War die Person im angegebenen Zeitraum im Zusammenhang mit der KG tätig?' -Type Choice -Required `
+    -Choices @('S05_STATUS_JA', 'S05_STATUS_GEPLANT', 'S05_STATUS_BEENDET', 'S05_STATUS_KEINE', 'S05_STATUS_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "taetigkeit_beginn" -DisplayName 'Seit wann übernimmt die Person diese Aufgaben tatsächlich?' -Type DateOnly
+Add-Field -List "Personeneinsaetze" -InternalName "taetigkeit_beginn_genauigkeit" -DisplayName 'Datumsgenauigkeit' -Type Choice `
+    -Choices @('GENAUIGKEIT_GENAU', 'GENAUIGKEIT_UNGEFAEHR', 'GENAUIGKEIT_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "taetigkeit_ende" -DisplayName 'Enddatum (nur bei beendeter Tätigkeit)' -Type DateOnly
+Add-Field -List "Personeneinsaetze" -InternalName "bereiche" -DisplayName 'In welchen Bereichen hat die Person gearbeitet?' -Type MultiChoice `
+    -Choices @('S07_BEREICH_KUNDEN_LIEFERANTEN', 'S07_BEREICH_PERSONAL', 'S07_BEREICH_FINANZEN_BERATER', 'S07_BEREICH_PROJEKTE_PLANUNG', 'S07_BEREICH_BERICHTE_KONTROLLE', 'S07_BEREICH_VORGABEN_SCHULUNG', 'S07_BEREICH_EIGENE_VERWALTUNG', 'S07_BEREICH_BETEILIGUNG_MUTTER', 'S07_BEREICH_ANDERER_BEREICH', 'S07_BEREICH_NICHT_BEKANNT')
+# bereiche: Nicht ausgewaehlte Bereiche gelten NICHT automatisch als ausdruecklich verneint (B4).
+Add-Field -List "Personeneinsaetze" -InternalName "bereich_andere_text" -DisplayName 'Anderer Bereich - bitte benennen' -Type Text
+Add-Field -List "Personeneinsaetze" -InternalName "handlungen_ausgefuehrt" -DisplayName 'Handlungen: ausgeführt' -Type MultiChoice `
+    -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
+# handlungen_ausgefuehrt: Je Handlung eine Einzelfrage ausgefuehrt/nicht ausgefuehrt/nicht bekannt (B3); hier als 3 MultiChoice-Spalten gebuendelt gespeichert.
+Add-Field -List "Personeneinsaetze" -InternalName "handlungen_nicht_ausgefuehrt" -DisplayName 'Handlungen: nicht ausgeführt' -Type MultiChoice `
+    -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
+Add-Field -List "Personeneinsaetze" -InternalName "handlungen_unbekannt" -DisplayName 'Handlungen: nicht bekannt' -Type MultiChoice `
+    -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
+Add-Field -List "Personeneinsaetze" -InternalName "weitere_aufgabe_je_bereich_text" -DisplayName 'Welche weitere Aufgabe hat die Person in diesem Bereich ausgeübt? (je Bereich)' -Type Note
+Add-Field -List "Personeneinsaetze" -InternalName "zeitnachweis_unterlagenart" -DisplayName 'Welche Unterlagen können die Zeitangaben stützen?' -Type MultiChoice -Required `
+    -Choices @('Z01_UNTERLAGENART_ZEITERFASSUNG', 'Z01_UNTERLAGENART_KALENDER', 'Z01_UNTERLAGENART_PROJEKT_ARBEITSUNTERLAGEN', 'Z01_UNTERLAGENART_ANDERE', 'Z01_UNTERLAGENART_KEINE')
+Add-Field -List "Personeneinsaetze" -InternalName "gesamthaeufigkeit" -DisplayName 'Wie häufig hat die Person im Zusammenhang mit der KG gearbeitet?' -Type Choice -Required `
+    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NICHT_TAETIG', 'FREQ_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "gesamtstunden_status" -DisplayName 'Wie viele Arbeitsstunden hat die Person insgesamt im Zeitraum geleistet?' -Type Choice -Required `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "gesamtstunden" -DisplayName 'Gesamtstunden im Zeitraum' -Type Number
+Add-Field -List "Personeneinsaetze" -InternalName "kg_stunden_status" -DisplayName 'Wie viele dieser Stunden entfielen auf Arbeiten im Auftrag der KG?' -Type Choice -Required `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "kg_stunden" -DisplayName 'KG-Stunden im Zeitraum' -Type Number
+Add-Field -List "Personeneinsaetze" -InternalName "kg_stunden_offene_zuordnung" -DisplayName 'Zuordnung zum KG-Auftrag nicht sicher möglich' -Type Boolean
+# kg_stunden_offene_zuordnung: Reiner Kennzeichnungs-Flag, keine dritte Antwortmoeglichkeit im Quelltext.
+Add-Field -List "Personeneinsaetze" -InternalName "schaetzgrundlage" -DisplayName 'Worauf beruht die Schätzung?' -Type Choice `
+    -Choices @('Z06_GRUNDLAGE_KALENDER', 'Z06_GRUNDLAGE_TYPISCHE_WOCHE', 'Z06_GRUNDLAGE_WIEDERKEHRENDE_ARBEITEN', 'Z06_GRUNDLAGE_ANDERE', 'Z06_GRUNDLAGE_KEINE_NAEHERE')
+# schaetzgrundlage: Nur wenn mindestens eine Zeitangabe geschaetzt wurde.
+Add-Field -List "Personeneinsaetze" -InternalName "zeitabschnitt_abweichend" -DisplayName 'Gab es Zeitabschnitte mit deutlich anderem Arbeitsumfang?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "zeitabschnitt_von" -DisplayName 'Abweichender Zeitabschnitt - Beginn' -Type DateOnly
+Add-Field -List "Personeneinsaetze" -InternalName "zeitabschnitt_bis" -DisplayName 'Abweichender Zeitabschnitt - Ende' -Type DateOnly
+Add-Field -List "Personeneinsaetze" -InternalName "zeitabschnitt_stunden" -DisplayName 'Abweichende Stunden in diesem Zeitabschnitt' -Type Number
+Add-Field -List "Personeneinsaetze" -InternalName "kg_buero_haeufigkeit" -DisplayName 'Wie häufig war die Person im KG-Büro tätig?' -Type Choice -Required `
+    -Choices @('O03_HAEUFIGKEIT_DAILY', 'O03_HAEUFIGKEIT_MULTI_WEEK', 'O03_HAEUFIGKEIT_WEEKLY', 'O03_HAEUFIGKEIT_MONTHLY', 'O03_HAEUFIGKEIT_SELTENER', 'O03_HAEUFIGKEIT_NIE', 'O03_HAEUFIGKEIT_UNBEKANNT')
+Add-Field -List "Personeneinsaetze" -InternalName "kg_buero_tage_status" -DisplayName 'Wie viele Tage arbeitete die Person im Zeitraum im KG-Büro?' -Type Choice `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+# kg_buero_tage_status: Anzeige: O03 nicht 'nie'.
+Add-Field -List "Personeneinsaetze" -InternalName "kg_buero_tage" -DisplayName 'Tage im KG-Büro' -Type Number
+Add-Field -List "Personeneinsaetze" -InternalName "kg_buero_aufgaben_ref" -DisplayName 'Welche der bereits genannten Aufgaben erledigte sie im KG-Büro?' -Type LookupMulti `
+    -LookupList "Aufgaben" -LookupField "display_label"
+# kg_buero_aufgaben_ref: Anzeige: O03 nicht 'nie'.
+Add-Field -List "Personeneinsaetze" -InternalName "kg_buero_andere_text" -DisplayName 'Andere Aufgabe im KG-Büro - bitte benennen' -Type Text
 Add-Field -List "Personeneinsaetze" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
-# Liste: Orte
-# Standortkatalog (P16/P22 referenzieren; R-Block fuer Raeume separat)
+# Liste: Aufgabenempfaenger
+# n:m-Verknuepfung Aufgabe x Empfaengergesellschaft (T04, T10, G11, G13)
 # ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Orte"
-Add-Field -List "Orte" -InternalName "ort_id" -DisplayName 'Ort-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Orte" -InternalName "ort_kategorie" -DisplayName 'Ortskategorie' -Type Choice -Required `
-    -Choices @('ORT_KATEGORIE_KG_BUERO', 'ORT_KATEGORIE_BETEILIGUNG_RAEUME', 'ORT_KATEGORIE_HOMEOFFICE', 'ORT_KATEGORIE_SCHWEIZER_RAEUME', 'ORT_KATEGORIE_UNTERWEGS_GESCHAEFTSPARTNER', 'ORT_KATEGORIE_ANDERER_ORT')
-Add-Field -List "Orte" -InternalName "standortgesellschaft_ref" -DisplayName 'Standortgesellschaft, soweit zutreffend' -Type Lookup `
+New-ListIfMissing -Title "Aufgabenempfaenger"
+Add-Field -List "Aufgabenempfaenger" -InternalName "empfaenger_id" -DisplayName 'Empfänger-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Aufgabenempfaenger" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Aufgabenempfaenger" -InternalName "gesellschaft_ref" -DisplayName 'Für welche Gesellschaften übernimmt die Person diese Aufgabe?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Orte" -InternalName "adresse" -DisplayName 'Adresse bzw. Ort und Land' -Type Note
-Add-Field -List "Orte" -InternalName "land" -DisplayName 'Land' -Type Text
-Add-Field -List "Orte" -InternalName "nutzungsbereich" -DisplayName 'Bezeichnung des Nutzungsbereichs (z. B. ''Büro 2'', ''Homeoffice MA X'')' -Type Text
-Add-Field -List "Orte" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+Add-Field -List "Aufgabenempfaenger" -InternalName "gesellschaft_status" -DisplayName 'Status, falls keine konkrete Gesellschaft' -Type Choice `
+    -Choices @('GESELLSCHAFT_STATUS_KG_SELBST', 'GESELLSCHAFT_STATUS_BETEILIGUNG', 'GESELLSCHAFT_STATUS_SCHWEIZER_MUTTER', 'GESELLSCHAFT_STATUS_ANDERE', 'GESELLSCHAFT_STATUS_KEIN_VERTRAG', 'GESELLSCHAFT_STATUS_MEHRERE', 'GESELLSCHAFT_STATUS_UNBEKANNT')
+Add-Field -List "Aufgabenempfaenger" -InternalName "nutzen_art" -DisplayName 'Wem kommen diese Arbeiten unmittelbar zugute?' -Type Choice -Required `
+    -Choices @('T10_EMPFAENGER_BETEILIGUNG_LAUFENDES_GESCHAEFT', 'T10_EMPFAENGER_KG_EIGENE_VERWALTUNG', 'T10_EMPFAENGER_KG_BETEILIGUNGSRECHTE', 'T10_EMPFAENGER_SCHWEIZER_MUTTER', 'T10_EMPFAENGER_ANDERE', 'T10_EMPFAENGER_MEHRERE', 'T10_EMPFAENGER_UNBEKANNT')
+# nutzen_art: Mittelbarer Vorteil aus Beteiligung allein genuegt nicht (T10).
+Add-Field -List "Aufgabenempfaenger" -InternalName "verwendung_text" -DisplayName 'Verwendung der Arbeitsergebnisse (bei mehreren Empfängern)' -Type Note
+Add-Field -List "Aufgabenempfaenger" -InternalName "g11_rolle" -DisplayName 'Für welche Gesellschaft werden Beteiligungsrechte oder Gesellschafteraufgaben wahrgenommen?' -Type Choice `
+    -Choices @('G11_ROLLE_KG_ANTEILSEIGNERIN', 'G11_ROLLE_SCHWEIZER_MUTTER_ANTEILSEIGNERIN', 'G11_ROLLE_ANDERE_GESELLSCHAFT', 'G11_ROLLE_UNBEKANNT')
+# g11_rolle: Nur bei bereich_code=EIGENE_VERWALTUNG oder BETEILIGUNG_MUTTER.
+Add-Field -List "Aufgabenempfaenger" -InternalName "g11_beteiligung_ref" -DisplayName 'Betroffene Beteiligung' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Aufgabenempfaenger" -InternalName "g13_zusatz_empfaenger_ref" -DisplayName 'Wer nutzt diese Arbeitsergebnisse zusätzlich?' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+# g13_zusatz_empfaenger_ref: Nur bei bereich_code=BETEILIGUNG_MUTTER.
+Add-Field -List "Aufgabenempfaenger" -InternalName "g13_zusatz_empfaenger_text" -DisplayName 'Nutzung kurz angeben' -Type Note
+Add-Field -List "Aufgabenempfaenger" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
-# Liste: Taetigkeiten
-# Zentrale Verknuepfungsliste Person x Taetigkeit x Beteiligung (P09-P18; G01-G05, K01-K03/K05 Unterstruktur)
+# Liste: Aufgabenzustaendigkeiten
+# Priorisierung, weitere Mitwirkende, Aufteilung, Vertretung und Aenderungen je Aufgabe (T06, T11-T15, G14-G15)
 # ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Taetigkeiten"
-Add-Field -List "Taetigkeiten" -InternalName "taetigkeit_id" -DisplayName 'Tätigkeits-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Taetigkeiten" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
-    -LookupList "Erfassungen" -LookupField "case_id" `
-    -DeleteBehavior Restrict
-Add-Field -List "Taetigkeiten" -InternalName "person_ref" -DisplayName 'Bezug: Person' -Type Lookup -Required `
+New-ListIfMissing -Title "Aufgabenzustaendigkeiten"
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "zustaendigkeit_id" -DisplayName 'Zuständigkeits-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t06_prioritaet_ref" -DisplayName 'Wer legt die Aufgaben und Prioritäten in diesem Bereich fest?' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Taetigkeiten" -InternalName "bereich_code" -DisplayName 'In welchem Bereich arbeitet die Person tatsächlich? (steuert Folgefragen)' -Type Choice -Required `
-    -Choices @('P09_BEREICH_KUNDEN_VERTRIEB', 'P09_BEREICH_EINKAUF_LIEFERANTEN', 'P09_BEREICH_PERSONAL', 'P09_BEREICH_FINANZEN_LIQUID', 'P09_BEREICH_BUCHFUEHRUNG_STEUERN', 'P09_BEREICH_PROJEKTE_BETRIEB', 'P09_BEREICH_PLANUNG_INVESTITIONEN', 'P09_BEREICH_BERICHTE_KONTROLLE', 'P09_BEREICH_VORGABEN_SCHULUNG', 'P09_BEREICH_EIGENE_ORGANISATION', 'P09_BEREICH_BETEILIGUNGS_GESELLSCHAFTER', 'P09_BEREICH_SCHWEIZER_MUTTER', 'P09_BEREICH_ANDERE', 'P09_BEREICH_KEINE_NUR_GEPLANT')
-# bereich_code: Je Bereich eigener Taetigkeiten-Datensatz; 'nur geplant'/'keine Aufgaben' statt erfundener Details.
-Add-Field -List "Taetigkeiten" -InternalName "bereich_andere_text" -DisplayName 'Andere Aufgaben - bitte benennen' -Type Text
-Add-Field -List "Taetigkeiten" -InternalName "handlung_code" -DisplayName 'Welche konkrete Tätigkeit wird erfasst? (Handlung aus der Handlungstabelle des gewählten Bereichs)' -Type Choice `
-    -Choices @('P09_HANDLUNG_KUNDEN_VERTRIEB_01_KUNDENKONTAKTE_ANBAHNEN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_02_KUNDEN_BETREUEN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_03_ANGEBOTE_AUSARBEITEN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_04_PREISE_UND_RABATTE_BESTIMMEN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_05_LEISTUNGSUMFANG_UND_TERMINE_VERHANDELN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_06_VERTRAGSBEDINGUNGEN_AUSHANDELN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_07_AUFTRAEGE_ANNEHMEN_ODER_ABLEHNEN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_08_REKLAMATIONEN_LOESEN', 'P09_HANDLUNG_KUNDEN_VERTRIEB_09_VERTRIEBSMITARBEITERN_KONKRETE_AUFGABEN_GEBEN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_01_BEDARF_FESTSTELLEN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_02_ANGEBOTE_EINHOLEN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_03_LIEFERANTEN_AUSWAEHLEN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_04_PREISE_MENGEN_UND_LIEFERBEDINGUNGEN_VERHANDELN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_05_BESTELLUNGEN_FREIGEBEN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_06_VERTRAEGE_AUSHANDELN', 'P09_HANDLUNG_EINKAUF_LIEFERANTEN_07_LIEFERPROBLEME_ENTSCHEIDEN', 'P09_HANDLUNG_PERSONAL_01_PERSONALBEDARF_PLANEN', 'P09_HANDLUNG_PERSONAL_02_BEWERBER_SUCHEN_UND_AUSWAEHLEN', 'P09_HANDLUNG_PERSONAL_03_VORSTELLUNGSGESPRAECHE_FUEHREN', 'P09_HANDLUNG_PERSONAL_04_VERGUETUNG_UND_VERTRAGSBEDINGUNGEN_VERHANDELN', 'P09_HANDLUNG_PERSONAL_05_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHEIDEN', 'P09_HANDLUNG_PERSONAL_06_ARBEITSVERTRAEGE_VORBEREITEN', 'P09_HANDLUNG_PERSONAL_07_ARBEITSVERTRAEGE_UNTERZEICHNEN', 'P09_HANDLUNG_PERSONAL_08_ZIELE_UND_AUFGABEN_FESTLEGEN', 'P09_HANDLUNG_PERSONAL_09_ARBEITSEINSAETZE_UND_URLAUB_GENEHMIGEN', 'P09_HANDLUNG_PERSONAL_10_LEISTUNG_BEURTEILEN', 'P09_HANDLUNG_FINANZEN_LIQUID_01_LIQUIDITAET_PLANEN', 'P09_HANDLUNG_FINANZEN_LIQUID_02_ZAHLUNGEN_PRIORISIEREN_ODER_FREIGEBEN', 'P09_HANDLUNG_FINANZEN_LIQUID_03_FORDERUNGEN_VERFOLGEN', 'P09_HANDLUNG_FINANZEN_LIQUID_04_BANKGESPRAECHE_FUEHREN', 'P09_HANDLUNG_FINANZEN_LIQUID_05_KREDIT_UND_SICHERHEITENBEDINGUNGEN_VERHANDELN', 'P09_HANDLUNG_FINANZEN_LIQUID_06_FINANZIERUNGSVORSCHLAEGE_VERGLEICHEN', 'P09_HANDLUNG_FINANZEN_LIQUID_07_KREDITE_AUSWAEHLEN', 'P09_HANDLUNG_FINANZEN_LIQUID_08_FINANZIERUNG_UEBERWACHEN', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_01_BELEGE_BEARBEITEN', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_02_MONATS_ODER_JAHRESABSCHLUSS_VORBEREITEN', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_03_BUCHHALTER_UND_STEUERBERATER_BEAUFTRAGEN_ODER_STEUERN', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_04_SACHVERHALTE_ERLAEUTERN', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_05_STEUERLICHE_WAHLMOEGLICHKEITEN_ZUR_ENTSCHEIDUNG_VORLEGE', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_06_ENTSCHEIDUNGEN_NACH_BERATUNG_TREFFEN', 'P09_HANDLUNG_BUCHFUEHRUNG_STEUERN_07_FRISTEN_UEBERWACHEN', 'P09_HANDLUNG_PROJEKTE_BETRIEB_01_KAPAZITAETEN_UND_TERMINE_PLANEN', 'P09_HANDLUNG_PROJEKTE_BETRIEB_02_PROJEKTE_LEITEN', 'P09_HANDLUNG_PROJEKTE_BETRIEB_03_MITARBEITEREINSATZ_BESTIMMEN', 'P09_HANDLUNG_PROJEKTE_BETRIEB_04_QUALITAET_UND_LEISTUNGSERBRINGUNG_STEUERN', 'P09_HANDLUNG_PROJEKTE_BETRIEB_05_KONKRETE_PROBLEME_LOESEN', 'P09_HANDLUNG_PROJEKTE_BETRIEB_06_LEISTUNGEN_ODER_ERGEBNISSE_ABNEHMEN', 'P09_HANDLUNG_PLANUNG_INVESTITIONEN_01_UNTERNEHMENSPLANUNG_ERSTELLEN', 'P09_HANDLUNG_PLANUNG_INVESTITIONEN_02_BUDGETS_ERARBEITEN', 'P09_HANDLUNG_PLANUNG_INVESTITIONEN_03_BUDGETS_FREIGEBEN', 'P09_HANDLUNG_PLANUNG_INVESTITIONEN_04_INVESTITIONEN_PRUEFEN', 'P09_HANDLUNG_PLANUNG_INVESTITIONEN_05_INVESTITIONEN_AUSWAEHLEN_ODER_FREIGEBEN', 'P09_HANDLUNG_PLANUNG_INVESTITIONEN_06_UMSETZUNG_UEBERWACHEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_01_KENNZAHLEN_SAMMELN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_02_BERICHTE_ERSTELLEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_03_BERICHTE_PRUEFEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_04_ABWEICHUNGEN_ERKLAEREN_LASSEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_05_GESCHAEFTSLEITUNG_BEFRAGEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_06_EINHALTUNG_VON_VORGABEN_PRUEFEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_07_MASSNAHMEN_EMPFEHLEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_08_KONKRETE_KORREKTURMASSNAHMEN_ANORDNEN', 'P09_HANDLUNG_BERICHTE_KONTROLLE_09_UMSETZUNG_VERFOLGEN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWERFEN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_02_RICHTLINIEN_BESCHLIESSEN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEBEN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_04_MITARBEITENDE_FACHLICH_BERATEN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_05_SCHULUNGEN_KONZIPIEREN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_06_SCHULUNGEN_DURCHFUEHREN', 'P09_HANDLUNG_VORGABEN_SCHULUNG_07_UMSETZUNG_IN_EINZELNEN_VORGAENGEN_BEGLEITEN', 'P09_HANDLUNG_EIGENE_ORGANISATION_01_EIGENE_BUCHFUEHRUNG', 'P09_HANDLUNG_EIGENE_ORGANISATION_02_EIGENE_STEUERANGELEGENHEITEN', 'P09_HANDLUNG_EIGENE_ORGANISATION_03_EIGENE_BANKKONTEN_UND_ZAHLUNGEN', 'P09_HANDLUNG_EIGENE_ORGANISATION_04_EIGENES_PERSONAL', 'P09_HANDLUNG_EIGENE_ORGANISATION_05_EIGENE_RAEUME_UND_AUSSTATTUNG', 'P09_HANDLUNG_EIGENE_ORGANISATION_06_EIGENE_IT', 'P09_HANDLUNG_EIGENE_ORGANISATION_07_EIGENE_MANAGEMENTVERTRAEGE_UND_ABRECHNUNGEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_01_BETEILIGUNGEN_UEBERWACHEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_02_ERWERB_ODER_VERKAUF_VON_BETEILIGUNGEN_VORBEREITEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_03_STIMMRECHTSAUSUEBUNG_VORBEREITEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_04_GESELLSCHAFTERBESCHLUESSE_VORBEREITEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_05_ALS_VERTRETER_EINES_GESELLSCHAFTERS_ABSTIMMEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_06_AUSSCHUETTUNGSENTSCHEIDUNGEN_VORBEREITEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_07_KAPITALMASSNAHMEN_VORBEREITEN', 'P09_HANDLUNG_BETEILIGUNGS_GESELLSCHAFTER_08_ORGANBESTELLUNGEN_VORBEREITEN', 'P09_HANDLUNG_SCHWEIZER_MUTTER_01_UNTERLAGEN_FUER_DEREN_EIGENEN_ABSCHLUSS_ODER_STEUERERKL', 'P09_HANDLUNG_SCHWEIZER_MUTTER_02_UNTERLAGEN_FUER_KONZERNABSCHLUSS_AUFBEREITEN', 'P09_HANDLUNG_SCHWEIZER_MUTTER_03_DEREN_GESELLSCHAFTER_ODER_VERWALTUNGSRATSSITZUNGEN_VORB', 'P09_HANDLUNG_SCHWEIZER_MUTTER_04_DEREN_INVESTOREN_ODER_FINANZIERER_INFORMIEREN', 'P09_HANDLUNG_SCHWEIZER_MUTTER_05_DEREN_BETEILIGUNGSERWERB_FINANZIEREN', 'P09_HANDLUNG_SCHWEIZER_MUTTER_06_SONSTIGE_KONKRETE_ARBEITEN_BENENNEN')
-# handlung_code: Forms zeigt je gewähltem Bereich nur die passenden Handlungen (siehe sharepoint-forms/README.md).
-Add-Field -List "Taetigkeiten" -InternalName "activity_text" -DisplayName 'Beschreibung der konkreten Tätigkeit (nicht nur ''Management'' oder ''Controlling'')' -Type Note -Required
-Add-Field -List "Taetigkeiten" -InternalName "empfaenger_ref" -DisplayName 'Für welche Gesellschaft wird die Tätigkeit ausgeführt / wer nutzt das Ergebnis unmittelbar?' -Type Lookup -Required `
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t06_prioritaet_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('PERSON_STATUS_SELBST', 'PERSON_STATUS_BENANNTE_PERSON', 'PERSON_STATUS_WECHSELND', 'PERSON_STATUS_NIEMAND', 'PERSON_STATUS_KEINE', 'PERSON_STATUS_UNBEKANNT')
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t06_gesellschaft_ref" -DisplayName 'Zugehörige Gesellschaft' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Taetigkeiten" -InternalName "empfaenger_status" -DisplayName 'Status, falls kein eindeutiger Empfänger zutrifft' -Type Choice `
-    -Choices @('GESELLSCHAFT_STATUS_ANDERE', 'GESELLSCHAFT_STATUS_KEINE', 'GESELLSCHAFT_STATUS_UNBEKANNT', 'GESELLSCHAFT_STATUS_NICHT_EINDEUTIG')
-# empfaenger_status: Belegt u. a. 'andere Gesellschaft'/'nicht eindeutig'.
-Add-Field -List "Taetigkeiten" -InternalName "mehrere_empfaenger_text" -DisplayName 'Bei mehreren unmittelbaren Empfängern: Aufteilung oder gemeinsame Nutzung erläutern' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "auftrag_funktion" -DisplayName 'In wessen Auftrag und in welcher Funktion handelt die Person dabei?' -Type Choice -Required `
-    -Choices @('P12_FUNKTION_AUFTRAG_KG', 'P12_FUNKTION_AUFTRAG_BETEILIGUNG', 'P12_FUNKTION_AUFTRAG_SCHWEIZER_MUTTER', 'P12_FUNKTION_EIGENE_ORGANFUNKTION', 'P12_FUNKTION_VERTRETER_GESELLSCHAFTER', 'P12_FUNKTION_ANDERE', 'P12_FUNKTION_UNBEKANNT')
-Add-Field -List "Taetigkeiten" -InternalName "auftraggeber_person_ref" -DisplayName 'Auftraggebende Person' -Type Lookup `
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t11_unterschiedlich" -DisplayName 'Bestehen innerhalb dieses Aufgabenbereichs unterschiedliche Zuständigkeiten?' -Type Choice -Required `
+    -Choices @('T11_ZUSTAENDIGKEIT_NEIN', 'T11_ZUSTAENDIGKEIT_JA_GESELLSCHAFT', 'T11_ZUSTAENDIGKEIT_JA_GESCHAEFT_BETRAG', 'T11_ZUSTAENDIGKEIT_JA_STANDORT', 'T11_ZUSTAENDIGKEIT_ANDERE', 'T11_ZUSTAENDIGKEIT_UNBEKANNT')
+# t11_unterschiedlich: Geaenderte Bedeutung gegenueber V2.
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t12_text" -DisplayName 'Wie sind diese Zuständigkeiten verteilt?' -Type Note
+# t12_text: Anzeige: T11 benennt unterschiedliche Zustaendigkeiten.
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t13_status" -DisplayName 'Wer übernimmt weitere Teile dieser Aufgabe?' -Type Choice -Required `
+    -Choices @('T13_STATUS_PERSONEN', 'T13_STATUS_DIENSTLEISTER', 'T13_STATUS_NIEMAND', 'T13_STATUS_UNBEKANNT')
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t13_personen_ref" -DisplayName 'Benannte interne Personen' -Type LookupMulti `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Taetigkeiten" -InternalName "auftraggeber_gesellschaft_ref" -DisplayName 'Auftraggebende Gesellschaft' -Type Lookup `
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t13_dienstleister_text" -DisplayName 'Externe Dienstleister' -Type Text
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t13_gesellschaft_ref" -DisplayName 'Gesellschaft bzw. Arbeitgeber' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Taetigkeiten" -InternalName "handlungstyp" -DisplayName 'Was macht die Person bei dieser Tätigkeit?' -Type MultiChoice -Required `
-    -Choices @('P13_HANDLUNGSTYP_INFO_SAMMELN', 'P13_HANDLUNGSTYP_VORSCHLAG_ERARBEITEN', 'P13_HANDLUNGSTYP_VERHANDLUNGEN_FUEHREN', 'P13_HANDLUNGSTYP_VERBINDLICHE_VORGABEN', 'P13_HANDLUNGSTYP_SELBST_ENTSCHEIDEN', 'P13_HANDLUNGSTYP_FREMDE_ENTSCHEIDUNG_UMSETZEN', 'P13_HANDLUNGSTYP_KONTROLLE_ARBEIT_ANDERER', 'P13_HANDLUNGSTYP_BERATEN_SCHULEN', 'P13_HANDLUNGSTYP_NUR_BERICHTEN')
-Add-Field -List "Taetigkeiten" -InternalName "ablauf_text" -DisplayName 'Ablauf bei mehreren Schritten' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "verwendungszweck" -DisplayName 'Wofür wird das Ergebnis konkret verwendet?' -Type MultiChoice -Required `
-    -Choices @('P14_VERWENDUNGSZWECK_KUNDENAUFTRAG', 'P14_VERWENDUNGSZWECK_EINKAUF_LIEFERANTENVERTRAG', 'P14_VERWENDUNGSZWECK_PERSONALENTSCHEIDUNG', 'P14_VERWENDUNGSZWECK_FINANZIERUNG_ZAHLUNG', 'P14_VERWENDUNGSZWECK_BETRIEBLICHE_PLANUNG_UMSETZUNG', 'P14_VERWENDUNGSZWECK_KONTROLLE_GESCHAEFTSLEITUNG', 'P14_VERWENDUNGSZWECK_VERWALTUNG_KG_SELBST', 'P14_VERWENDUNGSZWECK_STIMMRECHTE_GESELLSCHAFTERBESCHLUESSE', 'P14_VERWENDUNGSZWECK_ABSCHLUSS_BERICHT_SCHWEIZER_MUTTER', 'P14_VERWENDUNGSZWECK_ANDERER_ZWECK')
-Add-Field -List "Taetigkeiten" -InternalName "verwendung_beispiel_text" -DisplayName 'Kurzes Beispiel zur Verwendung' -Type Text
-Add-Field -List "Taetigkeiten" -InternalName "activity_start" -DisplayName 'Seit wann erfolgt diese Tätigkeit?' -Type DateOnly -Required
-Add-Field -List "Taetigkeiten" -InternalName "activity_end" -DisplayName 'Bis wann, falls beendet' -Type DateOnly
-Add-Field -List "Taetigkeiten" -InternalName "frequency" -DisplayName 'Wie häufig erfolgt diese Tätigkeit?' -Type Choice -Required `
-    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NONE')
-# frequency: Volle Skala FREQ_DAILY..FREQ_ONCE.
-Add-Field -List "Taetigkeiten" -InternalName "hours" -DisplayName 'Stunden im Bezugszeitraum' -Type Number
-Add-Field -List "Taetigkeiten" -InternalName "is_estimate" -DisplayName 'Schätzung (statt exakter Wert)?' -Type Choice `
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t14_aufteilung_text" -DisplayName 'Wie sind die Arbeiten zwischen diesen Beteiligten verteilt?' -Type Note
+# t14_aufteilung_text: Anzeige: T13 benennt weitere Beteiligte.
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t15_geaendert" -DisplayName 'Hat sich diese Aufgabenverteilung im Zeitraum geändert?' -Type Choice -Required `
     -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
-Add-Field -List "Taetigkeiten" -InternalName "ergebnis_text" -DisplayName 'Welches konkrete Ergebnis ist im Bezugszeitraum entstanden?' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "ergebnis_datum" -DisplayName 'Datum des Ergebnisses' -Type DateOnly
-Add-Field -List "Taetigkeiten" -InternalName "ergebnis_empfaenger_text" -DisplayName 'Empfänger des Ergebnisses' -Type Text
-Add-Field -List "Taetigkeiten" -InternalName "kein_fall_im_zeitraum" -DisplayName 'Kein tatsächlicher Fall im Zeitraum' -Type Choice `
-    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
-Add-Field -List "Taetigkeiten" -InternalName "ergebnis_nachweis_ref" -DisplayName 'Vorhandene Unterlagen' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Taetigkeiten" -InternalName "zusatz_erbringer" -DisplayName 'Wer erbringt dieselbe oder eine ähnliche Arbeit zusätzlich?' -Type Choice -Required `
-    -Choices @('P18_ERBRINGER_NIEMAND', 'P18_ERBRINGER_INTERNE_PERSON', 'P18_ERBRINGER_EXTERNER_DIENSTLEISTER', 'P18_ERBRINGER_UNBEKANNT')
-Add-Field -List "Taetigkeiten" -InternalName "zusatz_person_ref" -DisplayName 'Zusätzliche interne Person' -Type Lookup `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Taetigkeiten" -InternalName "zusatz_gesellschaft_text" -DisplayName 'Externer Dienstleister / Gesellschaft' -Type Text
-Add-Field -List "Taetigkeiten" -InternalName "zusatz_ergaenzung_text" -DisplayName 'Was ergänzt die Person konkret, welches zusätzliche Ergebnis entsteht?' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "zusatz_nur_berichtspflicht_mutter" -DisplayName 'Ergebnis ausschliesslich für Berichtspflichten der Mutter angefordert' -Type Choice `
-    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
-Add-Field -List "Taetigkeiten" -InternalName "g04_ergebnistyp" -DisplayName 'Was entsteht aus den Arbeiten für die Schweizer Mutter?' -Type MultiChoice `
-    -Choices @('G04_ERGEBNISTYP_EINZELABSCHLUSS', 'G04_ERGEBNISTYP_KONZERNABSCHLUSS', 'G04_ERGEBNISTYP_INFORMATIONSBERICHT', 'G04_ERGEBNISTYP_BESCHLUSSVORLAGE', 'G04_ERGEBNISTYP_FINANZIERUNG', 'G04_ERGEBNISTYP_OPERATIVE_ENTSCHEIDUNG', 'G04_ERGEBNISTYP_ANDERES_ERGEBNIS')
-# g04_ergebnistyp: Nur bei bereich_code=SCHWEIZER_MUTTER relevant.
-Add-Field -List "Taetigkeiten" -InternalName "g04_mehrfachnutzung_text" -DisplayName 'Unterschiedliche Verwendungen bei Mehrfachnutzung von Unterlagen' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "g05_alternative" -DisplayName 'Wer würde die Arbeit erledigen, wenn die KG sie nicht übernähme?' -Type Choice `
-    -Choices @('G05_ALTERNATIVE_BETEILIGUNG_SELBST', 'G05_ALTERNATIVE_SCHWEIZER_MUTTER', 'G05_ALTERNATIVE_ANDERER_INTERNER_BEREICH', 'G05_ALTERNATIVE_EXTERNER_DIENSTLEISTER', 'G05_ALTERNATIVE_ENTFAELLT', 'G05_ALTERNATIVE_UNBEKANNT')
-# g05_alternative: Nur bei bereich_code=BETEILIGUNGS_GESELLSCHAFTER oder SCHWEIZER_MUTTER relevant; keine rechtliche Beurteilung.
-Add-Field -List "Taetigkeiten" -InternalName "g05_text" -DisplayName 'Tatsächliche Vertretung oder bisherige Handhabung' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "k01_gegenstand" -DisplayName 'Was wird geprüft oder überwacht?' -Type MultiChoice `
-    -Choices @('K01_GEGENSTAND_GESCHAEFTSERGEBNIS', 'K01_GEGENSTAND_BUDGET', 'K01_GEGENSTAND_LIQUIDITAET', 'K01_GEGENSTAND_PROJEKTE', 'K01_GEGENSTAND_PERSONAL', 'K01_GEGENSTAND_EINHALTUNG_VORGABEN', 'K01_GEGENSTAND_TAETIGKEIT_GESCHAEFTSLEITUNG', 'K01_GEGENSTAND_WERTENTWICKLUNG_BETEILIGUNG', 'K01_GEGENSTAND_ANDERES')
-# k01_gegenstand: Nur bei bereich_code=BERICHTE_KONTROLLE relevant; betroffene Gesellschaft = empfaenger_ref.
-Add-Field -List "Taetigkeiten" -InternalName "k02_reaktion" -DisplayName 'Was geschieht bei einer Abweichung tatsächlich?' -Type MultiChoice `
-    -Choices @('K02_REAKTION_BERICHT_ZUR_KENNTNIS', 'K02_REAKTION_ERLAEUTERUNG_ANGEFORDERT', 'K02_REAKTION_EMPFEHLUNG_ABGEGEBEN', 'K02_REAKTION_ALLGEMEINE_VORGABE_GEAENDERT', 'K02_REAKTION_MASSNAHME_VERBINDLICH_ANGEORDNET', 'K02_REAKTION_EINZELFALL_SELBST_ENTSCHIEDEN', 'K02_REAKTION_ANDERE_REAKTION')
-Add-Field -List "Taetigkeiten" -InternalName "k02_beispiel_empfaenger_text" -DisplayName 'Beispiel und Empfänger der Reaktion' -Type Text
-Add-Field -List "Taetigkeiten" -InternalName "k03_inhalt" -DisplayName 'Welchen Inhalt haben Anweisungen und Schulungen?' -Type MultiChoice `
-    -Choices @('K03_INHALT_ALLGEMEINE_GRUNDSAETZE', 'K03_INHALT_FACHWISSEN_METHODEN', 'K03_INHALT_SOFTWARE_ANWENDUNG', 'K03_INHALT_REGELN_ABLAEUFE', 'K03_INHALT_KONKRETE_BEARBEITUNG', 'K03_INHALT_ANDERE_INHALTE')
-# k03_inhalt: Nur bei bereich_code=VORGABEN_SCHULUNG relevant.
-Add-Field -List "Taetigkeiten" -InternalName "k03_inhalt_andere_text" -DisplayName 'Andere Inhalte - bitte benennen' -Type Text
-Add-Field -List "Taetigkeiten" -InternalName "k03_wer_bestimmt_ref" -DisplayName 'Wer bestimmt die Inhalte?' -Type Lookup `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Taetigkeiten" -InternalName "k03_wer_nimmt_teil_text" -DisplayName 'Wer nimmt teil?' -Type Note
-Add-Field -List "Taetigkeiten" -InternalName "k03_wer_setzt_um_ref" -DisplayName 'Wer setzt die Inhalte um?' -Type Lookup `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Taetigkeiten" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t15_zeitpunkt" -DisplayName 'Änderungszeitpunkt' -Type DateOnly
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "t15_neue_zustaendigkeit_text" -DisplayName 'Geänderte Zuständigkeit' -Type Note
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "g14_regelung" -DisplayName 'Wie ist die Zuständigkeit für diese Aufgaben organisatorisch geregelt?' -Type Choice `
+    -Choices @('G14_REGELUNG_STAENDIGE_VERTEILUNG', 'G14_REGELUNG_SCHRIFTLICHER_AUFTRAG', 'G14_REGELUNG_MUENDLICHE_ABSPRACHE', 'G14_REGELUNG_WIEDERKEHRENDE_ANFORDERUNG', 'G14_REGELUNG_WECHSELNDE_ZUSTAENDIGKEIT', 'G14_REGELUNG_ANDERE', 'G14_REGELUNG_UNBEKANNT')
+# g14_regelung: Nur bei bereich_code=BETEILIGUNG_MUTTER.
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "g15_vertretung" -DisplayName 'Wie werden diese Aufgaben bei Abwesenheit weitergeführt?' -Type Choice `
+    -Choices @('G15_VERTRETUNG_BENANNTE_VERTRETUNG', 'G15_VERTRETUNG_VERTEILUNG_MEHRERE', 'G15_VERTRETUNG_EXTERNER_DIENSTLEISTER', 'G15_VERTRETUNG_BLEIBT_LIEGEN', 'G15_VERTRETUNG_BISHER_KEIN_FALL', 'G15_VERTRETUNG_UNBEKANNT')
+# g15_vertretung: Nur bei bereich_code=BETEILIGUNG_MUTTER.
+Add-Field -List "Aufgabenzustaendigkeiten" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
-# Liste: Zeitverteilungen
-# n:m-Verknuepfung Zeitanteile auf Ort/Empfaenger (P16, P21, P22), Summe je Bezug = 100 Prozent
+# Liste: Entscheidungsbefugnisse
+# Wiederkehrende Entscheidungszustaendigkeit je Aufgabe x Entscheidungsart (D02-D10)
 # ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Zeitverteilungen"
-Add-Field -List "Zeitverteilungen" -InternalName "verteilung_id" -DisplayName 'Verteilungs-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Zeitverteilungen" -InternalName "bezug_typ" -DisplayName 'Bezugstyp der Verteilung' -Type Choice -Required `
-    -Choices @('ZEITVERTEILUNG_BEZUGSTYP_EINSATZ', 'ZEITVERTEILUNG_BEZUGSTYP_TAETIGKEIT')
-Add-Field -List "Zeitverteilungen" -InternalName "einsatz_ref" -DisplayName 'Bezug: Personeneinsatz (bei P21/P22)' -Type Lookup `
-    -LookupList "Personeneinsaetze" -LookupField "display_label"
-Add-Field -List "Zeitverteilungen" -InternalName "taetigkeit_ref" -DisplayName 'Bezug: Tätigkeit (bei P16)' -Type Lookup `
-    -LookupList "Taetigkeiten" -LookupField "display_label"
-Add-Field -List "Zeitverteilungen" -InternalName "dimension" -DisplayName 'Dimension der Verteilung' -Type Choice -Required `
-    -Choices @('ZEITVERTEILUNG_DIMENSION_ORT', 'ZEITVERTEILUNG_DIMENSION_EMPFAENGER')
-Add-Field -List "Zeitverteilungen" -InternalName "ort_ref" -DisplayName 'Bezug: Ort (bei Dimension=Ort)' -Type Lookup `
-    -LookupList "Orte" -LookupField "display_label"
-Add-Field -List "Zeitverteilungen" -InternalName "empfaenger_ref" -DisplayName 'Bezug: Empfänger-Gesellschaft (bei Dimension=Empfänger)' -Type Lookup `
+New-ListIfMissing -Title "Entscheidungsbefugnisse"
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "befugnis_id" -DisplayName 'Befugnis-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+# aufgabe_ref: Anzeige: Entscheidungsaufgabe vorhanden (D01 nicht 'keine').
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "entscheidungsart_code" -DisplayName 'Welche Entscheidungen betrifft dies?' -Type Choice -Required `
+    -Choices @('D02_ART_PREISE_KUNDENAUFTRAEGE', 'D02_ART_LIEFERANTEN_EINKAUF', 'D02_ART_PERSONAL', 'D02_ART_PERSONALEINSATZ', 'D02_ART_FINANZIERUNG', 'D02_ART_ZAHLUNGEN', 'D02_ART_BUDGETS', 'D02_ART_INVESTITIONEN', 'D02_ART_UNTERNEHMENSPLANUNG', 'D02_ART_BETEILIGUNGEN', 'D02_ART_AUSSCHUETTUNGEN', 'D02_ART_KAPITALMASSNAHMEN', 'D02_ART_ORGANBESTELLUNGEN', 'D02_ART_ANDERE')
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "entscheidungsart_andere_text" -DisplayName 'Andere Entscheidungen - bitte benennen' -Type Text
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "gesellschaft_ref" -DisplayName 'Tatsächlich betroffene Gesellschaft' -Type Lookup -Required `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Zeitverteilungen" -InternalName "prozent" -DisplayName 'Prozentanteil (Summe je Bezug = 100 %)' -Type Number -Required `
-    -Min 0 `
-    -Max 100
-# prozent: 100-%-Prüfung mit Toleranz 99-101 % im Flow, siehe README.
-Add-Field -List "Zeitverteilungen" -InternalName "stunden" -DisplayName 'Stunden (alternativ oder ergänzend zu Prozent)' -Type Number
-Add-Field -List "Zeitverteilungen" -InternalName "basis_code" -DisplayName 'Grundlage der Verteilung' -Type Choice `
-    -Choices @('NUTZUNGSGRUNDLAGE_AUFZEICHNUNG', 'NUTZUNGSGRUNDLAGE_SCHAETZUNG', 'NUTZUNGSGRUNDLAGE_ANDERE_GRUNDLAGE')
-Add-Field -List "Zeitverteilungen" -InternalName "zeitraum_von" -DisplayName 'Zeitraum - Beginn' -Type DateOnly
-Add-Field -List "Zeitverteilungen" -InternalName "zeitraum_bis" -DisplayName 'Zeitraum - Ende' -Type DateOnly
-Add-Field -List "Zeitverteilungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
-
-# ---------------------------------------------------------------------------
-# Liste: Entscheidungsfaelle
-# Entscheidungsfaelle (E01-E08) sowie Kontroll-/Anweisungs-/Schulungsfaelle (K05)
-# ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Entscheidungsfaelle"
-Add-Field -List "Entscheidungsfaelle" -InternalName "fall_id" -DisplayName 'Fall-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Entscheidungsfaelle" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
-    -LookupList "Erfassungen" -LookupField "case_id" `
-    -DeleteBehavior Restrict
-Add-Field -List "Entscheidungsfaelle" -InternalName "art_code" -DisplayName 'Um welche Entscheidung geht es?' -Type Choice -Required `
-    -Choices @('E01_ART_KUNDENPREISE_AUFTRAEGE', 'E01_ART_LIEFERANTEN_BESTELLUNGEN', 'E01_ART_PERSONAL', 'E01_ART_ARBEITSORGANISATION', 'E01_ART_FINANZIERUNG_SICHERHEITEN', 'E01_ART_ZAHLUNGEN', 'E01_ART_BUDGET_INVESTITION', 'E01_ART_BETRIEBLICHE_STRATEGISCHE_PLANUNG', 'E01_ART_BETEILIGUNGSERWERB_VERKAUF', 'E01_ART_AUSSCHUETTUNG', 'E01_ART_KAPITALMASSNAHME', 'E01_ART_ORGANBESTELLUNG_ABBERUFUNG', 'E01_ART_ANDERE', 'E01_ART_KONTROLLE_ANWEISUNG_SCHULUNG')
-# art_code: Codeliste um K05-Faelle (E01_ART_KONTROLLE_ANWEISUNG_SCHULUNG) erweitert.
-Add-Field -List "Entscheidungsfaelle" -InternalName "art_andere_text" -DisplayName 'Andere Entscheidung - bitte benennen' -Type Text
-Add-Field -List "Entscheidungsfaelle" -InternalName "gesellschaft_ref" -DisplayName 'Welche Gesellschaft betrifft die Entscheidung?' -Type Lookup -Required `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Entscheidungsfaelle" -InternalName "gesellschaft_status" -DisplayName 'Status, falls keine konkrete Gesellschaft zutrifft' -Type Choice `
-    -Choices @('GESELLSCHAFT_STATUS_ANDERE', 'GESELLSCHAFT_STATUS_KEINE', 'GESELLSCHAFT_STATUS_UNBEKANNT', 'GESELLSCHAFT_STATUS_NICHT_EINDEUTIG')
-Add-Field -List "Entscheidungsfaelle" -InternalName "inhalt" -DisplayName 'Gegenstand der Entscheidung' -Type Note
-Add-Field -List "Entscheidungsfaelle" -InternalName "e05_grenzen" -DisplayName 'Welche Grenzen oder Freigaben bestehen?' -Type MultiChoice -Required `
-    -Choices @('E05_GRENZEN_KEINE_FREIGABE', 'E05_GRENZEN_INNERHALB_BUDGET', 'E05_GRENZEN_BIS_BETRAG', 'E05_GRENZEN_ZUSTIMMUNG_GESCHAEFTSLEITUNG', 'E05_GRENZEN_ZUSTIMMUNG_GESELLSCHAFTER_GREMIUM', 'E05_GRENZEN_ANDERE_VORGABE')
-Add-Field -List "Entscheidungsfaelle" -InternalName "e05_betrag" -DisplayName 'Betragsgrenze' -Type Number
-Add-Field -List "Entscheidungsfaelle" -InternalName "e05_waehrung" -DisplayName 'Währung der Betragsgrenze' -Type Text
-Add-Field -List "Entscheidungsfaelle" -InternalName "e05_regelung_ref" -DisplayName 'Schriftliche Regelung' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Entscheidungsfaelle" -InternalName "e06_ablauf" -DisplayName 'Wie läuft eine Zustimmung in der Praxis ab?' -Type Choice -Required `
-    -Choices @('E06_ZUSTIMMUNGSABLAUF_PRUEFT_AENDERT_REGELMAESSIG', 'E06_ZUSTIMMUNGSABLAUF_PRUEFT_AENDERT_SELTEN', 'E06_ZUSTIMMUNGSABLAUF_BESTAETIGT_UEBLICH', 'E06_ZUSTIMMUNGSABLAUF_ZEICHNET_FORMAL', 'E06_ZUSTIMMUNGSABLAUF_KEINE_ZUSTIMMUNG', 'E06_ZUSTIMMUNGSABLAUF_UNBEKANNT')
-Add-Field -List "Entscheidungsfaelle" -InternalName "e06_beispiel_text" -DisplayName 'Beispiel: Kann die zustimmende Person ablehnen, wann zuletzt geschehen?' -Type Note
-Add-Field -List "Entscheidungsfaelle" -InternalName "status" -DisplayName 'Status des Falls' -Type Choice -Required `
-    -Choices @('FALL_STATUS_OFFEN', 'FALL_STATUS_GEPLANT', 'FALL_STATUS_ABGESCHLOSSEN')
-# status: 'geplant' statt erfundener Detailantwort, falls Fall nur beabsichtigt.
-Add-Field -List "Entscheidungsfaelle" -InternalName "ergebnis" -DisplayName 'Ergebnis der Entscheidung' -Type Note
-Add-Field -List "Entscheidungsfaelle" -InternalName "e08_datum" -DisplayName 'Datum des Falls' -Type DateOnly
-Add-Field -List "Entscheidungsfaelle" -InternalName "e08_nachweis_ref" -DisplayName 'Nachweis des Falls' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Entscheidungsfaelle" -InternalName "k05_text" -DisplayName 'Kontroll-, Anweisungs- oder Schulungsfall: Anlass, Beteiligte, Inhalt, Reaktion, Ergebnis' -Type Note
-# k05_text: Nur bei art_code=E01_ART_KONTROLLE_ANWEISUNG_SCHULUNG.
-Add-Field -List "Entscheidungsfaelle" -InternalName "k05_nachweis_ref" -DisplayName 'Nachweis zum Kontroll-/Anweisungs-/Schulungsfall' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Entscheidungsfaelle" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
-Add-Field -List "Entscheidungsfaelle" -InternalName "n01_bereich" -DisplayName 'Welche tatsächlich ausgeübten Managementtätigkeiten lassen sich konkret zeigen?' -Type MultiChoice `
-    -Choices @('N01_BEREICH_KUNDENGESCHAEFT', 'N01_BEREICH_LIEFERANTENGESCHAEFT', 'N01_BEREICH_PERSONALENTSCHEIDUNG', 'N01_BEREICH_FINANZIERUNG', 'N01_BEREICH_BETRIEBLICHE_STEUERUNG', 'N01_BEREICH_BUDGET_INVESTITION', 'N01_BEREICH_ANDERE_TAETIGKEIT')
-# n01_bereich: Je tatsächlich ausgeübtem wesentlichem Bereich ein Fall (keine fixe Obergrenze mehr, frühere offene Frage damit erledigt); bereits bei P17/E08/V09/K05 genannte Fälle referenzieren statt neu erfassen - siehe Belegverknuepfungen.
-
-# ---------------------------------------------------------------------------
-# Liste: Vertragsvorgaenge
-# Vertragsverhandlungen und Abschlussreife (V01-V02, V05-V06, V08-V09)
-# ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Vertragsvorgaenge"
-Add-Field -List "Vertragsvorgaenge" -InternalName "vorgang_id" -DisplayName 'Vorgangs-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Vertragsvorgaenge" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
-    -LookupList "Erfassungen" -LookupField "case_id" `
-    -DeleteBehavior Restrict
-Add-Field -List "Vertragsvorgaenge" -InternalName "vertragsart" -DisplayName 'Bei welchen Geschäften wirkt die Person mit?' -Type Choice -Required `
-    -Choices @('V01_VERTRAGSART_KUNDENVERTRAEGE', 'V01_VERTRAGSART_LIEFERANTENVERTRAEGE', 'V01_VERTRAGSART_PERSONALVERTRAEGE', 'V01_VERTRAGSART_KREDITE_SICHERHEITEN', 'V01_VERTRAGSART_MIET_LEASINGVERTRAEGE', 'V01_VERTRAGSART_BERATERVERTRAEGE', 'V01_VERTRAGSART_SONSTIGE_VERTRAEGE', 'V01_VERTRAGSART_KEINE_MITWIRKUNG')
-# vertragsart: Je ausgewählter Art (ausser 'keine Mitwirkung') ein eigener Vorgangs-Datensatz.
-Add-Field -List "Vertragsvorgaenge" -InternalName "vertragsgesellschaft_ref" -DisplayName 'Welche Gesellschaft soll Vertragspartei werden?' -Type Lookup -Required `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Vertragsvorgaenge" -InternalName "gegenpartei_text" -DisplayName 'Gegenpartei' -Type Text
-Add-Field -List "Vertragsvorgaenge" -InternalName "v05_offene_punkte" -DisplayName 'Was ist nach ihrer Verhandlung noch offen?' -Type Choice -Required `
-    -Choices @('V05_OFFENE_PUNKTE_WESENTLICHE_WIRTSCHAFTLICHE_PUNKTE', 'V05_OFFENE_PUNKTE_EINZELNE_WIRTSCHAFTLICHE_PUNKTE', 'V05_OFFENE_PUNKTE_NUR_RECHTLICHE_DETAILPRUEFUNG', 'V05_OFFENE_PUNKTE_NUR_INTERNE_FREIGABE', 'V05_OFFENE_PUNKTE_NUR_UNTERSCHRIFT', 'V05_OFFENE_PUNKTE_NICHTS_BINDEND', 'V05_OFFENE_PUNKTE_UNBEKANNT')
-Add-Field -List "Vertragsvorgaenge" -InternalName "v05_text" -DisplayName 'Welche Punkte genau?' -Type Text
-Add-Field -List "Vertragsvorgaenge" -InternalName "v06_aenderungshaeufigkeit" -DisplayName 'Wer prüft, ändert oder genehmigt danach den Vertrag?' -Type Choice -Required `
-    -Choices @('V06_AENDERUNGSHAEUFIGKEIT_REGELMAESSIGE_AENDERUNGEN', 'V06_AENDERUNGSHAEUFIGKEIT_GELEGENTLICHE_AENDERUNGEN', 'V06_AENDERUNGSHAEUFIGKEIT_GEWOEHNLICH_KEINE_AENDERUNGEN', 'V06_AENDERUNGSHAEUFIGKEIT_KEINE_WEITERE_PRUEFUNG', 'V06_AENDERUNGSHAEUFIGKEIT_UNBEKANNT')
-Add-Field -List "Vertragsvorgaenge" -InternalName "v06_beispiel_text" -DisplayName 'Letzte Änderung oder Ablehnung als Beispiel' -Type Note
-Add-Field -List "Vertragsvorgaenge" -InternalName "v08_anzahl_vorgaenge" -DisplayName 'Anzahl Vorgänge im Zeitraum' -Type Number
-Add-Field -List "Vertragsvorgaenge" -InternalName "v09_text" -DisplayName 'Beschreibung eines bis zur Unterschrift vorbereiteten Vertrags' -Type Note -Required
-Add-Field -List "Vertragsvorgaenge" -InternalName "v09_nachweis_ref" -DisplayName 'Anlagen: E-Mail-Verlauf, Entwurfsstände, Verhandlungsnotiz, Freigabe, unterschriebener Vertrag' -Type LookupMulti `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Vertragsvorgaenge" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
-
-# ---------------------------------------------------------------------------
-# Liste: Fallbeteiligungen
-# Rollen/Schritte/Orte der beteiligten Personen je Entscheidungsfall oder Vertragsvorgang (E03/E04/E07; V03/V04/V07/V08)
-# ---------------------------------------------------------------------------
-New-ListIfMissing -Title "Fallbeteiligungen"
-Add-Field -List "Fallbeteiligungen" -InternalName "beteiligung_id" -DisplayName 'Beteiligungs-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Fallbeteiligungen" -InternalName "bezug_typ" -DisplayName 'Bezugstyp' -Type Choice -Required `
-    -Choices @('FALLBETEILIGUNG_BEZUGSTYP_ENTSCHEIDUNG', 'FALLBETEILIGUNG_BEZUGSTYP_VERTRAG')
-Add-Field -List "Fallbeteiligungen" -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsfall' -Type Lookup `
-    -LookupList "Entscheidungsfaelle" -LookupField "display_label"
-Add-Field -List "Fallbeteiligungen" -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragsvorgang' -Type Lookup `
-    -LookupList "Vertragsvorgaenge" -LookupField "display_label"
-Add-Field -List "Fallbeteiligungen" -InternalName "person_ref" -DisplayName 'Bezug: Person (Entscheider/Beteiligter)' -Type Lookup -Required `
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d03_entscheider_ref" -DisplayName 'Wer trifft in diesem Bereich die inhaltlichen Entscheidungen?' -Type LookupMulti `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Fallbeteiligungen" -InternalName "e04_entscheider" -DisplayName 'Wer bestimmt tatsächlich das Ergebnis?' -Type Choice `
-    -Choices @('E04_ENTSCHEIDER_PERSON_ALLEIN', 'E04_ENTSCHEIDER_GEMEINSAM_BENANNTE', 'E04_ENTSCHEIDER_ANDERE_PERSON', 'E04_ENTSCHEIDER_GREMIUM_SITZUNG', 'E04_ENTSCHEIDER_GESELLSCHAFTERBESCHLUSS', 'E04_ENTSCHEIDER_UNBEKANNT')
-Add-Field -List "Fallbeteiligungen" -InternalName "e03_rolle" -DisplayName 'Welche Rolle hat die Person dabei tatsächlich?' -Type MultiChoice `
-    -Choices @('E03_ROLLE_GRUNDLAGEN_ERMITTELN', 'E03_ROLLE_ALTERNATIVEN_ENTWICKELN', 'E03_ROLLE_LOESUNG_EMPFEHLEN', 'E03_ROLLE_VERHANDELN', 'E03_ROLLE_SELBST_ENTSCHEIDEN', 'E03_ROLLE_GEMEINSAM_ENTSCHEIDEN', 'E03_ROLLE_ZUSTIMMUNG_ERTEILEN', 'E03_ROLLE_UMSETZEN', 'E03_ROLLE_KONTROLLE_UMSETZUNG', 'E03_ROLLE_NUR_INFORMIERT')
-Add-Field -List "Fallbeteiligungen" -InternalName "v03_schritte" -DisplayName 'Welche Schritte übernimmt die Person tatsächlich? (Vertrag)' -Type MultiChoice `
-    -Choices @('V03_SCHRITTE_KONTAKT_HERSTELLEN', 'V03_SCHRITTE_BEDARF_RAHMEN_KLAEREN', 'V03_SCHRITTE_VERTRAGSPARTNER_AUSWAEHLEN', 'V03_SCHRITTE_ANGEBOT_ERSTELLEN_EINHOLEN', 'V03_SCHRITTE_PREISE_VERGUETUNG_VERHANDELN', 'V03_SCHRITTE_LEISTUNG_LAUFZEIT_VERHANDELN', 'V03_SCHRITTE_HAFTUNG_SICHERHEITEN_VERHANDELN', 'V03_SCHRITTE_ENTWURF_ABSTIMMEN', 'V03_SCHRITTE_BINDENDE_ZUSAGE', 'V03_SCHRITTE_UNTERZEICHNEN', 'V03_SCHRITTE_NUR_WEITERLEITEN')
-Add-Field -List "Fallbeteiligungen" -InternalName "v04_gespraechspartner" -DisplayName 'Mit wem führt sie diese Gespräche?' -Type MultiChoice `
-    -Choices @('V04_GESPRAECHSPARTNER_KUNDEN', 'V04_GESPRAECHSPARTNER_LIEFERANTEN', 'V04_GESPRAECHSPARTNER_BEWERBER_MITARBEITENDE', 'V04_GESPRAECHSPARTNER_BANKEN_FINANZIERER', 'V04_GESPRAECHSPARTNER_STEUERBERATER_BUCHHALTER', 'V04_GESPRAECHSPARTNER_ANDERE_BERATER', 'V04_GESPRAECHSPARTNER_INTERNE_VERANTWORTLICHE', 'V04_GESPRAECHSPARTNER_ANDERE_GESPRAECHSPARTNER')
-Add-Field -List "Fallbeteiligungen" -InternalName "v04_gespraechspartner_text" -DisplayName 'Andere Gesprächspartner - bitte benennen' -Type Text
-Add-Field -List "Fallbeteiligungen" -InternalName "v07_unterlagenart" -DisplayName 'Welche Unterlagen darf die Person unterzeichnen oder verbindlich bestätigen?' -Type MultiChoice `
-    -Choices @('V07_UNTERLAGENART_ANGEBOTE', 'V07_UNTERLAGENART_AUFTRAGSBESTAETIGUNGEN', 'V07_UNTERLAGENART_KUNDENVERTRAEGE', 'V07_UNTERLAGENART_BESTELLUNGEN_LIEFERANTENVERTRAEGE', 'V07_UNTERLAGENART_ARBEITSVERTRAEGE', 'V07_UNTERLAGENART_FINANZIERUNGSVERTRAEGE', 'V07_UNTERLAGENART_ZAHLUNGSFREIGABEN', 'V07_UNTERLAGENART_BERATERAUFTRAEGE', 'V07_UNTERLAGENART_SONSTIGE_DOKUMENTE', 'V07_UNTERLAGENART_KEINE')
-Add-Field -List "Fallbeteiligungen" -InternalName "v07_grenzen_text" -DisplayName 'Allein oder gemeinsam; Betragsgrenzen; Vollmacht oder Kompetenzordnung' -Type Note
-Add-Field -List "Fallbeteiligungen" -InternalName "v07_nachweis_ref" -DisplayName 'Vollmacht oder Kompetenzordnung' -Type Lookup `
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d03_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('D03_ENTSCHEIDER_PERSON_ALLEIN', 'D03_ENTSCHEIDER_GEMEINSAM_BENANNTE', 'D03_ENTSCHEIDER_ANDERE_PERSON', 'D03_ENTSCHEIDER_GESCHAEFTSLEITUNG', 'D03_ENTSCHEIDER_ANDERES_GREMIUM', 'D03_ENTSCHEIDER_GESELLSCHAFTER', 'D03_ENTSCHEIDER_UNTERSCHIEDLICH', 'D03_ENTSCHEIDER_UNBEKANNT')
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d03_gesellschaft_ref" -DisplayName 'Gesellschaft des Entscheiders' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d03_funktion_text" -DisplayName 'Funktion des Entscheiders' -Type Text
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d04_zustimmung" -DisplayName 'Für welche Entscheidungen ist eine zusätzliche Zustimmung erforderlich?' -Type Choice -Required `
+    -Choices @('D04_ZUSTIMMUNG_KEINE', 'D04_ZUSTIMMUNG_NACH_BETRAG', 'D04_ZUSTIMMUNG_AUSSERHALB_BUDGET', 'D04_ZUSTIMMUNG_NACH_ART', 'D04_ZUSTIMMUNG_GRUNDSAETZLICH', 'D04_ZUSTIMMUNG_ANDERE', 'D04_ZUSTIMMUNG_UNBEKANNT')
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d05_erteiler_ref" -DisplayName 'Wer erteilt diese Zustimmung?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+# d05_erteiler_ref: Anzeige: Zustimmung erforderlich.
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d05_gesellschaft_ref" -DisplayName 'Gesellschaft des Erteilers' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d05_funktion_text" -DisplayName 'Funktion des Erteilers' -Type Text
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d06_bearbeitung" -DisplayName 'Wie werden Entscheidungsvorschläge vor der Freigabe tatsächlich bearbeitet?' -Type MultiChoice `
+    -Choices @('D06_BEARBEITUNG_INHALTLICH_GEPRUEFT', 'D06_BEARBEITUNG_MIT_VERANTWORTLICHEN_BESPROCHEN', 'D06_BEARBEITUNG_ZUR_ERGAENZUNG_ZURUECK', 'D06_BEARBEITUNG_INHALTLICH_GEAENDERT', 'D06_BEARBEITUNG_GELEGENTLICH_ABGELEHNT', 'D06_BEARBEITUNG_OHNE_BEARBEITUNG_BESTAETIGT', 'D06_BEARBEITUNG_UNTERSCHIEDLICH', 'D06_BEARBEITUNG_UNBEKANNT')
+# d06_bearbeitung: Anzeige: Zustimmung erforderlich.
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d07_pruefpunkte" -DisplayName 'Welche Punkte werden dabei geprüft oder abgestimmt?' -Type MultiChoice `
+    -Choices @('D07_PRUEFPUNKTE_WIRTSCHAFTLICHE_BEDINGUNGEN', 'D07_PRUEFPUNKTE_FINANZIERUNG_LIQUIDITAET', 'D07_PRUEFPUNKTE_PERSONAL', 'D07_PRUEFPUNKTE_BUDGET', 'D07_PRUEFPUNKTE_RECHTLICH_STEUERLICH', 'D07_PRUEFPUNKTE_UMSETZUNG', 'D07_PRUEFPUNKTE_ANDERE', 'D07_PRUEFPUNKTE_UNBEKANNT')
+# d07_pruefpunkte: Anzeige: Pruefung oder Abstimmung vorhanden (D06 nicht 'ohne Bearbeitung').
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d08_grenzen" -DisplayName 'Welche Grenzen gelten für die eigenen Entscheidungsbefugnisse?' -Type Choice -Required `
+    -Choices @('D08_GRENZEN_KEINE', 'D08_GRENZEN_BETRAG', 'D08_GRENZEN_BUDGET', 'D08_GRENZEN_THEMENBEREICH', 'D08_GRENZEN_ZUSTIMMUNGSVORBEHALT', 'D08_GRENZEN_ANDERE', 'D08_GRENZEN_UNBEKANNT')
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d08_betrag" -DisplayName 'Betragsgrenze' -Type Number
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d08_waehrung" -DisplayName 'Währung der Betragsgrenze' -Type Text
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d08_regelung_ref" -DisplayName 'Schriftliche Regelung' -Type Lookup `
     -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Fallbeteiligungen" -InternalName "v07_email_zusage" -DisplayName 'Auch bindende E-Mail-Zusagen erfasst' -Type Choice `
-    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
-Add-Field -List "Fallbeteiligungen" -InternalName "schritt" -DisplayName 'Schritt (Vorbereitung/Festlegung/Freigabe bzw. Verhandlung/Einigung/Freigabe/Unterschrift)' -Type Choice `
-    -Choices @('FALLBETEILIGUNG_SCHRITT_VORBEREITUNG', 'FALLBETEILIGUNG_SCHRITT_INHALTLICHE_FESTLEGUNG', 'FALLBETEILIGUNG_SCHRITT_ABSCHLIESSENDE_FREIGABE', 'FALLBETEILIGUNG_SCHRITT_VERHANDLUNG', 'FALLBETEILIGUNG_SCHRITT_INHALTLICHE_EINIGUNG', 'FALLBETEILIGUNG_SCHRITT_FREIGABE_VERTRAG', 'FALLBETEILIGUNG_SCHRITT_UNTERZEICHNUNG')
-Add-Field -List "Fallbeteiligungen" -InternalName "ort_ref" -DisplayName 'Aufenthaltsort bei diesem Schritt' -Type Lookup `
-    -LookupList "Orte" -LookupField "display_label"
-Add-Field -List "Fallbeteiligungen" -InternalName "land_text" -DisplayName 'Land, falls kein erfasster Ort' -Type Text
-Add-Field -List "Fallbeteiligungen" -InternalName "zeitpunkt" -DisplayName 'Zeitpunkt dieses Schritts' -Type DateOnly
-Add-Field -List "Fallbeteiligungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d09_umsetzung" -DisplayName 'Wer verantwortet die Umsetzung der Entscheidungen?' -Type Choice -Required `
+    -Choices @('D09_UMSETZUNG_PERSON_SELBST', 'D09_UMSETZUNG_BENANNTE_MITARBEITENDE', 'D09_UMSETZUNG_GESCHAEFTSLEITUNG', 'D09_UMSETZUNG_EXTERNER_DIENSTLEISTER', 'D09_UMSETZUNG_UNTERSCHIEDLICH', 'D09_UMSETZUNG_UNBEKANNT')
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d10_gesellschafter_vorgelegt" -DisplayName 'Welche Entscheidungen werden tatsächlich den Gesellschaftern vorgelegt?' -Type MultiChoice -Required `
+    -Choices @('D10_ART_BETEILIGUNGSERWERB_VERKAUF', 'D10_ART_AUSSCHUETTUNG', 'D10_ART_KAPITALMASSNAHME', 'D10_ART_ORGANBESTELLUNG', 'D10_ART_BUDGET_INVESTITION', 'D10_ART_ANDERE', 'D10_ART_KEINE', 'D10_ART_UNBEKANNT')
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d10_gesellschaft_ref" -DisplayName 'Gesellschaft, deren Gesellschafter entscheiden' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "d10_vertreter_ref" -DisplayName 'Handelnder Vertreter' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Entscheidungsbefugnisse" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
+# Liste: Vertragszustaendigkeiten
+# Wiederkehrende Vertragszustaendigkeit je Aufgabe x Vertragsart (V10-V18)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Vertragszustaendigkeiten"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "zustaendigkeit_id" -DisplayName 'Zuständigkeits-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "vertragsart_code" -DisplayName 'Bei welchen Verträgen übernimmt die Person Aufgaben?' -Type Choice -Required `
+    -Choices @('V10_ART_KUNDENVERTRAEGE', 'V10_ART_LIEFERANTENVERTRAEGE', 'V10_ART_PERSONALVERTRAEGE', 'V10_ART_KREDITE_SICHERHEITEN', 'V10_ART_MIETE_LEASING', 'V10_ART_BERATERVERTRAEGE', 'V10_ART_ANDERE', 'V10_ART_KEINE', 'V10_ART_UNBEKANNT')
+# vertragsart_code: Je ausgewaehlter Art (ausser 'keine') ein eigener Datensatz.
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "vertragspartei_ref" -DisplayName 'Für welche Gesellschaft übernimmt sie diese Vertragsaufgaben?' -Type Lookup -Required `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "vertragspartei_text" -DisplayName 'Vertragspartei ausdrücklich benennen' -Type Text
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v12_gespraechspartner" -DisplayName 'Mit welchen Geschäftspartnern oder Ansprechpartnern führt sie die Gespräche?' -Type MultiChoice -Required `
+    -Choices @('V12_GESPRAECHSPARTNER_KUNDEN', 'V12_GESPRAECHSPARTNER_LIEFERANTEN', 'V12_GESPRAECHSPARTNER_BEWERBER_MITARBEITENDE', 'V12_GESPRAECHSPARTNER_BANKEN_FINANZIERER', 'V12_GESPRAECHSPARTNER_VERMIETER_LEASINGGEBER', 'V12_GESPRAECHSPARTNER_STEUERBERATER_ANDERE', 'V12_GESPRAECHSPARTNER_ANDERE')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v13_teile" -DisplayName 'Welche Teile der Verhandlung übernimmt sie selbst?' -Type MultiChoice -Required `
+    -Choices @('V13_TEILE_KONTAKT_BEDARFSKLAERUNG', 'V13_TEILE_AUSWAHL_VERTRAGSPARTNER', 'V13_TEILE_PREIS_VERGUETUNG', 'V13_TEILE_LEISTUNG_MENGE', 'V13_TEILE_TERMINE_LAUFZEIT', 'V13_TEILE_HAFTUNG_SICHERHEITEN', 'V13_TEILE_KUENDIGUNGSBEDINGUNGEN', 'V13_TEILE_ABSTIMMUNG_UNTERSCHRIFTSREIF', 'V13_TEILE_ANDERE')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v14_abschlussreife" -DisplayName 'Bis zu welchem Stand führt sie die Verhandlungen üblicherweise?' -Type Choice -Required `
+    -Choices @('V14_ABSCHLUSSREIFE_NUR_GRUNDLAGEN', 'V14_ABSCHLUSSREIFE_ANGEBOT', 'V14_ABSCHLUSSREIFE_EINZELNE_BEDINGUNGEN', 'V14_ABSCHLUSSREIFE_WESENTLICHE_BEDINGUNGEN', 'V14_ABSCHLUSSREIFE_BIS_AUF_FREIGABE', 'V14_ABSCHLUSSREIFE_SCHLIESST_SELBST_AB', 'V14_ABSCHLUSSREIFE_UNTERSCHIEDLICH', 'V14_ABSCHLUSSREIFE_UNBEKANNT')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v15_bearbeitung" -DisplayName 'Welche Bearbeitung erfolgt danach durch andere Personen?' -Type MultiChoice -Required `
+    -Choices @('V15_BEARBEITUNG_WEITERE_WIRTSCHAFTLICHE_VERHANDLUNG', 'V15_BEARBEITUNG_RECHTLICHE_DETAILPRUEFUNG', 'V15_BEARBEITUNG_INHALTLICHE_FREIGABE', 'V15_BEARBEITUNG_REGELMAESSIG_WESENTLICHE_AENDERUNGEN', 'V15_BEARBEITUNG_NUR_UNTERZEICHNUNG', 'V15_BEARBEITUNG_KEINE_WEITERE_BEARBEITUNG', 'V15_BEARBEITUNG_UNTERSCHIEDLICH', 'V15_BEARBEITUNG_UNBEKANNT')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v15_zustaendige_ref" -DisplayName 'Zuständige Personen' -Type LookupMulti `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v15_gesellschaft_ref" -DisplayName 'Zugehörige Gesellschaft' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v16_zeichnung" -DisplayName 'Wer erklärt die verbindliche Zusage oder unterzeichnet üblicherweise?' -Type Choice -Required `
+    -Choices @('V16_ZEICHNUNG_PERSON_SELBST', 'V16_ZEICHNUNG_ANDERE_PERSON', 'V16_ZEICHNUNG_GEMEINSAME_ZEICHNUNG', 'V16_ZEICHNUNG_JE_VERTRAGSART', 'V16_ZEICHNUNG_UNBEKANNT')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v16_person_ref" -DisplayName 'Zeichnungsberechtigte Person(en)' -Type LookupMulti `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v17_unterlagenart" -DisplayName 'Welche Verträge oder Unterlagen darf die Person verbindlich bestätigen oder unterzeichnen?' -Type MultiChoice -Required `
+    -Choices @('V17_UNTERLAGENART_ANGEBOTE', 'V17_UNTERLAGENART_AUFTRAGSBESTAETIGUNGEN', 'V17_UNTERLAGENART_KUNDENVERTRAEGE', 'V17_UNTERLAGENART_BESTELLUNGEN_LIEFERANTENVERTRAEGE', 'V17_UNTERLAGENART_PERSONALVERTRAEGE', 'V17_UNTERLAGENART_FINANZIERUNGSVERTRAEGE', 'V17_UNTERLAGENART_ZAHLUNGSFREIGABEN', 'V17_UNTERLAGENART_BERATERAUFTRAEGE', 'V17_UNTERLAGENART_ANDERE', 'V17_UNTERLAGENART_KEINE', 'V17_UNTERLAGENART_UNBEKANNT')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v17_grenzen_text" -DisplayName 'Einzel- oder gemeinsame Zeichnung und Grenzen' -Type Note
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v17_nachweis_ref" -DisplayName 'Vollmacht/Kompetenzordnung' -Type Lookup `
+    -LookupList "Substanznachweise" -LookupField "display_label"
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "v18_haeufigkeit" -DisplayName 'Wie häufig führt sie solche Verhandlungen?' -Type Choice -Required `
+    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NICHT_TAETIG', 'FREQ_UNBEKANNT')
+Add-Field -List "Vertragszustaendigkeiten" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
+# Liste: Kontrollaufgaben
+# Aufsichts-/Instruktions-/Schulungsaufgabe je Aufgabe (K10-K14)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Kontrollaufgaben"
+Add-Field -List "Kontrollaufgaben" -InternalName "kontrollaufgabe_id" -DisplayName 'Kontrollaufgabe-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Kontrollaufgaben" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Kontrollaufgaben" -InternalName "k10_gegenstand" -DisplayName 'Welche Bereiche überwacht oder kontrolliert die Person?' -Type MultiChoice -Required `
+    -Choices @('K10_GEGENSTAND_ERGEBNIS', 'K10_GEGENSTAND_BUDGET', 'K10_GEGENSTAND_LIQUIDITAET', 'K10_GEGENSTAND_PROJEKTE', 'K10_GEGENSTAND_PERSONAL', 'K10_GEGENSTAND_EINHALTUNG_VORGABEN', 'K10_GEGENSTAND_TAETIGKEIT_GESCHAEFTSLEITUNG', 'K10_GEGENSTAND_BETEILIGUNGSENTWICKLUNG', 'K10_GEGENSTAND_ANDERE', 'K10_GEGENSTAND_KEINE', 'K10_GEGENSTAND_UNBEKANNT')
+Add-Field -List "Kontrollaufgaben" -InternalName "k11_befugnisse" -DisplayName 'Welche Befugnisse übt sie bei Abweichungen tatsächlich aus?' -Type MultiChoice -Required `
+    -Choices @('K11_BEFUGNISSE_ERLAEUTERUNGEN_VERLANGEN', 'K11_BEFUGNISSE_EMPFEHLUNGEN_GEBEN', 'K11_BEFUGNISSE_ALLGEMEINE_VORGABEN_ANPASSEN', 'K11_BEFUGNISSE_MASSNAHMEN_ANORDNEN', 'K11_BEFUGNISSE_SELBST_EINGREIFEN', 'K11_BEFUGNISSE_UMSETZUNG_NACHHALTEN', 'K11_BEFUGNISSE_NUR_BERICHTEN', 'K11_BEFUGNISSE_ANDERE', 'K11_BEFUGNISSE_UNBEKANNT')
+# k11_befugnisse: Anzeige: Kontrollaufgaben vorhanden.
+Add-Field -List "Kontrollaufgaben" -InternalName "k12_art" -DisplayName 'Welche Art von Vorgaben, Beratung oder Schulung übernimmt sie?' -Type MultiChoice -Required `
+    -Choices @('K12_ART_ALLGEMEINE_RICHTLINIEN', 'K12_ART_FACHWISSEN_METHODEN', 'K12_ART_SOFTWAREANWENDUNG', 'K12_ART_ALLGEMEINE_ARBEITSABLAEUFE', 'K12_ART_KONKRETE_ANWEISUNGEN', 'K12_ART_ANDERE', 'K12_ART_KEINE', 'K12_ART_UNBEKANNT')
+Add-Field -List "Kontrollaufgaben" -InternalName "k13_adressaten" -DisplayName 'An welche Personen oder Bereiche richten sich diese Leistungen?' -Type MultiChoice `
+    -Choices @('K13_ADRESSATEN_GESCHAEFTSLEITUNG', 'K13_ADRESSATEN_FACHABTEILUNGEN', 'K13_ADRESSATEN_EINZELNE_MITARBEITENDE', 'K13_ADRESSATEN_DIENSTLEISTER', 'K13_ADRESSATEN_ANDERE')
+# k13_adressaten: Anzeige: Vorgaben, Beratung oder Schulung vorhanden.
+Add-Field -List "Kontrollaufgaben" -InternalName "k13_gesellschaft_ref" -DisplayName 'Zugehörige Gesellschaft' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Kontrollaufgaben" -InternalName "k14_festleger_ref" -DisplayName 'Wer legt deren Inhalt fest?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+# k14_festleger_ref: Anzeige: Vorgaben, Beratung oder Schulung vorhanden.
+Add-Field -List "Kontrollaufgaben" -InternalName "k14_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('K14_FESTLEGUNG_PERSON_SELBST', 'K14_FESTLEGUNG_GESCHAEFTSLEITUNG', 'K14_FESTLEGUNG_SCHWEIZER_MUTTER', 'K14_FESTLEGUNG_ANDERE', 'K14_FESTLEGUNG_GEMEINSAM', 'K14_FESTLEGUNG_UNBEKANNT')
+Add-Field -List "Kontrollaufgaben" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Steuerungsbeziehungen
-# Steuerung von Mitarbeitenden/Dienstleistern (K04)
+# Gesteuerte Mitarbeitende/Dienstleister je Aufgabe (K15-K17)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Steuerungsbeziehungen"
 Add-Field -List "Steuerungsbeziehungen" -InternalName "beziehung_id" -DisplayName 'Beziehungs-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Steuerungsbeziehungen" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
-    -LookupList "Erfassungen" -LookupField "case_id" `
-    -DeleteBehavior Restrict
-Add-Field -List "Steuerungsbeziehungen" -InternalName "taetigkeit_ref" -DisplayName 'Bezug: zugehörige Tätigkeit (optional)' -Type Lookup `
-    -LookupList "Taetigkeiten" -LookupField "display_label"
-Add-Field -List "Steuerungsbeziehungen" -InternalName "steuernde_person_ref" -DisplayName 'Steuert die Person bestimmte Mitarbeitende oder Dienstleister?' -Type Lookup -Required `
+Add-Field -List "Steuerungsbeziehungen" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Steuerungsbeziehungen" -InternalName "gesteuerte_person_ref" -DisplayName 'Welche Mitarbeitenden oder Dienstleister steuert die Person im Tagesgeschäft?' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Steuerungsbeziehungen" -InternalName "gesteuerte_person_ref" -DisplayName 'Gesteuerte Person (intern erfasst)' -Type Lookup `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Steuerungsbeziehungen" -InternalName "gesteuerter_dienstleister_text" -DisplayName 'Gesteuerter Dienstleister (Name/Funktion)' -Type Text
-Add-Field -List "Steuerungsbeziehungen" -InternalName "arbeitgeber_gesellschaft_ref" -DisplayName 'Arbeitgeber bzw. Vertragspartner' -Type Lookup `
+Add-Field -List "Steuerungsbeziehungen" -InternalName "dienstleister_text" -DisplayName 'Dienstleister (falls kein Personen-Datensatz)' -Type Text
+Add-Field -List "Steuerungsbeziehungen" -InternalName "status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('T13_STATUS_PERSONEN', 'T13_STATUS_DIENSTLEISTER', 'T13_STATUS_NIEMAND', 'T13_STATUS_UNBEKANNT')
+Add-Field -List "Steuerungsbeziehungen" -InternalName "k16_gesellschaft_ref" -DisplayName 'Für welche Gesellschaft arbeiten diese Mitarbeitenden oder Dienstleister?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Steuerungsbeziehungen" -InternalName "fuer_gesellschaft_ref" -DisplayName 'Gesellschaft, für die gearbeitet wird' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Steuerungsbeziehungen" -InternalName "art_text" -DisplayName 'Art der Steuerung' -Type Text
-Add-Field -List "Steuerungsbeziehungen" -InternalName "haeufigkeit" -DisplayName 'Häufigkeit der Steuerung' -Type Choice -Required `
-    -Choices @('K04_HAEUFIGKEIT_REGELMAESSIG', 'K04_HAEUFIGKEIT_FALLWEISE', 'K04_HAEUFIGKEIT_NEIN')
-Add-Field -List "Steuerungsbeziehungen" -InternalName "befugnisse" -DisplayName 'Befugnis, Aufgaben, Termine und Ergebnisse verbindlich festzulegen' -Type Note
+Add-Field -List "Steuerungsbeziehungen" -InternalName "k17_festlegung" -DisplayName 'Was legt die Person für diese Mitarbeitenden oder Dienstleister tatsächlich fest?' -Type MultiChoice `
+    -Choices @('K17_FESTLEGUNG_AUFGABEN', 'K17_FESTLEGUNG_PRIORITAETEN', 'K17_FESTLEGUNG_TERMINE', 'K17_FESTLEGUNG_VORGEHENSWEISE', 'K17_FESTLEGUNG_ERWARTETE_ERGEBNISSE', 'K17_FESTLEGUNG_ABNAHME', 'K17_FESTLEGUNG_ANDERE', 'K17_FESTLEGUNG_KEINE', 'K17_FESTLEGUNG_UNBEKANNT')
+# k17_festlegung: Anzeige: gesteuerte Personen/Dienstleister vorhanden.
 Add-Field -List "Steuerungsbeziehungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
+# Liste: Zeitverteilungen
+# n:m-Verknuepfung Aufgabe x Empfaengergesellschaft, Stunden (Z08); keine Summenkorrektur auf 100% (B4)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Zeitverteilungen"
+Add-Field -List "Zeitverteilungen" -InternalName "verteilung_id" -DisplayName 'Verteilungs-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Zeitverteilungen" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup -Required `
+    -LookupList "Aufgaben" -LookupField "display_label"
+# aufgabe_ref: Nur bei Aufgaben mit mehreren Empfaengern oder offenen Stunden (B3); sonst Uebernahme der eindeutigen Zuordnung ohne Rueckfrage.
+Add-Field -List "Zeitverteilungen" -InternalName "empfaenger_ref" -DisplayName 'Empfänger-Gesellschaft' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Zeitverteilungen" -InternalName "status" -DisplayName 'Status der Verteilung' -Type Choice -Required `
+    -Choices @('Z08_STATUS_AUS_UNTERLAGEN', 'Z08_STATUS_GESCHAETZT', 'Z08_STATUS_NUR_ANTEILE', 'Z08_STATUS_UNBEKANNT', 'Z08_STATUS_REST_NICHT_ZUGEORDNET')
+# status: REST_NICHT_ZUGEORDNET bildet die ausdruecklich offene Restzeit ab (B4) - keine Summenkorrektur auf 100%.
+Add-Field -List "Zeitverteilungen" -InternalName "stunden" -DisplayName 'Stunden je Empfänger' -Type Number
+Add-Field -List "Zeitverteilungen" -InternalName "anteil_geschaetzt_prozent" -DisplayName 'Geschätzter Anteil (falls keine Stunden verfügbar)' -Type Number `
+    -Min 0 `
+    -Max 100
+Add-Field -List "Zeitverteilungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
+# Liste: Aufgabenorte
+# Arbeitsorte je Aufgabe (O01-O02, O05-O08) sowie Orte der Vorbereitung/Verhandlung/Entscheidung/Freigabe (O06, polymorph zu D/V/K)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "Aufgabenorte"
+Add-Field -List "Aufgabenorte" -InternalName "ort_eintrag_id" -DisplayName 'Orts-Eintrag-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "Aufgabenorte" -InternalName "rollenbezug" -DisplayName 'Rollenbezug des Ortseintrags' -Type Choice -Required `
+    -Choices @('ROLLENBEZUG_AUSUEBUNG', 'ROLLENBEZUG_VORBEREITUNG', 'ROLLENBEZUG_VERHANDLUNG', 'ROLLENBEZUG_ENTSCHEIDUNG', 'ROLLENBEZUG_FREIGABE')
+# rollenbezug: AUSUEBUNG = O01/O02 (Aufgabenausuebung); VORBEREITUNG/VERHANDLUNG/ENTSCHEIDUNG/FREIGABE = O06 (geaenderte Bedeutung ggue. V2, dort Fallbeteiligungen.schritt).
+Add-Field -List "Aufgabenorte" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe (bei Rollenbezug=Ausübung)' -Type Lookup `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Aufgabenorte" -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsbefugnis (bei Rollenbezug=Vorbereitung/Entscheidung/Freigabe)' -Type Lookup `
+    -LookupList "Entscheidungsbefugnisse" -LookupField "display_label"
+Add-Field -List "Aufgabenorte" -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragszuständigkeit (bei Rollenbezug=Vorbereitung/Verhandlung/Freigabe)' -Type Lookup `
+    -LookupList "Vertragszustaendigkeiten" -LookupField "display_label"
+Add-Field -List "Aufgabenorte" -InternalName "kontrolle_ref" -DisplayName 'Bezug: Kontrollaufgabe' -Type Lookup `
+    -LookupList "Kontrollaufgaben" -LookupField "display_label"
+Add-Field -List "Aufgabenorte" -InternalName "person_ref" -DisplayName 'Beteiligte Person an diesem Ort' -Type Lookup -Required `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "Aufgabenorte" -InternalName "ort_ref" -DisplayName 'An welchen Orten führte die Person die erfassten Aufgaben aus?' -Type Lookup -Required `
+    -LookupList "Orte" -LookupField "display_label"
+# ort_ref: Bei Telefon-/Videobesprechungen zaehlt der Aufenthaltsort der Person (O06).
+Add-Field -List "Aufgabenorte" -InternalName "o02_status" -DisplayName 'Wie viel Arbeitszeit entfiel auf den jeweiligen Ort?' -Type Choice `
+    -Choices @('O02_STATUS_STUNDEN_VERFUEGBAR', 'O02_STATUS_GESCHAETZTE_STUNDEN', 'O02_STATUS_NUR_PROZENTANTEIL', 'O02_STATUS_UNBEKANNT')
+# o02_status: Nur bei Rollenbezug=Ausuebung.
+Add-Field -List "Aufgabenorte" -InternalName "o02_stunden" -DisplayName 'Stunden am jeweiligen Ort' -Type Number
+Add-Field -List "Aufgabenorte" -InternalName "o02_prozent" -DisplayName 'Prozentanteil am jeweiligen Ort' -Type Number `
+    -Min 0 `
+    -Max 100
+# o02_prozent: Alternative zu Stunden, keine zusaetzliche Schaetzpflicht (O02).
+Add-Field -List "Aufgabenorte" -InternalName "o07_grund" -DisplayName 'Warum wurde für diese Arbeit das Homeoffice genutzt?' -Type MultiChoice `
+    -Choices @('O07_GRUND_PERSOENLICHER_WUNSCH', 'O07_GRUND_VORGABE_UNTERNEHMEN', 'O07_GRUND_KEIN_ANDERER_ARBEITSPLATZ', 'O07_GRUND_NAEHE_KUNDEN', 'O07_GRUND_ANDERER_GRUND', 'O07_GRUND_UNBEKANNT')
+# o07_grund: Anzeige: Homeoffice in O01 vorhanden.
+Add-Field -List "Aufgabenorte" -InternalName "o08_alternativer_arbeitsplatz" -DisplayName 'Stand für diese Arbeit ein anderer Arbeitsplatz zur Verfügung?' -Type Choice `
+    -Choices @('JA_NEIN_TEILWEISE_UNBEKANNT_JA', 'JA_NEIN_TEILWEISE_UNBEKANNT_NEIN', 'JA_NEIN_TEILWEISE_UNBEKANNT_TEILWEISE', 'JA_NEIN_TEILWEISE_UNBEKANNT_UNBEKANNT')
+# o08_alternativer_arbeitsplatz: Anzeige: Homeoffice in O01 vorhanden.
+Add-Field -List "Aufgabenorte" -InternalName "o08_alternativ_ort_ref" -DisplayName 'Alternativer Standort' -Type Lookup `
+    -LookupList "Orte" -LookupField "display_label"
+Add-Field -List "Aufgabenorte" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
 # Liste: Raeume
-# Geschaeftsraeume und tatsaechliche Nutzung (R01-R06)
+# Geschaeftsraeume und tatsaechliche Verfuegungsmoeglichkeiten (R21-R28)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Raeume"
 Add-Field -List "Raeume" -InternalName "raum_id" -DisplayName 'Raum-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "Raeume" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
     -LookupList "Erfassungen" -LookupField "case_id" `
     -DeleteBehavior Restrict
-Add-Field -List "Raeume" -InternalName "ort_ref" -DisplayName 'Welche Räume oder Arbeitsbereiche nutzt die KG? (Ort/Adresse)' -Type Lookup -Required `
+Add-Field -List "Raeume" -InternalName "ort_ref" -DisplayName 'Welcher Raum oder Arbeitsbereich wird genutzt?' -Type Lookup -Required `
     -LookupList "Orte" -LookupField "display_label"
 Add-Field -List "Raeume" -InternalName "raumart" -DisplayName 'Raumart' -Type Choice -Required `
-    -Choices @('RAUM_ART_EIGENES_BUERO', 'RAUM_ART_EIGENER_RAUM_BETEILIGUNG', 'RAUM_ART_GEMEINSAMER_RAUM_BETEILIGUNG', 'RAUM_ART_FLEXIBLER_ARBEITSPLATZ', 'RAUM_ART_BESPRECHUNGSRAUM', 'RAUM_ART_HOMEOFFICE', 'RAUM_ART_SCHWEIZER_RAEUME', 'RAUM_ART_LAGER_ARCHIV', 'RAUM_ART_ANDERE_FLAECHE')
-# raumart: Löst frühere offene Frage zum Raumart-Katalog: R01 gibt den Katalog vor.
-Add-Field -List "Raeume" -InternalName "eigentuemer_gesellschaft_ref" -DisplayName 'Eigentümer der Fläche (Gesellschaft)' -Type Lookup `
+    -Choices @('RAUM_ART_EIGENES_BUERO', 'RAUM_ART_EIGENER_RAUM_BETEILIGUNG', 'RAUM_ART_GEMEINSAMER_RAUM', 'RAUM_ART_WECHSELNDER_ARBEITSPLATZ', 'RAUM_ART_BESPRECHUNGSRAUM', 'RAUM_ART_HOMEOFFICE', 'RAUM_ART_ARCHIV', 'RAUM_ART_ANDERER_BEREICH')
+Add-Field -List "Raeume" -InternalName "eigentuemer_ref" -DisplayName 'Wem gehört der Raum?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Raeume" -InternalName "eigentuemer_person_ref" -DisplayName 'Eigentümer der Fläche (Person)' -Type Lookup `
+Add-Field -List "Raeume" -InternalName "eigentuemer_person_ref" -DisplayName 'Eigentümer (Person)' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Raeume" -InternalName "mieter_ref" -DisplayName 'Mieter der Fläche' -Type Lookup `
+Add-Field -List "Raeume" -InternalName "r22_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('R22_24_STATUS_GESELLSCHAFT', 'R22_24_STATUS_PERSON', 'R22_24_STATUS_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "mieter_ref" -DisplayName 'Wer ist Mieter des Raums?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Raeume" -InternalName "untervermieter_text" -DisplayName 'Untervermieter, falls zutreffend' -Type Text
-Add-Field -List "Raeume" -InternalName "r02_nachweis_ref" -DisplayName 'Miet-, Untermiet- oder Nutzungsvereinbarung' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Raeume" -InternalName "nutzung_beginn" -DisplayName 'Beginn der Nutzung' -Type DateOnly
-Add-Field -List "Raeume" -InternalName "nutzung_ende" -DisplayName 'Ende der Nutzung' -Type DateOnly
-Add-Field -List "Raeume" -InternalName "verfuegung" -DisplayName 'Worüber kann die KG tatsächlich verfügen?' -Type MultiChoice -Required `
-    -Choices @('R03_VERFUEGUNG_EIGENER_SCHLUESSEL_ZUGANG', 'R03_VERFUEGUNG_JEDERZEITIGER_ZUGANG', 'R03_VERFUEGUNG_ZUGANG_NACH_ANMELDUNG', 'R03_VERFUEGUNG_FEST_ZUGEWIESENE_ARBEITSPLAETZE', 'R03_VERFUEGUNG_GELEGENTLICHE_BUCHUNG', 'R03_VERFUEGUNG_EIGENE_ABLAGE', 'R03_VERFUEGUNG_ABSCHLIESSBARE_AUFBEWAHRUNG', 'R03_VERFUEGUNG_EIGENE_BESCHILDERUNG', 'R03_VERFUEGUNG_KEINE_AUSSCHLIESSLICHE_FLAECHE')
-Add-Field -List "Raeume" -InternalName "flaeche_qm" -DisplayName 'Fläche in m²' -Type Number `
+Add-Field -List "Raeume" -InternalName "r23_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('R23_STATUS_GESELLSCHAFT', 'R23_STATUS_PERSON', 'R23_STATUS_KEIN_MIETVERHAELTNIS', 'R23_STATUS_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r24_bereitsteller" -DisplayName 'Wer stellt den Raum der KG zur Verfügung?' -Type Choice -Required `
+    -Choices @('R24_BEREITSTELLER_EIGENTUEMER', 'R24_BEREITSTELLER_MIETER', 'R24_BEREITSTELLER_ANDERER', 'R24_BEREITSTELLER_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r24_name_text" -DisplayName 'Name bzw. Gesellschaft des Bereitstellers' -Type Text
+Add-Field -List "Raeume" -InternalName "r25_vereinbarung" -DisplayName 'Auf welcher Vereinbarung beruht die Nutzung?' -Type Choice -Required `
+    -Choices @('R25_VEREINBARUNG_MIETVERTRAG', 'R25_VEREINBARUNG_UNTERMIETVERTRAG', 'R25_VEREINBARUNG_ANDERE_SCHRIFTLICHE', 'R25_VEREINBARUNG_MUENDLICH', 'R25_VEREINBARUNG_KEINE_BEKANNT', 'R25_VEREINBARUNG_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r25_beginn" -DisplayName 'Beginn der Nutzung' -Type DateOnly
+Add-Field -List "Raeume" -InternalName "r25_ende" -DisplayName 'Ende der Nutzung' -Type DateOnly
+Add-Field -List "Raeume" -InternalName "r26_eigener_zugang" -DisplayName 'Eigener Schlüssel oder Zugang?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+# r26_eigener_zugang: R26: je eine Einzelfrage, nicht als MultiChoice.
+Add-Field -List "Raeume" -InternalName "r26_zugang_ohne_anmeldung" -DisplayName 'Zugang ohne Voranmeldung?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r26_fest_zugewiesen" -DisplayName 'Fest zugewiesene Arbeitsplätze?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r26_eigene_ablage" -DisplayName 'Eigene Ablage?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r26_abschliessbare_aufbewahrung" -DisplayName 'Abschliessbare Aufbewahrung?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r26_nur_nach_buchung" -DisplayName 'Raum nur nach Buchung verfügbar?' -Type Choice -Required `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r27_flaeche_status" -DisplayName 'Welche Fläche wird genutzt?' -Type Choice -Required `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r27_flaeche_qm" -DisplayName 'Fläche in m²' -Type Number `
     -Min 0
-Add-Field -List "Raeume" -InternalName "anzahl_arbeitsplaetze" -DisplayName 'Anzahl Arbeitsplätze' -Type Number `
+Add-Field -List "Raeume" -InternalName "r27_gemeinsam_genutzt" -DisplayName 'Gemeinsam genutzte Fläche' -Type Choice `
+    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r28_status" -DisplayName 'Wie viele Arbeitsplätze stehen dort zur Verfügung?' -Type Choice -Required `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+Add-Field -List "Raeume" -InternalName "r28_anzahl_arbeitsplaetze" -DisplayName 'Anzahl Arbeitsplätze' -Type Number `
     -Min 0
-Add-Field -List "Raeume" -InternalName "aufteilung_text" -DisplayName 'Aufteilung bei gemeinsamer Nutzung' -Type Note
-Add-Field -List "Raeume" -InternalName "belegart" -DisplayName 'Wie wird die Nutzung belegt?' -Type MultiChoice `
-    -Choices @('R05_BELEGART_GRUNDRISS', 'R05_BELEGART_MIET_NUTZUNGSVERTRAG', 'R05_BELEGART_FOTOS', 'R05_BELEGART_BUCHUNGS_ZUTRITTSDATEN', 'R05_BELEGART_KALENDER', 'R05_BELEGART_BESPRECHUNGSUNTERLAGEN', 'R05_BELEGART_ANDERE_UNTERLAGE', 'R05_BELEGART_KEINE_UNTERLAGEN')
-Add-Field -List "Raeume" -InternalName "r05_nachweis_ref" -DisplayName 'Vorhandene Belege (Grundriss, Fotos, Verträge usw.)' -Type LookupMulti `
-    -LookupList "Substanznachweise" -LookupField "display_label"
 Add-Field -List "Raeume" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Arbeitsmittel
-# Arbeitsmittel, Fahrzeuge, IT und Software (A01-A02, A05-A07)
+# Arbeitsmittel, Fahrzeuge, IT und Software - Eigentum/Bereitstellung/Lizenzen (A20-A23, A26-A31)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Arbeitsmittel"
 Add-Field -List "Arbeitsmittel" -InternalName "mittel_id" -DisplayName 'Mittel-ID (intern vergeben)' -Type Text -Required
@@ -786,56 +896,59 @@ Add-Field -List "Arbeitsmittel" -InternalName "erfassung_ref" -DisplayName 'Bezu
     -LookupList "Erfassungen" -LookupField "case_id" `
     -DeleteBehavior Restrict
 Add-Field -List "Arbeitsmittel" -InternalName "art_code" -DisplayName 'Welches Arbeitsmittel wird genutzt?' -Type Choice -Required `
-    -Choices @('A01_ART_FAHRZEUG', 'A01_ART_BUEROAUSSTATTUNG', 'A01_ART_COMPUTER_NOTEBOOK', 'A01_ART_MONITOR_ZUBEHOER', 'A01_ART_SMARTPHONE_TABLET', 'A01_ART_TELEFON_INTERNET', 'A01_ART_DRUCKER_SCANNER', 'A01_ART_SERVER_CLOUD', 'A01_ART_SOFTWARE_DATENBANK', 'A01_ART_ANDERES')
-Add-Field -List "Arbeitsmittel" -InternalName "bezeichnung" -DisplayName 'Bezeichnung des Arbeitsmittels' -Type Text -Required
-Add-Field -List "Arbeitsmittel" -InternalName "eigentuemer_gesellschaft_ref" -DisplayName 'Eigentümer (Gesellschaft)' -Type Lookup `
+    -Choices @('A20_ART_FAHRZEUG', 'A20_ART_BUEROAUSSTATTUNG', 'A20_ART_COMPUTER', 'A20_ART_SMARTPHONE_TABLET', 'A20_ART_TELEFON_INTERNET', 'A20_ART_DRUCKER', 'A20_ART_SERVER_CLOUD', 'A20_ART_SOFTWARE_DATENBANK', 'A20_ART_ANDERES')
+Add-Field -List "Arbeitsmittel" -InternalName "bezeichnung_text" -DisplayName 'Bezeichnung' -Type Text -Required
+Add-Field -List "Arbeitsmittel" -InternalName "eigentuemer_ref" -DisplayName 'Wem gehört das Arbeitsmittel?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
+# eigentuemer_ref: Bei Software stattdessen Lizenznehmer unter A26.
 Add-Field -List "Arbeitsmittel" -InternalName "eigentuemer_person_ref" -DisplayName 'Eigentümer (Person)' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Arbeitsmittel" -InternalName "bereitsteller_ref" -DisplayName 'Bereitsteller' -Type Lookup `
+Add-Field -List "Arbeitsmittel" -InternalName "a21_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('A21_22_STATUS_GESELLSCHAFT', 'A21_22_STATUS_PERSON', 'A21_22_STATUS_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a22_bereitsteller_ref" -DisplayName 'Wer stellt es zur Verfügung?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "bereitstellungsart" -DisplayName 'Gekauft / gemietet / geleast / privat bereitgestellt' -Type Choice -Required `
-    -Choices @('A02_BEREITSTELLUNG_GEKAUFT', 'A02_BEREITSTELLUNG_GEMIETET', 'A02_BEREITSTELLUNG_GELEAST', 'A02_BEREITSTELLUNG_PRIVAT_BEREITGESTELLT', 'A02_BEREITSTELLUNG_UNBEKANNT')
-Add-Field -List "Arbeitsmittel" -InternalName "ort_ref" -DisplayName 'Standort des Arbeitsmittels' -Type Lookup `
-    -LookupList "Orte" -LookupField "display_label"
-Add-Field -List "Arbeitsmittel" -InternalName "beginn" -DisplayName 'Anschaffungs- bzw. Nutzungsbeginn' -Type DateOnly
-Add-Field -List "Arbeitsmittel" -InternalName "fahrzeughalter_ref" -DisplayName 'Fahrzeughalter (nur bei Art=Fahrzeug)' -Type Lookup `
+Add-Field -List "Arbeitsmittel" -InternalName "a22_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('A21_22_STATUS_GESELLSCHAFT', 'A21_22_STATUS_PERSON', 'A21_22_STATUS_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a23_grundlage" -DisplayName 'Auf welcher Grundlage wird es genutzt?' -Type Choice -Required `
+    -Choices @('A23_GRUNDLAGE_GEKAUFT', 'A23_GRUNDLAGE_GEMIETET', 'A23_GRUNDLAGE_GELEAST', 'A23_GRUNDLAGE_PRIVAT_BEREITGESTELLT', 'A23_GRUNDLAGE_ANDERE', 'A23_GRUNDLAGE_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a23_beginn" -DisplayName 'Nutzungsbeginn' -Type DateOnly
+Add-Field -List "Arbeitsmittel" -InternalName "a23_ende" -DisplayName 'Nutzungsende' -Type DateOnly
+Add-Field -List "Arbeitsmittel" -InternalName "a26_lizenznehmer_ref" -DisplayName 'Wer ist Lizenz- oder Abonnementnehmer?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "leasingnehmer_ref" -DisplayName 'Leasingnehmer (nur bei Art=Fahrzeug)' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "fahrtenbuch_status" -DisplayName 'Fahrtenbuch oder andere Aufzeichnung vorhanden?' -Type Choice `
-    -Choices @('ALLG_STATUS_NICHT_BEKANNT', 'ALLG_STATUS_NICHT_VORHANDEN', 'ALLG_STATUS_WIRD_NACHGEREICHT', 'ALLG_STATUS_NICHT_ZUTREFFEND', 'ALLG_STATUS_VORHANDEN')
-# fahrtenbuch_status: Unterscheidet 'nicht vorhanden' von 'nicht bekannt' statt Boolean.
-Add-Field -List "Arbeitsmittel" -InternalName "fahrtenbuch_text" -DisplayName 'Art der Aufzeichnung, falls vorhanden' -Type Text
-Add-Field -List "Arbeitsmittel" -InternalName "mobilfunkvertrag_ref" -DisplayName 'Mobilfunkvertrag auf wen?' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "email_domain_ref" -DisplayName 'E-Mail-Domain auf wen?' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "konto_ref" -DisplayName 'Benutzerkonto auf wen?' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "geraeteverwaltung_ref" -DisplayName 'Geräteverwaltung auf wen?' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "support_ref" -DisplayName 'Technischer Support auf wen?' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "speicherzugriff_ref" -DisplayName 'Speicherzugriff auf wen?' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "lizenznehmer_ref" -DisplayName 'Lizenz- bzw. Abonnementnehmer' -Type Lookup `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Arbeitsmittel" -InternalName "anzahl_lizenzen_verfuegbar" -DisplayName 'Anzahl verfügbare Lizenzen' -Type Number `
+# a26_lizenznehmer_ref: Anzeige: Software oder Datenbank.
+Add-Field -List "Arbeitsmittel" -InternalName "a26_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('A21_22_STATUS_GESELLSCHAFT', 'A21_22_STATUS_PERSON', 'A21_22_STATUS_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a27_status" -DisplayName 'Wie viele Lizenzen stehen zur Verfügung?' -Type Choice `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+# a27_status: Anzeige: Software oder Datenbank.
+Add-Field -List "Arbeitsmittel" -InternalName "a27_lizenzen_verfuegbar" -DisplayName 'Anzahl verfügbare Lizenzen' -Type Number `
     -Min 0
-Add-Field -List "Arbeitsmittel" -InternalName "anzahl_lizenzen_genutzt" -DisplayName 'Anzahl tatsächlich genutzte Lizenzen' -Type Number `
+Add-Field -List "Arbeitsmittel" -InternalName "a28_status" -DisplayName 'Wie viele Lizenzen werden tatsächlich genutzt?' -Type Choice `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+# a28_status: Anzeige: Software oder Datenbank.
+Add-Field -List "Arbeitsmittel" -InternalName "a28_lizenzen_genutzt" -DisplayName 'Anzahl tatsächlich genutzte Lizenzen' -Type Number `
     -Min 0
-Add-Field -List "Arbeitsmittel" -InternalName "a07_nachweis_ref" -DisplayName 'Lizenz- oder Abonnementnachweis' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-# a07_nachweis_ref: Rechtliche Zulässigkeit wird intern geprüft (kein Formular-Feld).
-Add-Field -List "Arbeitsmittel" -InternalName "beschraenkungen_text" -DisplayName 'Bekannte Nutzungsbeschränkungen' -Type Note
-Add-Field -List "Arbeitsmittel" -InternalName "vertragsstatus" -DisplayName 'Vertragsstatus (sofern schriftlich fixiert)' -Type Choice `
-    -Choices @('P05_VERTRAGSSTATUS_UNTERZEICHNET', 'P05_VERTRAGSSTATUS_NUR_ENTWURF', 'P05_VERTRAGSSTATUS_VORHANDEN_NICHT_VERFUEGBAR', 'P05_VERTRAGSSTATUS_KEIN_VERTRAG', 'P05_VERTRAGSSTATUS_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a28_beschraenkungen_text" -DisplayName 'Bekannte Nutzungsbeschränkungen' -Type Note
+Add-Field -List "Arbeitsmittel" -InternalName "a29_vertrag_ref" -DisplayName 'Auf wen läuft der Mobilfunk- oder IT-Vertrag?' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+# a29_vertrag_ref: Anzeige: Smartphone, Telefon oder IT-Vertrag.
+Add-Field -List "Arbeitsmittel" -InternalName "a29_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('A21_22_STATUS_GESELLSCHAFT', 'A21_22_STATUS_PERSON', 'A21_22_STATUS_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a30_verwalter_ref" -DisplayName 'Wer verwaltet das Gerät oder Benutzerkonto?' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+# a30_verwalter_ref: Anzeige: IT oder Smartphone. Keine Passwoerter erfassen.
+Add-Field -List "Arbeitsmittel" -InternalName "a30_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('A30_VERWALTUNG_INTERNE_PERSON', 'A30_VERWALTUNG_DIENSTLEISTER', 'A30_VERWALTUNG_NIEMAND_GESONDERT', 'A30_VERWALTUNG_UNBEKANNT')
+Add-Field -List "Arbeitsmittel" -InternalName "a31_halter_ref" -DisplayName 'Wer ist Fahrzeughalter?' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+# a31_halter_ref: Anzeige: Fahrzeug.
+Add-Field -List "Arbeitsmittel" -InternalName "a31_status" -DisplayName 'Status' -Type Choice `
+    -Choices @('A21_22_STATUS_GESELLSCHAFT', 'A21_22_STATUS_PERSON', 'A21_22_STATUS_UNBEKANNT')
 Add-Field -List "Arbeitsmittel" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Ressourcennutzungen
-# n:m-Verknuepfung Raum/Mittel x Person x Taetigkeit x Nutzungsanteil (R04; A03-A04)
+# n:m-Verknuepfung Raum/Mittel x Person x Aufgabe x Nutzungsumfang (R29, A24-A25, A32)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Ressourcennutzungen"
 Add-Field -List "Ressourcennutzungen" -InternalName "nutzung_id" -DisplayName 'Nutzungs-ID (intern vergeben)' -Type Text -Required
@@ -844,175 +957,174 @@ Add-Field -List "Ressourcennutzungen" -InternalName "erfassung_ref" -DisplayName
     -DeleteBehavior Restrict
 Add-Field -List "Ressourcennutzungen" -InternalName "bezug_typ" -DisplayName 'Bezugstyp' -Type Choice -Required `
     -Choices @('RESSOURCE_BEZUGSTYP_RAUM', 'RESSOURCE_BEZUGSTYP_MITTEL')
-Add-Field -List "Ressourcennutzungen" -InternalName "raum_ref" -DisplayName 'Bezug: Raum (bei Bezugstyp=Raum)' -Type Lookup `
+Add-Field -List "Ressourcennutzungen" -InternalName "raum_ref" -DisplayName 'Bezug: Raum' -Type Lookup `
     -LookupList "Raeume" -LookupField "display_label"
-Add-Field -List "Ressourcennutzungen" -InternalName "mittel_ref" -DisplayName 'Bezug: Arbeitsmittel (bei Bezugstyp=Mittel)' -Type Lookup `
+Add-Field -List "Ressourcennutzungen" -InternalName "mittel_ref" -DisplayName 'Bezug: Arbeitsmittel' -Type Lookup `
     -LookupList "Arbeitsmittel" -LookupField "display_label"
-Add-Field -List "Ressourcennutzungen" -InternalName "person_ref" -DisplayName 'Wer arbeitet dort bzw. nutzt es tatsächlich?' -Type Lookup -Required `
+Add-Field -List "Ressourcennutzungen" -InternalName "person_ref" -DisplayName 'Wer nutzt den Raum/das Arbeitsmittel tatsächlich?' -Type Lookup -Required `
     -LookupList "Personen" -LookupField "display_label"
 Add-Field -List "Ressourcennutzungen" -InternalName "gesellschaft_ref" -DisplayName 'Für welche Gesellschaft?' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Ressourcennutzungen" -InternalName "taetigkeit_ref" -DisplayName 'Für welche Tätigkeit, soweit zuordenbar' -Type Lookup `
-    -LookupList "Taetigkeiten" -LookupField "display_label"
-Add-Field -List "Ressourcennutzungen" -InternalName "anteil_prozent" -DisplayName 'Nutzungsanteil in Prozent (Summe je Ressource = 100 %)' -Type Number `
+Add-Field -List "Ressourcennutzungen" -InternalName "aufgabe_ref" -DisplayName 'Für welche Aufgabe, soweit zuordenbar' -Type Lookup `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Ressourcennutzungen" -InternalName "a25_einheit" -DisplayName 'Wie verteilt sich die tatsächliche Nutzung?' -Type Choice -Required `
+    -Choices @('A25_EINHEIT_STUNDEN', 'A25_EINHEIT_KILOMETER', 'A25_EINHEIT_ANDERE_EINHEIT', 'A25_EINHEIT_GESCHAETZTE_ANTEILE', 'A25_EINHEIT_NICHT_AUFTEILBAR', 'A25_EINHEIT_DERZEIT_UNGENUTZT')
+Add-Field -List "Ressourcennutzungen" -InternalName "a25_menge" -DisplayName 'Menge in der gewählten Einheit' -Type Number
+Add-Field -List "Ressourcennutzungen" -InternalName "a25_privatanteil_prozent" -DisplayName 'Privatanteil in Prozent' -Type Number `
     -Min 0 `
     -Max 100
-# anteil_prozent: 100-%-Pruefung mit Toleranz im Flow.
-Add-Field -List "Ressourcennutzungen" -InternalName "basis_code" -DisplayName 'Grundlage der Angabe' -Type Choice `
-    -Choices @('NUTZUNGSGRUNDLAGE_AUFZEICHNUNG', 'NUTZUNGSGRUNDLAGE_SCHAETZUNG', 'NUTZUNGSGRUNDLAGE_ANDERE_GRUNDLAGE')
-Add-Field -List "Ressourcennutzungen" -InternalName "tage_oder_stunden_pro_monat" -DisplayName 'Typische Tage bzw. Stunden im Monat' -Type Number
-Add-Field -List "Ressourcennutzungen" -InternalName "haeufigkeit" -DisplayName 'Wie häufig wird es eingesetzt?' -Type Choice `
-    -Choices @('FREQ_DAILY', 'FREQ_MULTI_WEEK', 'FREQ_WEEKLY', 'FREQ_MONTHLY', 'FREQ_QUARTERLY', 'FREQ_YEARLY', 'FREQ_ON_DEMAND', 'FREQ_ONCE', 'FREQ_RARELY', 'FREQ_NEVER', 'FREQ_NONE')
-# haeufigkeit: Codes FREQ_DAILY..FREQ_ON_DEMAND, FREQ_NONE.
-Add-Field -List "Ressourcennutzungen" -InternalName "ort_kategorie" -DisplayName 'Wo wird es eingesetzt?' -Type Choice `
-    -Choices @('ORT_KATEGORIE_KG_BUERO', 'ORT_KATEGORIE_BETEILIGUNG_RAEUME', 'ORT_KATEGORIE_HOMEOFFICE', 'ORT_KATEGORIE_SCHWEIZER_RAEUME', 'ORT_KATEGORIE_UNTERWEGS_GESCHAEFTSPARTNER', 'ORT_KATEGORIE_ANDERER_ORT')
-Add-Field -List "Ressourcennutzungen" -InternalName "nutzungszeitraum_von" -DisplayName 'Nutzungszeitraum - Beginn' -Type DateOnly
-Add-Field -List "Ressourcennutzungen" -InternalName "nutzungszeitraum_bis" -DisplayName 'Nutzungszeitraum - Ende' -Type DateOnly
-Add-Field -List "Ressourcennutzungen" -InternalName "privat" -DisplayName 'Privatnutzung' -Type Choice `
-    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Ressourcennutzungen" -InternalName "bezugszeitraum_von" -DisplayName 'Bezugszeitraum - Beginn' -Type DateOnly
+Add-Field -List "Ressourcennutzungen" -InternalName "bezugszeitraum_bis" -DisplayName 'Bezugszeitraum - Ende' -Type DateOnly
+Add-Field -List "Ressourcennutzungen" -InternalName "a32_fahrtzweck" -DisplayName 'Für welche Fahrten wurde das Fahrzeug eingesetzt?' -Type MultiChoice `
+    -Choices @('A32_FAHRTZWECK_KUNDEN_LIEFERANTEN', 'A32_FAHRTZWECK_BETEILIGUNGSBESUCHE', 'A32_FAHRTZWECK_BANK_BERATER', 'A32_FAHRTZWECK_KG_BUERO', 'A32_FAHRTZWECK_ANDERE_BERUFLICHE', 'A32_FAHRTZWECK_PRIVAT')
+# a32_fahrtzweck: Anzeige: Fahrzeug (A20).
 Add-Field -List "Ressourcennutzungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Kosten
-# Personal-, Sach- und Gemeinkosten (C01-C04; A08; R06)
+# Kostenposition mit Bezug zu Person/Raum/Mittel/Aufgabe (C20-C24)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Kosten"
 Add-Field -List "Kosten" -InternalName "kosten_id" -DisplayName 'Kosten-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "Kosten" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
     -LookupList "Erfassungen" -LookupField "case_id" `
     -DeleteBehavior Restrict
-Add-Field -List "Kosten" -InternalName "kostenart" -DisplayName 'Kostenart' -Type Choice -Required `
-    -Choices @('KOSTENART_PERSONAL_FESTVERGUETUNG', 'KOSTENART_PERSONAL_VARIABLE_VERGUETUNG', 'KOSTENART_PERSONAL_ARBEITGEBERBEITRAEGE', 'KOSTENART_PERSONAL_SPESEN', 'KOSTENART_PERSONAL_SONSTIGE_VERGUETUNG', 'KOSTENART_RAUMKOSTEN', 'KOSTENART_FAHRZEUGE', 'KOSTENART_IT_TELEFON', 'KOSTENART_SOFTWARE', 'KOSTENART_REISEN', 'KOSTENART_EXTERNE_BERATUNG', 'KOSTENART_BUCHFUEHRUNG', 'KOSTENART_VERSICHERUNGEN', 'KOSTENART_ALLGEMEINE_VERWALTUNG', 'KOSTENART_SONSTIGE_KOSTEN')
-# kostenart: Vereinigung aus C01 (Vergütungsarten) und C03 (sonstige Kostenarten).
-Add-Field -List "Kosten" -InternalName "kostenart_andere_text" -DisplayName 'Sonstige Kosten - bitte benennen' -Type Text
-Add-Field -List "Kosten" -InternalName "betrag" -DisplayName 'Betrag' -Type Number -Required
-# betrag: Betrag/Währung sind vorgegeben - frühere offene Frage damit erledigt.
-Add-Field -List "Kosten" -InternalName "waehrung" -DisplayName 'Währung' -Type Text -Required
-Add-Field -List "Kosten" -InternalName "zeitraum_von" -DisplayName 'Zeitraum - Beginn' -Type DateOnly
-Add-Field -List "Kosten" -InternalName "zeitraum_bis" -DisplayName 'Zeitraum - Ende' -Type DateOnly
-Add-Field -List "Kosten" -InternalName "zahlende_gesellschaft_ref" -DisplayName 'Zahlende Gesellschaft (zuerst zahlende Gesellschaft)' -Type Lookup -Required `
-    -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Kosten" -InternalName "kostenbasis_text" -DisplayName 'Grundlage bei Pauschalen' -Type Text
-Add-Field -List "Kosten" -InternalName "quelle_text" -DisplayName 'Quelle (Vertrag, Rechnung, Umlagebeleg usw.)' -Type Text
-Add-Field -List "Kosten" -InternalName "nachweis_ref" -DisplayName 'Nachweis (Rechnung, Vertrag, Umlagebeleg)' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Kosten" -InternalName "raum_ref" -DisplayName 'Bezug: Raum (bei Raumkosten)' -Type Lookup `
-    -LookupList "Raeume" -LookupField "display_label"
-Add-Field -List "Kosten" -InternalName "mittel_ref" -DisplayName 'Bezug: Arbeitsmittel (bei Arbeitsmittelkosten)' -Type Lookup `
-    -LookupList "Arbeitsmittel" -LookupField "display_label"
-Add-Field -List "Kosten" -InternalName "person_ref" -DisplayName 'Bezug: Person (bei Personalkosten)' -Type Lookup `
+Add-Field -List "Kosten" -InternalName "kostenart" -DisplayName 'Welche Kostenposition wird beschrieben?' -Type Choice -Required `
+    -Choices @('C20_KOSTENART_VERGUETUNG', 'C20_KOSTENART_ARBEITGEBERBEITRAEGE', 'C20_KOSTENART_SPESEN', 'C20_KOSTENART_RAUMKOSTEN', 'C20_KOSTENART_FAHRZEUG', 'C20_KOSTENART_IT_TELEFON', 'C20_KOSTENART_SOFTWARE', 'C20_KOSTENART_REISE', 'C20_KOSTENART_BERATUNG', 'C20_KOSTENART_BUCHFUEHRUNG', 'C20_KOSTENART_VERSICHERUNG', 'C20_KOSTENART_SONSTIGE_VERWALTUNG')
+Add-Field -List "Kosten" -InternalName "person_ref" -DisplayName 'Bezug: Person, soweit zuordenbar' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Kosten" -InternalName "taetigkeit_ref" -DisplayName 'Bezug: Tätigkeit, soweit direkt zuordenbar' -Type Lookup `
-    -LookupList "Taetigkeiten" -LookupField "display_label"
-Add-Field -List "Kosten" -InternalName "zuordnung" -DisplayName 'Lassen sich die Kosten direkt einer Tätigkeit oder Gesellschaft zuordnen?' -Type Choice -Required `
-    -Choices @('C04_ZUORDNUNG_VOLLSTAENDIG', 'C04_ZUORDNUNG_TEILWEISE', 'C04_ZUORDNUNG_NEIN', 'C04_ZUORDNUNG_UNBEKANNT')
-Add-Field -List "Kosten" -InternalName "schluessel" -DisplayName 'Verwendeter Schlüssel für gemeinsame Kosten' -Type Choice `
-    -Choices @('C04_SCHLUESSEL_ZEIT', 'C04_SCHLUESSEL_NUTZUNG', 'C04_SCHLUESSEL_FLAECHE', 'C04_SCHLUESSEL_ANZAHL_NUTZER', 'C04_SCHLUESSEL_ANDERER_SCHLUESSEL', 'C04_SCHLUESSEL_KEIN_SCHLUESSEL')
-Add-Field -List "Kosten" -InternalName "schluessel_begruendung" -DisplayName 'Begründung des Schlüssels' -Type Note
-Add-Field -List "Kosten" -InternalName "berechneter_anteil" -DisplayName 'Berechneter Anteil' -Type Number `
-    -Min 0 `
-    -Max 100
-Add-Field -List "Kosten" -InternalName "vertraulich_hinweis" -DisplayName 'Vertrauliche Vergütungsunterlagen direkt an Kanzlei übermittelt' -Type Choice `
-    -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
+Add-Field -List "Kosten" -InternalName "raum_ref" -DisplayName 'Bezug: Raum, soweit zuordenbar' -Type Lookup `
+    -LookupList "Raeume" -LookupField "display_label"
+Add-Field -List "Kosten" -InternalName "mittel_ref" -DisplayName 'Bezug: Arbeitsmittel, soweit zuordenbar' -Type Lookup `
+    -LookupList "Arbeitsmittel" -LookupField "display_label"
+Add-Field -List "Kosten" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe, soweit zuordenbar' -Type Lookup `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "Kosten" -InternalName "zahlende_gesellschaft_ref" -DisplayName 'Welche Gesellschaft hat diese Kosten zunächst bezahlt?' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Kosten" -InternalName "c21_status" -DisplayName 'Status' -Type Choice -Required `
+    -Choices @('C21_STATUS_GESELLSCHAFT', 'C21_STATUS_NOCH_NICHT_BEZAHLT', 'C21_STATUS_UNBEKANNT')
+Add-Field -List "Kosten" -InternalName "c21_rechnungsempfaenger_text" -DisplayName 'Rechnungsempfänger (bei offener Rechnung)' -Type Text
+Add-Field -List "Kosten" -InternalName "zeitraum_von" -DisplayName 'Auf welchen Zeitraum beziehen sich die Kosten? - Beginn' -Type DateOnly -Required
+Add-Field -List "Kosten" -InternalName "zeitraum_bis" -DisplayName 'Zeitraum - Ende' -Type DateOnly -Required
+Add-Field -List "Kosten" -InternalName "betrag_status" -DisplayName 'Wie hoch ist der Betrag?' -Type Choice -Required `
+    -Choices @('ERMITTLUNGSART_ERMITTELT', 'ERMITTLUNGSART_GESCHAETZT', 'ERMITTLUNGSART_UNBEKANNT')
+Add-Field -List "Kosten" -InternalName "betrag" -DisplayName 'Betrag' -Type Number
+Add-Field -List "Kosten" -InternalName "waehrung" -DisplayName 'Währung' -Type Text
+Add-Field -List "Kosten" -InternalName "weiterberechnung" -DisplayName 'Wurden diese Kosten einer anderen Gesellschaft berechnet oder von ihr erstattet?' -Type Choice -Required `
+    -Choices @('C24_WEITERBERECHNUNG_JA_VOLLSTAENDIG', 'C24_WEITERBERECHNUNG_JA_TEILWEISE', 'C24_WEITERBERECHNUNG_NEIN', 'C24_WEITERBERECHNUNG_NOCH_OFFEN', 'C24_WEITERBERECHNUNG_UNBEKANNT')
 Add-Field -List "Kosten" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Kostenverteilungen
-# Weiterberechnung von Kosten auf Empfaengergesellschaften (C02)
+# Weiterberechnung von Kosten auf Empfaengergesellschaften (C25-C27)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Kostenverteilungen"
 Add-Field -List "Kostenverteilungen" -InternalName "kostenanteil_id" -DisplayName 'Kostenanteils-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "Kostenverteilungen" -InternalName "kosten_ref" -DisplayName 'Bezug: Kostenposition' -Type Lookup -Required `
     -LookupList "Kosten" -LookupField "display_label"
-Add-Field -List "Kostenverteilungen" -InternalName "empfaenger_gesellschaft_ref" -DisplayName 'Empfangende Gesellschaft' -Type Lookup -Required `
+# kosten_ref: Anzeige: C24 = ja oder noch offen.
+Add-Field -List "Kostenverteilungen" -InternalName "empfaenger_gesellschaft_ref" -DisplayName 'Welche Gesellschaft erhielt die Rechnung oder erstattete die Kosten?' -Type Lookup -Required `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Kostenverteilungen" -InternalName "anteil_prozent" -DisplayName 'Anteil in Prozent' -Type Number `
-    -Min 0 `
-    -Max 100
-Add-Field -List "Kostenverteilungen" -InternalName "betrag" -DisplayName 'Betrag' -Type Number
-Add-Field -List "Kostenverteilungen" -InternalName "schluessel" -DisplayName 'Berechnungsschlüssel der Weiterberechnung' -Type Choice -Required `
-    -Choices @('C02_WEITERBERECHNUNG_KEINE', 'C02_WEITERBERECHNUNG_FESTE_PAUSCHALE', 'C02_WEITERBERECHNUNG_NACH_STUNDEN', 'C02_WEITERBERECHNUNG_NACH_ZEITANTEILEN', 'C02_WEITERBERECHNUNG_NACH_ANDEREM_SCHLUESSEL', 'C02_WEITERBERECHNUNG_UNBEKANNT')
-Add-Field -List "Kostenverteilungen" -InternalName "begruendung" -DisplayName 'Begründung des Schlüssels' -Type Note
-Add-Field -List "Kostenverteilungen" -InternalName "weiterberechnet" -DisplayName 'Weiterberechnet?' -Type Choice -Required `
+Add-Field -List "Kostenverteilungen" -InternalName "rechnungsempfaenger_ref" -DisplayName 'Rechnungsempfänger, falls abweichend' -Type Lookup `
+    -LookupList "Gesellschaften" -LookupField "company_id"
+Add-Field -List "Kostenverteilungen" -InternalName "schluessel" -DisplayName 'Wie wurde der berechnete Anteil bestimmt?' -Type Choice -Required `
+    -Choices @('C26_SCHLUESSEL_DIREKT', 'C26_SCHLUESSEL_STUNDEN', 'C26_SCHLUESSEL_NUTZUNG', 'C26_SCHLUESSEL_FLAECHE', 'C26_SCHLUESSEL_ANZAHL_NUTZER', 'C26_SCHLUESSEL_FESTE_PAUSCHALE', 'C26_SCHLUESSEL_ANDERER', 'C26_SCHLUESSEL_UNBEKANNT')
+Add-Field -List "Kostenverteilungen" -InternalName "betrag" -DisplayName 'Betrag (bei Teilbeträgen)' -Type Number
+Add-Field -List "Kostenverteilungen" -InternalName "zuschlag" -DisplayName 'Wurde ein Zuschlag berechnet?' -Type Choice -Required `
     -Choices @('JA_NEIN_UNBEKANNT_JA', 'JA_NEIN_UNBEKANNT_NEIN', 'JA_NEIN_UNBEKANNT_UNBEKANNT')
-# weiterberechnet: Bewusst Choice statt Boolean (B2: 'weiterberechnet ja/nein/unbekannt') - unbekannt nie als 0/false.
+Add-Field -List "Kostenverteilungen" -InternalName "zuschlag_basis_text" -DisplayName 'Zuschlagsbasis' -Type Text
+Add-Field -List "Kostenverteilungen" -InternalName "zuschlag_hoehe" -DisplayName 'Höhe des Zuschlags' -Type Number
 Add-Field -List "Kostenverteilungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Abrechnungen
-# Tatsaechlich gestellte Abrechnungen/Leistungsvereinbarungen (G06, C05)
+# Tatsaechlich gestellte Abrechnungen (C28-C31)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Abrechnungen"
 Add-Field -List "Abrechnungen" -InternalName "abrechnung_id" -DisplayName 'Abrechnungs-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "Abrechnungen" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
     -LookupList "Erfassungen" -LookupField "case_id" `
     -DeleteBehavior Restrict
-Add-Field -List "Abrechnungen" -InternalName "leistender_ref" -DisplayName 'Leistender (Gesellschaft)' -Type Lookup -Required `
+Add-Field -List "Abrechnungen" -InternalName "leistungsart" -DisplayName 'Welche Leistung rechnete die KG ab?' -Type Choice -Required `
+    -Choices @('C28_LEISTUNGSART_MANAGEMENT', 'C28_LEISTUNGSART_PERSONALBEREITSTELLUNG', 'C28_LEISTUNGSART_ARBEITSMITTELBEREITSTELLUNG', 'C28_LEISTUNGSART_KOSTENERSTATTUNG', 'C28_LEISTUNGSART_ANDERE', 'C28_LEISTUNGSART_KEINE', 'C28_LEISTUNGSART_UNBEKANNT')
+Add-Field -List "Abrechnungen" -InternalName "leistender_ref" -DisplayName 'Leistender' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Abrechnungen" -InternalName "empfaenger_ref" -DisplayName 'Rechnungsempfänger' -Type Lookup -Required `
+Add-Field -List "Abrechnungen" -InternalName "empfaenger_ref" -DisplayName 'Empfänger' -Type Lookup `
     -LookupList "Gesellschaften" -LookupField "company_id"
-Add-Field -List "Abrechnungen" -InternalName "leistungsart" -DisplayName 'Welche Leistungen rechnet die KG tatsächlich ab?' -Type Choice -Required `
-    -Choices @('C05_LEISTUNGSART_MANAGEMENTLEISTUNGEN', 'C05_LEISTUNGSART_PERSONALBEREITSTELLUNG', 'C05_LEISTUNGSART_SACHMITTELBEREITSTELLUNG', 'C05_LEISTUNGSART_KOSTENERSTATTUNG', 'C05_LEISTUNGSART_ANDERE_LEISTUNG', 'C05_LEISTUNGSART_KEINE_ABRECHNUNG')
+Add-Field -List "Abrechnungen" -InternalName "zeitraum_von" -DisplayName 'Zeitraum - Beginn' -Type DateOnly
+Add-Field -List "Abrechnungen" -InternalName "zeitraum_bis" -DisplayName 'Zeitraum - Ende' -Type DateOnly
 Add-Field -List "Abrechnungen" -InternalName "betrag" -DisplayName 'Betrag' -Type Number
 Add-Field -List "Abrechnungen" -InternalName "waehrung" -DisplayName 'Währung' -Type Text
-Add-Field -List "Abrechnungen" -InternalName "zeitraum_von" -DisplayName 'Leistungszeitraum - Beginn' -Type DateOnly
-Add-Field -List "Abrechnungen" -InternalName "zeitraum_bis" -DisplayName 'Leistungszeitraum - Ende' -Type DateOnly
-Add-Field -List "Abrechnungen" -InternalName "zuschlag_text" -DisplayName 'Gegebenenfalls gesonderter Zuschlag' -Type Text
-Add-Field -List "Abrechnungen" -InternalName "rechnungsdatum" -DisplayName 'Rechnungsdatum' -Type DateOnly
-Add-Field -List "Abrechnungen" -InternalName "zahlungsstatus" -DisplayName 'Zahlungsstatus' -Type Choice `
-    -Choices @('ZAHLUNGSSTATUS_BEZAHLT', 'ZAHLUNGSSTATUS_OFFEN', 'ZAHLUNGSSTATUS_TEILWEISE', 'ZAHLUNGSSTATUS_UNBEKANNT')
-Add-Field -List "Abrechnungen" -InternalName "g06_vereinbarung_status" -DisplayName 'Schriftliche Leistungsvereinbarung vorhanden?' -Type Choice -Required `
-    -Choices @('ALLG_STATUS_NICHT_BEKANNT', 'ALLG_STATUS_NICHT_VORHANDEN', 'ALLG_STATUS_WIRD_NACHGEREICHT', 'ALLG_STATUS_NICHT_ZUTREFFEND', 'ALLG_STATUS_VORHANDEN')
-Add-Field -List "Abrechnungen" -InternalName "g06_vereinbarung_nachweis_ref" -DisplayName 'Leistungsvereinbarung' -Type Lookup `
+Add-Field -List "Abrechnungen" -InternalName "vereinbarung_status" -DisplayName 'Liegt eine Vereinbarung zu dieser Leistung vor?' -Type Choice -Required `
+    -Choices @('C29_VEREINBARUNG_UNTERZEICHNET', 'C29_VEREINBARUNG_NUR_ENTWURF', 'C29_VEREINBARUNG_NICHT_VERFUEGBAR', 'C29_VEREINBARUNG_KEINE', 'C29_VEREINBARUNG_UNBEKANNT')
+Add-Field -List "Abrechnungen" -InternalName "c29_nachweis_ref" -DisplayName 'Vereinbarung (Nachweis)' -Type Lookup `
     -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Abrechnungen" -InternalName "g06_rechnung_status" -DisplayName 'Tatsächlich gestellte Rechnung vorhanden?' -Type Choice -Required `
-    -Choices @('ALLG_STATUS_NICHT_BEKANNT', 'ALLG_STATUS_NICHT_VORHANDEN', 'ALLG_STATUS_WIRD_NACHGEREICHT', 'ALLG_STATUS_NICHT_ZUTREFFEND', 'ALLG_STATUS_VORHANDEN')
-Add-Field -List "Abrechnungen" -InternalName "g06_rechnung_nachweis_ref" -DisplayName 'Tatsächlich gestellte Rechnung' -Type Lookup `
-    -LookupList "Substanznachweise" -LookupField "display_label"
-Add-Field -List "Abrechnungen" -InternalName "g06_abweichung_text" -DisplayName 'Abweichungen zwischen Vereinbarung und tatsächlicher Arbeit' -Type Note
+Add-Field -List "Abrechnungen" -InternalName "c30_abweichung" -DisplayName 'Welche Unterschiede zwischen Vereinbarung und tatsächlicher Ausführung sind bekannt?' -Type Choice -Required `
+    -Choices @('C30_ABWEICHUNG_KEINE_BEKANNT', 'C30_ABWEICHUNG_VORHANDEN', 'C30_ABWEICHUNG_NOCH_NICHT_VERGLICHEN')
+Add-Field -List "Abrechnungen" -InternalName "c30_text" -DisplayName 'Abweichung - Beschreibung' -Type Note
+Add-Field -List "Abrechnungen" -InternalName "c31_abgestimmt" -DisplayName 'Sind Angaben und Abrechnungen mit der Buchhaltung abgestimmt?' -Type Choice -Required `
+    -Choices @('C31_ABGESTIMMT_JA', 'C31_ABGESTIMMT_TEILWEISE', 'C31_ABGESTIMMT_NEIN', 'C31_ABGESTIMMT_NOCH_NICHT_GEPRUEFT')
+Add-Field -List "Abrechnungen" -InternalName "c31_differenzen_text" -DisplayName 'Bekannte Differenzen' -Type Note
 Add-Field -List "Abrechnungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
 # Liste: Belegverknuepfungen
-# Generische Verknuepfung Nachweis -> beliebige Zielliste (N02-N04)
+# Generische Verknuepfung Nachweis -> beliebige Zielliste, keine Mehrfachablage (N21)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Belegverknuepfungen"
 Add-Field -List "Belegverknuepfungen" -InternalName "link_id" -DisplayName 'Link-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Belegverknuepfungen" -InternalName "nachweis_ref" -DisplayName 'Welche Unterlagen belegen die Angabe?' -Type Lookup `
+Add-Field -List "Belegverknuepfungen" -InternalName "nachweis_ref" -DisplayName 'Bezug: Nachweis' -Type Lookup -Required `
     -LookupList "Substanznachweise" -LookupField "display_label"
-# nachweis_ref: Je referenzierter Unterlage ein Belegverknuepfungen-Datensatz; die N02_UNTERLAGENART-Kategorie steht auf dem referenzierten Substanznachweise-Eintrag (dokumentart), nicht hier.
-Add-Field -List "Belegverknuepfungen" -InternalName "ziel_typ" -DisplayName 'Zieltyp der belegten Angabe (Liste)' -Type Choice -Required `
-    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_TAETIGKEITEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_ENTSCHEIDUNGSFAELLE', 'ZIEL_TYP_FALLBETEILIGUNGEN', 'ZIEL_TYP_VERTRAGSVORGAENGE', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_INTERNEBEWERTUNGEN')
+Add-Field -List "Belegverknuepfungen" -InternalName "ziel_typ" -DisplayName 'Welche Aufgabe, Zuständigkeit oder sonstige Angabe belegt die Unterlage? - Zieltyp' -Type Choice -Required `
+    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_FUNKTIONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_AUFGABEN', 'ZIEL_TYP_AUFGABENEMPFAENGER', 'ZIEL_TYP_AUFGABENZUSTAENDIGKEITEN', 'ZIEL_TYP_ENTSCHEIDUNGSBEFUGNISSE', 'ZIEL_TYP_VERTRAGSZUSTAENDIGKEITEN', 'ZIEL_TYP_KONTROLLAUFGABEN', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_AUFGABENORTE', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_OFFENEPUNKTE', 'ZIEL_TYP_INTERNEBEWERTUNGEN')
 Add-Field -List "Belegverknuepfungen" -InternalName "ziel_id" -DisplayName 'Ziel-ID (stabile ID der referenzierten Zeile)' -Type Text -Required
-# ziel_id: Generischer Verweis als Text statt 19 Einzel-Lookups (B2-Design uebernommen); Aufloesung durch Flow/Kanzlei.
-Add-Field -List "Belegverknuepfungen" -InternalName "frage_id" -DisplayName 'Frage-ID, die belegt wird (z. B. P17, E08, V09, K05)' -Type Text
-Add-Field -List "Belegverknuepfungen" -InternalName "belegter_sachverhalt" -DisplayName 'Belegter Sachverhalt' -Type Note
-Add-Field -List "Belegverknuepfungen" -InternalName "seite_abschnitt" -DisplayName 'Seite oder Abschnitt in der Unterlage' -Type Text
-Add-Field -List "Belegverknuepfungen" -InternalName "belegstatus" -DisplayName 'Belegstatus' -Type Choice -Required `
-    -Choices @('N03_BELEGSTATUS_LIEGT_BEI', 'N03_BELEGSTATUS_BEREITS_UEBERMITTELT', 'N03_BELEGSTATUS_NUR_BENANNT', 'N03_BELEGSTATUS_WIRD_NACHGEREICHT', 'N03_BELEGSTATUS_NICHT_VORHANDEN')
-Add-Field -List "Belegverknuepfungen" -InternalName "schaetzungsgrundlage_text" -DisplayName 'Geschätzte/unvollständige Angabe: Schätzungsgrundlage' -Type Note
-Add-Field -List "Belegverknuepfungen" -InternalName "fehlende_information_text" -DisplayName 'Fehlende Information' -Type Note
-Add-Field -List "Belegverknuepfungen" -InternalName "ansprechperson_ref" -DisplayName 'Zuständige Ansprechperson' -Type Lookup `
-    -LookupList "Personen" -LookupField "display_label"
-Add-Field -List "Belegverknuepfungen" -InternalName "erwarteter_nachreichtermin" -DisplayName 'Erwarteter Nachreichtermin' -Type DateOnly
+# ziel_id: Generischer Verweis als Text statt Einzel-Lookups je Zielliste (B1: 'keine Mehrfachablage').
+Add-Field -List "Belegverknuepfungen" -InternalName "frage_id_text" -DisplayName 'Frage-ID, die belegt wird' -Type Text
+Add-Field -List "Belegverknuepfungen" -InternalName "abschnitt_text" -DisplayName 'Seite oder Abschnitt' -Type Text
 Add-Field -List "Belegverknuepfungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
+# Liste: OffenePunkte
+# Fehlende Angaben und fehlende Nachweise mit Ansprechperson (N23, N26)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "OffenePunkte"
+Add-Field -List "OffenePunkte" -InternalName "offener_punkt_id" -DisplayName 'Offener-Punkt-ID (intern vergeben)' -Type Text -Required
+Add-Field -List "OffenePunkte" -InternalName "erfassung_ref" -DisplayName 'Bezug: Erfassung' -Type Lookup -Required `
+    -LookupList "Erfassungen" -LookupField "case_id" `
+    -DeleteBehavior Restrict
+Add-Field -List "OffenePunkte" -InternalName "art" -DisplayName 'Art des offenen Punktes' -Type Choice -Required `
+    -Choices @('OFFENER_PUNKT_ART_OFFENE_ANGABE', 'OFFENER_PUNKT_ART_FEHLENDER_NACHWEIS')
+Add-Field -List "OffenePunkte" -InternalName "beschreibung_text" -DisplayName 'Welche Angaben müssen noch geklärt werden?' -Type Note -Required
+Add-Field -List "OffenePunkte" -InternalName "bezug_ziel_typ" -DisplayName 'Bezug: Zieltyp (optional, generisch)' -Type Choice `
+    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_FUNKTIONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_AUFGABEN', 'ZIEL_TYP_AUFGABENEMPFAENGER', 'ZIEL_TYP_AUFGABENZUSTAENDIGKEITEN', 'ZIEL_TYP_ENTSCHEIDUNGSBEFUGNISSE', 'ZIEL_TYP_VERTRAGSZUSTAENDIGKEITEN', 'ZIEL_TYP_KONTROLLAUFGABEN', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_AUFGABENORTE', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_OFFENEPUNKTE', 'ZIEL_TYP_INTERNEBEWERTUNGEN')
+Add-Field -List "OffenePunkte" -InternalName "bezug_ziel_id" -DisplayName 'Bezug: Ziel-ID' -Type Text
+Add-Field -List "OffenePunkte" -InternalName "ansprechperson_ref" -DisplayName 'Zuständige Person' -Type Lookup `
+    -LookupList "Personen" -LookupField "display_label"
+Add-Field -List "OffenePunkte" -InternalName "nachreichtermin" -DisplayName 'Nachreichtermin (nur falls tatsächlich vereinbart)' -Type DateOnly
+Add-Field -List "OffenePunkte" -InternalName "status" -DisplayName 'Status des offenen Punktes' -Type Choice -Required `
+    -Choices @('OFFENER_PUNKT_STATUS_OFFEN', 'OFFENER_PUNKT_STATUS_ANGEFORDERT', 'OFFENER_PUNKT_STATUS_GEKLAERT')
+Add-Field -List "OffenePunkte" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+# ---------------------------------------------------------------------------
 # Liste: InterneBewertungen
-# NUR INTERN, eingeschraenkte Berechtigungen - Auswertungshilfen zu Anhang A (A1-A7)
+# NUR INTERN, eingeschraenkte Berechtigungen - Auswertungshilfen zu Anhang D (D1-D7)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "InterneBewertungen"
 Add-Field -List "InterneBewertungen" -InternalName "bewertung_id" -DisplayName 'Bewertungs-ID (intern vergeben)' -Type Text -Required
 Add-Field -List "InterneBewertungen" -InternalName "bezug_typ" -DisplayName 'Bezugstyp der Bewertung' -Type Choice -Required `
-    -Choices @('BEWERTUNG_BEZUGSTYP_TAETIGKEIT', 'BEWERTUNG_BEZUGSTYP_FALL')
-Add-Field -List "InterneBewertungen" -InternalName "taetigkeit_ref" -DisplayName 'Bezug: Tätigkeit' -Type Lookup `
-    -LookupList "Taetigkeiten" -LookupField "display_label"
-Add-Field -List "InterneBewertungen" -InternalName "fall_ref" -DisplayName 'Bezug: Entscheidungsfall' -Type Lookup `
-    -LookupList "Entscheidungsfaelle" -LookupField "display_label"
+    -Choices @('BEWERTUNG_BEZUGSTYP_AUFGABE', 'BEWERTUNG_BEZUGSTYP_ENTSCHEIDUNGSBEFUGNIS', 'BEWERTUNG_BEZUGSTYP_VERTRAGSZUSTAENDIGKEIT', 'BEWERTUNG_BEZUGSTYP_KONTROLLAUFGABE')
+Add-Field -List "InterneBewertungen" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup `
+    -LookupList "Aufgaben" -LookupField "display_label"
+Add-Field -List "InterneBewertungen" -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsbefugnis' -Type Lookup `
+    -LookupList "Entscheidungsbefugnisse" -LookupField "display_label"
+Add-Field -List "InterneBewertungen" -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragszuständigkeit' -Type Lookup `
+    -LookupList "Vertragszustaendigkeiten" -LookupField "display_label"
+Add-Field -List "InterneBewertungen" -InternalName "kontrolle_ref" -DisplayName 'Bezug: Kontrollaufgabe' -Type Lookup `
+    -LookupList "Kontrollaufgaben" -LookupField "display_label"
 Add-Field -List "InterneBewertungen" -InternalName "pruefungszusammenhang" -DisplayName 'Prüfungszusammenhang (z. B. tatsächliche Verwaltung, Konzernleistungen, Organrecht, VP-Stewardship, OECD-MK Art. 5)' -Type Text -Required
 Add-Field -List "InterneBewertungen" -InternalName "einordnung" -DisplayName 'Vorläufige Einordnung' -Type Note -Required
 Add-Field -List "InterneBewertungen" -InternalName "begruendung" -DisplayName 'Begründung' -Type Note
-Add-Field -List "InterneBewertungen" -InternalName "quellen" -DisplayName 'Quellenverweis (interner Anhang A, Abschnitte A1-A7)' -Type Note
+Add-Field -List "InterneBewertungen" -InternalName "quellen" -DisplayName 'Quellenverweis (Interner Anhang D, D1-D7)' -Type Note
 Add-Field -List "InterneBewertungen" -InternalName "pruefer_name" -DisplayName 'Prüfende Person' -Type Text
 Add-Field -List "InterneBewertungen" -InternalName "pruefdatum" -DisplayName 'Prüfdatum' -Type DateOnly
 Add-Field -List "InterneBewertungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
@@ -1020,12 +1132,11 @@ Add-Field -List "InterneBewertungen" -InternalName "display_label" -DisplayName 
 Set-RestrictedPermission -List "InterneBewertungen"
 
 Write-Host ""
-Write-Host "Fertig. Alle 20 Substanzpruefungs-Listen sowie die Dokumentbibliothek Substanznachweise sind angelegt bzw. angeglichen."
-Write-Host "Ersetzt die fruehere SH0-SH11-Modellierung vollstaendig (Update 1, siehe PR-Beschreibung)."
+Write-Host "Fertig. Alle 25 Substanzpruefungs-Listen (Version 3) sowie die Dokumentbibliothek Substanznachweise sind angelegt bzw. angeglichen."
+Write-Host "Ersetzt Version 2 vollstaendig (Update 2) - keine Vorgangslisten mehr (siehe PR-Beschreibung)."
 Write-Host "Wiederverwendet (nicht neu angelegt, siehe Datenmodell Abschnitt \"Wiederverwendung\"):"
 Write-Host "  - 'Eingang_Fehler' (DE/AO) fuer fehlgeschlagene Formular-Uebernahmen dieses Moduls."
-Write-Host "  - '4_Beteiligte_und_Quoten' (DE/AO) als Lookup-Ziel fuer Gesellschaften.ao_participation_ref und weitere Beteiligungsbezuege."
-Write-Host "  - '3_Personen_und_Vertretung' und '5_Betriebsstaetten' (DE/AO) nur als optionale Cross-Reference-Lookups."
+Write-Host "  - '4_Beteiligte_und_Quoten' (DE/AO) als Lookup-Ziel fuer Gesellschaften.ao_participation_ref."
 Write-Host "Falls diese Listen auf der Zielsite noch nicht existieren, zuerst DE/AO/sharepoint-forms/New-SteuerlicheErfassungListen.ps1 ausfuehren."
 Write-Host ""
 Write-Warning "InterneBewertungen hat eine gebrochene Rechtevererbung erhalten - bitte manuell die zulaessige Pruefergruppe eintragen (siehe sharepoint-forms/README.md)."
