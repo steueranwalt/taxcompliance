@@ -38,11 +38,15 @@
         kompakt als drei MultiChoice-Spalten auf Personeneinsaetze abgelegt.
       - InterneBewertungen wird je Standort als eigene Liste
         (InterneBewertungen_ZH, InterneBewertungen_HH, gesteuert ueber
-        -Standort) mit gebrochener Rechtevererbung angelegt. Lesezugriff
-        erhalten nur die ueber -StandortGruppen/-GesamtGruppe benannten
-        SharePoint-Gruppen (keine Item-Level-Berechtigung); ohne Gruppenname
-        bleibt die jeweilige Liste gesperrt (Warnung statt Fehler, siehe
-        README.md).
+        -Standort) mit gebrochener Rechtevererbung angelegt. Zugriff
+        (Bearbeiten) erhalten nur die ueber -StandortGruppen/-GesamtGruppe
+        benannten Gruppen (keine Item-Level-Berechtigung) -- das Skript
+        akzeptiert sowohl klassische SharePoint-Gruppen der Site als auch
+        Microsoft-365-/Entra-ID-Gruppen (nach Anzeigename aufgeloest) und
+        probiert die Berechtigungsstufen-Namen "Bearbeiten" und "Edit"
+        nacheinander (sprachabhaengiger interner Name der Berechtigungs-
+        stufe). Ohne aufloesbaren Gruppennamen bleibt die jeweilige Liste
+        gesperrt (Warnung statt Fehler, siehe README.md).
 
     .PARAMETER SiteUrl
     Zielsite im Tenant steueranwaltskanzlei.com (siehe
@@ -73,11 +77,11 @@ param(
     [ValidateSet('ZH', 'HH')]
     [string[]]$Standort = @('ZH'),
 
-    [Parameter(HelpMessage = "Zuordnung Standort -> SharePoint-Gruppenname mit Lesezugriff auf die jeweilige InterneBewertungen_<Standort>-Liste, z. B. @{ ZH = 'Substanzpruefung ZH'; HH = 'Substanzpruefung HH' }. Fehlt ein Standort in dieser Tabelle, wird nur gewarnt (keine Rechtevergabe ohne Gruppe) statt eines Fehlers.")]
-    [hashtable]$StandortGruppen = @{},
+    [Parameter(HelpMessage = "Zuordnung Standort -> Gruppenname mit Zugriff (Bearbeiten) auf die jeweilige InterneBewertungen_<Standort>-Liste. Kann eine klassische SharePoint-Gruppe der Site ODER eine Microsoft-365-/Entra-ID-Gruppe (nach Anzeigename) sein - das Skript versucht zuerst eine SharePoint-Gruppe, dann eine M365-/Entra-ID-Gruppe aufzuloesen. Default-Gruppennamen laut Nils Obenhaus: ZH = 'Kanzlei ZH' (mit Leerzeichen), HH = 'Kanzlei-HH' (mit Bindestrich). Fehlt ein Standort in dieser Tabelle oder wird die Gruppe nirgends gefunden, wird nur gewarnt (keine Rechtevergabe ohne aufgeloeste Gruppe) statt eines Fehlers.")]
+    [hashtable]$StandortGruppen = @{ ZH = 'Kanzlei ZH'; HH = 'Kanzlei-HH' },
 
-    [Parameter(HelpMessage = "SharePoint-Gruppenname, der auf ALLEN InterneBewertungen_<Standort>-Listen Lesezugriff erhalten soll (z. B. 'steueranwaltskanzlei'). Leer lassen, um keine uebergreifende Gruppe zu berechtigen (dann nur Warnung).")]
-    [string]$GesamtGruppe = ''
+    [Parameter(HelpMessage = "Name der Gesamtgruppe, die auf ALLEN angelegten InterneBewertungen_<Standort>-Listen Zugriff (Bearbeiten) erhalten soll. Kann ebenfalls eine SharePoint-Gruppe ODER eine Microsoft-365-/Entra-ID-Gruppe sein (siehe -StandortGruppen). Default laut Nils Obenhaus: 'steueranwaltskanzlei'. Leer lassen, um keine uebergreifende Gruppe zu berechtigen (dann nur Warnung).")]
+    [string]$GesamtGruppe = 'steueranwaltskanzlei'
 )
 
 $ErrorActionPreference = "Stop"
@@ -304,6 +308,121 @@ function Add-Field {
     }
 }
 
+function Grant-RoleToPrincipal {
+    <#
+      Versucht Set-PnPListPermission mit mehreren moeglichen Berechtigungs-
+      stufennamen (RoleCandidates), da der interne Name der SharePoint-
+      Berechtigungsstufe "Bearbeiten"/"Edit" je nach Sprache der Zielsite
+      unterschiedlich heisst (z. B. "Edit" auf einer englischsprachigen,
+      "Bearbeiten" auf einer deutschsprachigen Site). Gibt den tatsaechlich
+      erfolgreichen Rollennamen zurueck, oder $null wenn keiner funktioniert
+      hat.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$List,
+        [string]$Group,
+        [string]$User,
+        [string[]]$RoleCandidates
+    )
+    foreach ($role in $RoleCandidates) {
+        try {
+            if ($Group) {
+                Set-PnPListPermission -Identity $List -Group $Group -AddRole $role -ErrorAction Stop | Out-Null
+            }
+            else {
+                Set-PnPListPermission -Identity $List -User $User -AddRole $role -ErrorAction Stop | Out-Null
+            }
+            return $role
+        }
+        catch {
+            continue
+        }
+    }
+    return $null
+}
+
+function Grant-ListAccess {
+    <#
+      Loest einen Gruppennamen in dieser Reihenfolge auf und vergibt bei
+      Erfolg Zugriff (Bearbeiten) auf die Liste:
+        1. Klassische SharePoint-Gruppe der aktuellen Site (Get-PnPGroup).
+        2. Microsoft-365-Gruppe nach Anzeigename (Get-PnPMicrosoft365Group).
+        3. Sonstige Entra-ID-Gruppe nach Anzeigename, z. B. eine Security-
+           Gruppe ohne Mail-Attribut (Get-PnPAzureADGroup / Get-PnPEntraIDGroup).
+      Wird die Gruppe in KEINER der drei Formen gefunden, wird nur gewarnt
+      (kein Abbruch) -- die Liste bleibt dann ohne diese Berechtigung, bis sie
+      manuell nachgetragen wird. Gibt im Log aus, welcher Principal (Name und
+      Art) tatsaechlich berechtigt wurde, damit das spaeter auf der Site
+      nachvollziehbar ist.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$List,
+        [Parameter(Mandatory = $true)][string]$PrincipalName,
+        [string[]]$RoleCandidates = @("Bearbeiten", "Edit")
+    )
+
+    # 1) Klassische SharePoint-Gruppe der Site
+    $spGroup = $null
+    try { $spGroup = Get-PnPGroup -Identity $PrincipalName -ErrorAction SilentlyContinue } catch { $spGroup = $null }
+    if ($spGroup) {
+        $grantedRole = Grant-RoleToPrincipal -List $List -Group $PrincipalName -RoleCandidates $RoleCandidates
+        if ($grantedRole) {
+            Write-Host "  Berechtigung '$grantedRole' erteilt an SharePoint-Gruppe '$PrincipalName': $List"
+        }
+        else {
+            Write-Warning "  SharePoint-Gruppe '$PrincipalName' gefunden, aber keine der Berechtigungsstufen ($($RoleCandidates -join ', ')) konnte auf '$List' gesetzt werden (Namen pruefen, sind sprachabhaengig)."
+        }
+        return
+    }
+
+    # 2) Microsoft-365-Gruppe nach Anzeigename
+    $m365Group = $null
+    try { $m365Group = Get-PnPMicrosoft365Group -Identity $PrincipalName -ErrorAction SilentlyContinue } catch { $m365Group = $null }
+
+    # 3) Sonstige Entra-ID-Gruppe nach Anzeigename (z. B. Security-Gruppe)
+    $entraGroup = $null
+    if (-not $m365Group) {
+        try { $entraGroup = Get-PnPAzureADGroup -Identity $PrincipalName -ErrorAction SilentlyContinue } catch { $entraGroup = $null }
+    }
+
+    $loginName = $null
+    $principalLabel = $null
+    if ($m365Group) {
+        $loginName = $m365Group.Mail
+        $principalLabel = "Microsoft-365-Gruppe '$($m365Group.DisplayName)' ($($m365Group.Mail))"
+    }
+    elseif ($entraGroup -and $entraGroup.Mail) {
+        $loginName = $entraGroup.Mail
+        $principalLabel = "Entra-ID-Gruppe '$($entraGroup.DisplayName)' ($($entraGroup.Mail))"
+    }
+    elseif ($entraGroup) {
+        # Security-Gruppe ohne Mail-Attribut: ueber Claims-Login-Format berechtigen.
+        $loginName = "c:0t.c|tenant|$($entraGroup.Id)"
+        $principalLabel = "Entra-ID-Gruppe '$($entraGroup.DisplayName)' (Security-Gruppe ohne Mail, ObjectId $($entraGroup.Id))"
+    }
+
+    if (-not $loginName) {
+        Write-Warning "  Gruppe '$PrincipalName' wurde weder als SharePoint-Gruppe dieser Site noch als Microsoft-365-/Entra-ID-Gruppe im Tenant gefunden - '$List' bleibt ohne diese Berechtigung, bis sie manuell nachgetragen wird."
+        return
+    }
+
+    try {
+        $ensuredUser = New-PnPUser -LoginName $loginName
+    }
+    catch {
+        Write-Warning "  $principalLabel gefunden, konnte aber nicht per New-PnPUser als Principal aufgeloest werden: $_"
+        return
+    }
+
+    $grantedRole = Grant-RoleToPrincipal -List $List -User $ensuredUser.LoginName -RoleCandidates $RoleCandidates
+    if ($grantedRole) {
+        Write-Host "  Berechtigung '$grantedRole' erteilt an $principalLabel (als SharePoint-Principal '$($ensuredUser.LoginName)'): $List"
+    }
+    else {
+        Write-Warning "  $principalLabel aufgeloest, aber keine der Berechtigungsstufen ($($RoleCandidates -join ', ')) konnte auf '$List' gesetzt werden (Namen pruefen, sind sprachabhaengig)."
+    }
+}
+
 function Set-RestrictedPermission {
     <#
       Bricht die Rechtevererbung OHNE die bisherigen (breiten) Site-
@@ -311,8 +430,11 @@ function Set-RestrictedPermission {
       ist danach fuer alle ausser Site Collection Administrators unsichtbar,
       bis explizit eine Gruppe berechtigt wird. Das ist die bewusste
       "fail closed"-Entscheidung (Nils: "keine Rechtevergabe ohne Gruppe,
-      Warnung statt Fehler"): fehlt eine Gruppe, bleibt die Liste gesperrt
-      statt versehentlich fuer alle sichtbar zu sein.
+      Warnung statt Fehler"): fehlt eine Gruppe oder laesst sie sich nicht
+      aufloesen, bleibt die Liste gesperrt statt versehentlich fuer alle
+      sichtbar zu sein. Die eigentliche Aufloesung/Rechtevergabe je Gruppe
+      erfolgt in Grant-ListAccess (SharePoint-Gruppe ODER M365-/Entra-ID-
+      Gruppe).
     #>
     param(
         [Parameter(Mandatory = $true)][string]$List,
@@ -336,17 +458,11 @@ function Set-RestrictedPermission {
 
     $validGroups = @($Groups | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
     if ($validGroups.Count -eq 0) {
-        Write-Warning "  Keine Gruppe fuer '$List' angegeben - die Liste bleibt gesperrt, bis manuell eine Gruppe mit Leserecht eingetragen wird (siehe sharepoint-forms/README.md)."
+        Write-Warning "  Keine Gruppe fuer '$List' angegeben - die Liste bleibt gesperrt, bis manuell eine Gruppe mit Zugriff eingetragen wird (siehe sharepoint-forms/README.md)."
         return
     }
     foreach ($g in $validGroups) {
-        try {
-            Set-PnPListPermission -Identity $List -Group $g -AddRole "Read" | Out-Null
-            Write-Host "  Leserecht erteilt an Gruppe '$g': $List"
-        }
-        catch {
-            Write-Warning "  Konnte Gruppe '$g' nicht auf '$List' berechtigen (existiert die Gruppe auf dieser Site?): $_"
-        }
+        Grant-ListAccess -List $List -PrincipalName $g
     }
 }
 
@@ -1205,9 +1321,5 @@ Write-Host "  - 'Eingang_Fehler' (DE/AO) fuer fehlgeschlagene Formular-Uebernahm
 Write-Host "  - '4_Beteiligte_und_Quoten' (DE/AO) als Lookup-Ziel fuer Gesellschaften.ao_participation_ref."
 Write-Host "Falls diese Listen auf der Zielsite noch nicht existieren, zuerst DE/AO/sharepoint-forms/New-SteuerlicheErfassungListen.ps1 ausfuehren."
 Write-Host ""
-foreach ($standort in $Standort) {
-    if (-not $StandortGruppen.ContainsKey($standort) -and [string]::IsNullOrWhiteSpace($GesamtGruppe)) {
-        Write-Warning "InterneBewertungen_$standort hat eine gebrochene Rechtevererbung erhalten, aber weder in -StandortGruppen noch -GesamtGruppe wurde eine Gruppe angegeben - die Liste bleibt gesperrt, bis manuell eine Gruppe mit Leserecht eingetragen wird (siehe sharepoint-forms/README.md)."
-    }
-}
+Write-Host "Berechtigungen auf InterneBewertungen_<Standort>: siehe die Meldungen je Standort oben (Set-RestrictedPermission/Grant-ListAccess) - dort steht je Gruppe, ob und als welcher Principal (SharePoint-Gruppe bzw. Microsoft-365-/Entra-ID-Gruppe) sie berechtigt wurde. Warnungen bei nicht aufloesbaren Gruppennamen bitte dort pruefen."
 Write-Host "Naechster Schritt: siehe DE/Substanz-Holding-KG/sharepoint-forms/README.md, Abschnitt E (Forms-Einrichtung) und F (Freigabe/Rollout)."

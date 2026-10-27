@@ -55,5 +55,5 @@ Gesamtaufwand grob 2-2,5 Stunden für das Grundgerüst aller fünf Formulare (oh
 - Jedes Formular per „Antworten" → „..." → „In Excel öffnen" einmal leer testen.
 - Testdurchlauf mit Dummy-Erfassung gemäss `README.md` Abschnitt I.
 - Power-Automate-Flows je Formular/Liste-Paar einrichten (`README.md` Abschnitt G), inkl. Code-Auflösung, `FormID+ResponseID`-Übernahmeschlüssel, Erfassungsreferenz-/Status-Prüfung, H-Handlungs-Spaltenexklusivitätsprüfung und `Eingang_Fehler`-Fallback.
-- `InterneBewertungen_<Standort>`-Berechtigungen beim PnP-Skriptlauf über `-StandortGruppen`/`-GesamtGruppe` mit den tatsächlichen SharePoint-Gruppennamen setzen (Datenmodell, Abschnitt 6; `README.md` Abschnitt C2) — kein manuelles Nachtragen mehr nötig, sofern die Gruppennamen beim Lauf übergeben werden.
+- `InterneBewertungen_<Standort>`-Berechtigungen: Die Gruppennamen `steueranwaltskanzlei`, `Kanzlei ZH`, `Kanzlei-HH` sind bereits als Default im PnP-Skript hinterlegt (SharePoint-Gruppe oder M365-/Entra-ID-Gruppe werden beide unterstützt, siehe Datenmodell Abschnitt 6; `README.md` Abschnitt C2) — nur bei abweichenden Gruppennamen im Zieltenant `-StandortGruppen`/`-GesamtGruppe` explizit überschreiben.
 - `Eingang_Fehler` (geteilt mit dem AO-Modul) regelmässig sichten.

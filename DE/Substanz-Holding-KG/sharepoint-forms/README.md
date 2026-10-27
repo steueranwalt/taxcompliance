@@ -22,13 +22,16 @@ Dieselbe Zielsite wie beim AO-Modul (siehe `DE/AO/sharepoint-forms/README.md` Ab
 # Voraussetzung (einmalig, falls noch nicht geschehen):
 .\..\..\AO\sharepoint-forms\New-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>"
 
-# Danach (Default: nur InterneBewertungen_ZH, keine Gruppen berechtigt -> Warnung statt Fehler):
+# Danach (Default: nur InterneBewertungen_ZH, Gruppennamen laut Nils bereits vorbelegt):
 .\New-SubstanzHoldingKGListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>"
 
-# Mit explizit benannten Standorten und Berechtigungsgruppen:
+# Mit explizit beiden Standorten (Default-Gruppennamen bleiben erhalten, siehe Abschnitt C2):
+.\New-SubstanzHoldingKGListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>" -Standort ZH, HH
+
+# Mit abweichenden Gruppennamen (überschreibt die Defaults):
 .\New-SubstanzHoldingKGListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>" `
     -Standort ZH, HH `
-    -StandortGruppen @{ ZH = "Substanzpruefung ZH"; HH = "Substanzpruefung HH" } `
+    -StandortGruppen @{ ZH = "Kanzlei ZH"; HH = "Kanzlei-HH" } `
     -GesamtGruppe "steueranwaltskanzlei"
 ```
 
@@ -57,10 +60,20 @@ Identisch zum AO-Modul — siehe [`DE/AO/sharepoint-forms/README.md`](../../AO/s
 Entscheidung Nils: Die Gruppe `steueranwaltskanzlei` sieht alle internen Bewertungen, die Standorte ZH und HH jeweils nur ihre eigenen. Umgesetzt über eine eigene physische Liste je Standort statt Item-Level-Berechtigung:
 
 - **`-Standort`** (`string[]`, `ValidateSet('ZH','HH')`, Default `@('ZH')`): für welche Standorte eine `InterneBewertungen_<Standort>`-Liste angelegt/angeglichen wird. Default nur ZH, da laut Nils fast ausschliesslich ZH-Fälle vorkommen.
-- **`-StandortGruppen`** (`hashtable`, Default `@{}`): Zuordnung Standort → SharePoint-Gruppenname, der Lesezugriff auf die jeweilige Standort-Liste erhält, z. B. `@{ ZH = 'Substanzpruefung ZH'; HH = 'Substanzpruefung HH' }`.
-- **`-GesamtGruppe`** (`string`, Default `''`): SharePoint-Gruppenname, der auf **allen** angelegten `InterneBewertungen_<Standort>`-Listen Lesezugriff erhält (z. B. `'steueranwaltskanzlei'`).
+- **`-StandortGruppen`** (`hashtable`, Default `@{ ZH = 'Kanzlei ZH'; HH = 'Kanzlei-HH' }`): Zuordnung Standort → Gruppenname mit Zugriff auf die jeweilige Standort-Liste. **Schreibweise exakt wie von Nils vorgegeben: ZH mit Leerzeichen ("Kanzlei ZH"), HH mit Bindestrich ("Kanzlei-HH").**
+- **`-GesamtGruppe`** (`string`, Default `'steueranwaltskanzlei'`): Gruppenname, der auf **allen** angelegten `InterneBewertungen_<Standort>`-Listen Zugriff erhält.
 
-Für jede in `-Standort` genannte Liste bricht das Skript die Rechtevererbung, **ohne** bestehende Site-Berechtigungen zu kopieren (`BreakRoleInheritance($false, $false)`) — die Liste ist danach für alle ausser Site Collection Administrators unsichtbar, bis eine Gruppe berechtigt wird ("fail closed"). Fehlt für einen Standort sowohl ein Eintrag in `-StandortGruppen` als auch eine `-GesamtGruppe`, gibt das Skript nur eine `Write-Warning` aus und lässt die Liste gesperrt — **es wird nie ohne benannte Gruppe automatisch Zugriff gewährt.**
+**SharePoint-Gruppe oder Microsoft-365-/Entra-ID-Gruppe — beides wird unterstützt.** Die drei Gruppennamen können entweder klassische SharePoint-Gruppen der Zielsite oder Microsoft-365-/Entra-ID-Gruppen sein (z. B. wenn die Kanzlei bereits mit M365-Gruppen statt SharePoint-eigenen Gruppen arbeitet). Für jeden der drei Namen versucht das Skript (`Grant-ListAccess`, siehe `New-SubstanzHoldingKGListen.ps1`):
+
+1. **SharePoint-Gruppe der Site** (`Get-PnPGroup -Identity <Name>`) — wenn gefunden, direkte Rechtevergabe über `Set-PnPListPermission -Group`.
+2. **Microsoft-365-Gruppe** nach Anzeigename (`Get-PnPMicrosoft365Group -Identity <Name>`) — wenn gefunden, wird die Gruppen-E-Mail-Adresse über `New-PnPUser` als SharePoint-Principal aufgelöst und darüber berechtigt.
+3. **Sonstige Entra-ID-Gruppe** (z. B. eine Security-Gruppe ohne Mail-Attribut) nach Anzeigename (`Get-PnPAzureADGroup`/`Get-PnPEntraIDGroup -Identity <Name>`) — Auflösung über E-Mail, falls vorhanden, sonst über das Claims-Login-Format `c:0t.c|tenant|<ObjectId>`.
+
+Wird ein Gruppenname in **keiner** der drei Formen gefunden, gibt das Skript nur eine `Write-Warning` aus und lässt die Liste für diese Gruppe ungenehmigt — **es wird nie ohne aufgelösten Principal automatisch Zugriff gewährt.** Im Erfolgsfall protokolliert das Skript je Gruppe, **welcher Principal-Typ und -Name** tatsächlich berechtigt wurde (z. B. "SharePoint-Gruppe 'Kanzlei ZH'" oder "Microsoft-365-Gruppe 'Kanzlei ZH' (`kanzlei-zh@obenhaus.onmicrosoft.com`)"), damit das später auf der Site nachvollziehbar ist.
+
+**Berechtigungsstufe:** Beide Gruppentypen (Gesamtgruppe und Standortgruppe) erhalten **Bearbeiten**-Zugriff (nicht nur Lesen). Da der interne Name dieser Berechtigungsstufe je nach Sprache der Zielsite unterschiedlich heisst, probiert das Skript nacheinander `"Bearbeiten"` und `"Edit"` und verwendet den ersten, der auf der Zielsite existiert.
+
+Für jede in `-Standort` genannte Liste bricht das Skript zusätzlich die Rechtevererbung, **ohne** bestehende Site-Berechtigungen zu kopieren (`BreakRoleInheritance($false, $false)`) — die Liste ist danach für alle ausser Site Collection Administrators unsichtbar, bis eine Gruppe erfolgreich berechtigt wurde ("fail closed").
 
 Idempotent: ein späterer Lauf mit zusätzlichem `-Standort`-Wert (z. B. zuerst nur `ZH`, später `ZH,HH`) legt nur die fehlende Liste neu an; bestehende Listen/Berechtigungen bleiben unverändert.
 
@@ -159,8 +172,8 @@ Wie in Version 2: kein nativer Forms-Datei-Upload. Jede Frage mit Anlagenreferen
 4. Testdurchlauf mit Dummy-Erfassung vor Versand an echte Mandanten/Mitarbeitende.
 5. `Eingang_Fehler` regelmässig sichten (gemeinsam mit dem AO-Modul).
 6. `display_label`-Felder durch den jeweiligen Flow nach Elementanlage befüllen.
-7. `InterneBewertungen_<Standort>`-Berechtigungen prüfen: beim Skriptlauf `-StandortGruppen`/`-GesamtGruppe` mit den tatsächlichen SharePoint-Gruppennamen übergeben (siehe Abschnitt C2); ohne benannte Gruppe bleibt die jeweilige Liste gesperrt (Warnung statt Fehler).
+7. `InterneBewertungen_<Standort>`-Berechtigungen prüfen: Die Gruppennamen `steueranwaltskanzlei` (Gesamtgruppe), `Kanzlei ZH` und `Kanzlei-HH` (Standortgruppen) sind als Default bereits im Skript hinterlegt (siehe Abschnitt C2) und müssen nur dann explizit überschrieben werden, wenn die tatsächlichen Gruppennamen im Zieltenant abweichen. Nach dem Lauf die Log-Ausgabe je Gruppe prüfen (SharePoint-Gruppe oder M365-/Entra-ID-Gruppe gefunden und berechtigt, oder Warnung bei nicht aufgelöstem Namen).
 
 ## J. Offene Punkte
 
-Siehe Datenmodell, Abschnitt 9 — insbesondere, ob neben `InterneBewertungen` auch die Mandantendaten-Fachlisten eine Standorttrennung benötigen (als offener Punkt gemeldet, nicht umgesetzt), sowie die konkreten SharePoint-Gruppennamen für `-StandortGruppen`/`-GesamtGruppe`. Zugriffsschutz der öffentlichen Formulare, `InterneBewertungen`-Standorttrennung, R26-Granularität und H-Handlungs-Ablage sind durch die Entscheidungen Nils' in Update 3 bereits geklärt (siehe Datenmodell, Abschnitt 8).
+Siehe Datenmodell, Abschnitt 9 — insbesondere, ob neben `InterneBewertungen` auch die Mandantendaten-Fachlisten eine Standorttrennung benötigen (als offener Punkt gemeldet, nicht umgesetzt). Die konkreten Gruppennamen (`steueranwaltskanzlei`, `Kanzlei ZH`, `Kanzlei-HH`) sind durch Nils bestätigt und als Default-Werte für `-GesamtGruppe`/`-StandortGruppen` hinterlegt; vor dem ersten echten Skriptlauf ist nur noch zu prüfen, ob diese Gruppen (als SharePoint-Gruppe oder M365-/Entra-ID-Gruppe) im Zieltenant tatsächlich existieren. Zugriffsschutz der öffentlichen Formulare, `InterneBewertungen`-Standorttrennung, R26-Granularität und H-Handlungs-Ablage sind durch die Entscheidungen Nils' in Update 3 bereits geklärt (siehe Datenmodell, Abschnitt 8).
