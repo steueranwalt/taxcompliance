@@ -85,7 +85,7 @@
     {
       "bereich": "O06",
       "v2": "Ort je Verfahrensschritt (Vorbereitung/Festlegung/Freigabe bzw. Verhandlung/Einigung/Freigabe/Unterschrift) als Spalten auf Fallbeteiligungen (gebunden an einen konkreten Entscheidungsfall/Vertragsvorgang).",
-      "v3": "Aufgabenorte mit Rollenbezug (Ausuebung/Vorbereitung/Verhandlung/Entscheidung/Freigabe) und polymorphem Bezug auf Aufgaben/Entscheidungsbefugnisse/Vertragszustaendigkeiten/Kontrollaufgaben - keine Bindung an einen abgeschlossenen Fall mehr."
+      "v3": "Aufgabenorte mit Pflicht-Spalte bezugsart (Arbeitszeit-Ort mit Stunden/Anteilen vs. Funktionsort ohne Stunden/Anteile) und bei Funktionsort zusaetzlich funktion (Vorbereitung/Verhandlung/Entscheidung/Freigabe), polymorpher Bezug auf Aufgaben/Entscheidungsbefugnisse/Vertragszustaendigkeiten/Kontrollaufgaben - keine Bindung an einen abgeschlossenen Fall mehr."
     }
   ],
   "codebooks": {
@@ -1853,25 +1853,31 @@
         "label": "nicht bekannt"
       }
     ],
-    "ROLLENBEZUG": [
+    "AUFGABENORT_BEZUGSART": [
       {
-        "code": "ROLLENBEZUG_AUSUEBUNG",
-        "label": "Ausübung der Aufgabe (O01/O02)"
+        "code": "AUFGABENORT_BEZUGSART_ARBEITSZEIT_ORT",
+        "label": "Arbeitszeit-Ort (O01/O02, mit Stunden/Anteilen)"
       },
       {
-        "code": "ROLLENBEZUG_VORBEREITUNG",
+        "code": "AUFGABENORT_BEZUGSART_FUNKTIONSORT",
+        "label": "Funktionsort (O06, ohne Stunden/Anteile)"
+      }
+    ],
+    "AUFGABENORT_FUNKTION": [
+      {
+        "code": "AUFGABENORT_FUNKTION_VORBEREITUNG",
         "label": "Vorbereitung"
       },
       {
-        "code": "ROLLENBEZUG_VERHANDLUNG",
+        "code": "AUFGABENORT_FUNKTION_VERHANDLUNG",
         "label": "Verhandlung"
       },
       {
-        "code": "ROLLENBEZUG_ENTSCHEIDUNG",
+        "code": "AUFGABENORT_FUNKTION_ENTSCHEIDUNG",
         "label": "Entscheidung"
       },
       {
-        "code": "ROLLENBEZUG_FREIGABE",
+        "code": "AUFGABENORT_FUNKTION_FREIGABE",
         "label": "Freigabe"
       }
     ],
@@ -2607,8 +2613,12 @@
         "label": "OffenePunkte"
       },
       {
-        "code": "ZIEL_TYP_INTERNEBEWERTUNGEN",
-        "label": "InterneBewertungen"
+        "code": "ZIEL_TYP_INTERNEBEWERTUNGEN_ZH",
+        "label": "InterneBewertungen_ZH"
+      },
+      {
+        "code": "ZIEL_TYP_INTERNEBEWERTUNGEN_HH",
+        "label": "InterneBewertungen_HH"
       }
     ],
     "OFFENER_PUNKT_ART": [
@@ -2714,6 +2724,36 @@
       "hinweis_intern": null
     },
     {
+      "formular": "intern (Kanzlei-Administration, kein Formular)",
+      "frage_id": "SCHUTZ01",
+      "unterfeld_suffix": "Referenzcode",
+      "text": "Erfassungsreferenz (Pflichtfeld auf jedem Formular, Plausibilitaetspruefung)",
+      "antworttyp": "T",
+      "auswahlcode": null,
+      "pflichtbedingung": "unbedingt",
+      "zielliste": "Erfassungen",
+      "zielspalte": "referenzcode",
+      "version": 3,
+      "sp_type": "Text",
+      "lookup_zielliste": null,
+      "hinweis_intern": "Kurzer, nicht fortlaufender Code je Erfassung (z. B. zufaellig vergeben). PFLICHTFELD auf allen fuenf Formularen anstelle der rohen Fall-ID. Ist KEIN Berechtigungsnachweis, sondern eine Plausibilitaetspruefung (Entscheidung Nils, offene Frage 1) - siehe sharepoint-forms/README.md Abschnitt D."
+    },
+    {
+      "formular": "intern (Kanzlei-Administration, kein Formular)",
+      "frage_id": "SCHUTZ02",
+      "unterfeld_suffix": "FormularEnddatum",
+      "text": "Formular-Enddatum (Forms-Annahmeschluss)",
+      "antworttyp": "D",
+      "auswahlcode": null,
+      "pflichtbedingung": "optional",
+      "zielliste": "Erfassungen",
+      "zielspalte": "formular_enddatum",
+      "version": 3,
+      "sp_type": "DateOnly",
+      "lookup_zielliste": null,
+      "hinweis_intern": "In Microsoft Forms je Formular unter Einstellungen -> Start- und Enddatum einzutragen (Annahmeschluss nach Ende des Erhebungszeitraums); dieses Feld haelt den geplanten Termin zur Nachverfolgung fest."
+    },
+    {
       "formular": "S",
       "frage_id": "S01",
       "unterfeld_suffix": "ZeitraumVon",
@@ -2786,7 +2826,7 @@
       "version": 3,
       "sp_type": "Choice",
       "lookup_zielliste": null,
-      "hinweis_intern": null
+      "hinweis_intern": "Flow prueft Status vor jeder Elementanlage; bei 'abgeschlossen' Ablage in Eingang_Fehler statt in den Fachlisten (siehe README Abschnitt D)."
     },
     {
       "formular": "N",
@@ -3596,7 +3636,7 @@
       "version": 3,
       "sp_type": "MultiChoice",
       "lookup_zielliste": null,
-      "hinweis_intern": "Je Handlung eine Einzelfrage ausgefuehrt/nicht ausgefuehrt/nicht bekannt (B3); hier als 3 MultiChoice-Spalten gebuendelt gespeichert."
+      "hinweis_intern": "Bestaetigt (Entscheidung Nils): je Handlung eine Forms-Einzelfrage ausgefuehrt/nicht ausgefuehrt/nicht bekannt (B3), hier als 3 MultiChoice-Spalten gebuendelt gespeichert. Ein Handlungscode, der in KEINER der drei Spalten steht, bedeutet 'nicht gefragt' (Bereich nicht ausgewaehlt, S07) - nicht 'nicht bekannt'. Flow-Pruefregel: derselbe Handlungscode darf nicht in mehr als einer der drei Spalten vorkommen, sonst Ablage in Eingang_Fehler bzw. OffenePunkte statt stiller Uebernahme. Auswertungen je einzelner Handlung muessen alle drei Spalten auflösen (siehe sharepoint-forms/README.md)."
     },
     {
       "formular": "1 - Personenblatt (S, H)",
@@ -3611,7 +3651,7 @@
       "version": 3,
       "sp_type": "MultiChoice",
       "lookup_zielliste": null,
-      "hinweis_intern": null
+      "hinweis_intern": "Siehe Hinweis bei handlungen_ausgefuehrt (Flow-Pruefregel: keine Handlung in mehr als einer der drei Spalten)."
     },
     {
       "formular": "1 - Personenblatt (S, H)",
@@ -3626,7 +3666,7 @@
       "version": 3,
       "sp_type": "MultiChoice",
       "lookup_zielliste": null,
-      "hinweis_intern": null
+      "hinweis_intern": "Siehe Hinweis bei handlungen_ausgefuehrt (Flow-Pruefregel: keine Handlung in mehr als einer der drei Spalten)."
     },
     {
       "formular": "1 - Personenblatt (S, H)",
@@ -5716,23 +5756,38 @@
     {
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
       "frage_id": "O06",
-      "unterfeld_suffix": "Rollenbezug",
-      "text": "Rollenbezug des Ortseintrags",
+      "unterfeld_suffix": "Bezugsart",
+      "text": "Bezugsart des Ortseintrags",
       "antworttyp": "E",
-      "auswahlcode": "ROLLENBEZUG",
+      "auswahlcode": "AUFGABENORT_BEZUGSART",
       "pflichtbedingung": "unbedingt",
       "zielliste": "Aufgabenorte",
-      "zielspalte": "rollenbezug",
+      "zielspalte": "bezugsart",
       "version": 3,
       "sp_type": "Choice",
       "lookup_zielliste": null,
-      "hinweis_intern": "AUSUEBUNG = O01/O02 (Aufgabenausuebung); VORBEREITUNG/VERHANDLUNG/ENTSCHEIDUNG/FREIGABE = O06 (geaenderte Bedeutung ggue. V2, dort Fallbeteiligungen.schritt)."
+      "hinweis_intern": "PFLICHT-Spalte (Entscheidung Nils). ARBEITSZEIT_ORT = O01/O02 (traegt Stunden/Anteile); FUNKTIONSORT = O06 (traegt KEINE Stunden/Anteile, geaenderte Bedeutung ggue. V2, dort Fallbeteiligungen.schritt)."
+    },
+    {
+      "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
+      "frage_id": "O06",
+      "unterfeld_suffix": "Funktion",
+      "text": "Funktion (nur bei Funktionsort)",
+      "antworttyp": "E",
+      "auswahlcode": "AUFGABENORT_FUNKTION",
+      "pflichtbedingung": "bedingt",
+      "zielliste": "Aufgabenorte",
+      "zielspalte": "funktion",
+      "version": 3,
+      "sp_type": "Choice",
+      "lookup_zielliste": null,
+      "hinweis_intern": "Nur bei bezugsart=FUNKTIONSORT auszufuellen/anzuzeigen."
     },
     {
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
       "frage_id": "O01",
       "unterfeld_suffix": "AufgabeRef",
-      "text": "Bezug: Aufgabe (bei Rollenbezug=Ausübung)",
+      "text": "Bezug: Aufgabe (bei Bezugsart=Arbeitszeit-Ort)",
       "antworttyp": "T",
       "auswahlcode": null,
       "pflichtbedingung": "bedingt",
@@ -5747,7 +5802,7 @@
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
       "frage_id": "O06",
       "unterfeld_suffix": "EntscheidungRef",
-      "text": "Bezug: Entscheidungsbefugnis (bei Rollenbezug=Vorbereitung/Entscheidung/Freigabe)",
+      "text": "Bezug: Entscheidungsbefugnis (bei Bezugsart=Funktionsort, Funktion Vorbereitung/Entscheidung/Freigabe)",
       "antworttyp": "T",
       "auswahlcode": null,
       "pflichtbedingung": "bedingt",
@@ -5762,7 +5817,7 @@
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
       "frage_id": "O06",
       "unterfeld_suffix": "VertragRef",
-      "text": "Bezug: Vertragszuständigkeit (bei Rollenbezug=Vorbereitung/Verhandlung/Freigabe)",
+      "text": "Bezug: Vertragszuständigkeit (bei Bezugsart=Funktionsort, Funktion Vorbereitung/Verhandlung/Freigabe)",
       "antworttyp": "T",
       "auswahlcode": null,
       "pflichtbedingung": "bedingt",
@@ -5777,7 +5832,7 @@
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
       "frage_id": "O06",
       "unterfeld_suffix": "KontrolleRef",
-      "text": "Bezug: Kontrollaufgabe",
+      "text": "Bezug: Kontrollaufgabe (bei Bezugsart=Funktionsort)",
       "antworttyp": "T",
       "auswahlcode": null,
       "pflichtbedingung": "bedingt",
@@ -5831,7 +5886,7 @@
       "version": 3,
       "sp_type": "Choice",
       "lookup_zielliste": null,
-      "hinweis_intern": "Nur bei Rollenbezug=Ausuebung."
+      "hinweis_intern": "Nur bei bezugsart=ARBEITSZEIT_ORT; bei FUNKTIONSORT leer lassen (Doppelzaehlungs-Validierung)."
     },
     {
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
@@ -5846,7 +5901,7 @@
       "version": 3,
       "sp_type": "Number",
       "lookup_zielliste": null,
-      "hinweis_intern": null
+      "hinweis_intern": "Nur bei bezugsart=ARBEITSZEIT_ORT; bei FUNKTIONSORT leer lassen."
     },
     {
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",
@@ -5861,7 +5916,7 @@
       "version": 3,
       "sp_type": "Number",
       "lookup_zielliste": null,
-      "hinweis_intern": "Alternative zu Stunden, keine zusaetzliche Schaetzpflicht (O02)."
+      "hinweis_intern": "Alternative zu Stunden, keine zusaetzliche Schaetzpflicht (O02). Nur bei bezugsart=ARBEITSZEIT_ORT; bei FUNKTIONSORT leer lassen."
     },
     {
       "formular": "3 - Arbeitsorganisation, Zeit und Ort (P30-P38, Z, O)",

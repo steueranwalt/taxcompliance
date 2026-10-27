@@ -36,9 +36,13 @@
       - H-Handlungen (45 Einzelhandlungen) werden in Forms als Einzelfragen
         ausgefuehrt/nicht ausgefuehrt/nicht bekannt gestellt (B3), im Skript
         kompakt als drei MultiChoice-Spalten auf Personeneinsaetze abgelegt.
-      - InterneBewertungen erhaelt eigene, eingeschraenkte Berechtigungen
-        (Rechtevererbung gebrochen); eine berechtigte Person muss danach
-        manuell die zulaessige Pruefergruppe eintragen (siehe README.md).
+      - InterneBewertungen wird je Standort als eigene Liste
+        (InterneBewertungen_ZH, InterneBewertungen_HH, gesteuert ueber
+        -Standort) mit gebrochener Rechtevererbung angelegt. Lesezugriff
+        erhalten nur die ueber -StandortGruppen/-GesamtGruppe benannten
+        SharePoint-Gruppen (keine Item-Level-Berechtigung); ohne Gruppenname
+        bleibt die jeweilige Liste gesperrt (Warnung statt Fehler, siehe
+        README.md).
 
     .PARAMETER SiteUrl
     Zielsite im Tenant steueranwaltskanzlei.com (siehe
@@ -63,7 +67,17 @@ param(
     [string]$SiteUrl,
 
     [Parameter(Mandatory = $true, HelpMessage = "ClientId einer tenant-eigenen Entra-App-Registrierung mit delegierter Berechtigung 'AllSites.FullControl' (siehe DE/AO/sharepoint-forms/README.md Abschnitt C1). Die generische PnP-Management-Shell-App ist seit 09/2024 in den meisten Tenants gesperrt.")]
-    [string]$ClientId
+    [string]$ClientId,
+
+    [Parameter(HelpMessage = "Standorte, fuer die eine eigene InterneBewertungen_<Standort>-Liste angelegt/angeglichen wird (idempotent - ein spaeterer Lauf mit zusaetzlichem Standort ergaenzt nur die fehlende Liste). Default nur ZH, da fast nur ZH-Faelle (Entscheidung Nils).")]
+    [ValidateSet('ZH', 'HH')]
+    [string[]]$Standort = @('ZH'),
+
+    [Parameter(HelpMessage = "Zuordnung Standort -> SharePoint-Gruppenname mit Lesezugriff auf die jeweilige InterneBewertungen_<Standort>-Liste, z. B. @{ ZH = 'Substanzpruefung ZH'; HH = 'Substanzpruefung HH' }. Fehlt ein Standort in dieser Tabelle, wird nur gewarnt (keine Rechtevergabe ohne Gruppe) statt eines Fehlers.")]
+    [hashtable]$StandortGruppen = @{},
+
+    [Parameter(HelpMessage = "SharePoint-Gruppenname, der auf ALLEN InterneBewertungen_<Standort>-Listen Lesezugriff erhalten soll (z. B. 'steueranwaltskanzlei'). Leer lassen, um keine uebergreifende Gruppe zu berechtigen (dann nur Warnung).")]
+    [string]$GesamtGruppe = ''
 )
 
 $ErrorActionPreference = "Stop"
@@ -291,21 +305,48 @@ function Add-Field {
 }
 
 function Set-RestrictedPermission {
-    param([Parameter(Mandatory = $true)][string]$List)
+    <#
+      Bricht die Rechtevererbung OHNE die bisherigen (breiten) Site-
+      Berechtigungen zu kopieren (CopyRoleAssignments = $false) -- die Liste
+      ist danach fuer alle ausser Site Collection Administrators unsichtbar,
+      bis explizit eine Gruppe berechtigt wird. Das ist die bewusste
+      "fail closed"-Entscheidung (Nils: "keine Rechtevergabe ohne Gruppe,
+      Warnung statt Fehler"): fehlt eine Gruppe, bleibt die Liste gesperrt
+      statt versehentlich fuer alle sichtbar zu sein.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$List,
+        [string[]]$Groups
+    )
     try {
         $listObj = Get-PnPList -Identity $List -Includes HasUniqueRoleAssignments
-        if ($listObj.HasUniqueRoleAssignments) {
-            Write-Host "  Eigene Berechtigungen bereits gesetzt: $List"
-            return
+        if (-not $listObj.HasUniqueRoleAssignments) {
+            $ctx = Get-PnPContext
+            $listObj.BreakRoleInheritance($false, $false)
+            $ctx.ExecuteQuery()
+            Write-Host "  Rechtevererbung gebrochen (keine Berechtigungen kopiert): $List"
         }
-        $ctx = Get-PnPContext
-        $listObj.BreakRoleInheritance($true, $false)
-        $ctx.ExecuteQuery()
-        Write-Host "  Rechtevererbung gebrochen (Kopie der bisherigen Zuweisungen): $List"
-        Write-Warning "  MANUELL NACHPRUEFEN: Nur die zulaessige interne Pruefergruppe darf auf '$List' Zugriff behalten (siehe README.md)."
+        else {
+            Write-Host "  Eigene Berechtigungen bereits gesetzt: $List"
+        }
     }
     catch {
         Write-Warning "  Konnte Rechtevererbung fuer '$List' nicht brechen: $_"
+    }
+
+    $validGroups = @($Groups | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    if ($validGroups.Count -eq 0) {
+        Write-Warning "  Keine Gruppe fuer '$List' angegeben - die Liste bleibt gesperrt, bis manuell eine Gruppe mit Leserecht eingetragen wird (siehe sharepoint-forms/README.md)."
+        return
+    }
+    foreach ($g in $validGroups) {
+        try {
+            Set-PnPListPermission -Identity $List -Group $g -AddRole "Read" | Out-Null
+            Write-Host "  Leserecht erteilt an Gruppe '$g': $List"
+        }
+        catch {
+            Write-Warning "  Konnte Gruppe '$g' nicht auf '$List' berechtigen (existiert die Gruppe auf dieser Site?): $_"
+        }
     }
 }
 
@@ -329,6 +370,11 @@ New-ListIfMissing -Title "Erfassungen"
 Add-Field -List "Erfassungen" -InternalName "case_id" -DisplayName 'Fall-ID der Substanzprüfung (intern vergeben)' -Type Text -Required `
     -Indexed -EnforceUniqueValues
 Add-Field -List "Erfassungen" -InternalName "project_id" -DisplayName 'Projektkennung (z. B. 22032-2)' -Type Text
+Add-Field -List "Erfassungen" -InternalName "referenzcode" -DisplayName 'Erfassungsreferenz (Pflichtfeld auf jedem Formular, Plausibilitaetspruefung)' -Type Text -Required `
+    -Indexed -EnforceUniqueValues
+# referenzcode: Kurzer, nicht fortlaufender Code je Erfassung (z. B. zufaellig vergeben). PFLICHTFELD auf allen fuenf Formularen anstelle der rohen Fall-ID. Ist KEIN Berechtigungsnachweis, sondern eine Plausibilitaetspruefung (Entscheidung Nils, offene Frage 1) - siehe sharepoint-forms/README.md Abschnitt D.
+Add-Field -List "Erfassungen" -InternalName "formular_enddatum" -DisplayName 'Formular-Enddatum (Forms-Annahmeschluss)' -Type DateOnly
+# formular_enddatum: In Microsoft Forms je Formular unter Einstellungen -> Start- und Enddatum einzutragen (Annahmeschluss nach Ende des Erhebungszeitraums); dieses Feld haelt den geplanten Termin zur Nachverfolgung fest.
 Add-Field -List "Erfassungen" -InternalName "period_from" -DisplayName 'Für welchen Zeitraum gelten die Angaben? - Beginn' -Type DateOnly -Required
 Add-Field -List "Erfassungen" -InternalName "period_to" -DisplayName 'Für welchen Zeitraum gelten die Angaben? - Ende' -Type DateOnly -Required
 Add-Field -List "Erfassungen" -InternalName "period_confirmed" -DisplayName 'Vorgegebener Zeitraum bestätigt oder korrigiert' -Type Boolean -Required
@@ -337,6 +383,7 @@ Add-Field -List "Erfassungen" -InternalName "schema_version" -DisplayName 'Schem
     -DefaultValue '3'
 Add-Field -List "Erfassungen" -InternalName "status" -DisplayName 'Status der Erfassung' -Type Choice -Required `
     -Choices @('ERFASSUNG_STATUS_OFFEN', 'ERFASSUNG_STATUS_IN_BEARBEITUNG', 'ERFASSUNG_STATUS_VOLLSTAENDIG', 'ERFASSUNG_STATUS_ABGESCHLOSSEN')
+# status: Flow prueft Status vor jeder Elementanlage; bei 'abgeschlossen' Ablage in Eingang_Fehler statt in den Fachlisten (siehe README Abschnitt D).
 Add-Field -List "Erfassungen" -InternalName "auskunftsperson_ref" -DisplayName 'Rückfragekontakt (aus N24, zuletzt übermittelte Angabe)' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
 # auskunftsperson_ref: Ersetzt S02 (gestrichen); N24 kann je Modul abweichen, hier wird der zuletzt gemeldete Kontakt gefuehrt.
@@ -529,11 +576,13 @@ Add-Field -List "Personeneinsaetze" -InternalName "bereiche" -DisplayName 'In we
 Add-Field -List "Personeneinsaetze" -InternalName "bereich_andere_text" -DisplayName 'Anderer Bereich - bitte benennen' -Type Text
 Add-Field -List "Personeneinsaetze" -InternalName "handlungen_ausgefuehrt" -DisplayName 'Handlungen: ausgeführt' -Type MultiChoice `
     -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
-# handlungen_ausgefuehrt: Je Handlung eine Einzelfrage ausgefuehrt/nicht ausgefuehrt/nicht bekannt (B3); hier als 3 MultiChoice-Spalten gebuendelt gespeichert.
+# handlungen_ausgefuehrt: Bestaetigt (Entscheidung Nils): je Handlung eine Forms-Einzelfrage ausgefuehrt/nicht ausgefuehrt/nicht bekannt (B3), hier als 3 MultiChoice-Spalten gebuendelt gespeichert. Ein Handlungscode, der in KEINER der drei Spalten steht, bedeutet 'nicht gefragt' (Bereich nicht ausgewaehlt, S07) - nicht 'nicht bekannt'. Flow-Pruefregel: derselbe Handlungscode darf nicht in mehr als einer der drei Spalten vorkommen, sonst Ablage in Eingang_Fehler bzw. OffenePunkte statt stiller Uebernahme. Auswertungen je einzelner Handlung muessen alle drei Spalten auflösen (siehe sharepoint-forms/README.md).
 Add-Field -List "Personeneinsaetze" -InternalName "handlungen_nicht_ausgefuehrt" -DisplayName 'Handlungen: nicht ausgeführt' -Type MultiChoice `
     -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
+# handlungen_nicht_ausgefuehrt: Siehe Hinweis bei handlungen_ausgefuehrt (Flow-Pruefregel: keine Handlung in mehr als einer der drei Spalten).
 Add-Field -List "Personeneinsaetze" -InternalName "handlungen_unbekannt" -DisplayName 'Handlungen: nicht bekannt' -Type MultiChoice `
     -Choices @('H_KUNDEN_LIEFERANTEN_01_KUNDEN_BETREUT', 'H_KUNDEN_LIEFERANTEN_02_ANGEBOTE_AUSGEARBEITET', 'H_KUNDEN_LIEFERANTEN_03_PREISE_FESTGELEGT', 'H_KUNDEN_LIEFERANTEN_04_KUNDENVERTRAEGE_VERHANDELT', 'H_KUNDEN_LIEFERANTEN_05_LIEFERANTEN_AUSGEWAEHLT', 'H_KUNDEN_LIEFERANTEN_06_LIEFERANTENVERTRAEGE_VERHANDELT', 'H_PERSONAL_01_BEWERBER_AUSGEWAEHLT', 'H_PERSONAL_02_VERGUETUNG_ODER_VERTRAGSBEDINGUNGEN_VERHANDELT', 'H_PERSONAL_03_EINSTELLUNGEN_ODER_KUENDIGUNGEN_ENTSCHIEDEN', 'H_PERSONAL_04_KONKRETE_ARBEITSAUFGABEN_VERTEILT', 'H_PERSONAL_05_ABWESENHEITEN_GENEHMIGT', 'H_PERSONAL_06_LEISTUNGEN_VON_MITARBEITENDEN_BEURTEILT', 'H_FINANZEN_BERATER_01_LIQUIDITAET_GEPLANT', 'H_FINANZEN_BERATER_02_ZAHLUNGEN_FREIGEGEBEN', 'H_FINANZEN_BERATER_03_BANKGESPRAECHE_GEFUEHRT', 'H_FINANZEN_BERATER_04_FINANZIERUNGSBEDINGUNGEN_VERHANDELT', 'H_FINANZEN_BERATER_05_BUCHHALTER_ODER_STEUERBERATER_GESTEUERT', 'H_FINANZEN_BERATER_06_ENTSCHEIDUNGEN_NACH_DEREN_BERATUNG_GETROFFEN', 'H_PROJEKTE_PLANUNG_01_PROJEKTE_GELEITET', 'H_PROJEKTE_PLANUNG_02_KAPAZITAETEN_ODER_TERMINE_GEPLANT', 'H_PROJEKTE_PLANUNG_03_BETRIEBLICHE_PROBLEME_ENTSCHIEDEN', 'H_PROJEKTE_PLANUNG_04_BUDGETS_VORBEREITET', 'H_PROJEKTE_PLANUNG_05_BUDGETS_FREIGEGEBEN', 'H_PROJEKTE_PLANUNG_06_INVESTITIONEN_AUSGEWAEHLT_ODER_FREIGEGEBEN', 'H_BERICHTE_KONTROLLE_01_BERICHTE_ERSTELLT', 'H_BERICHTE_KONTROLLE_02_BERICHTE_GEPRUEFT', 'H_BERICHTE_KONTROLLE_03_ERLAEUTERUNGEN_ANGEFORDERT', 'H_BERICHTE_KONTROLLE_04_MASSNAHMEN_EMPFOHLEN', 'H_BERICHTE_KONTROLLE_05_KONKRETE_KORREKTURMASSNAHMEN_ANGEORDNET', 'H_VORGABEN_SCHULUNG_01_ALLGEMEINE_RICHTLINIEN_ENTWICKELT', 'H_VORGABEN_SCHULUNG_02_ALLGEMEINE_VORGABEN_BESCHLOSSEN', 'H_VORGABEN_SCHULUNG_03_KONKRETE_EINZELANWEISUNGEN_GEGEBEN', 'H_VORGABEN_SCHULUNG_04_MITARBEITENDE_GESCHULT', 'H_EIGENE_VERWALTUNG_01_EIGENE_BUCHFUEHRUNG_ODER_STEUERN_BEARBEITET', 'H_EIGENE_VERWALTUNG_02_EIGENES_PERSONAL_VERWALTET', 'H_EIGENE_VERWALTUNG_03_EIGENE_RAEUME_ODER_ARBEITSMITTEL_VERWALTET', 'H_EIGENE_VERWALTUNG_04_EIGENE_IT_BETREUT', 'H_EIGENE_VERWALTUNG_05_EIGENE_FINANZIERUNG_BEARBEITET', 'H_EIGENE_VERWALTUNG_06_EIGENE_LEISTUNGEN_ABGERECHNET', 'H_BETEILIGUNG_MUTTER_01_BETEILIGUNGSENTWICKLUNG_UEBERWACHT', 'H_BETEILIGUNG_MUTTER_02_BETEILIGUNGSERWERB_ODER_VERKAUF_VORBEREITET', 'H_BETEILIGUNG_MUTTER_03_STIMMABGABEN_ODER_GESELLSCHAFTERBESCHLUESSE_VORBER', 'H_BETEILIGUNG_MUTTER_04_AUSSCHUETTUNG_ODER_KAPITALMASSNAHME_VORBEREITET', 'H_BETEILIGUNG_MUTTER_05_UNTERLAGEN_FUER_ABSCHLUSS_ODER_KONZERNABSCHLUSS_DE', 'H_BETEILIGUNG_MUTTER_06_SITZUNGEN_ODER_BERICHTE_FUER_DIE_MUTTER_VORBEREITE')
+# handlungen_unbekannt: Siehe Hinweis bei handlungen_ausgefuehrt (Flow-Pruefregel: keine Handlung in mehr als einer der drei Spalten).
 Add-Field -List "Personeneinsaetze" -InternalName "weitere_aufgabe_je_bereich_text" -DisplayName 'Welche weitere Aufgabe hat die Person in diesem Bereich ausgeübt? (je Bereich)' -Type Note
 Add-Field -List "Personeneinsaetze" -InternalName "zeitnachweis_unterlagenart" -DisplayName 'Welche Unterlagen können die Zeitangaben stützen?' -Type MultiChoice -Required `
     -Choices @('Z01_UNTERLAGENART_ZEITERFASSUNG', 'Z01_UNTERLAGENART_KALENDER', 'Z01_UNTERLAGENART_PROJEKT_ARBEITSUNTERLAGEN', 'Z01_UNTERLAGENART_ANDERE', 'Z01_UNTERLAGENART_KEINE')
@@ -797,16 +846,19 @@ Add-Field -List "Zeitverteilungen" -InternalName "display_label" -DisplayName 'A
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Aufgabenorte"
 Add-Field -List "Aufgabenorte" -InternalName "ort_eintrag_id" -DisplayName 'Orts-Eintrag-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "Aufgabenorte" -InternalName "rollenbezug" -DisplayName 'Rollenbezug des Ortseintrags' -Type Choice -Required `
-    -Choices @('ROLLENBEZUG_AUSUEBUNG', 'ROLLENBEZUG_VORBEREITUNG', 'ROLLENBEZUG_VERHANDLUNG', 'ROLLENBEZUG_ENTSCHEIDUNG', 'ROLLENBEZUG_FREIGABE')
-# rollenbezug: AUSUEBUNG = O01/O02 (Aufgabenausuebung); VORBEREITUNG/VERHANDLUNG/ENTSCHEIDUNG/FREIGABE = O06 (geaenderte Bedeutung ggue. V2, dort Fallbeteiligungen.schritt).
-Add-Field -List "Aufgabenorte" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe (bei Rollenbezug=Ausübung)' -Type Lookup `
+Add-Field -List "Aufgabenorte" -InternalName "bezugsart" -DisplayName 'Bezugsart des Ortseintrags' -Type Choice -Required `
+    -Choices @('AUFGABENORT_BEZUGSART_ARBEITSZEIT_ORT', 'AUFGABENORT_BEZUGSART_FUNKTIONSORT')
+# bezugsart: PFLICHT-Spalte (Entscheidung Nils). ARBEITSZEIT_ORT = O01/O02 (traegt Stunden/Anteile); FUNKTIONSORT = O06 (traegt KEINE Stunden/Anteile, geaenderte Bedeutung ggue. V2, dort Fallbeteiligungen.schritt).
+Add-Field -List "Aufgabenorte" -InternalName "funktion" -DisplayName 'Funktion (nur bei Funktionsort)' -Type Choice `
+    -Choices @('AUFGABENORT_FUNKTION_VORBEREITUNG', 'AUFGABENORT_FUNKTION_VERHANDLUNG', 'AUFGABENORT_FUNKTION_ENTSCHEIDUNG', 'AUFGABENORT_FUNKTION_FREIGABE')
+# funktion: Nur bei bezugsart=FUNKTIONSORT auszufuellen/anzuzeigen.
+Add-Field -List "Aufgabenorte" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe (bei Bezugsart=Arbeitszeit-Ort)' -Type Lookup `
     -LookupList "Aufgaben" -LookupField "display_label"
-Add-Field -List "Aufgabenorte" -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsbefugnis (bei Rollenbezug=Vorbereitung/Entscheidung/Freigabe)' -Type Lookup `
+Add-Field -List "Aufgabenorte" -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsbefugnis (bei Bezugsart=Funktionsort, Funktion Vorbereitung/Entscheidung/Freigabe)' -Type Lookup `
     -LookupList "Entscheidungsbefugnisse" -LookupField "display_label"
-Add-Field -List "Aufgabenorte" -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragszuständigkeit (bei Rollenbezug=Vorbereitung/Verhandlung/Freigabe)' -Type Lookup `
+Add-Field -List "Aufgabenorte" -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragszuständigkeit (bei Bezugsart=Funktionsort, Funktion Vorbereitung/Verhandlung/Freigabe)' -Type Lookup `
     -LookupList "Vertragszustaendigkeiten" -LookupField "display_label"
-Add-Field -List "Aufgabenorte" -InternalName "kontrolle_ref" -DisplayName 'Bezug: Kontrollaufgabe' -Type Lookup `
+Add-Field -List "Aufgabenorte" -InternalName "kontrolle_ref" -DisplayName 'Bezug: Kontrollaufgabe (bei Bezugsart=Funktionsort)' -Type Lookup `
     -LookupList "Kontrollaufgaben" -LookupField "display_label"
 Add-Field -List "Aufgabenorte" -InternalName "person_ref" -DisplayName 'Beteiligte Person an diesem Ort' -Type Lookup -Required `
     -LookupList "Personen" -LookupField "display_label"
@@ -815,12 +867,13 @@ Add-Field -List "Aufgabenorte" -InternalName "ort_ref" -DisplayName 'An welchen 
 # ort_ref: Bei Telefon-/Videobesprechungen zaehlt der Aufenthaltsort der Person (O06).
 Add-Field -List "Aufgabenorte" -InternalName "o02_status" -DisplayName 'Wie viel Arbeitszeit entfiel auf den jeweiligen Ort?' -Type Choice `
     -Choices @('O02_STATUS_STUNDEN_VERFUEGBAR', 'O02_STATUS_GESCHAETZTE_STUNDEN', 'O02_STATUS_NUR_PROZENTANTEIL', 'O02_STATUS_UNBEKANNT')
-# o02_status: Nur bei Rollenbezug=Ausuebung.
+# o02_status: Nur bei bezugsart=ARBEITSZEIT_ORT; bei FUNKTIONSORT leer lassen (Doppelzaehlungs-Validierung).
 Add-Field -List "Aufgabenorte" -InternalName "o02_stunden" -DisplayName 'Stunden am jeweiligen Ort' -Type Number
+# o02_stunden: Nur bei bezugsart=ARBEITSZEIT_ORT; bei FUNKTIONSORT leer lassen.
 Add-Field -List "Aufgabenorte" -InternalName "o02_prozent" -DisplayName 'Prozentanteil am jeweiligen Ort' -Type Number `
     -Min 0 `
     -Max 100
-# o02_prozent: Alternative zu Stunden, keine zusaetzliche Schaetzpflicht (O02).
+# o02_prozent: Alternative zu Stunden, keine zusaetzliche Schaetzpflicht (O02). Nur bei bezugsart=ARBEITSZEIT_ORT; bei FUNKTIONSORT leer lassen.
 Add-Field -List "Aufgabenorte" -InternalName "o07_grund" -DisplayName 'Warum wurde für diese Arbeit das Homeoffice genutzt?' -Type MultiChoice `
     -Choices @('O07_GRUND_PERSOENLICHER_WUNSCH', 'O07_GRUND_VORGABE_UNTERNEHMEN', 'O07_GRUND_KEIN_ANDERER_ARBEITSPLATZ', 'O07_GRUND_NAEHE_KUNDEN', 'O07_GRUND_ANDERER_GRUND', 'O07_GRUND_UNBEKANNT')
 # o07_grund: Anzeige: Homeoffice in O01 vorhanden.
@@ -1076,7 +1129,7 @@ Add-Field -List "Belegverknuepfungen" -InternalName "link_id" -DisplayName 'Link
 Add-Field -List "Belegverknuepfungen" -InternalName "nachweis_ref" -DisplayName 'Bezug: Nachweis' -Type Lookup -Required `
     -LookupList "Substanznachweise" -LookupField "display_label"
 Add-Field -List "Belegverknuepfungen" -InternalName "ziel_typ" -DisplayName 'Welche Aufgabe, Zuständigkeit oder sonstige Angabe belegt die Unterlage? - Zieltyp' -Type Choice -Required `
-    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_FUNKTIONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_AUFGABEN', 'ZIEL_TYP_AUFGABENEMPFAENGER', 'ZIEL_TYP_AUFGABENZUSTAENDIGKEITEN', 'ZIEL_TYP_ENTSCHEIDUNGSBEFUGNISSE', 'ZIEL_TYP_VERTRAGSZUSTAENDIGKEITEN', 'ZIEL_TYP_KONTROLLAUFGABEN', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_AUFGABENORTE', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_OFFENEPUNKTE', 'ZIEL_TYP_INTERNEBEWERTUNGEN')
+    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_FUNKTIONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_AUFGABEN', 'ZIEL_TYP_AUFGABENEMPFAENGER', 'ZIEL_TYP_AUFGABENZUSTAENDIGKEITEN', 'ZIEL_TYP_ENTSCHEIDUNGSBEFUGNISSE', 'ZIEL_TYP_VERTRAGSZUSTAENDIGKEITEN', 'ZIEL_TYP_KONTROLLAUFGABEN', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_AUFGABENORTE', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_OFFENEPUNKTE', 'ZIEL_TYP_INTERNEBEWERTUNGEN_ZH', 'ZIEL_TYP_INTERNEBEWERTUNGEN_HH')
 Add-Field -List "Belegverknuepfungen" -InternalName "ziel_id" -DisplayName 'Ziel-ID (stabile ID der referenzierten Zeile)' -Type Text -Required
 # ziel_id: Generischer Verweis als Text statt Einzel-Lookups je Zielliste (B1: 'keine Mehrfachablage').
 Add-Field -List "Belegverknuepfungen" -InternalName "frage_id_text" -DisplayName 'Frage-ID, die belegt wird' -Type Text
@@ -1096,7 +1149,7 @@ Add-Field -List "OffenePunkte" -InternalName "art" -DisplayName 'Art des offenen
     -Choices @('OFFENER_PUNKT_ART_OFFENE_ANGABE', 'OFFENER_PUNKT_ART_FEHLENDER_NACHWEIS')
 Add-Field -List "OffenePunkte" -InternalName "beschreibung_text" -DisplayName 'Welche Angaben müssen noch geklärt werden?' -Type Note -Required
 Add-Field -List "OffenePunkte" -InternalName "bezug_ziel_typ" -DisplayName 'Bezug: Zieltyp (optional, generisch)' -Type Choice `
-    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_FUNKTIONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_AUFGABEN', 'ZIEL_TYP_AUFGABENEMPFAENGER', 'ZIEL_TYP_AUFGABENZUSTAENDIGKEITEN', 'ZIEL_TYP_ENTSCHEIDUNGSBEFUGNISSE', 'ZIEL_TYP_VERTRAGSZUSTAENDIGKEITEN', 'ZIEL_TYP_KONTROLLAUFGABEN', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_AUFGABENORTE', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_OFFENEPUNKTE', 'ZIEL_TYP_INTERNEBEWERTUNGEN')
+    -Choices @('ZIEL_TYP_ERFASSUNGEN', 'ZIEL_TYP_GESELLSCHAFTEN', 'ZIEL_TYP_PERSONEN', 'ZIEL_TYP_ORTE', 'ZIEL_TYP_FUNKTIONEN', 'ZIEL_TYP_PERSONENBINDUNGEN', 'ZIEL_TYP_AUFGABEN', 'ZIEL_TYP_AUFGABENEMPFAENGER', 'ZIEL_TYP_AUFGABENZUSTAENDIGKEITEN', 'ZIEL_TYP_ENTSCHEIDUNGSBEFUGNISSE', 'ZIEL_TYP_VERTRAGSZUSTAENDIGKEITEN', 'ZIEL_TYP_KONTROLLAUFGABEN', 'ZIEL_TYP_STEUERUNGSBEZIEHUNGEN', 'ZIEL_TYP_PERSONENEINSAETZE', 'ZIEL_TYP_ZEITVERTEILUNGEN', 'ZIEL_TYP_AUFGABENORTE', 'ZIEL_TYP_RAEUME', 'ZIEL_TYP_ARBEITSMITTEL', 'ZIEL_TYP_RESSOURCENNUTZUNGEN', 'ZIEL_TYP_KOSTEN', 'ZIEL_TYP_KOSTENVERTEILUNGEN', 'ZIEL_TYP_ABRECHNUNGEN', 'ZIEL_TYP_OFFENEPUNKTE', 'ZIEL_TYP_INTERNEBEWERTUNGEN_ZH', 'ZIEL_TYP_INTERNEBEWERTUNGEN_HH')
 Add-Field -List "OffenePunkte" -InternalName "bezug_ziel_id" -DisplayName 'Bezug: Ziel-ID' -Type Text
 Add-Field -List "OffenePunkte" -InternalName "ansprechperson_ref" -DisplayName 'Zuständige Person' -Type Lookup `
     -LookupList "Personen" -LookupField "display_label"
@@ -1106,38 +1159,55 @@ Add-Field -List "OffenePunkte" -InternalName "status" -DisplayName 'Status des o
 Add-Field -List "OffenePunkte" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
 
 # ---------------------------------------------------------------------------
-# Liste: InterneBewertungen
-# NUR INTERN, eingeschraenkte Berechtigungen - Auswertungshilfen zu Anhang D (D1-D7)
+# InterneBewertungen_<Standort>: je Standort eine eigene Liste mit
+# gebrochener Rechtevererbung (Entscheidung Nils - keine Item-Level-
+# Berechtigung). Idempotent: ein spaeterer Lauf mit zusaetzlichem
+# -Standort-Wert ergaenzt nur die fehlende Liste, ohne bestehende
+# Listen/Berechtigungen zu veraendern.
 # ---------------------------------------------------------------------------
-New-ListIfMissing -Title "InterneBewertungen"
-Add-Field -List "InterneBewertungen" -InternalName "bewertung_id" -DisplayName 'Bewertungs-ID (intern vergeben)' -Type Text -Required
-Add-Field -List "InterneBewertungen" -InternalName "bezug_typ" -DisplayName 'Bezugstyp der Bewertung' -Type Choice -Required `
-    -Choices @('BEWERTUNG_BEZUGSTYP_AUFGABE', 'BEWERTUNG_BEZUGSTYP_ENTSCHEIDUNGSBEFUGNIS', 'BEWERTUNG_BEZUGSTYP_VERTRAGSZUSTAENDIGKEIT', 'BEWERTUNG_BEZUGSTYP_KONTROLLAUFGABE')
-Add-Field -List "InterneBewertungen" -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup `
-    -LookupList "Aufgaben" -LookupField "display_label"
-Add-Field -List "InterneBewertungen" -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsbefugnis' -Type Lookup `
-    -LookupList "Entscheidungsbefugnisse" -LookupField "display_label"
-Add-Field -List "InterneBewertungen" -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragszuständigkeit' -Type Lookup `
-    -LookupList "Vertragszustaendigkeiten" -LookupField "display_label"
-Add-Field -List "InterneBewertungen" -InternalName "kontrolle_ref" -DisplayName 'Bezug: Kontrollaufgabe' -Type Lookup `
-    -LookupList "Kontrollaufgaben" -LookupField "display_label"
-Add-Field -List "InterneBewertungen" -InternalName "pruefungszusammenhang" -DisplayName 'Prüfungszusammenhang (z. B. tatsächliche Verwaltung, Konzernleistungen, Organrecht, VP-Stewardship, OECD-MK Art. 5)' -Type Text -Required
-Add-Field -List "InterneBewertungen" -InternalName "einordnung" -DisplayName 'Vorläufige Einordnung' -Type Note -Required
-Add-Field -List "InterneBewertungen" -InternalName "begruendung" -DisplayName 'Begründung' -Type Note
-Add-Field -List "InterneBewertungen" -InternalName "quellen" -DisplayName 'Quellenverweis (Interner Anhang D, D1-D7)' -Type Note
-Add-Field -List "InterneBewertungen" -InternalName "pruefer_name" -DisplayName 'Prüfende Person' -Type Text
-Add-Field -List "InterneBewertungen" -InternalName "pruefdatum" -DisplayName 'Prüfdatum' -Type DateOnly
-Add-Field -List "InterneBewertungen" -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+foreach ($standort in $Standort) {
+    $listName = "InterneBewertungen_$standort"
+    Write-Host ""
+    Write-Host "--- Standort: $standort ($listName) ---"
 
-Set-RestrictedPermission -List "InterneBewertungen"
+    # ---------------------------------------------------------------------------
+    # Liste: InterneBewertungen (je Standort, siehe -Standort)
+    # NUR INTERN, je Standort eine eigene Liste InterneBewertungen_<Standort> mit eingeschraenkten Berechtigungen - Auswertungshilfen zu Anhang D (D1-D7)
+    # ---------------------------------------------------------------------------
+    New-ListIfMissing -Title $listName
+    Add-Field -List $listName -InternalName "bewertung_id" -DisplayName 'Bewertungs-ID (intern vergeben)' -Type Text -Required
+    Add-Field -List $listName -InternalName "bezug_typ" -DisplayName 'Bezugstyp der Bewertung' -Type Choice -Required `
+        -Choices @('BEWERTUNG_BEZUGSTYP_AUFGABE', 'BEWERTUNG_BEZUGSTYP_ENTSCHEIDUNGSBEFUGNIS', 'BEWERTUNG_BEZUGSTYP_VERTRAGSZUSTAENDIGKEIT', 'BEWERTUNG_BEZUGSTYP_KONTROLLAUFGABE')
+    Add-Field -List $listName -InternalName "aufgabe_ref" -DisplayName 'Bezug: Aufgabe' -Type Lookup `
+        -LookupList "Aufgaben" -LookupField "display_label"
+    Add-Field -List $listName -InternalName "entscheidung_ref" -DisplayName 'Bezug: Entscheidungsbefugnis' -Type Lookup `
+        -LookupList "Entscheidungsbefugnisse" -LookupField "display_label"
+    Add-Field -List $listName -InternalName "vertrag_ref" -DisplayName 'Bezug: Vertragszuständigkeit' -Type Lookup `
+        -LookupList "Vertragszustaendigkeiten" -LookupField "display_label"
+    Add-Field -List $listName -InternalName "kontrolle_ref" -DisplayName 'Bezug: Kontrollaufgabe' -Type Lookup `
+        -LookupList "Kontrollaufgaben" -LookupField "display_label"
+    Add-Field -List $listName -InternalName "pruefungszusammenhang" -DisplayName 'Prüfungszusammenhang (z. B. tatsächliche Verwaltung, Konzernleistungen, Organrecht, VP-Stewardship, OECD-MK Art. 5)' -Type Text -Required
+    Add-Field -List $listName -InternalName "einordnung" -DisplayName 'Vorläufige Einordnung' -Type Note -Required
+    Add-Field -List $listName -InternalName "begruendung" -DisplayName 'Begründung' -Type Note
+    Add-Field -List $listName -InternalName "quellen" -DisplayName 'Quellenverweis (Interner Anhang D, D1-D7)' -Type Note
+    Add-Field -List $listName -InternalName "pruefer_name" -DisplayName 'Prüfende Person' -Type Text
+    Add-Field -List $listName -InternalName "pruefdatum" -DisplayName 'Prüfdatum' -Type DateOnly
+    Add-Field -List $listName -InternalName "display_label" -DisplayName 'Anzeigelabel (eindeutig, für Lookups)' -Type Text
+
+    Set-RestrictedPermission -List $listName -Groups @($StandortGruppen[$standort], $GesamtGruppe)
+}
 
 Write-Host ""
-Write-Host "Fertig. Alle 25 Substanzpruefungs-Listen (Version 3) sowie die Dokumentbibliothek Substanznachweise sind angelegt bzw. angeglichen."
+Write-Host "Fertig. Die 24 gemeinsamen Substanzpruefungs-Listen (Version 3), die Dokumentbibliothek Substanznachweise sowie InterneBewertungen_<Standort> fuer $($Standort -join ', ') sind angelegt bzw. angeglichen."
 Write-Host "Ersetzt Version 2 vollstaendig (Update 2) - keine Vorgangslisten mehr (siehe PR-Beschreibung)."
 Write-Host "Wiederverwendet (nicht neu angelegt, siehe Datenmodell Abschnitt \"Wiederverwendung\"):"
-Write-Host "  - 'Eingang_Fehler' (DE/AO) fuer fehlgeschlagene Formular-Uebernahmen dieses Moduls."
+Write-Host "  - 'Eingang_Fehler' (DE/AO) fuer fehlgeschlagene Formular-Uebernahmen dieses Moduls (ungueltige/abgelaufene Erfassungsreferenz, Handlungs-Spaltenkonflikt)."
 Write-Host "  - '4_Beteiligte_und_Quoten' (DE/AO) als Lookup-Ziel fuer Gesellschaften.ao_participation_ref."
 Write-Host "Falls diese Listen auf der Zielsite noch nicht existieren, zuerst DE/AO/sharepoint-forms/New-SteuerlicheErfassungListen.ps1 ausfuehren."
 Write-Host ""
-Write-Warning "InterneBewertungen hat eine gebrochene Rechtevererbung erhalten - bitte manuell die zulaessige Pruefergruppe eintragen (siehe sharepoint-forms/README.md)."
+foreach ($standort in $Standort) {
+    if (-not $StandortGruppen.ContainsKey($standort) -and [string]::IsNullOrWhiteSpace($GesamtGruppe)) {
+        Write-Warning "InterneBewertungen_$standort hat eine gebrochene Rechtevererbung erhalten, aber weder in -StandortGruppen noch -GesamtGruppe wurde eine Gruppe angegeben - die Liste bleibt gesperrt, bis manuell eine Gruppe mit Leserecht eingetragen wird (siehe sharepoint-forms/README.md)."
+    }
+}
 Write-Host "Naechster Schritt: siehe DE/Substanz-Holding-KG/sharepoint-forms/README.md, Abschnitt E (Forms-Einrichtung) und F (Freigabe/Rollout)."
