@@ -914,15 +914,51 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notarial_deed_da
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "share_capital_amount" -DisplayName "Grund-/Stammkapital - Betrag" -Type Number
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "share_capital_currency" -DisplayName "Grund-/Stammkapital - Waehrung" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "paid_in_capital" -DisplayName "Eingezahltes Kapital" -Type Number
+# Gruendungsurkunde/Satzung/Gesellschaftsvertrag: kein eigenes Upload-Feld hier
+# noetig - Verweis auf 8_Unterlagen (document_type jetzt inkl. "Gruendungsurkunde"
+# und "Satzung", siehe dort).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_status" -DisplayName "Handelsregister-Status" -Type Choice -Required `
     -Choices @("beabsichtigt", "beantragt", "erfolgt")
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "registry_court" -DisplayName "Ort des Amtsgerichts" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "registry_court" -DisplayName "Ort des Amtsgerichts bzw. der ausländischen Registerbehörde" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_number" -DisplayName "Register / Registernummer" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor" -DisplayName "Vorheriger Inhaber / Vorunternehmen" -Type Note
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "deviating_fiscal_year" -DisplayName "Abweichendes Wirtschaftsjahr" -Type Boolean
+# registry_court-Anzeigename verallgemeinert (Review Nils 28.10.2026): gilt
+# jetzt auch fuer eine auslaendische registerfuehrende Stelle, nicht nur das
+# deutsche Amtsgericht - deckt damit einen Teil des Befunds "Registerangaben
+# fehlen bei Koerperschaft auslaendischen Rechts" ab (siehe README.md
+# Abschnitt H zur ebenfalls ergaenzten E.9-Routing-Korrektur).
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_exists" -DisplayName "Wurde die Tätigkeit vorher ganz oder teilweise von einem anderen Unternehmen bzw. einer anderen Person ausgeübt?" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_name" -DisplayName "Vorheriger Inhaber / Vorunternehmen - Name" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_tax_or_address" -DisplayName "Vorheriger Inhaber / Vorunternehmen - Steuernummer bzw. Anschrift" -Type Note
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_scope" -DisplayName "Übernahme ganz oder teilweise" -Type Choice `
+    -Choices @("ganz", "teilweise")
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_since" -DisplayName "Übernommen ab" -Type DateOnly
+# predecessor_* ersetzt das bisherige einzelne Freitextfeld "predecessor"
+# (Review Nils 28.10.2026): erst Ja/Nein-Tatsache, dann bei Ja die
+# strukturierten Folgefragen (wer, Steuernummer/Anschrift, ganz/teilweise,
+# ab wann).
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_matches_calendar" -DisplayName "Entspricht das Wirtschaftsjahr dem Kalenderjahr?" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_start" -DisplayName "Wirtschaftsjahr - Beginn" -Type DateOnly
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_determination_method" -DisplayName "Gewinnermittlungsart" -Type Choice -Required `
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_end" -DisplayName "Wirtschaftsjahr - Ende" -Type DateOnly
+# fiscal_year_matches_calendar ersetzt "deviating_fiscal_year" (Review Nils
+# 28.10.2026, gleiche Tatsache nur umgekehrtes Vorzeichen: Nein hier = Ja
+# dort) und vermeidet ein doppeltes Pflichtfeld-Paar; fiscal_year_end war
+# bislang gar nicht vorhanden, obwohl "Beginn" ohne "Ende" unvollstaendig ist.
+# Beide Datumsfelder bleiben ohne -Required, da sie nur bei Antwort "Nein"
+# ausgefuellt werden (Forms-Branching, siehe README.md E.2).
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_determination_method" -DisplayName "Gewinnermittlungsart (von der Kanzlei abgeleitet)" -Type Choice `
     -Choices @("Betriebsvermögensvergleich", "Einnahmenüberschussrechnung")
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "foreign_bookkeeping_obligation" -DisplayName "Buchführungs-/Bilanzierungspflicht nach ausländischem Recht" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "voluntary_balance_sheet" -DisplayName "Bereits bilanziert (freiwillig oder nach anderer Vorschrift)" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "balance_sheet_basis" -DisplayName "Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht)" -Type Text
+# profit_determination_method (Review Nils 28.10.2026): nicht mehr Pflicht und
+# jetzt als Kanzleifeld gekennzeichnet - "Gewinnermittlungsart" ist eine
+# rechtliche Wuerdigung (§ 4/§ 5 EStG), kein Mandanten-Fakt. Stattdessen werden
+# die Tatsachen erhoben (Buchfuehrungspflicht nach auslaendischem Recht,
+# freiwillige Bilanzierung, Rechtsgrundlage; Handelsregister-Eintragung bereits
+# ueber register_status, freiberufliche Taetigkeit bereits ueber
+# legal_form_category in Liste 1 abgedeckt - keine Dubletten dafuer angelegt).
+# Die Kanzlei leitet die Gewinnermittlungsart daraus ab, siehe Datenmodell
+# Abschnitt 10 Ableitungstabelle.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_opening_year" -DisplayName "Voraussichtlicher Gewinn Eroeffnungsjahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_following_year" -DisplayName "Voraussichtlicher Gewinn Folgejahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "part_of_group" -DisplayName "Konzernzugehoerigkeit" -Type Boolean
