@@ -435,8 +435,25 @@ function Add-Field {
             }
             "Lookup" {
                 $targetList = Get-PnPList -Identity $LookupList
-                $deleteBehaviorAttr = if ($DeleteBehavior -ne "None") { " RelationshipDeleteBehavior='$DeleteBehavior'" } else { "" }
-                $fieldXml = "<Field Type='Lookup' Name='$InternalName' StaticName='$InternalName' DisplayName='$escapedDisplayName' Required='$requiredAttr' List='{$($targetList.Id)}' ShowField='$LookupField'$deleteBehaviorAttr />"
+                $deleteBehaviorAttr = ""
+                $indexedAttr = ""
+                if ($DeleteBehavior -ne "None") {
+                    $deleteBehaviorAttr = " RelationshipDeleteBehavior='$DeleteBehavior'"
+                    # Bug gefunden 27./28.10.2026 auf einer FRISCHEN, leeren Site
+                    # (transferpricingdocs/steuerdaten): Restrict/Cascade verlangen
+                    # einen indizierten Lookup bereits bei der ERSTANLAGE, nicht erst
+                    # bei einer spaeteren Angleichung. Add-PnPFieldFromXml brach sonst
+                    # ab mit "Dieses Nachschlagefeld kann kein Verhalten fuer
+                    # Beziehungen erzwingen, weil es nicht indiziert ist." Auf einer
+                    # bereits bestehenden Site (z. B. obenhaus) fiel das nicht auf,
+                    # weil die Lookups dort schon vorhanden und indiziert waren - das
+                    # Skript lief nur noch durch die Angleichung (Set-LookupDeleteBehavior
+                    # ruft dort bereits Set-FieldIndexAndUniqueness zuerst auf). Fix:
+                    # Indexed='TRUE' gleich im Erstellungs-XML mitgeben, damit beide
+                    # Faelle (frische und bestehende Site) idempotent funktionieren.
+                    $indexedAttr = " Indexed='TRUE'"
+                }
+                $fieldXml = "<Field Type='Lookup' Name='$InternalName' StaticName='$InternalName' DisplayName='$escapedDisplayName' Required='$requiredAttr' List='{$($targetList.Id)}' ShowField='$LookupField'$deleteBehaviorAttr$indexedAttr />"
                 Add-PnPFieldFromXml -List $List -FieldXml $fieldXml | Out-Null
             }
             "DateOnly" {
