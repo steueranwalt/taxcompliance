@@ -842,16 +842,16 @@ Add-Field -List "0_Fallsteuerung" -InternalName "crm_reference" -DisplayName "Re
 # Liste 1: Allgemeiner Stammblock
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "1_Allgemeiner_Stammblock"
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "party_type" -DisplayName "Art des Meldepflichtigen" -Type Choice -Required `
     -Choices @("Person", "Firma")
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "salutation_title" -DisplayName "Anrede / Titel" -Type Text
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "salutation_title" -DisplayName "Anrede / Titel" -Type Text -AppliesTo @("NatuerlichePerson")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "last_name_or_company" -DisplayName "Name / Firma" -Type Text -Required
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "first_name" -DisplayName "Vorname" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "name_addition" -DisplayName "Namensvorsatz / -zusatz" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "date_of_birth" -DisplayName "Geburtsdatum" -Type DateOnly
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "religion" -DisplayName "Religion" -Type Choice `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "first_name" -DisplayName "Vorname" -Type Text -AppliesTo @("NatuerlichePerson")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "name_addition" -DisplayName "Namensvorsatz / -zusatz" -Type Text -AppliesTo @("NatuerlichePerson")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "date_of_birth" -DisplayName "Geburtsdatum" -Type DateOnly -AppliesTo @("NatuerlichePerson")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "religion" -DisplayName "Religion" -Type Choice -AppliesTo @("NatuerlichePerson") `
     -Choices @("keine", "römisch-katholisch", "evangelisch", "sonstige")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "id_number" -DisplayName "Identifikationsnummer / Wirtschafts-IdNr." -Type Text -Required
 # --- Rechtsform neu strukturiert (Review Nils 28.10.2026, Grundregel Tatsachen
@@ -864,14 +864,14 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "id_number" -DisplayNam
 # bleiben ausgeschlossen (Datenmodell 9.1 Status X); auslaendische
 # Partnerships/LLP/LLC bleiben im manuellen Pruefschritt vor Formular 0
 # (Status M) - keine eigene Kategorie hier.
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_category" -DisplayName "Rechtsform - Grundtyp" -Type Choice `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_category" -DisplayName "Rechtsform - Grundtyp" -Type Choice -AppliesTo @("Gesellschaft") `
     -Choices @("Einzelunternehmen (gewerblich)", "Freiberufliche Tätigkeit", "Personengesellschaft", "Kapitalgesellschaft")
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_jurisdiction" -DisplayName "Rechtsform - nach deutschem oder ausländischem Recht" -Type Choice `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_jurisdiction" -DisplayName "Rechtsform - nach deutschem oder ausländischem Recht" -Type Choice -AppliesTo @("Gesellschaft") `
     -Choices @("nach deutschem Recht", "nach ausländischem Recht")
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_german" -DisplayName "Konkrete Rechtsform (deutsches Recht)" -Type Choice `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_german" -DisplayName "Konkrete Rechtsform (deutsches Recht)" -Type Choice -AppliesTo @("Gesellschaft") `
     -Choices @("GmbH", "UG (haftungsbeschränkt)", "AG", "e.K.", "OHG", "KG", "GmbH & Co. KG", "GbR", "PartG", "sonstige deutsche Rechtsform")
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_foreign_name" -DisplayName "Rechtsform nach ausländischem Recht (Wortlaut)" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_foreign_country" -DisplayName "Staat der ausländischen Rechtsform" -Type Text
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_foreign_name" -DisplayName "Rechtsform nach ausländischem Recht (Wortlaut)" -Type Text -AppliesTo @("Gesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_foreign_country" -DisplayName "Staat der ausländischen Rechtsform" -Type Text -AppliesTo @("Gesellschaft")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "address_type" -DisplayName "Adressart" -Type Choice -Required `
     -Choices @("Inland", "Ausland")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "street" -DisplayName "Strasse, Hausnummer, Zusatz" -Type Text -Required
@@ -885,13 +885,13 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "business_activity" -Di
 # ersetzt "asset_management_only" (Boolean; die rechtliche Wuerdigung
 # "ausschliesslich vermoegensverwaltend" ist Kanzleisache, siehe Datenmodell
 # Abschnitt 10 Ableitungstabelle).
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_present" -DisplayName "Verwaltet Vermögen (Beteiligungen, Immobilien, Kapitalvermögen usw.)" -Type Boolean
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_type" -DisplayName "Art der Vermögensverwaltung" -Type Note
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_revenue" -DisplayName "Anteil Vermögensverwaltung am Umsatz in Prozent" -Type Number `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_present" -DisplayName "Verwaltet Vermögen (Beteiligungen, Immobilien, Kapitalvermögen usw.)" -Type Boolean -AppliesTo @("Gesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_type" -DisplayName "Art der Vermögensverwaltung" -Type Note -AppliesTo @("Gesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_revenue" -DisplayName "Anteil Vermögensverwaltung am Umsatz in Prozent" -Type Number -AppliesTo @("Gesellschaft") `
     -Min 0 -Max 100
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_profit" -DisplayName "Anteil Vermögensverwaltung am Gewinn in Prozent" -Type Number `
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_profit" -DisplayName "Anteil Vermögensverwaltung am Gewinn in Prozent" -Type Number -AppliesTo @("Gesellschaft") `
     -Min 0 -Max 100
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "other_business_activities" -DisplayName "Weitere Tätigkeiten" -Type Note
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "other_business_activities" -DisplayName "Weitere Tätigkeiten" -Type Note -AppliesTo @("Gesellschaft")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_id_type" -DisplayName "Art der Steuernummer-Angabe" -Type Choice -Required `
     -Choices @("bestehend", "neu beantragen")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_number" -DisplayName "Steuernummer" -Type Text
@@ -901,8 +901,8 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "advisor_is_authorized_
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "bank_iban" -DisplayName "Bank - IBAN" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "bank_bic" -DisplayName "Bank - BIC" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "bank_account_holder" -DisplayName "Bank - Kontoinhaber" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "foreign_tax_id" -DisplayName "Ausländische Steuer-ID / TIN" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "vat_id_existing" -DisplayName "Bestehende USt-IdNr." -Type Text
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "foreign_tax_id" -DisplayName "Ausländische Steuer-ID / TIN" -Type Text -AppliesTo @("Gesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "vat_id_existing" -DisplayName "Bestehende USt-IdNr." -Type Text -AppliesTo @("Gesellschaft")
 # tax_office, tax_office_country, phone, callback_email, sepa_desired,
 # par27_ao_agreement, deviating_management_place, management_address: ENTFERNT
 # (Review Nils 28.10.2026). Begruendung je Feld und manuelle Loeschschritte auf
@@ -921,15 +921,34 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "vat_id_existing" -Disp
 # Liste 2: Unternehmens-/Gruendungsmodul (Inbound; auch Einzelunternehmen, s. E.9)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "2_Unternehmens_Gruendungsmodul"
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 # company_name und legal_form (bisherige Choice-Liste) ENTFERNT (Review Nils
 # 28.10.2026, "jede Stammangabe genau an einer Stelle"): Name/Firma und
 # Rechtsform sind Stammangaben und leben jetzt ausschliesslich in
 # 1_Allgemeiner_Stammblock (last_name_or_company, legal_form_*) - diese Liste
 # verweist ueber case_id statt eine eigene Kopie zu fuehren.
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_type" -DisplayName "Gruendungsart" -Type Choice -Required `
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_type" -DisplayName "Gruendungsart (von der Kanzlei eingeordnet)" -Type Choice -FieldRole Ergebnis `
     -Choices @("Neugründung", "Übernahme", "Umwandlung", "Bargründung", "Sachgründung")
+# formation_type (Befund Erfassungs-Chat-Generator 28.10.2026, PR #22,
+# generator/output/required_ergebnis_konflikte.json): "Gruendungsart" (insb.
+# Bar-/Sachgruendung, Umwandlung) ist selbst eine rechtliche Einordnung, kein
+# Tatsachenfeld - war bislang -Required, was dem Generator-Befund und der
+# Grundregel (Datenmodell Abschnitt 10) widersprach. Jetzt nicht mehr
+# -Required, als Kanzleifeld gekennzeichnet (-FieldRole Ergebnis, siehe
+# README.md Abschnitt C3). Tatsachen stattdessen ueber predecessor_exists
+# (siehe oben), capital_contribution_type und transformation_event (neu,
+# siehe unten) sowie den Upload der Gruendungsurkunde/Satzung (Liste 8).
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribution_type" -DisplayName "Grund-/Stammkapital erbracht als" -Type Choice `
+    -Choices @("Bareinlage", "Sacheinlage", "gemischt (Bar- und Sacheinlage)")
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_event" -DisplayName "Entstehung durch gesellschaftsrechtliche Umwandlung (z. B. Verschmelzung, Spaltung, Formwechsel)" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_details" -DisplayName "Art der Umwandlung und beteiligte Rechtstraeger" -Type Note
+# capital_contribution_type/transformation_event/transformation_details
+# (neu, Grundregel-Ableitung fuer formation_type): Bar- vs. Sacheinlage ist
+# eine vom Mandanten feststellbare Tatsache (wurde Geld oder ein
+# Vermoegensgegenstand eingebracht), waehrend "Sachgruendung" als Rechtsbegriff
+# selbst eine Einordnung ist. Ebenso ist "liegt eine Umwandlung vor" eine
+# Tatsache, "welche Gruendungsart daraus rechtlich folgt" nicht.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_date" -DisplayName "Gruendungsdatum" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "activity_start_date" -DisplayName "Beginn der Taetigkeit" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notarial_deed_date" -DisplayName "Notarielle Errichtung / Musterprotokoll vom" -Type DateOnly
@@ -985,9 +1004,9 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_following_year" -DisplayName "Voraussichtlicher Gewinn Folgejahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "part_of_group" -DisplayName "Konzernzugehoerigkeit" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "controlling_company_name" -DisplayName "Herrschendes Unternehmen - Name" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_parent" -DisplayName "Organtraegerschaft" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_parent" -DisplayName "Organtraegerschaft" -Type Boolean -FieldRole "Ergebnis"
 # --- Abschnitt 9 ergaenzt (Datenmodell 2.3/9.3, Personengesellschaft) ---
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "legal_capacity" -DisplayName "Rechtsfaehigkeit (Personengesellschaft)" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "legal_capacity" -DisplayName "Rechtsfaehigkeit (Personengesellschaft)" -Type Boolean -FieldRole "Ergebnis"
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_distribution_key" -DisplayName "Aufteilungsschluessel (Gewinn-/Verlustverteilung)" -Type Text
 # legal_capacity ist bei form_type = Personengesellschaft/-gemeinschaft laut
 # Datenmodell Kz 33 unbedingt, bei anderen Formulartypen nicht einschlaegig;
@@ -1002,19 +1021,19 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notary_address" 
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_general_partner_of_kg" -DisplayName "Komplementaerin einer KG" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "general_partner_kg_name" -DisplayName "Bezeichnung der KG (falls Komplementaerin)" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_date" -DisplayName "Handelsregister - Datum (beantragt am / Tag der Eintragung)" -Type DateOnly
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_structure" -DisplayName "Betriebsaufspaltung" -Type Boolean
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_company_name" -DisplayName "Bezeichnung des Besitzunternehmens" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_owner_asset_description" -DisplayName "Bezeichnung des ueberlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage, Betriebsaufspaltung)" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_usage_start" -DisplayName "Beginn der tatsaechlichen Nutzung (Betriebsaufspaltung)" -Type DateOnly
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_owner_address_or_taxno" -DisplayName "Anschrift und/oder Steuernummer des Besitzunternehmens" -Type Note
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption" -DisplayName "Koerperschaftsteuerbefreiung nach Paragraf 5 KStG" -Type Boolean
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption_number" -DisplayName "Nummer nach Paragraf 5 Absatz 1 KStG" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_determination" -DisplayName "Feststellung nach Paragraf 60a AO" -Type Boolean
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_purpose" -DisplayName "Zweck der Koerperschaft (Paragraf 60a AO)" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_subsidiary" -DisplayName "Organgesellschaft (koerperschaftsteuerliche Organschaft)" -Type Boolean
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "tax_group_parent_name" -DisplayName "Name/Firma des Organtraegers" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_vat_group_member" -DisplayName "Umsatzsteuerliche Organschaft" -Type Boolean
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "vat_group_start_date" -DisplayName "Beginn der umsatzsteuerlichen Organschaft" -Type DateOnly
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_structure" -DisplayName "Betriebsaufspaltung" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_company_name" -DisplayName "Bezeichnung des Besitzunternehmens" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_owner_asset_description" -DisplayName "Bezeichnung des ueberlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage, Betriebsaufspaltung)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_usage_start" -DisplayName "Beginn der tatsaechlichen Nutzung (Betriebsaufspaltung)" -Type DateOnly -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_owner_address_or_taxno" -DisplayName "Anschrift und/oder Steuernummer des Besitzunternehmens" -Type Note -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption" -DisplayName "Koerperschaftsteuerbefreiung nach Paragraf 5 KStG" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption_number" -DisplayName "Nummer nach Paragraf 5 Absatz 1 KStG" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_determination" -DisplayName "Feststellung nach Paragraf 60a AO" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_purpose" -DisplayName "Zweck der Koerperschaft (Paragraf 60a AO)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_subsidiary" -DisplayName "Organgesellschaft (koerperschaftsteuerliche Organschaft)" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "tax_group_parent_name" -DisplayName "Name/Firma des Organtraegers" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_vat_group_member" -DisplayName "Umsatzsteuerliche Organschaft" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "vat_group_start_date" -DisplayName "Beginn der umsatzsteuerlichen Organschaft" -Type DateOnly -FieldRole "Ergebnis"
 # split_owner_asset_description (Zeile 135 in fsekapg-202401): Kanzleientscheid
 # Nils 27.10.2026 - Feld wird gefuehrt als "Bezeichnung des ueberlassenen
 # Wirtschaftsguts (wesentliche Betriebsgrundlage)". Der genaue Wortlaut laut
@@ -1026,22 +1045,22 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "vat_group_start_
 # Liste 3: Personen und Vertretung
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "3_Personen_und_Vertretung"
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "role" -DisplayName "Rolle" -Type Choice -Required `
     -Choices @("Gesetzlicher Vertreter", "Ständiger Vertreter", "Empfangsbevollmächtigter", "Steuerliche Beratung", "Ehegatte/Lebenspartner")
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "person_type" -DisplayName "Art der Person" -Type Choice -Required `
     -Choices @("natürlich", "nicht natürlich")
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "salutation_title" -DisplayName "Anrede / Titel" -Type Text
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "salutation_title" -DisplayName "Anrede / Titel" -Type Text -AppliesTo @("NatuerlichePerson")
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "last_name_or_company" -DisplayName "Name / Firma" -Type Text -Required
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "first_name" -DisplayName "Vorname" -Type Text
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "date_of_birth" -DisplayName "Geburtsdatum" -Type DateOnly
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "first_name" -DisplayName "Vorname" -Type Text -AppliesTo @("NatuerlichePerson")
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "date_of_birth" -DisplayName "Geburtsdatum" -Type DateOnly -AppliesTo @("NatuerlichePerson")
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "id_number" -DisplayName "Identifikationsnummer" -Type Text
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "profession" -DisplayName "Beruf / Taetigkeit" -Type Text
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "profession" -DisplayName "Beruf / Taetigkeit" -Type Text -AppliesTo @("NatuerlichePerson")
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "address" -DisplayName "Adresse" -Type Note -Required
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "phone" -DisplayName "Telefon" -Type Text
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "phone" -DisplayName "Telefon" -Type Text -FieldRole "System"
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "tax_reference" -DisplayName "Steuerliche Kennzeichen" -Type Text
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -DisplayName "Abhaengige/unabhaengige Person" -Type Choice `
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -DisplayName "Abhaengige/unabhaengige Person" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("abhängig", "unabhängig")
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "power_to_conclude_contracts" -DisplayName "Abschlussvollmacht" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "is_authorized_recipient" -DisplayName "Empfangsbevollmaechtigt" -Type Boolean
@@ -1058,7 +1077,7 @@ Add-Field -List "3_Personen_und_Vertretung" -InternalName "usual_workplace_count
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "usual_workplace_address" -DisplayName "Übliche Adresse/Ort der Tätigkeit (dieser Person)" -Type Note
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "works_elsewhere" -DisplayName "Arbeitet auch regelmässig an einem anderen Ort" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "other_workplace_details" -DisplayName "Anderer Tätigkeitsort - wo und Anteil der Arbeitszeit" -Type Note
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
 # display_label (Punkt 10, "Lookup-Anzeigefeld eindeutig machen"): last_name_or_company
 # ist bei Namensgleichheit nicht eindeutig. display_label soll vom auslösenden
 # Flow unmittelbar nach Elementanlage befuellt werden, z. B.
@@ -1069,13 +1088,13 @@ Add-Field -List "3_Personen_und_Vertretung" -InternalName "display_label" -Displ
 # Liste 4: Beteiligte und Quoten
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "4_Beteiligte_und_Quoten"
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "sequence_number" -DisplayName "Laufende Nummer / Zeichnernummer" -Type Number -Required
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participant_type" -DisplayName "Art des Beteiligten" -Type Choice -Required `
     -Choices @("natürlich", "nicht natürlich")
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "last_name_or_company" -DisplayName "Name / Firma" -Type Text -Required
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "date_of_birth" -DisplayName "Geburtsdatum" -Type DateOnly
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "date_of_birth" -DisplayName "Geburtsdatum" -Type DateOnly -AppliesTo @("NatuerlichePerson")
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "address" -DisplayName "Adresse" -Type Note -Required
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "tax_reference" -DisplayName "Steuerliche Kennzeichen" -Type Text
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participation_type" -DisplayName "Art der Beteiligung" -Type Choice -Required `
@@ -1106,79 +1125,89 @@ Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "trust_relationship_stat
 # bekannt).
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_opening_year" -DisplayName "Voraussichtlicher Gewinnanteil Eroeffnungsjahr" -Type Number
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_following_year" -DisplayName "Voraussichtlicher Gewinnanteil Folgejahr" -Type Number
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht" -Type Boolean
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht" -Type Boolean -FieldRole "Ergebnis"
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participation_since" -DisplayName "Beteiligt seit dem" -Type DateOnly
 # --- Abschnitt 9 ergaenzt (Datenmodell 9.2 "Beteiligte": Stimmrechte) ---
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "voting_rights_percentage" -DisplayName "Stimmrechte in Prozent" -Type Number `
     -Min 0 -Max 100
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
 
 # ---------------------------------------------------------------------------
 # Liste 5: Betriebsstaetten
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "5_Betriebsstaetten"
-Add-Field -List "5_Betriebsstaetten" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "5_Betriebsstaetten" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "5_Betriebsstaetten" -InternalName "site_name" -DisplayName "Bezeichnung der Betriebsstätte/Einrichtung" -Type Text -Required
 Add-Field -List "5_Betriebsstaetten" -InternalName "country" -DisplayName "Land" -Type Text -Required
 Add-Field -List "5_Betriebsstaetten" -InternalName "address" -DisplayName "Adresse" -Type Note -Required
-Add-Field -List "5_Betriebsstaetten" -InternalName "site_type" -DisplayName "Art der Einrichtung" -Type Choice -Required `
+Add-Field -List "5_Betriebsstaetten" -InternalName "site_type" -DisplayName "Art der Einrichtung (von der Kanzlei eingeordnet - fest/nicht fest nach Paragraf 12 AO)" -Type Choice -FieldRole Ergebnis `
     -Choices @("fest", "nicht fest")
+# site_type (Befund Erfassungs-Chat-Generator 28.10.2026, PR #22,
+# generator/output/required_ergebnis_konflikte.json): "fest"/"nicht fest" ist
+# der Betriebsstaetten-Begriff aus Paragraf 12 AO selbst, keine
+# Mandanten-Tatsache - war bislang -Required, was dem Generator-Befund und
+# der Grundregel (Datenmodell Abschnitt 10) widersprach. Jetzt nicht mehr
+# -Required, als Kanzleifeld gekennzeichnet (-FieldRole Ergebnis). Tatsachen
+# stattdessen ueber ownership_status/usage_type/activity_period_* (bestehend)
+# sowie own_disposal_power (neu, siehe unten) - das zentrale Tatbestandsmerkmal
+# der "Verfuegungsmacht" nach staendiger BFH-Rechtsprechung zu Paragraf 12 AO.
 Add-Field -List "5_Betriebsstaetten" -InternalName "ownership_status" -DisplayName "Eigentumsverhältnis" -Type Choice `
     -Choices @("Eigentum", "Miete", "Nutzung")
+Add-Field -List "5_Betriebsstaetten" -InternalName "own_disposal_power" -DisplayName "Eigene, nicht nur voruebergehende Verfuegungsmacht ueber die Einrichtung (z. B. eigener Schluessel/Zugang, eigener Arbeitsplatz)" -Type Boolean
 Add-Field -List "5_Betriebsstaetten" -InternalName "usage_type" -DisplayName "Nutzungsart" -Type Choice `
     -Choices @("Lagerung", "Verarbeitung", "Einkauf", "Werbung", "Sonstige")
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_from" -DisplayName "Taetigkeitsdauer - von" -Type DateOnly
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_to" -DisplayName "Taetigkeitsdauer - bis" -Type DateOnly
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_to_unknown" -DisplayName "Taetigkeitsdauer bis unbekannt" -Type Boolean
-Add-Field -List "5_Betriebsstaetten" -InternalName "vat_relevant_site" -DisplayName "Umsatzsteuerliche Betriebsstätte" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "vat_relevant_site" -DisplayName "Umsatzsteuerliche Betriebsstätte" -Type Boolean -FieldRole "Ergebnis"
 Add-Field -List "5_Betriebsstaetten" -InternalName "contact" -DisplayName "Telefon / Internetadresse" -Type Text
-Add-Field -List "5_Betriebsstaetten" -InternalName "payroll_tax_site" -DisplayName "Lohnsteuerliche Betriebsstätte" -Type Boolean
-Add-Field -List "5_Betriebsstaetten" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text
+Add-Field -List "5_Betriebsstaetten" -InternalName "payroll_tax_site" -DisplayName "Lohnsteuerliche Betriebsstätte" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "5_Betriebsstaetten" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
 
 # ---------------------------------------------------------------------------
 # Liste 6: Steuer- und Umsatzsteuerprofil (nur Inbound)
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "6_Steuer_und_Umsatzsteuerprofil"
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "estimated_revenue_opening_year" -DisplayName "Geschaetzter Umsatz Eroeffnungsjahr" -Type Number -Required
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "estimated_revenue_following_year" -DisplayName "Geschaetzter Umsatz Folgejahr" -Type Number -Required
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule" -DisplayName "Kleinunternehmer-Regelung" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule_waiver" -DisplayName "Verzicht auf Kleinunternehmer-Regelung" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_vat_amount" -DisplayName "Voraussichtliche USt (Zahllast/Ueberschuss)" -Type Number
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_filing_period" -DisplayName "Voranmeldungszeitraum" -Type Choice `
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule" -DisplayName "Kleinunternehmer-Regelung" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule_waiver" -DisplayName "Verzicht auf Kleinunternehmer-Regelung" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_vat_amount" -DisplayName "Voraussichtliche USt (Zahllast/Ueberschuss)" -Type Number -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_filing_period" -DisplayName "Voranmeldungszeitraum" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Monat", "Quartal")
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_taxation_method" -DisplayName "Soll-/Ist-Besteuerung" -Type Choice `
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_taxation_method" -DisplayName "Soll-/Ist-Besteuerung" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Soll-Besteuerung", "Ist-Besteuerung")
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "request_vat_id" -DisplayName "USt-IdNr. beantragen" -Type Boolean
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "previous_vat_id" -DisplayName "Fruehere USt-IdNr." -Type Text
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "oss_procedure" -DisplayName "OSS-Verfahren" -Type Boolean
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "own_webshop" -DisplayName "Eigener Webshop" -Type Boolean
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "electronic_interface" -DisplayName "Elektronische Schnittstelle" -Type Text
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "construction_services_over_10pct" -DisplayName "Bauleistungen ueber 10% Weltumsatz" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "construction_services_over_10pct" -DisplayName "Bauleistungen ueber 10% Weltumsatz" -Type Boolean -FieldRole "Ergebnis"
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "employees_total" -DisplayName "Anzahl Arbeitnehmer insgesamt" -Type Number
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "payroll_start_date" -DisplayName "Beginn Lohnzahlungen" -Type DateOnly
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_payroll_tax" -DisplayName "Voraussichtliche Lohnsteuer" -Type Number
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_payroll_tax" -DisplayName "Voraussichtliche Lohnsteuer" -Type Number -FieldRole "Ergebnis"
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "exemption_cert_48b_construction" -DisplayName "Freistellungsbescheinigung Paragraf 48b EStG" -Type Boolean
 # --- Abschnitt 9.6 ergaenzt (Update 2, ELSTER-Portalpruefung 26.10.2026):
 # bedingte Pflichtfelder aus fsekapgaus-202401 und fsekapg-202401 (beide
 # Formulare zeigen denselben USt-Block), Status belegt_bedingt, siehe
 # Datenmodell Abschnitt 9.6 / README.md Abschnitt E.6 fuer die Bedingung je Feld. ---
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_tax_free_sales" -DisplayName "Steuerfreie Umsaetze nach Paragraf 4 UStG" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_tax_free_sales_type" -DisplayName "Art des Umsatzes (steuerfrei)" -Type Text
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_reduced_rate_sales" -DisplayName "Ermaessigter Steuersatz" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_reduced_rate_sales_type" -DisplayName "Art des Umsatzes (ermaessigter Satz)" -Type Text
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_sales" -DisplayName "Nullsteuersatz" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_sales_type" -DisplayName "Art des Umsatzes (Nullsteuersatz)" -Type Text
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_legal_basis" -DisplayName "Rechtsvorschrift zum Nullsteuersatz" -Type Text
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture" -DisplayName "Durchschnittssatzbesteuerung Paragraf 24 UStG (Land-/Forstwirtschaft)" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture_type" -DisplayName "Art des Umsatzes (Paragraf 24 UStG)" -Type Text
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture_choice" -DisplayName "Durchschnittssatzbesteuerung oder Verzicht" -Type Choice `
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_tax_free_sales" -DisplayName "Steuerfreie Umsaetze nach Paragraf 4 UStG" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_tax_free_sales_type" -DisplayName "Art des Umsatzes (steuerfrei)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_reduced_rate_sales" -DisplayName "Ermaessigter Steuersatz" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_reduced_rate_sales_type" -DisplayName "Art des Umsatzes (ermaessigter Satz)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_sales" -DisplayName "Nullsteuersatz" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_sales_type" -DisplayName "Art des Umsatzes (Nullsteuersatz)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_zero_rate_legal_basis" -DisplayName "Rechtsvorschrift zum Nullsteuersatz" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture" -DisplayName "Durchschnittssatzbesteuerung Paragraf 24 UStG (Land-/Forstwirtschaft)" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture_type" -DisplayName "Art des Umsatzes (Paragraf 24 UStG)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_flat_rate_agriculture_choice" -DisplayName "Durchschnittssatzbesteuerung oder Verzicht" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Durchschnittssatzbesteuerung beibehalten", "Verzicht auf Durchschnittssatzbesteuerung")
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_requested" -DisplayName "Vorsteuerverguetung beantragt" -Type Boolean
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_date" -DisplayName "Datum der Vorsteuerverguetung" -Type DateOnly
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_reference" -DisplayName "Aktenzeichen Vorsteuerverguetung" -Type Text
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_requested" -DisplayName "Vorsteuerverguetung beantragt" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_date" -DisplayName "Datum der Vorsteuerverguetung" -Type DateOnly -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "input_tax_refund_reference" -DisplayName "Aktenzeichen Vorsteuerverguetung" -Type Text -FieldRole "Ergebnis"
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "webshop_url" -DisplayName "Internetadresse (URL) des Webshops" -Type URL
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "electronic_interface_identifier" -DisplayName "Identifikationsmerkmal der elektronischen Schnittstelle" -Type Text
 # own_webshop/electronic_interface existierten bereits; webshop_url und
@@ -1228,7 +1257,7 @@ Add-Field -List "7_Auslandsmitteilung_BZSt2" -InternalName "advisor_involvement"
 # Liste 8: Unterlagen
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "8_Unterlagen"
-Add-Field -List "8_Unterlagen" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
+Add-Field -List "8_Unterlagen" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "8_Unterlagen" -InternalName "document_type" -DisplayName "Dokumenttyp" -Type Choice -Required `
     -Choices @("Gründungsurkunde", "Satzung", "Gesellschaftsvertrag", "Vollmacht Steuerberatung", "Empfangsvollmacht", "SEPA-Mandat", "Handelsregisterauszug", "Sachgründungsbericht", "Ansässigkeitsbescheinigung", "Sonstiges")
@@ -1238,20 +1267,20 @@ Add-Field -List "8_Unterlagen" -InternalName "document_type" -DisplayName "Dokum
 # ueber Liste 8 mit dem passenden Dokumenttyp hochgeladen werden kann.
 # "Gesellschaftsvertrag" blieb zusaetzlich bestehen (z. B. GbR/OHG ohne notarielle
 # Urkunde).
-Add-Field -List "8_Unterlagen" -InternalName "related_object_text" -DisplayName "Bezug zu Objekt (Freitext aus Formular)" -Type Text
+Add-Field -List "8_Unterlagen" -InternalName "related_object_text" -DisplayName "Bezug zu Objekt (Freitext aus Formular)" -Type Text -FieldRole "System"
 # related_object_text (Punkt 6): bildet die Forms-Frage "Bezug zu Objekt" (Text,
 # README.md E.8 Frage 3) ab. Ohne diese Spalte konnte ein einfacher
 # Power-Automate-Flow die Forms-Antwort gar nicht speichern, da die
 # Lookup-Spalten related_case/related_person/related_participation/related_site
 # keinen Freitext annehmen. related_object_text ist die Rohantwort; die
 # Lookups werden danach manuell oder durch einen erweiterten Flow aufgeloest.
-Add-Field -List "8_Unterlagen" -InternalName "required" -DisplayName "Erforderlich" -Type Boolean -DefaultValue "0"
-Add-Field -List "8_Unterlagen" -InternalName "uploaded" -DisplayName "Vorhanden / hochgeladen" -Type Boolean -DefaultValue "0"
+Add-Field -List "8_Unterlagen" -InternalName "required" -DisplayName "Erforderlich" -Type Boolean -DefaultValue "0" -FieldRole "System"
+Add-Field -List "8_Unterlagen" -InternalName "uploaded" -DisplayName "Vorhanden / hochgeladen" -Type Boolean -DefaultValue "0" -FieldRole "System"
 # required/uploaded (Punkt 7): keine Forms-Frage, daher nicht mehr -Required;
 # Default FALSE, damit neu erstellte Elemente ohne explizite Eingabe konsistent
 # starten. Beide Felder werden von der Kanzlei intern gepflegt.
 Add-Field -List "8_Unterlagen" -InternalName "note" -DisplayName "Hinweis" -Type Note
-Add-Field -List "8_Unterlagen" -InternalName "file_link" -DisplayName "Link zur Datei (falls extern abgelegt)" -Type URL
+Add-Field -List "8_Unterlagen" -InternalName "file_link" -DisplayName "Link zur Datei (falls extern abgelegt)" -Type URL -FieldRole "System"
 # file_link (Punkt 6): Hyperlink-Feld fuer den Fall, dass eine Datei nicht ueber
 # den Forms-Datei-Upload (erfordert Microsoft-Konto, siehe README.md E.8),
 # sondern ueber einen separaten Kanzlei-Upload-Weg eingesammelt und hier nur
@@ -1261,13 +1290,13 @@ Add-Field -List "8_Unterlagen" -InternalName "file_link" -DisplayName "Link zur 
 # werden nach Anlage aller Listen manuell verknuepft, da PnP kein Multi-Listen-Lookup-Feld kennt;
 # ersatzweise vier separate Lookup-Spalten (related_case, related_person, related_participation, related_site)
 # plus Standard-Anlagenfunktion der Liste verwenden.
-Add-Field -List "8_Unterlagen" -InternalName "related_case" -DisplayName "Bezug: Fall" -Type Lookup `
+Add-Field -List "8_Unterlagen" -InternalName "related_case" -DisplayName "Bezug: Fall" -Type Lookup -FieldRole "System" `
     -LookupList "0_Fallsteuerung" -LookupField "case_id"
-Add-Field -List "8_Unterlagen" -InternalName "related_person" -DisplayName "Bezug: Person" -Type Lookup `
+Add-Field -List "8_Unterlagen" -InternalName "related_person" -DisplayName "Bezug: Person" -Type Lookup -FieldRole "System" `
     -LookupList "3_Personen_und_Vertretung" -LookupField "display_label"
-Add-Field -List "8_Unterlagen" -InternalName "related_participation" -DisplayName "Bezug: Beteiligung" -Type Lookup `
+Add-Field -List "8_Unterlagen" -InternalName "related_participation" -DisplayName "Bezug: Beteiligung" -Type Lookup -FieldRole "System" `
     -LookupList "4_Beteiligte_und_Quoten" -LookupField "display_label"
-Add-Field -List "8_Unterlagen" -InternalName "related_site" -DisplayName "Bezug: Betriebsstätte" -Type Lookup `
+Add-Field -List "8_Unterlagen" -InternalName "related_site" -DisplayName "Bezug: Betriebsstätte" -Type Lookup -FieldRole "System" `
     -LookupList "5_Betriebsstaetten" -LookupField "display_label"
 # related_person/related_participation/related_site bleiben ohne -DeleteBehavior
 # (Standard "None", Punkt 10): das Loeschen einer Person/Beteiligung/
