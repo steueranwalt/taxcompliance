@@ -19,6 +19,12 @@
     und alle Add-Field-Aufrufe LIVE gegen die Zielsite ausfuehren wuerde -
     genau das soll dieses Pruefskript nicht tun.
 
+    Vor jeder Verbindung wird ausserdem geprueft, dass im Hauptskript selbst
+    kein interner Feldname laenger als 32 Zeichen ist oder Zeichen ausserhalb
+    [A-Za-z0-9_] enthaelt (sonst kuerzt SharePoint ihn und ein spaeterer Lauf
+    legt ein Duplikat an, siehe Testlauf 27./28.10.2026) - bei Verstoss bricht
+    auch dieses Skript sofort ab, ohne sich zu verbinden.
+
     Geprueft wird pro Soll-Feld:
       - Existiert die Spalte ueberhaupt?
       - Entspricht der SharePoint-Feldtyp (inkl. DateOnly vs. DateTime) dem Soll?
@@ -122,6 +128,23 @@ function Get-FieldDefinitionsFromScript {
     }
 }
 
+function Test-InternalFieldNamingRules {
+    <#
+      Dieselbe Regel wie in New-SteuerlicheErfassungListen.ps1
+      (Test-InternalFieldNamingRules dort): interne Feldnamen duerfen hoechstens
+      32 Zeichen lang sein und nur aus [A-Za-z0-9_] bestehen, sonst kuerzt
+      SharePoint sie stillschweigend und ein spaeterer Lauf legt Duplikate an
+      (siehe Testlauf 27./28.10.2026). Wird hier auf dieselben, bereits per AST
+      eingelesenen Soll-Definitionen angewendet, nicht ein zweites Mal geparst.
+    #>
+    param([Parameter(Mandatory = $true)][array]$Definitions)
+    $violations = $Definitions | Where-Object { $_.InternalName.Length -gt 32 -or $_.InternalName -notmatch '^[A-Za-z0-9_]+$' }
+    if ($violations) {
+        $lines = $violations | ForEach-Object { "$($_.List) / $($_.InternalName) ($($_.InternalName.Length) Zeichen)" }
+        throw "Hauptskript enthaelt ungueltige interne Feldnamen - Abbruch vor jeder Verbindung:`n  $($lines -join "`n  ")"
+    }
+}
+
 function Test-SollTypeMatchesIst {
     <#
       Ordnet den im Hauptskript verwendeten logischen -Type-Werten den
@@ -154,6 +177,8 @@ $mainScriptPath = Join-Path -Path $PSScriptRoot -ChildPath "New-SteuerlicheErfas
 Write-Host "Lese Soll-Felder aus: $mainScriptPath"
 $sollFelder = @(Get-FieldDefinitionsFromScript -ScriptPath $mainScriptPath)
 Write-Host "Soll-Felder gelesen: $($sollFelder.Count) ueber $(($sollFelder | Select-Object -ExpandProperty List -Unique).Count) Listen"
+Test-InternalFieldNamingRules -Definitions $sollFelder
+Write-Host "Namensregel-Pruefung bestanden: alle internen Soll-Feldnamen <= 32 Zeichen und nur [A-Za-z0-9_]."
 
 Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
 $ctx = Get-PnPContext
@@ -252,11 +277,13 @@ $abweichungen = @($ergebnisse | Where-Object { $_.Status -eq "ABWEICHUNG" })
 Write-Host ""
 if ($abweichungen.Count -eq 0) {
     Write-Host "Ergebnis: keine Abweichungen. $($ergebnisse.Count) Pruefungen ueber $($listenNamen.Count) Listen, alle OK."
+    Write-Host "ERGEBNIS: OK"
     exit 0
 }
 else {
     Write-Host "=== Abweichungen ($($abweichungen.Count) von $($ergebnisse.Count) Pruefungen) ==="
     $abweichungen | Sort-Object Liste, Feld, Pruefung | Format-Table -AutoSize -Wrap
     Write-Host "Ergebnis: $($abweichungen.Count) Abweichung(en) gefunden - siehe Tabelle oben."
+    Write-Host "ERGEBNIS: $($abweichungen.Count) Abweichungen"
     exit 1
 }
