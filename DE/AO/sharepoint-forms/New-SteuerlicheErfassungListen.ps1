@@ -510,6 +510,18 @@ function Add-Field {
       - -HideFromForms: blendet das Feld im nativen SharePoint-Neu-/Bearbeiten-
         Formular aus (ShowInNewForm/ShowInEditForm = FALSE), siehe
         Set-FieldFormVisibility. Fuer Flow-generierte Felder wie access_code.
+      - -FieldRole/-AppliesTo: reine Metadaten (wirken NIE auf die SharePoint-
+        Spalte selbst) fuer externe Generatoren (z. B. den Mandanten-Chat in
+        DE/AO/erfassungs-chat/), die aus diesem Skript ableiten, welche Felder
+        sie dem Mandanten stellen duerfen. Format und Wertebereich siehe
+        README.md Abschnitt C3 ("Feld-Metadaten fuer externe Generatoren").
+        Harte Regel, die hier zusaetzlich zur Dokumentation erzwungen wird:
+        ein Feld mit -FieldRole "Ergebnis" oder "System" darf NIE -Required
+        sein - genau dieses Muster (Required-Ergebnisfeld) meldete der
+        Erfassungs-Chat-Generator am 28.10.2026 fuer vier Felder
+        (tax_office, formation_type, profit_determination_method, site_type;
+        die ersten beiden waren zu diesem Zeitpunkt bereits durch die
+        Grundregel-Arbeit in diesem Skript behoben).
 
       Defensive Namensregel-Pruefung (zusaetzlich zur Pruefung am Skriptanfang,
       siehe Test-InternalFieldNamingRules): da $InternalName hier immer ein
@@ -537,11 +549,21 @@ function Add-Field {
         [switch]$EnforceUniqueValues,
         [string]$ValidationFormula,
         [string]$ValidationMessage,
-        [switch]$HideFromForms
+        [switch]$HideFromForms,
+        [ValidateSet("Tatsache", "Ergebnis", "System")][string]$FieldRole = "Tatsache",
+        [ValidateSet("Alle", "Gesellschaft", "NatuerlichePerson")][string[]]$AppliesTo = @("Alle")
     )
 
     if ($InternalName.Length -gt 32 -or $InternalName -notmatch '^[A-Za-z0-9_]+$') {
         throw "Ungueltiger interner Feldname '$InternalName' ($List): > 32 Zeichen oder Zeichen ausserhalb [A-Za-z0-9_]. Siehe Test-InternalFieldNamingRules."
+    }
+    if ($Required -and $FieldRole -ne "Tatsache" -and $Type -ne "Lookup") {
+        # Lookup ausgenommen: case_id ist in jeder Folgeliste -Required UND
+        # -FieldRole System (technischer Fremdschluessel, wird vom Flow/der
+        # Session gesetzt, nie von einem Menschen "beantwortet" - die
+        # Required-Boolean-Falle betrifft nur Felder, die ein Mensch ueber
+        # ein Pflicht-UI-Element ausfuellen muesste).
+        throw "Feld '$InternalName' ($List) ist -Required, aber -FieldRole '$FieldRole' - widerspricht der Grundregel: Ergebnis-/Systemfelder duerfen nie vom Mandanten zwingend erfragt werden. Siehe README.md Abschnitt C3."
     }
 
     $existing = Get-PnPField -List $List -Identity $InternalName -ErrorAction SilentlyContinue
