@@ -1023,6 +1023,19 @@ Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -D
     -Choices @("abhängig", "unabhängig")
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "power_to_conclude_contracts" -DisplayName "Abschlussvollmacht" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "is_authorized_recipient" -DisplayName "Empfangsbevollmaechtigt" -Type Boolean
+# --- Uebliche Taetigkeitsorte der Person (Review Nils 28.10.2026, verschoben
+# von 1_Allgemeiner_Stammblock hierher): ersetzt "deviating_management_place"/
+# "management_address" (gehoerten fachlich nicht zum Unternehmen, sondern zu
+# den einzelnen gesetzlichen Vertretern/Geschaeftsfuehrern). Tatsachenfelder je
+# Person; der Ort der tatsaechlichen Geschaeftsleitung des Unternehmens
+# (Ergebnisfeld) wird von der Kanzlei daraus abgeleitet, nicht vom Mandanten
+# selbst eingeschaetzt - siehe Datenmodell Abschnitt 10 Ableitungstabelle.
+# Fachlich vor allem bei role = Gesetzlicher Vertreter/Staendiger Vertreter
+# einschlaegig (Forms-Branching, siehe README.md E.3).
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "usual_workplace_country" -DisplayName "Übliches Land der Tätigkeit (dieser Person)" -Type Text
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "usual_workplace_address" -DisplayName "Übliche Adresse/Ort der Tätigkeit (dieser Person)" -Type Note
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "works_elsewhere" -DisplayName "Arbeitet auch regelmässig an einem anderen Ort" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "other_workplace_details" -DisplayName "Anderer Tätigkeitsort - wo und Anteil der Arbeitszeit" -Type Note
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text
 # display_label (Punkt 10, "Lookup-Anzeigefeld eindeutig machen"): last_name_or_company
 # ist bei Namensgleichheit nicht eindeutig. display_label soll vom auslösenden
