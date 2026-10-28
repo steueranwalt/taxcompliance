@@ -86,7 +86,7 @@ Empfohlene Bearbeitungsreihenfolge (steigende Komplexität, Formular 0 zuerst al
 4. Formular 1 (37 Fragen, ca. 25 Min. — seit 28.10.2026 inkl. Rechtsform-Zwei-Fragen-Logik und Vermögensverwaltungs-Tatsachenfragen)
 5. Formular 4, 7 (16–18 Fragen, je ca. 20 Min.)
 6. Formular 6 (33 Fragen, ca. 30 Min. — seit Update 2 inkl. USt-Befreiungsblock, viele Branching-Fälle)
-7. Formular 2 (47 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle; seit 28.10.2026 zusätzlich Vorgänger-/Wirtschaftsjahr-Tatsachenfragen)
+7. Formular 2 (49 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle; seit 28.10.2026 zusätzlich Vorgänger-/Wirtschaftsjahr-/Umwandlungs-Tatsachenfragen)
 
 Gesamtaufwand grob 3–3,5 Stunden für alle 9 Formulare inkl. Testklicks in der Vorschau (seit Update 2 durch Formular 2/6 erhöht gegenüber ursprünglich 2–2,5 Stunden).
 
