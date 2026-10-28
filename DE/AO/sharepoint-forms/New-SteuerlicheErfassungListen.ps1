@@ -64,6 +64,66 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# ---------------------------------------------------------------------------
+# Harte Namensregel-Pruefung VOR jeder Verbindung/Aenderung
+#
+# Testlauf 27./28.10.2026 (PnP.PowerShell 3.4.1 / PowerShell 7.6.9) ergab:
+# SharePoint kuerzt interne Feldnamen (InternalName) intern auf 32 Zeichen.
+# Ueberlange Namen fuehrten dazu, dass das Skript das Feld beim naechsten
+# Angleichungslauf unter dem vollen (ungekuerzten) Namen nicht mehr fand und
+# es ERNEUT anlegte - SharePoint haengte dem (ebenfalls gekuerzten) Namen des
+# neuen Duplikats automatisch einen Zahlen-Suffix (_0, _1, ...) an. Betroffen
+# waren 6 Felder (seitdem umbenannt, siehe README.md Abschnitt "Changelog").
+#
+# Deshalb: vor jeder Ausfuehrung ALLE im Skript selbst verwendeten
+# -InternalName-Werte statisch pruefen (per AST-Parse des eigenen Skripts,
+# ohne es auszufuehren) und bei Verstoss SOFORT abbrechen - bevor ueberhaupt
+# eine Verbindung aufgebaut wird.
+# ---------------------------------------------------------------------------
+function Test-InternalFieldNamingRules {
+    param([Parameter(Mandatory = $true)][string]$ScriptPath)
+
+    $tokens = $null
+    $parseErrors = $null
+    $ast = [System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$parseErrors)
+    if ($parseErrors.Count -gt 0) {
+        throw "Konnte '$ScriptPath' nicht auf gueltige interne Feldnamen pruefen (Parse-Fehler im Skript selbst): $($parseErrors -join '; ')"
+    }
+
+    $commandAsts = $ast.FindAll(
+        { param($node) $node -is [System.Management.Automation.Language.CommandAst] -and $node.GetCommandName() -eq 'Add-Field' },
+        $true)
+
+    $violations = [System.Collections.Generic.List[string]]::new()
+    foreach ($cmd in $commandAsts) {
+        $elements = $cmd.CommandElements
+        $listValue = $null
+        $internalNameValue = $null
+        for ($i = 1; $i -lt $elements.Count; $i++) {
+            $el = $elements[$i]
+            if ($el -is [System.Management.Automation.Language.CommandParameterAst] -and ($i + 1) -lt $elements.Count) {
+                if ($el.ParameterName -eq 'List') { $listValue = $elements[$i + 1].SafeGetValue() }
+                elseif ($el.ParameterName -eq 'InternalName') { $internalNameValue = $elements[$i + 1].SafeGetValue() }
+            }
+        }
+        if ($internalNameValue) {
+            if ($internalNameValue.Length -gt 32) {
+                $violations.Add("$listValue / $internalNameValue : $($internalNameValue.Length) Zeichen (Grenze: 32 - SharePoint kuerzt sonst stillschweigend)")
+            }
+            if ($internalNameValue -notmatch '^[A-Za-z0-9_]+$') {
+                $violations.Add("$listValue / $internalNameValue : enthaelt Zeichen ausserhalb [A-Za-z0-9_]")
+            }
+        }
+    }
+
+    if ($violations.Count -gt 0) {
+        throw "Ungueltige interne Feldnamen gefunden - Abbruch VOR jeder Verbindung/Aenderung:`n  $($violations -join "`n  ")"
+    }
+    Write-Host "Namensregel-Pruefung bestanden: alle internen Feldnamen <= 32 Zeichen und nur [A-Za-z0-9_]."
+}
+
+Test-InternalFieldNamingRules -ScriptPath $PSCommandPath
+
 Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
 
 # ---------------------------------------------------------------------------
@@ -111,6 +171,75 @@ function Set-TitleOptional {
 function Get-XmlEscaped {
     param([string]$Text)
     return [System.Security.SecurityElement]::Escape($Text)
+}
+
+function Test-FieldTypeMatchesSchema {
+    <#
+      Punkt C der fachlichen Pruefung (Testlauf 27./28.10.2026): ordnet den im
+      Skript verwendeten logischen -Type-Werten den tatsaechlichen SharePoint-
+      Feldtyp (TypeAsString) sowie bei Datumsfeldern das DisplayFormat zu und
+      vergleicht gegen ein bereits vorhandenes Feld. Spiegelt bewusst dieselbe
+      Logik wie Test-SteuerlicheErfassungListen.ps1, damit Haupt- und
+      Pruefskript bei einer Typabweichung denselben Befund melden.
+    #>
+    param([string]$SollType, $IstField)
+    switch ($SollType) {
+        "DateOnly" { return ($IstField.TypeAsString -eq "DateTime" -and $IstField.DisplayFormat -eq "DateOnly") }
+        "DateTime" { return ($IstField.TypeAsString -eq "DateTime" -and $IstField.DisplayFormat -eq "DateTime") }
+        "Note" { return ($IstField.TypeAsString -eq "Note") }
+        "URL" { return ($IstField.TypeAsString -eq "URL") }
+        default { return ($IstField.TypeAsString -eq $SollType) }
+    }
+}
+
+function Format-FieldTypeForDisplay {
+    param($IstField)
+    if ($IstField.TypeAsString -eq "DateTime") {
+        return "DateTime (DisplayFormat=$($IstField.DisplayFormat))"
+    }
+    return $IstField.TypeAsString
+}
+
+function Set-DateOnlyFormat {
+    <#
+      Punkt B der fachlichen Pruefung (Testlauf 27./28.10.2026): 13 bereits
+      bestehende Datumsfelder standen trotz -Type DateOnly im Skript auf der
+      Zielsite mit DisplayFormat=DateTime, weil die bisherige Angleichungslogik
+      DisplayFormat bei bereits vorhandenen Feldern nie nachzog (nur die
+      XML-Erstellung neuer Felder setzte Format='DateOnly' korrekt). Fix: wird
+      jetzt nach jeder Feldanlage/-angleichung unbedingt aufgerufen (wie
+      Set-FieldIndexAndUniqueness/Set-LookupDeleteBehavior), prueft den
+      Ist-Zustand und setzt DisplayFormat bei Abweichung direkt per CSOM
+      (FieldDateTime.DisplayFormat), da Set-PnPField denselben
+      Enum-Konvertierungsfehler zeigen kann wie bei RelationshipDeleteBehavior
+      (siehe Set-LookupDeleteBehavior). Liest danach zurueck und verifiziert,
+      bevor Erfolg gemeldet wird.
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$List,
+        [Parameter(Mandatory = $true)][string]$InternalName
+    )
+    try {
+        $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+        if ($field.TypeAsString -ne "DateTime") {
+            throw "Feld ist kein Datumsfeld (TypeAsString=$($field.TypeAsString)); DateOnly nicht anwendbar - vermutlich Typabweichung, siehe Warnung oben."
+        }
+        if ($field.DisplayFormat -ne "DateOnly") {
+            $ctx = Get-PnPContext
+            $dateField = $ctx.CastTo[Microsoft.SharePoint.Client.FieldDateTime]($field)
+            $dateField.DisplayFormat = [Microsoft.SharePoint.Client.DateTimeFieldFormatType]::DateOnly
+            $dateField.Update()
+            Invoke-PnPQuery
+        }
+        $verify = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+        if ($verify.DisplayFormat -ne "DateOnly") {
+            throw "Rueckgelesenes DisplayFormat '$($verify.DisplayFormat)' entspricht nicht dem Sollwert 'DateOnly'."
+        }
+        Write-Host "  DateOnly-Format gesetzt und verifiziert: $List / $InternalName"
+    }
+    catch {
+        Write-Warning "  Konnte DateOnly-Format fuer $List/$InternalName nicht setzen/verifizieren: $_"
+    }
 }
 
 function Set-FieldIndexAndUniqueness {
@@ -248,13 +377,23 @@ function Add-Field {
       - -Type URL: Hyperlink-Feld (fuer file_link in 8_Unterlagen).
       - -DefaultValue: Default fuer Boolean/Text/Note/Number (Punkt 7).
       - -Min/-Max: Wertebereich fuer Number-Felder (Punkt 10: share_percentage 0-100).
-      - -ValidationFormula/-ValidationMessage: Spaltenvalidierung (Punkt 10:
-        notification_year).
+      - -Decimals: Nachkommastellen fuer Number-Felder (Punkt C: notification_year
+        ohne Nachkommastellen).
+      - -ValidationFormula/-ValidationMessage: Spaltenvalidierung.
       - -Indexed/-EnforceUniqueValues: siehe Set-FieldIndexAndUniqueness.
       - -DeleteBehavior: siehe Set-LookupDeleteBehavior (nur Type Lookup).
       - Angleichung bestehender Felder: Anzeigename, Pflichtstatus und fehlende
         Auswahlwerte (nie Entfernen) werden bei bereits vorhandenen Feldern
-        nachgezogen.
+        nachgezogen. Eine Typabweichung (z. B. Soll Note, Ist Text) wird klar
+        gewarnt, aber nie automatisch geaendert oder geloescht (Punkt C).
+      - -Type DateOnly: DisplayFormat wird unbedingt verifiziert/nachgezogen,
+        siehe Set-DateOnlyFormat (Punkt B).
+
+      Defensive Namensregel-Pruefung (zusaetzlich zur Pruefung am Skriptanfang,
+      siehe Test-InternalFieldNamingRules): da $InternalName hier immer ein
+      literaler String aus dem Skript ist, sollte die Pruefung am Skriptanfang
+      jeden Verstoss bereits vor der ersten Verbindung abfangen. Diese zweite,
+      lokale Pruefung ist nur ein zusaetzliches Sicherheitsnetz.
     #>
     param(
         [Parameter(Mandatory = $true)][string]$List,
@@ -270,12 +409,17 @@ function Add-Field {
         [ValidateSet("None", "Restrict", "Cascade")][string]$DeleteBehavior = "None",
         [Nullable[double]]$Min,
         [Nullable[double]]$Max,
+        [Nullable[int]]$Decimals,
         [string]$DefaultValue,
         [switch]$Indexed,
         [switch]$EnforceUniqueValues,
         [string]$ValidationFormula,
         [string]$ValidationMessage
     )
+
+    if ($InternalName.Length -gt 32 -or $InternalName -notmatch '^[A-Za-z0-9_]+$') {
+        throw "Ungueltiger interner Feldname '$InternalName' ($List): > 32 Zeichen oder Zeichen ausserhalb [A-Za-z0-9_]. Siehe Test-InternalFieldNamingRules."
+    }
 
     $existing = Get-PnPField -List $List -Identity $InternalName -ErrorAction SilentlyContinue
 
@@ -307,6 +451,7 @@ function Add-Field {
                 $minMaxAttr = ""
                 if ($null -ne $Min) { $minMaxAttr += " Min='$Min'" }
                 if ($null -ne $Max) { $minMaxAttr += " Max='$Max'" }
+                if ($null -ne $Decimals) { $minMaxAttr += " Decimals='$Decimals'" }
                 $validationXml = ""
                 if ($ValidationFormula) {
                     $validationXml = "<Validation Message='$(Get-XmlEscaped $ValidationMessage)'>$(Get-XmlEscaped $ValidationFormula)</Validation>"
@@ -355,6 +500,19 @@ function Add-Field {
     else {
         Write-Host "  Feld existiert bereits, pruefe Angleichung: $List / $InternalName"
 
+        # Punkt C der fachlichen Pruefung (Testlauf 27./28.10.2026): wenn der
+        # Ist-Typ nicht dem Soll-Typ entspricht (z. B. notification_year Ist
+        # Number statt Text, participant_name_share Ist Text statt Note),
+        # klar warnen - NICHT still weiterlaufen, aber auch NICHT automatisch
+        # aendern oder loeschen (SharePoint unterstuetzt Typaenderungen an
+        # bestehenden Feldern ohnehin nicht zuverlaessig). Typspezifische
+        # Angleichung (Choices-Ergaenzung) wird bei einer Typabweichung
+        # uebersprungen, da sie auf dem falschen Feldtyp keinen Sinn ergibt.
+        $typeMatches = Test-FieldTypeMatchesSchema -SollType $Type -IstField $existing
+        if (-not $typeMatches) {
+            Write-Warning "    TYP-ABWEICHUNG: Liste=$List Feld=$InternalName Soll=$Type Ist=$(Format-FieldTypeForDisplay $existing) - wird NICHT automatisch geaendert oder geloescht, bitte manuell pruefen."
+        }
+
         if ($existing.Title -ne $DisplayName) {
             try {
                 Set-PnPField -List $List -Identity $InternalName -Values @{ Title = $DisplayName } -WarningAction Stop | Out-Null
@@ -383,7 +541,7 @@ function Add-Field {
             }
         }
 
-        if ($Type -eq "Choice" -and $Choices) {
+        if ($typeMatches -and $Type -eq "Choice" -and $Choices) {
             $existingChoices = @($existing.Choices)
             $missingChoices = $Choices | Where-Object { $existingChoices -notcontains $_ }
             if ($missingChoices) {
@@ -430,6 +588,9 @@ function Add-Field {
     }
     if ($Type -eq "Lookup" -and $DeleteBehavior -ne "None") {
         Set-LookupDeleteBehavior -List $List -InternalName $InternalName -DeleteBehavior $DeleteBehavior
+    }
+    if ($Type -eq "DateOnly") {
+        Set-DateOnlyFormat -List $List -InternalName $InternalName
     }
 }
 
@@ -552,7 +713,7 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_following_year" -DisplayName "Voraussichtlicher Gewinn Folgejahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "part_of_group" -DisplayName "Konzernzugehoerigkeit" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "controlling_company_name" -DisplayName "Herrschendes Unternehmen - Name" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_controlling_company_for_tax_group" -DisplayName "Organtraegerschaft" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_parent" -DisplayName "Organtraegerschaft" -Type Boolean
 # --- Abschnitt 9 ergaenzt (Datenmodell 2.3/9.3, Personengesellschaft) ---
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "legal_capacity" -DisplayName "Rechtsfaehigkeit (Personengesellschaft)" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_distribution_key" -DisplayName "Aufteilungsschluessel (Gewinn-/Verlustverteilung)" -Type Text
@@ -571,9 +732,9 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "general_partner_
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_date" -DisplayName "Handelsregister - Datum (beantragt am / Tag der Eintragung)" -Type DateOnly
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_structure" -DisplayName "Betriebsaufspaltung" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_company_name" -DisplayName "Bezeichnung des Besitzunternehmens" -Type Text
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_asset_description" -DisplayName "Bezeichnung des ueberlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage, Betriebsaufspaltung)" -Type Text
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_owner_asset_description" -DisplayName "Bezeichnung des ueberlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage, Betriebsaufspaltung)" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_usage_start" -DisplayName "Beginn der tatsaechlichen Nutzung (Betriebsaufspaltung)" -Type DateOnly
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_ownership_address_or_tax_number" -DisplayName "Anschrift und/oder Steuernummer des Besitzunternehmens" -Type Note
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "split_owner_address_or_taxno" -DisplayName "Anschrift und/oder Steuernummer des Besitzunternehmens" -Type Note
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption" -DisplayName "Koerperschaftsteuerbefreiung nach Paragraf 5 KStG" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "kst_exemption_number" -DisplayName "Nummer nach Paragraf 5 Absatz 1 KStG" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "par60a_ao_determination" -DisplayName "Feststellung nach Paragraf 60a AO" -Type Boolean
@@ -582,7 +743,7 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_tax_group_sub
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "tax_group_parent_name" -DisplayName "Name/Firma des Organtraegers" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "is_vat_group_member" -DisplayName "Umsatzsteuerliche Organschaft" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "vat_group_start_date" -DisplayName "Beginn der umsatzsteuerlichen Organschaft" -Type DateOnly
-# split_ownership_asset_description (Zeile 135 in fsekapg-202401): Kanzleientscheid
+# split_owner_asset_description (Zeile 135 in fsekapg-202401): Kanzleientscheid
 # Nils 27.10.2026 - Feld wird gefuehrt als "Bezeichnung des ueberlassenen
 # Wirtschaftsguts (wesentliche Betriebsgrundlage)". Der genaue Wortlaut laut
 # ELSTER-Fehlerliste war nur "Bezeichnung" ohne weiteren Kontext; die
@@ -641,8 +802,8 @@ Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "share_percentage" -Disp
     -Min 0 -Max 100
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "fraction_numerator_denominator" -DisplayName "Zaehler / Nenner" -Type Text
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "trust_relationship" -DisplayName "Treuhandverhaeltnis" -Type Boolean -Required
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "expected_profit_share_opening_year" -DisplayName "Voraussichtlicher Gewinnanteil Eroeffnungsjahr" -Type Number
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "expected_profit_share_following_year" -DisplayName "Voraussichtlicher Gewinnanteil Folgejahr" -Type Number
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_opening_year" -DisplayName "Voraussichtlicher Gewinnanteil Eroeffnungsjahr" -Type Number
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_following_year" -DisplayName "Voraussichtlicher Gewinnanteil Folgejahr" -Type Number
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht" -Type Boolean
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participation_since" -DisplayName "Beteiligt seit dem" -Type DateOnly
 # --- Abschnitt 9 ergaenzt (Datenmodell 9.2 "Beteiligte": Stimmrechte) ---
@@ -697,7 +858,7 @@ Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "construction_se
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "employees_total" -DisplayName "Anzahl Arbeitnehmer insgesamt" -Type Number
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "payroll_start_date" -DisplayName "Beginn Lohnzahlungen" -Type DateOnly
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_payroll_tax" -DisplayName "Voraussichtliche Lohnsteuer" -Type Number
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "exemption_certificate_construction" -DisplayName "Freistellungsbescheinigung Paragraf 48b EStG" -Type Boolean
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "exemption_cert_48b_construction" -DisplayName "Freistellungsbescheinigung Paragraf 48b EStG" -Type Boolean
 # --- Abschnitt 9.6 ergaenzt (Update 2, ELSTER-Portalpruefung 26.10.2026):
 # bedingte Pflichtfelder aus fsekapgaus-202401 und fsekapg-202401 (beide
 # Formulare zeigen denselben USt-Block), Status belegt_bedingt, siehe
@@ -729,13 +890,17 @@ Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "electronic_inte
 New-ListIfMissing -Title "7_Auslandsmitteilung_BZSt2"
 Add-Field -List "7_Auslandsmitteilung_BZSt2" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
-Add-Field -List "7_Auslandsmitteilung_BZSt2" -InternalName "notification_year" -DisplayName "Mitteilungsjahr" -Type Text -Required `
-    -ValidationFormula "AND(ISNUMBER(VALUE([Mitteilungsjahr])),LEN([Mitteilungsjahr])=4)" `
-    -ValidationMessage "Bitte eine vierstellige Jahreszahl eingeben (z. B. 2026)."
-# notification_year bewusst als Text statt Number (Punkt 10): ein SharePoint-
-# Number-Feld zeigt Jahreszahlen ab 1000 je nach Gebietsschema mit
-# Tausendertrennzeichen an (z. B. "2.026"), was fachlich falsch wirkt. Die
-# Spaltenvalidierung erzwingt weiterhin eine vierstellige Zahl als Text.
+Add-Field -List "7_Auslandsmitteilung_BZSt2" -InternalName "notification_year" -DisplayName "Mitteilungsjahr" -Type Number -Required `
+    -Min 1000 -Max 9999 -Decimals 0
+# notification_year (Entscheid 28.10.2026, revidiert Punkt 10 aus der
+# ursprünglichen Pruefung): Der Testlauf 27./28.10.2026 ergab, dass das Feld
+# auf der Zielsite bereits als Number angelegt war (nicht wie im Skript zuvor
+# als Text) - Formular 6/E.7 Frage 2 ist in Forms bereits als Zahlenfrage
+# 1000-9999 gebaut. Entscheid: Skript auf Number mit Min=1000/Max=9999 und
+# Decimals=0 umstellen, statt die Site auf Text umzustellen. Damit sind nur
+# vierstellige Ganzzahlen zulaessig; das fruehere Bedenken wegen eines
+# Tausendertrennzeichens in der Anzeige wird in Kauf genommen (Forms selbst
+# erzwingt ohnehin eine Zahlenfrage, keine Validierungsformel mehr noetig).
 Add-Field -List "7_Auslandsmitteilung_BZSt2" -InternalName "notification_subject" -DisplayName "Sachverhalt" -Type Choice -Required `
     -Choices @("Betriebe/Betriebsstätten", "PersG-Beteiligung", "KapG-Beteiligung", "Drittstaat-Beherrschung", "Negativmeldung")
 Add-Field -List "7_Auslandsmitteilung_BZSt2" -InternalName "tax_or_id_number" -DisplayName "Steuer-/Identifikationsnummer" -Type Text -Required
