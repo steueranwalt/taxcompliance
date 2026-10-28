@@ -124,8 +124,45 @@ function Get-FieldDefinitionsFromScript {
             EnforceUniqueValues = [bool]$params['EnforceUniqueValues']
             Min                 = $params['Min']
             Max                 = $params['Max']
+            HideFromForms       = [bool]$params['HideFromForms']
+            FieldRole           = if ($params.ContainsKey('FieldRole') -and $params['FieldRole']) { $params['FieldRole'] } else { 'Tatsache' }
+            AppliesTo           = if ($params.ContainsKey('AppliesTo') -and $params['AppliesTo']) { @($params['AppliesTo']) } else { @('Alle') }
         }
     }
+}
+
+function Test-FieldRoleRequiredInvariant {
+    <#
+      Dieselbe Regel wie in New-SteuerlicheErfassungListen.ps1 (Add-Field):
+      ein Feld mit -FieldRole "Ergebnis" oder "System" darf nie -Required
+      sein (Ausnahme: Type Lookup, siehe dortige Begruendung zu case_id).
+      Wird hier zusaetzlich auf den bereits eingelesenen Soll-Definitionen
+      geprueft, bevor sich dieses Skript ueberhaupt verbindet - derselbe
+      Befund soll nicht erst beim naechsten Live-Lauf des Hauptskripts
+      auffallen.
+    #>
+    param([Parameter(Mandatory = $true)][array]$Definitions)
+    $violations = $Definitions | Where-Object {
+        $_.Required -and $_.FieldRole -ne 'Tatsache' -and $_.Type -ne 'Lookup'
+    }
+    if ($violations) {
+        $lines = $violations | ForEach-Object { "$($_.List) / $($_.InternalName) (FieldRole=$($_.FieldRole))" }
+        throw "Hauptskript enthaelt -Required-Felder mit widersprechender -FieldRole - Abbruch vor jeder Verbindung:`n  $($lines -join "`n  ")"
+    }
+}
+
+function Get-NormalizedChoiceKey {
+    <#
+      Dieselbe Normalisierung wie in New-SteuerlicheErfassungListen.ps1
+      (Get-NormalizedChoiceKey dort, Review Nils 28.10.2026): erkennt
+      Schreibvarianten-Dubletten in Auswahlwerten (ä/ö/ü/ß vs. ae/oe/ue/ss,
+      Gross-/Kleinschreibung, mehrfache Leerzeichen).
+    #>
+    param([Parameter(Mandatory = $true)][string]$Value)
+    $normalized = $Value.Trim().ToLowerInvariant()
+    $normalized = $normalized.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss")
+    $normalized = $normalized -replace '\s+', ' '
+    return $normalized
 }
 
 function Test-InternalFieldNamingRules {
@@ -179,6 +216,8 @@ $sollFelder = @(Get-FieldDefinitionsFromScript -ScriptPath $mainScriptPath)
 Write-Host "Soll-Felder gelesen: $($sollFelder.Count) ueber $(($sollFelder | Select-Object -ExpandProperty List -Unique).Count) Listen"
 Test-InternalFieldNamingRules -Definitions $sollFelder
 Write-Host "Namensregel-Pruefung bestanden: alle internen Soll-Feldnamen <= 32 Zeichen und nur [A-Za-z0-9_]."
+Test-FieldRoleRequiredInvariant -Definitions $sollFelder
+Write-Host "FieldRole/Required-Pruefung bestanden: kein Ergebnis-/Systemfeld (ausser Lookup) ist -Required."
 
 Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
 $ctx = Get-PnPContext
@@ -236,6 +275,45 @@ foreach ($listenName in $listenNamen) {
             $fehlendeChoices = $def.Choices | Where-Object { $istChoices -notcontains $_ }
             Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Auswahlwerte vollstaendig" `
                 -Soll ($def.Choices -join ", ") -Ist ($istChoices -join ", ") -Ok (-not $fehlendeChoices)
+        }
+
+        if ($def.Type -eq "Choice" -and $istFeld.Choices) {
+            # Review Nils 28.10.2026 (2_Unternehmens_Gruendungsmodul): auf der
+            # LIVE-Site koennen sich ueber mehrere, nacheinander gelaufene
+            # Skriptversionen Schreibvarianten-Dubletten angesammelt haben
+            # (z. B. "UG" und "UG (haftungsbeschränkt)", "ausl. Rechtsform"
+            # einmal mit Umlaut/einmal als "ae") - die nicht-destruktive
+            # Angleichung des Hauptskripts ergaenzt Auswahlwerte nur, entfernt
+            # nie. Dies ist die dynamische Ergaenzung zum statischen Selbsttest
+            # Test-ChoiceValueDuplicates im Hauptskript (der nur EINEN
+            # Add-Field-Aufruf isoliert prueft, nie akkumulierte Live-Werte
+            # ueber mehrere Laeufe sehen kann).
+            $istChoicesLive = @($istFeld.Choices)
+            $gesehen = @{}
+            $dubletten = [System.Collections.Generic.List[string]]::new()
+            foreach ($choiceWert in $istChoicesLive) {
+                $key = Get-NormalizedChoiceKey -Value $choiceWert
+                if ($gesehen.ContainsKey($key) -and $gesehen[$key] -cne $choiceWert) {
+                    $dubletten.Add("'$($gesehen[$key])' vs. '$choiceWert'")
+                }
+                else {
+                    $gesehen[$key] = $choiceWert
+                }
+            }
+            $dublettenText = if ($dubletten.Count -gt 0) { $dubletten -join "; " } else { "keine Dubletten" }
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Auswahlwerte ohne Schreibvariante-Dubletten" `
+                -Soll "keine Dubletten" -Ist $dublettenText -Ok ($dubletten.Count -eq 0)
+        }
+
+        if ($def.HideFromForms) {
+            # Review Nils 28.10.2026 (access_code): Feld muss im nativen
+            # SharePoint-Neu-/Bearbeiten-Formular ausgeblendet sein (siehe
+            # Set-FieldFormVisibility im Hauptskript), damit niemand von Hand
+            # einen Wert eintraegt, der eigentlich nur vom Flow gesetzt wird.
+            $formVisibilityOk = -not $istFeld.ShowInNewForm -and -not $istFeld.ShowInEditForm
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Im Neu-/Bearbeiten-Formular ausgeblendet" `
+                -Soll "ShowInNewForm=False, ShowInEditForm=False" `
+                -Ist "ShowInNewForm=$($istFeld.ShowInNewForm), ShowInEditForm=$($istFeld.ShowInEditForm)" -Ok $formVisibilityOk
         }
 
         # Restrict/Cascade verlangen einen indizierten Lookup (siehe Hauptskript
