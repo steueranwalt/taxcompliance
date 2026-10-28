@@ -242,6 +242,37 @@ function Set-DateOnlyFormat {
     }
 }
 
+function Set-FieldFormVisibility {
+    <#
+      Review Nils 28.10.2026 (0_Fallsteuerung): access_code wird ausschliesslich
+      von einem Flow gesetzt, nie von Hand. Damit niemand versehentlich ueber das
+      native SharePoint-Listenformular (NewForm.aspx/EditForm.aspx - zu
+      unterscheiden von den Microsoft-Forms-Umfragen F0-F8!) einen eigenen Wert
+      eintraegt, wird das Feld dort ausgeblendet (ShowInNewForm/ShowInEditForm =
+      FALSE). In der Anzeige (DisplayForm) bleibt es sichtbar, damit die Kanzlei
+      den Code bei Bedarf nachschlagen kann. Gilt fuer neue und bestehende Felder
+      gleichermassen (unbedingter Aufruf am Ende von Add-Field).
+    #>
+    param(
+        [Parameter(Mandatory = $true)][string]$List,
+        [Parameter(Mandatory = $true)][string]$InternalName
+    )
+    try {
+        $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+        if ($field.ShowInNewForm -or $field.ShowInEditForm) {
+            Set-PnPField -List $List -Identity $InternalName -Values @{ ShowInNewForm = $false; ShowInEditForm = $false } -WarningAction Stop | Out-Null
+            $field = Get-PnPField -List $List -Identity $InternalName -ErrorAction Stop
+            if ($field.ShowInNewForm -or $field.ShowInEditForm) {
+                throw "Rueckgelesen ist das Feld weiterhin im Neu- oder Bearbeiten-Formular sichtbar (ShowInNewForm=$($field.ShowInNewForm), ShowInEditForm=$($field.ShowInEditForm))."
+            }
+            Write-Host "  Feld im Neu-/Bearbeiten-Formular ausgeblendet und verifiziert: $List / $InternalName"
+        }
+    }
+    catch {
+        Write-Warning "  Konnte Feld $List/$InternalName nicht im Neu-/Bearbeiten-Formular ausblenden: $_"
+    }
+}
+
 function Set-FieldIndexAndUniqueness {
     <#
       Punkt 2 der fachlichen Pruefung: case_id (und neu: access_code) in
@@ -388,6 +419,9 @@ function Add-Field {
         gewarnt, aber nie automatisch geaendert oder geloescht (Punkt C).
       - -Type DateOnly: DisplayFormat wird unbedingt verifiziert/nachgezogen,
         siehe Set-DateOnlyFormat (Punkt B).
+      - -HideFromForms: blendet das Feld im nativen SharePoint-Neu-/Bearbeiten-
+        Formular aus (ShowInNewForm/ShowInEditForm = FALSE), siehe
+        Set-FieldFormVisibility. Fuer Flow-generierte Felder wie access_code.
 
       Defensive Namensregel-Pruefung (zusaetzlich zur Pruefung am Skriptanfang,
       siehe Test-InternalFieldNamingRules): da $InternalName hier immer ein
@@ -414,7 +448,8 @@ function Add-Field {
         [switch]$Indexed,
         [switch]$EnforceUniqueValues,
         [string]$ValidationFormula,
-        [string]$ValidationMessage
+        [string]$ValidationMessage,
+        [switch]$HideFromForms
     )
 
     if ($InternalName.Length -gt 32 -or $InternalName -notmatch '^[A-Za-z0-9_]+$') {
@@ -608,6 +643,9 @@ function Add-Field {
     }
     if ($Type -eq "DateOnly") {
         Set-DateOnlyFormat -List $List -InternalName $InternalName
+    }
+    if ($HideFromForms) {
+        Set-FieldFormVisibility -List $List -InternalName $InternalName
     }
 }
 
