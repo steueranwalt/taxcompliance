@@ -743,28 +743,77 @@ function Add-Field {
 New-ListIfMissing -Title "0_Fallsteuerung"
 Add-Field -List "0_Fallsteuerung" -InternalName "case_id" -DisplayName "Fall-ID" -Type Text -Required `
     -Indexed -EnforceUniqueValues
-Add-Field -List "0_Fallsteuerung" -InternalName "access_code" -DisplayName "Zugangscode (Mandantenpruefung)" -Type Text `
-    -Indexed -EnforceUniqueValues
-# access_code: neuer Zufallswert je Fall, da Fall-IDs im Format JJJJ-NNNN leicht
-# erratbar sind (fortlaufende Nummer). Der auslösende Power-Automate-Flow soll
-# den Wert bei Fallanlage setzen, z. B. per Ausdruck toUpper(substring(guid(),0,10)).
-# Spaetere Flows pruefen case_id UND access_code gemeinsam, bevor eine
-# Formularantwort einem Fall zugeordnet wird. Nicht als -Required angelegt,
-# da bestehende Faelle ohne Nachtrag sonst nicht mehr bearbeitbar waeren; siehe
-# README.md fuer die empfohlene Nachtrags-/Migrationsvorgehensweise.
+Add-Field -List "0_Fallsteuerung" -InternalName "access_code" -DisplayName "Zugangscode (Mandantenpruefung, automatisch per Flow erzeugt)" -Type Text `
+    -Indexed -EnforceUniqueValues -HideFromForms
+# access_code (Review Nils 28.10.2026): Zufallswert je Fall, da Fall-IDs im
+# Format JJJJ-NNNN leicht erratbar sind (fortlaufende Nummer). NIEMAND traegt
+# den Wert von Hand ein - der fallanlegende Power-Automate-Flow erzeugt ihn IM
+# SELBEN "Element erstellen"-Schritt wie case_id (z. B. per Ausdruck
+# toUpper(substring(guid(),0,10))) und baut ihn in den vorausgefuellten Link zu
+# den Formularen 1-8 ein. Spaetere Flows pruefen case_id UND access_code
+# gemeinsam, bevor eine Formularantwort einem Fall zugeordnet wird. Deshalb
+# -HideFromForms (im nativen SharePoint-Neu-/Bearbeiten-Formular ausgeblendet,
+# siehe Set-FieldFormVisibility) und bewusst weiterhin nicht -Required (ein
+# nachtraegliches Pflichtfeld ohne Default wuerde bei bereits vorhandenen
+# Eintraegen die Spaltenanlage verhindern). Zum Zusammenspiel von
+# EnforceUniqueValues mit leeren Werten: siehe README.md Abschnitt D1.
 Add-Field -List "0_Fallsteuerung" -InternalName "direction" -DisplayName "Richtung" -Type Choice -Required `
-    -Choices @("Inbound", "Outbound")
+    -Choices @("Ausländische Gesellschaft mit Bezug zu Deutschland (Inbound)", "Deutsche Gesellschaft/Person mit Auslandsbezug (Outbound)")
+# direction (Review Nils 28.10.2026): "Inbound"/"Outbound" allein waren fuer die
+# Kanzlei nicht selbsterklaerend. Die Fachbegriffe bleiben als Klammerzusatz
+# erhalten, der Haupttext ist jetzt verstaendliches Deutsch. BREAKING CHANGE
+# fuer bestehende Flows: jede Power-Automate-Bedingung, die bisher exakt auf
+# "Inbound"/"Outbound" prueft, muss auf den neuen vollen Wortlaut umgestellt
+# werden - siehe README.md Abschnitt H (Changelog) fuer die Alt/Neu-Zuordnung.
 Add-Field -List "0_Fallsteuerung" -InternalName "form_type" -DisplayName "Rechtsform / Formulartyp" -Type Choice -Required `
     -Choices @("Einzelunternehmen", "Kapitalgesellschaft oder Genossenschaft", "Personengesellschaft oder -gemeinschaft", "Körperschaft nach ausländischem Recht", "BZSt2-Mitteilung")
-Add-Field -List "0_Fallsteuerung" -InternalName "already_registered" -DisplayName "Bereits steuerlich erfasst" -Type Boolean -Required
+Add-Field -List "0_Fallsteuerung" -InternalName "registration_status" -DisplayName "Bereits steuerlich erfasst" -Type Choice `
+    -Choices @("Ja", "Nein", "Unbekannt")
+# registration_status (Review Nils 28.10.2026) ERSETZT already_registered
+# (Boolean, war -Required): ein als Pflicht markiertes Ja/Nein-Feld liess sich
+# in SharePoint nur mit "Ja" sauber ausfuellen (Checkbox-Verhalten bei
+# Required-Yes/No). Jetzt optionales Choice-Feld mit "Unbekannt" als dritter
+# Option. already_registered wird von diesem Skript nicht mehr angelegt oder
+# angeglichen (Typaenderung Boolean -> Choice ist laut Punkt C nicht automatisch
+# moeglich) - auf Bestandssites manuell loeschen, siehe README.md Abschnitt H
+# (beide bislang bekannten Sites hatten beim Wechsel 0 Eintraege in
+# 0_Fallsteuerung, die alte Spalte kann also gefahrlos entfernt werden).
 Add-Field -List "0_Fallsteuerung" -InternalName "existing_tax_number" -DisplayName "Bestehende Steuernummer" -Type Text
-Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayName "Land des Finanzamts" -Type Text -Required
-Add-Field -List "0_Fallsteuerung" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt" -Type Text -Required
-Add-Field -List "0_Fallsteuerung" -InternalName "target_notification" -DisplayName "Zielmeldung (BZSt2-Sachverhalt)" -Type Choice `
+Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayName "Land des Finanzamts (von der Kanzlei nach Pruefung ausgefuellt)" -Type Choice `
+    -Choices @("Deutschland", "Österreich", "Schweiz", "Liechtenstein", "Frankreich", "Italien", "Spanien", "Niederlande", "Belgien", "Luxemburg", "Polen", "Vereinigtes Königreich", "Vereinigte Staaten", "Sonstiger EU/EWR-Staat", "Sonstiger Staat", "Unbekannt")
+# tax_office_country (Review Nils 28.10.2026): nicht mehr Pflicht (vorher Text
+# -Required) und jetzt Choice statt freiem Text - Deutschland als erster Wert
+# (haeufigster Fall), dazu EU/EWR-Kernstaaten, Schweiz, UK, USA, je ein
+# Sammelwert fuer weitere EU/EWR- bzw. Drittstaaten sowie "Unbekannt". Nach der
+# Grundregel (Datenmodell Abschnitt 10, Trennung Tatsache/Rechtsfolge) ist
+# dieses Feld wie das folgende (tax_office) ein Ergebnisfeld, keine
+# Mandanten-Tatsache - die zugrunde liegenden Tatsachen (Ort der
+# Geschaeftsleitung, Sitz, Betriebsstaette in DE usw.) stehen in Liste 1/2/5,
+# siehe Datenmodell Ableitungstabelle.
+Add-Field -List "0_Fallsteuerung" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt (von der Kanzlei nach Pruefung ausgefuellt)" -Type Text
+# tax_office (Review Nils 28.10.2026): nicht mehr Pflicht - das bestimmt die
+# Kanzlei anhand der erhobenen Tatsachen, nicht der Mandant (Grundregel, siehe
+# oben). War bislang zusaetzlich dupliziert in Liste 1 (dort jetzt entfernt,
+# siehe README.md Abschnitt H) - lebt jetzt nur noch hier.
+Add-Field -List "0_Fallsteuerung" -InternalName "target_notification" -DisplayName "Zielmeldung (BZSt2-Sachverhalt) - wird von der Kanzlei nach Pruefung der Angaben festgelegt" -Type Choice `
     -Choices @("Betriebe/Betriebsstätten", "PersG-Beteiligung", "KapG-Beteiligung", "Drittstaat-Beherrschung", "Negativmeldung")
 Add-Field -List "0_Fallsteuerung" -InternalName "processing_note" -DisplayName "Persoenliche Bearbeitungsnotiz" -Type Note
 Add-Field -List "0_Fallsteuerung" -InternalName "case_status" -DisplayName "Status" -Type Choice -Required `
     -Choices @("offen", "in Bearbeitung", "vollständig", "übermittelt")
+Add-Field -List "0_Fallsteuerung" -InternalName "par27_ao_agreement" -DisplayName "Zustimmung zur Zuständigkeitsvereinbarung nach Paragraf 27 AO (Kanzleifeld)" -Type Boolean
+# par27_ao_agreement (Review Nils 28.10.2026, verschoben von 1_Allgemeiner_
+# Stammblock hierher): fachlich unverstaendlich fuer den Mandanten und in der
+# Praxis fuer ihn irrelevant - trotzdem nicht ersatzlos gestrichen, weil es im
+# ELSTER-Fragebogen "Koerperschaft nach auslaendischem Recht" eine belegte
+# Grundlage hat (Datenmodell Abschnitt 2.4 Kz 18, unbedingtes Pflichtfeld;
+# zusaetzlich durch die ELSTER-Portalpruefung 26.10.2026 bestaetigt, siehe
+# Abschnitt 9.6/E.10). Bleibt deshalb als Kanzleifeld hier in der internen
+# Fallsteuerung erhalten, nicht mehr als Forms-Frage an den Mandanten.
+Add-Field -List "0_Fallsteuerung" -InternalName "crm_reference" -DisplayName "Referenz auf Mandant im CRM (Kanzleifeld)" -Type Text
+# crm_reference (Review Nils 28.10.2026): ersetzt die bisherigen
+# Kontakt-Einzelfelder in 1_Allgemeiner_Stammblock (Rueckfrage-E-Mail, Telefon
+# usw.) - diese Daten liegen im CRM der Kanzlei, nicht in dieser Fallliste.
+# Hoechstens eine Referenz/ID auf den CRM-Datensatz wird hier gefuehrt.
 # created_by / created_at: SharePoint-Systemfelder Author/Created werden verwendet, keine Zusatzspalte noetig.
 
 # ---------------------------------------------------------------------------
