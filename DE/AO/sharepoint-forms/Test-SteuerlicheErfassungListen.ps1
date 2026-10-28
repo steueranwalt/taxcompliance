@@ -125,7 +125,29 @@ function Get-FieldDefinitionsFromScript {
             Min                 = $params['Min']
             Max                 = $params['Max']
             HideFromForms       = [bool]$params['HideFromForms']
+            FieldRole           = if ($params.ContainsKey('FieldRole') -and $params['FieldRole']) { $params['FieldRole'] } else { 'Tatsache' }
+            AppliesTo           = if ($params.ContainsKey('AppliesTo') -and $params['AppliesTo']) { @($params['AppliesTo']) } else { @('Alle') }
         }
+    }
+}
+
+function Test-FieldRoleRequiredInvariant {
+    <#
+      Dieselbe Regel wie in New-SteuerlicheErfassungListen.ps1 (Add-Field):
+      ein Feld mit -FieldRole "Ergebnis" oder "System" darf nie -Required
+      sein (Ausnahme: Type Lookup, siehe dortige Begruendung zu case_id).
+      Wird hier zusaetzlich auf den bereits eingelesenen Soll-Definitionen
+      geprueft, bevor sich dieses Skript ueberhaupt verbindet - derselbe
+      Befund soll nicht erst beim naechsten Live-Lauf des Hauptskripts
+      auffallen.
+    #>
+    param([Parameter(Mandatory = $true)][array]$Definitions)
+    $violations = $Definitions | Where-Object {
+        $_.Required -and $_.FieldRole -ne 'Tatsache' -and $_.Type -ne 'Lookup'
+    }
+    if ($violations) {
+        $lines = $violations | ForEach-Object { "$($_.List) / $($_.InternalName) (FieldRole=$($_.FieldRole))" }
+        throw "Hauptskript enthaelt -Required-Felder mit widersprechender -FieldRole - Abbruch vor jeder Verbindung:`n  $($lines -join "`n  ")"
     }
 }
 
@@ -194,6 +216,8 @@ $sollFelder = @(Get-FieldDefinitionsFromScript -ScriptPath $mainScriptPath)
 Write-Host "Soll-Felder gelesen: $($sollFelder.Count) ueber $(($sollFelder | Select-Object -ExpandProperty List -Unique).Count) Listen"
 Test-InternalFieldNamingRules -Definitions $sollFelder
 Write-Host "Namensregel-Pruefung bestanden: alle internen Soll-Feldnamen <= 32 Zeichen und nur [A-Za-z0-9_]."
+Test-FieldRoleRequiredInvariant -Definitions $sollFelder
+Write-Host "FieldRole/Required-Pruefung bestanden: kein Ergebnis-/Systemfeld (ausser Lookup) ist -Required."
 
 Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
 $ctx = Get-PnPContext
