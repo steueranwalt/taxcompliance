@@ -832,7 +832,24 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "date_of_birth" -Displa
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "religion" -DisplayName "Religion" -Type Choice `
     -Choices @("keine", "römisch-katholisch", "evangelisch", "sonstige")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "id_number" -DisplayName "Identifikationsnummer / Wirtschafts-IdNr." -Type Text -Required
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form" -DisplayName "Rechtsform" -Type Text
+# --- Rechtsform neu strukturiert (Review Nils 28.10.2026, Grundregel Tatsachen
+# statt Wuerdigung + "jede Stammangabe genau an einer Stelle"): ersetzt das
+# bisherige Freitextfeld "legal_form" hier UND die eigene Choice-Liste in
+# 2_Unternehmens_Gruendungsmodul (dort entfernt, siehe README.md Abschnitt H).
+# Zwei-Fragen-Struktur: zuerst Grundtyp, dann deutsches oder auslaendisches
+# Recht; bei deutschem Recht Folgefrage mit der konkreten Rechtsform, bei
+# auslaendischem Recht Wortlaut + Staat als Freitext. Vereine/Stiftungen/jPoeR
+# bleiben ausgeschlossen (Datenmodell 9.1 Status X); auslaendische
+# Partnerships/LLP/LLC bleiben im manuellen Pruefschritt vor Formular 0
+# (Status M) - keine eigene Kategorie hier.
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_category" -DisplayName "Rechtsform - Grundtyp" -Type Choice `
+    -Choices @("Einzelunternehmen (gewerblich)", "Freiberufliche Tätigkeit", "Personengesellschaft", "Kapitalgesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_jurisdiction" -DisplayName "Rechtsform - nach deutschem oder ausländischem Recht" -Type Choice `
+    -Choices @("nach deutschem Recht", "nach ausländischem Recht")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_german" -DisplayName "Konkrete Rechtsform (deutsches Recht)" -Type Choice `
+    -Choices @("GmbH", "UG (haftungsbeschränkt)", "AG", "e.K.", "OHG", "KG", "GmbH & Co. KG", "GbR", "PartG", "sonstige deutsche Rechtsform")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_foreign_name" -DisplayName "Rechtsform nach ausländischem Recht (Wortlaut)" -Type Text
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "legal_form_foreign_country" -DisplayName "Staat der ausländischen Rechtsform" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "address_type" -DisplayName "Adressart" -Type Choice -Required `
     -Choices @("Inland", "Ausland")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "street" -DisplayName "Strasse, Hausnummer, Zusatz" -Type Text -Required
@@ -840,31 +857,43 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "address_supplement" -D
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "postal_code_city" -DisplayName "Postleitzahl, Ort" -Type Text -Required
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "country" -DisplayName "Staat" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "po_box" -DisplayName "Postfach" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "phone" -DisplayName "Telefon" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "website" -DisplayName "Internetadresse" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "business_activity" -DisplayName "Genaue Taetigkeit" -Type Note -Required
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_only" -DisplayName "Ausschliesslich vermoegensverwaltend taetig" -Type Boolean
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "deviating_management_place" -DisplayName "Abweichender Ort der Geschäftsleitung" -Type Boolean
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "management_address" -DisplayName "Ort der Geschäftsleitung - Adresse" -Type Note
+# --- Vermoegensverwaltung: Tatsachen statt Wuerdigung (Review Nils 28.10.2026) ---
+# ersetzt "asset_management_only" (Boolean; die rechtliche Wuerdigung
+# "ausschliesslich vermoegensverwaltend" ist Kanzleisache, siehe Datenmodell
+# Abschnitt 10 Ableitungstabelle).
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_present" -DisplayName "Verwaltet Vermögen (Beteiligungen, Immobilien, Kapitalvermögen usw.)" -Type Boolean
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_management_type" -DisplayName "Art der Vermögensverwaltung" -Type Note
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_revenue" -DisplayName "Anteil Vermögensverwaltung am Umsatz in Prozent" -Type Number `
+    -Min 0 -Max 100
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_profit" -DisplayName "Anteil Vermögensverwaltung am Gewinn in Prozent" -Type Number `
+    -Min 0 -Max 100
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "other_business_activities" -DisplayName "Weitere Tätigkeiten" -Type Note
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_id_type" -DisplayName "Art der Steuernummer-Angabe" -Type Choice -Required `
     -Choices @("bestehend", "neu beantragen")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_number" -DisplayName "Steuernummer" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt" -Type Text -Required
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_advisor_name" -DisplayName "Steuerliche Beratung - Name/Firma" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_advisor_address" -DisplayName "Steuerliche Beratung - Adresse" -Type Note
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "advisor_is_authorized_recipient" -DisplayName "Steuerliche Beratung ist empfangsbevollmächtigt" -Type Boolean
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "bank_iban" -DisplayName "Bank - IBAN" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "bank_bic" -DisplayName "Bank - BIC" -Type Text
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "bank_account_holder" -DisplayName "Bank - Kontoinhaber" -Type Text
-# --- Abschnitt 9 (Mandanten-Erhebungsmatrix) ergaenzt (Datenmodell 9.2 "Bank/Kontakt") ---
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "callback_email" -DisplayName "Rueckfrage-E-Mail (freiwillig)" -Type Text
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "sepa_desired" -DisplayName "SEPA-Lastschrift gewuenscht" -Type Boolean
-Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "par27_ao_agreement" -DisplayName "Zustimmung zur Zustaendigkeitsvereinbarung nach Paragraf 27 AO" -Type Boolean
-# par27_ao_agreement ist nur bei form_type = Koerperschaft nach auslaendischem
-# Recht fachlich unbedingt (Datenmodell 2.4, Kz 18). Da SharePoint keine
-# formularuebergreifend bedingten Pflichtfelder kennt (siehe README.md
-# Abschnitt C), bleibt die Spalte hier optional; die Pflicht wird ueber
-# Forms-Branching in Formular 1 durchgesetzt.
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "foreign_tax_id" -DisplayName "Ausländische Steuer-ID / TIN" -Type Text
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "vat_id_existing" -DisplayName "Bestehende USt-IdNr." -Type Text
+# tax_office, tax_office_country, phone, callback_email, sepa_desired,
+# par27_ao_agreement, deviating_management_place, management_address: ENTFERNT
+# (Review Nils 28.10.2026). Begruendung je Feld und manuelle Loeschschritte auf
+# Bestandssites siehe README.md Abschnitt H/G. Kurzfassung: tax_office/
+# tax_office_country sind Ergebnisfelder und leben nur noch in 0_Fallsteuerung
+# (dort waren sie ausserdem dupliziert); phone/callback_email sind
+# CRM-Kontaktdaten der Kanzlei, keine Fallangaben; sepa_desired vorerst ganz
+# entfernt; par27_ao_agreement als Kanzleifeld nach 0_Fallsteuerung verschoben
+# (Mandant soll keine Zustimmung zu einer Zustaendigkeitsvereinbarung
+# einschaetzen); deviating_management_place/management_address als
+# Tatsachenfelder zu den einzelnen Personen nach 3_Personen_und_Vertretung
+# verschoben (usual_workplace_*), der Ort der Geschaeftsleitung wird von der
+# Kanzlei daraus abgeleitet (Kanzleifeld, siehe Datenmodell Abschnitt 10).
 
 # ---------------------------------------------------------------------------
 # Liste 2: Unternehmens-/Gruendungsmodul (Inbound; auch Einzelunternehmen, s. E.9)
@@ -872,18 +901,11 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "par27_ao_agreement" -D
 New-ListIfMissing -Title "2_Unternehmens_Gruendungsmodul"
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "company_name" -DisplayName "Bezeichnung des Unternehmens" -Type Text -Required
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "legal_form" -DisplayName "Rechtsform" -Type Choice -Required `
-    -Choices @(
-        "Einzelunternehmen", "Freiberufliche Tätigkeit", "Eingetragener Kaufmann (e.K.)",
-        "GmbH", "UG (haftungsbeschränkt)", "AG", "SE", "KGaA", "eingetragene Genossenschaft (eG)",
-        "GbR/eGbR", "OHG", "KG", "GmbH & Co. KG", "PartG/PartG mbB",
-        "sonstige deutsche Rechtsform", "ausländische Rechtsform")
-# Rechtsform-Choices Punkt 8 erweitert: Personengesellschaften (GbR/eGbR, OHG, KG,
-# GmbH & Co. KG, PartG/PartG mbB), SE, KGaA sowie Einzelunternehmen-Varianten,
-# da Formular 2 laut Routing-Tabelle README.md Abschnitt E.9 nicht nur fuer
-# Kapitalgesellschaften, sondern auch fuer Einzelunternehmen und
-# Personengesellschaften durchlaufen wird (Datenmodell Abschnitt 9.1).
+# company_name und legal_form (bisherige Choice-Liste) ENTFERNT (Review Nils
+# 28.10.2026, "jede Stammangabe genau an einer Stelle"): Name/Firma und
+# Rechtsform sind Stammangaben und leben jetzt ausschliesslich in
+# 1_Allgemeiner_Stammblock (last_name_or_company, legal_form_*) - diese Liste
+# verweist ueber case_id statt eine eigene Kopie zu fuehren.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_type" -DisplayName "Gruendungsart" -Type Choice -Required `
     -Choices @("Neugründung", "Übernahme", "Umwandlung", "Bargründung", "Sachgründung")
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_date" -DisplayName "Gruendungsdatum" -Type DateOnly -Required
