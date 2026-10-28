@@ -1,0 +1,228 @@
+{
+  "list": "2_Unternehmens_Gruendungsmodul",
+  "fields": [
+    {
+      "internal_name": "company_name",
+      "display_name": "Bezeichnung des Unternehmens",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Stammangabe, einmal erfragen (ask_once, identisch mit last_name_or_company aus Liste 1 fuer party_type=Firma - Chat fragt den Namen nur einmal und uebernimmt den Wert)."
+    },
+    {
+      "internal_name": "legal_form",
+      "display_name": "Rechtsform",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "Einzelunternehmen",
+        "Freiberufliche Tätigkeit"
+      ],
+      "note": "Zweistufige Rechtsform-Erhebung, siehe flow_config.legal_form_zweistufig; Ergebnis landet hier UND in Liste 1 legal_form (ein Wert, zwei Spalten)."
+    },
+    {
+      "internal_name": "formation_date",
+      "display_name": "Gruendungsdatum",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "activity_start_date",
+      "display_name": "Beginn der Taetigkeit",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "notarial_deed_date",
+      "display_name": "Notarielle Errichtung / Musterprotokoll vom",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "share_capital_amount",
+      "display_name": "Grund-/Stammkapital - Betrag",
+      "sharepoint_type": "Number",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "share_capital_currency",
+      "display_name": "Grund-/Stammkapital - Waehrung",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "paid_in_capital",
+      "display_name": "Eingezahltes Kapital",
+      "sharepoint_type": "Number",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "register_status",
+      "display_name": "Handelsregister-Status",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "beabsichtigt",
+        "beantragt",
+        "erfolgt"
+      ],
+      "note": "Handelsregistereintragung ist eine nachpruefbare Tatsache."
+    },
+    {
+      "internal_name": "registry_court",
+      "display_name": "Ort des Amtsgerichts",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "register_number",
+      "display_name": "Register / Registernummer",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "predecessor",
+      "display_name": "Vorheriger Inhaber / Vorunternehmen",
+      "sharepoint_type": "Note",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Frage: 'Wurde die Taetigkeit vorher ganz oder teilweise von jemand anderem ausgeuebt?' (Vorgabe Nils Obenhaus, woertlich)."
+    },
+    {
+      "internal_name": "deviating_fiscal_year",
+      "display_name": "Abweichendes Wirtschaftsjahr",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Im Chat invertiert gefragt: 'Entspricht Ihr Wirtschaftsjahr dem Kalenderjahr?' - Nein setzt dieses Feld auf wahr und schaltet fiscal_year_start frei (Vorgabe Nils Obenhaus)."
+    },
+    {
+      "internal_name": "fiscal_year_start",
+      "display_name": "Wirtschaftsjahr - Beginn",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Nur gefragt, wenn deviating_fiscal_year = wahr."
+    },
+    {
+      "internal_name": "expected_profit_opening_year",
+      "display_name": "Voraussichtlicher Gewinn Eroeffnungsjahr",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "expected_profit_following_year",
+      "display_name": "Voraussichtlicher Gewinn Folgejahr",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "part_of_group",
+      "display_name": "Konzernzugehoerigkeit",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Konzernzugehoerigkeit ist eine dokumentierte Unternehmensstruktur, keine steuerliche Wuerdigung."
+    },
+    {
+      "internal_name": "controlling_company_name",
+      "display_name": "Herrschendes Unternehmen - Name",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "profit_distribution_key",
+      "display_name": "Aufteilungsschluessel (Gewinn-/Verlustverteilung)",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Dokumentierter Aufteilungsschluessel, relevant bei Personengesellschaften."
+    },
+    {
+      "internal_name": "notary_name",
+      "display_name": "Gruendungsnotar - Name",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "notary_address",
+      "display_name": "Gruendungsnotar - Adresse",
+      "sharepoint_type": "Note",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "is_general_partner_of_kg",
+      "display_name": "Komplementaerin einer KG",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Dokumentierte Gesellschafterstellung, keine Wuerdigung."
+    },
+    {
+      "internal_name": "general_partner_kg_name",
+      "display_name": "Bezeichnung der KG (falls Komplementaerin)",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "register_date",
+      "display_name": "Handelsregister - Datum (beantragt am / Tag der Eintragung)",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    }
+  ]
+}

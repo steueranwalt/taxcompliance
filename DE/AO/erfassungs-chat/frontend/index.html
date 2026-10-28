@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Steuerliche Erfassung – Mandanten-Chat | Kanzlei Obenhaus</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<a class="skip-link" href="#chat-verlauf">Zum Chat-Inhalt springen</a>
+
+<header class="kopf">
+  <h1>Steuerliche Erfassung – geführter Chat</h1>
+  <p class="unterzeile">Kanzlei Obenhaus · Nur mit persönlichem Link gültig</p>
+</header>
+
+<main id="hauptinhalt">
+  <section id="zugang" aria-labelledby="zugang-titel">
+    <h2 id="zugang-titel">Zugang</h2>
+    <p>
+      Dieser Chat ist nur über den persönlichen Link gültig, den Sie von der
+      Kanzlei erhalten haben. Fall-ID und Zugangscode sind bereits
+      eingetragen, wenn Sie über den Link hierher gekommen sind.
+    </p>
+    <form id="zugang-formular" novalidate>
+      <label for="case-id">Fall-ID</label>
+      <input type="text" id="case-id" name="case_id" autocomplete="off" required
+             aria-describedby="case-id-hinweis" />
+      <p id="case-id-hinweis" class="hinweis">Beispiel: 2026-0042</p>
+
+      <label for="access-code">Zugangscode</label>
+      <input type="text" id="access-code" name="access_code" autocomplete="off" required />
+
+      <button type="submit">Chat starten</button>
+    </form>
+    <p id="zugang-fehler" role="alert" class="fehler" hidden></p>
+  </section>
+
+  <section id="chat" aria-labelledby="chat-titel" hidden>
+    <h2 id="chat-titel">Erfassungs-Chat</h2>
+
+    <div id="chat-verlauf" role="log" aria-live="polite" aria-label="Chat-Verlauf"></div>
+
+    <form id="antwort-formular">
+      <label for="antwort-feld">Ihre Antwort</label>
+      <textarea id="antwort-feld" rows="3" required></textarea>
+      <div class="formular-aktionen">
+        <button type="button" id="erklaerung-button" aria-describedby="chat-verlauf">
+          Was ist damit gemeint?
+        </button>
+        <button type="submit">Antwort senden</button>
+      </div>
+    </form>
+
+    <details id="upload-bereich">
+      <summary>Dokument hochladen (optional)</summary>
+      <p class="hinweis">
+        Erlaubt: PDF, JPG, PNG, maximal 15&nbsp;MB. Eine automatische Prüfung
+        auf Schadsoftware findet aktuell nicht statt – laden Sie bitte nur
+        Dateien hoch, denen Sie vertrauen.
+      </p>
+      <label for="upload-datei">Datei auswählen</label>
+      <input type="file" id="upload-datei" accept=".pdf,.jpg,.jpeg,.png" />
+      <label for="upload-typ">Art des Dokuments</label>
+      <select id="upload-typ">
+        <option value="Gesellschaftsvertrag">Gesellschaftsvertrag / Gründungsurkunde</option>
+        <option value="Handelsregisterauszug">Handelsregisterauszug</option>
+        <option value="Vollmacht Steuerberatung">Vollmacht Steuerberatung</option>
+        <option value="Sonstiges">Sonstiges</option>
+      </select>
+      <button type="button" id="upload-button">Hochladen</button>
+    </details>
+  </section>
+
+  <section id="zusammenfassung" aria-labelledby="zusammenfassung-titel" hidden>
+    <h2 id="zusammenfassung-titel">Zusammenfassung Ihrer Angaben</h2>
+    <p>
+      Bitte prüfen Sie Ihre Angaben sorgfältig. Erst nach Ihrer Bestätigung
+      werden die Daten an die Kanzlei übermittelt. Sie können noch Angaben
+      korrigieren, bevor Sie bestätigen.
+    </p>
+    <div id="zusammenfassung-inhalt"></div>
+    <button type="button" id="bestaetigen-button">Angaben bestätigen und übermitteln</button>
+  </section>
+
+  <section id="abschluss" aria-labelledby="abschluss-titel" hidden>
+    <h2 id="abschluss-titel">Vielen Dank</h2>
+    <p id="abschluss-text"></p>
+  </section>
+
+  <section id="vertraulichkeit" aria-labelledby="vertraulichkeit-titel">
+    <h2 id="vertraulichkeit-titel">Hinweis zur Vertraulichkeit und Datenverarbeitung</h2>
+    <p class="platzhalter-rechtstext">
+      [Platzhaltertext – der endgültige Rechtstext zu Vertraulichkeit,
+      Datenverarbeitung und Berufsgeheimnis (§ 203 StGB) wird von der Kanzlei
+      ergänzt. Dieser Chat verarbeitet Ihre Angaben ausschließlich zum Zweck
+      der steuerlichen Erfassung und übermittelt sie an die Kanzlei Obenhaus.]
+    </p>
+  </section>
+</main>
+
+<footer>
+  <p>Bei Problemen mit diesem Chat wenden Sie sich bitte direkt an die Kanzlei.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

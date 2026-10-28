@@ -1,0 +1,102 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "5_Betriebsstaetten",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "5_Betriebsstaetten",
+      "additionalProperties": false,
+      "properties": {
+        "site_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bezeichnung der Betriebsstätte/Einrichtung"
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Land"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Adresse"
+        },
+        "ownership_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Eigentumsverhältnis Zulaessige Werte: Eigentum, Miete, Nutzung.",
+          "enum": [
+            "Eigentum",
+            "Miete",
+            "Nutzung",
+            null
+          ]
+        },
+        "usage_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Nutzungsart Zulaessige Werte: Lagerung, Verarbeitung, Einkauf, Werbung, Sonstige.",
+          "enum": [
+            "Lagerung",
+            "Verarbeitung",
+            "Einkauf",
+            "Werbung",
+            "Sonstige",
+            null
+          ]
+        },
+        "activity_period_from": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Taetigkeitsdauer - von Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "activity_period_to": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Taetigkeitsdauer - bis Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "activity_period_to_unknown": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Taetigkeitsdauer bis unbekannt"
+        },
+        "contact": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Telefon / Internetadresse"
+        }
+      },
+      "required": [
+        "site_name",
+        "country",
+        "address",
+        "ownership_status",
+        "usage_type",
+        "activity_period_from",
+        "activity_period_to",
+        "activity_period_to_unknown",
+        "contact"
+      ]
+    }
+  }
+}

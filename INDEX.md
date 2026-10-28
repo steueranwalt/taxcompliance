@@ -17,6 +17,8 @@
 - [Einheitliches Datenmodell: steuerliche Erfassung DE und Auslandsbezug](DE/AO/Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md) — Pflichtlogik, Objekte, Forms-/Übergabe-Architektur
 - [Formulardaten: Rohfassung](DE/AO/formulardaten-roherfassung.md) — Feld-/Kz-Katalog (ELSTER + BZSt2)
 - [W-IdNr.: erneute Mitteilung](DE/AO/formulardaten-widnr-erneute-mitteilung.md) — separates FMS-Formular
+- [`DE/AO/sharepoint-forms/`](DE/AO/sharepoint-forms/README.md) — PnP-Skript + Forms-Spezifikation für die 11 SharePoint-Listen
+- [`DE/AO/erfassungs-chat/`](DE/AO/erfassungs-chat/README.md) — Prototyp: geführter Mandanten-Chat (Azure OpenAI, Managed Identity), Schema automatisch aus dem PnP-Skript abgeleitet; nur Testdaten, nicht deployt
 - Übersicht: [`DE/AO/README.md`](DE/AO/README.md)
 
 ### Einkommensteuer (EStG)

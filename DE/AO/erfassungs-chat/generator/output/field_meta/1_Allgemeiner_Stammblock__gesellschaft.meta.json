@@ -1,0 +1,221 @@
+{
+  "list": "1_Allgemeiner_Stammblock",
+  "fields": [
+    {
+      "internal_name": "party_type",
+      "display_name": "Art des Meldepflichtigen",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "Person",
+        "Firma"
+      ],
+      "note": "Zweig-Schluessel: natuerliche Person vs. Gesellschaft fuer den Meldepflichtigen selbst."
+    },
+    {
+      "internal_name": "last_name_or_company",
+      "display_name": "Name / Firma",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Stammangabe (Firmenname/Name) - wird genau einmal erfragt, siehe flow_config ask_once."
+    },
+    {
+      "internal_name": "id_number",
+      "display_name": "Identifikationsnummer / Wirtschafts-IdNr.",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "legal_form",
+      "display_name": "Rechtsform",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Stammangabe, einmal erfragt. Wird im Chat zweistufig erhoben (Grundtyp, dann deutsches/auslaendisches Recht, bei auslaendischem Recht Wortlaut+Staat) und hier als zusammengesetzter Text gespeichert, siehe flow_config.legal_form_zweistufig."
+    },
+    {
+      "internal_name": "address_type",
+      "display_name": "Adressart",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "Inland",
+        "Ausland"
+      ],
+      "note": null
+    },
+    {
+      "internal_name": "street",
+      "display_name": "Strasse, Hausnummer, Zusatz",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "address_supplement",
+      "display_name": "Adressergänzung",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "postal_code_city",
+      "display_name": "Postleitzahl, Ort",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "country",
+      "display_name": "Staat",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "po_box",
+      "display_name": "Postfach",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "website",
+      "display_name": "Internetadresse",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Oeffentliche Geschaeftsangabe, keine Kontaktdaten zur Mandantenerreichung - deshalb Tatsache, nicht CRM-Feld."
+    },
+    {
+      "internal_name": "business_activity",
+      "display_name": "Genaue Taetigkeit",
+      "sharepoint_type": "Note",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Offene Frage 'Was macht das Unternehmen?'. Bei Hinweis auf Vermoegensverwaltung folgt eine Anschlussfrage nach Anteil an Umsatz und Gewinn, siehe flow_config.vermoegensverwaltung_folgefrage; Antwort wird hier zusammengefasst, NIE als 'ausschliesslich vermoegensverwaltend?' direkt gefragt."
+    },
+    {
+      "internal_name": "management_address",
+      "display_name": "Ort der Geschäftsleitung - Adresse",
+      "sharepoint_type": "Note",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Wird NICHT direkt gefragt, sondern aus den Geschaeftsfuehrer-Arbeitsort-Antworten (Liste 3) zusammengesetzt, siehe flow_config.geschaeftsleitung_arbeitsort."
+    },
+    {
+      "internal_name": "tax_id_type",
+      "display_name": "Art der Steuernummer-Angabe",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "bestehend",
+        "neu beantragen"
+      ],
+      "note": "Reine Tatsache: hat der Mandant bereits eine deutsche Steuernummer oder nicht."
+    },
+    {
+      "internal_name": "tax_number",
+      "display_name": "Steuernummer",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "tax_advisor_name",
+      "display_name": "Steuerliche Beratung - Name/Firma",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Bestehende Beratungsbeziehung ist eine Tatsache, kein Kontaktdatenfeld der Kanzlei selbst."
+    },
+    {
+      "internal_name": "tax_advisor_address",
+      "display_name": "Steuerliche Beratung - Adresse",
+      "sharepoint_type": "Note",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "advisor_is_authorized_recipient",
+      "display_name": "Steuerliche Beratung ist empfangsbevollmächtigt",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Dokumentierter Vollmachtsstatus, keine Wuerdigung."
+    },
+    {
+      "internal_name": "bank_iban",
+      "display_name": "Bank - IBAN",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "bank_bic",
+      "display_name": "Bank - BIC",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "bank_account_holder",
+      "display_name": "Bank - Kontoinhaber",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "sepa_desired",
+      "display_name": "SEPA-Lastschrift gewuenscht",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Mandantenwunsch, keine Kontaktangabe."
+    },
+    {
+      "internal_name": "par27_ao_agreement",
+      "display_name": "Zustimmung zur Zustaendigkeitsvereinbarung nach Paragraf 27 AO",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Zustimmungserklaerung des Mandanten selbst (Willenserklaerung), keine steuerliche Wuerdigung durch die Kanzlei."
+    }
+  ]
+}
