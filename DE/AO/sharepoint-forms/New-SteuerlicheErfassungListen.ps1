@@ -122,7 +122,95 @@ function Test-InternalFieldNamingRules {
     Write-Host "Namensregel-Pruefung bestanden: alle internen Feldnamen <= 32 Zeichen und nur [A-Za-z0-9_]."
 }
 
+function Get-NormalizedChoiceKey {
+    <#
+      Review Nils 28.10.2026 (2_Unternehmens_Gruendungsmodul, Rechtsform-Choices):
+      auf der frisch angelegten Site fanden sich Dubletten/Schreibvarianten bei
+      Auswahlwerten (z. B. "ausl. Rechtsform" einmal mit Umlaut, einmal als "ae";
+      "UG" und "UG (haftungsbeschränkt)" nebeneinander). Normalisiert einen
+      Auswahlwert fuer den Vergleich: Kleinschreibung, ae/oe/ue/ss statt
+      ä/ö/ü/ß, mehrfache Leerzeichen zusammengefasst. Dient NUR dem Erkennen
+      von Schreibvarianten derselben Bedeutung, nicht der Anzeige - die
+      tatsaechlichen Choice-Werte in SharePoint bleiben immer mit echten
+      Umlauten (Empfehlung README.md Abschnitt C).
+    #>
+    param([Parameter(Mandatory = $true)][string]$Value)
+    $normalized = $Value.Trim().ToLowerInvariant()
+    $normalized = $normalized.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss")
+    $normalized = $normalized -replace '\s+', ' '
+    return $normalized
+}
+
+function Test-ChoiceValueDuplicates {
+    <#
+      Statischer Selbsttest (Review Nils 28.10.2026): prueft JEDE einzelne
+      -Choices-Liste eines Add-Field-Aufrufs in diesem Skript auf
+      Schreibvarianten-Dubletten (z. B. gleicher Wert einmal mit Umlaut, einmal
+      ohne). Die auf der Zielsite tatsaechlich gefundenen Dubletten stammen
+      nach Befund aus mehreren, nacheinander gegen dieselbe Site gelaufenen
+      HISTORISCHEN Skriptversionen (die nicht-destruktive Angleichung ergaenzt
+      Auswahlwerte nur, entfernt nie) - nicht aus der aktuellen Fassung dieses
+      Skripts selbst. Dieser Selbsttest kann solche historisch akkumulierten
+      Dubletten auf einer bereits produktiven Site deshalb NICHT erkennen (er
+      liest nie von SharePoint); das uebernimmt Test-SteuerlicheErfassungListen.ps1
+      (liest die tatsaechlichen Ist-Choices). Dieser Selbsttest ist ein
+      zusaetzliches Sicherheitsnetz gegen kuenftige Kopier-/Tippfehler
+      INNERHALB eines einzelnen Add-Field-Aufrufs, bevor ueberhaupt eine
+      Verbindung aufgebaut wird.
+    #>
+    param([Parameter(Mandatory = $true)][string]$ScriptPath)
+
+    $tokens = $null
+    $parseErrors = $null
+    $ast = [System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$parseErrors)
+    if ($parseErrors.Count -gt 0) {
+        throw "Konnte '$ScriptPath' nicht auf Auswahlwert-Dubletten pruefen (Parse-Fehler im Skript selbst): $($parseErrors -join '; ')"
+    }
+
+    $commandAsts = $ast.FindAll(
+        { param($node) $node -is [System.Management.Automation.Language.CommandAst] -and $node.GetCommandName() -eq 'Add-Field' },
+        $true)
+
+    $violations = [System.Collections.Generic.List[string]]::new()
+    foreach ($cmd in $commandAsts) {
+        $elements = $cmd.CommandElements
+        $listValue = $null
+        $internalNameValue = $null
+        $choicesValue = $null
+        for ($i = 1; $i -lt $elements.Count; $i++) {
+            $el = $elements[$i]
+            if ($el -is [System.Management.Automation.Language.CommandParameterAst] -and ($i + 1) -lt $elements.Count) {
+                if ($el.ParameterName -eq 'List') { $listValue = $elements[$i + 1].SafeGetValue() }
+                elseif ($el.ParameterName -eq 'InternalName') { $internalNameValue = $elements[$i + 1].SafeGetValue() }
+                elseif ($el.ParameterName -eq 'Choices') { $choicesValue = @($elements[$i + 1].SafeGetValue()) }
+            }
+        }
+        if ($choicesValue) {
+            $seen = @{}
+            foreach ($choice in $choicesValue) {
+                $key = Get-NormalizedChoiceKey -Value $choice
+                # -cne (fallunterscheidend!) statt -ne: PowerShell vergleicht
+                # Strings mit -ne standardmaessig GROSS-/KLEINSCHREIBUNGS-
+                # UNABHAENGIG, wodurch z. B. "Unbekannt" vs. "unbekannt" sonst
+                # faelschlich als identisch durchgehen wuerde (im End-to-End-
+                # Selbsttest 28.10.2026 mit absichtlich eingefuegter Dublette
+                # reproduziert und mit -cne behoben).
+                if ($seen.ContainsKey($key) -and $seen[$key] -cne $choice) {
+                    $violations.Add("$listValue / $internalNameValue : '$($seen[$key])' vs. '$choice' (normalisiert identisch: '$key')")
+                }
+                $seen[$key] = $choice
+            }
+        }
+    }
+
+    if ($violations.Count -gt 0) {
+        throw "Schreibvarianten-Dubletten in Auswahlwerten gefunden - Abbruch VOR jeder Verbindung/Aenderung:`n  $($violations -join "`n  ")"
+    }
+    Write-Host "Auswahlwert-Dubletten-Pruefung bestanden: keine Schreibvarianten innerhalb einer Choices-Liste."
+}
+
 Test-InternalFieldNamingRules -ScriptPath $PSCommandPath
+Test-ChoiceValueDuplicates -ScriptPath $PSCommandPath
 
 Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
 
