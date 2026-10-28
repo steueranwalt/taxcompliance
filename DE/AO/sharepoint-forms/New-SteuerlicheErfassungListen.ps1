@@ -1209,7 +1209,13 @@ New-ListIfMissing -Title "8_Unterlagen"
 Add-Field -List "8_Unterlagen" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required `
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "8_Unterlagen" -InternalName "document_type" -DisplayName "Dokumenttyp" -Type Choice -Required `
-    -Choices @("Gesellschaftsvertrag", "Vollmacht Steuerberatung", "Empfangsvollmacht", "SEPA-Mandat", "Handelsregisterauszug", "Sachgründungsbericht", "Ansässigkeitsbescheinigung", "Sonstiges")
+    -Choices @("Gründungsurkunde", "Satzung", "Gesellschaftsvertrag", "Vollmacht Steuerberatung", "Empfangsvollmacht", "SEPA-Mandat", "Handelsregisterauszug", "Sachgründungsbericht", "Ansässigkeitsbescheinigung", "Sonstiges")
+# Gründungsurkunde/Satzung (Review Nils 28.10.2026, 2_Unternehmens_Gruendungsmodul):
+# ergaenzen (additiv, Choices werden nie entfernt) den bisherigen Katalog, damit
+# die in Liste 2 referenzierte Gruendungsurkunde/Satzung/der Gesellschaftsvertrag
+# ueber Liste 8 mit dem passenden Dokumenttyp hochgeladen werden kann.
+# "Gesellschaftsvertrag" blieb zusaetzlich bestehen (z. B. GbR/OHG ohne notarielle
+# Urkunde).
 Add-Field -List "8_Unterlagen" -InternalName "related_object_text" -DisplayName "Bezug zu Objekt (Freitext aus Formular)" -Type Text
 # related_object_text (Punkt 6): bildet die Forms-Frage "Bezug zu Objekt" (Text,
 # README.md E.8 Frage 3) ab. Ohne diese Spalte konnte ein einfacher
