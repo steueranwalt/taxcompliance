@@ -59,12 +59,12 @@ Titel: „0 – Fallsteuerung – Steuerliche Erfassung DE / Auslandsbezug"
 
 | # | Frage | Typ (Klick gemäss B) | Optionen (bei Auswahl) | Pflicht/Bedingt | Branching (gemäss C) |
 |---|---|---|---|---|---|
-| 1 | Richtung | Auswahl | Inbound; Outbound | Pflicht | Löst Sichtbarkeit von Frage 7 aus |
+| 1 | Richtung | Auswahl | Ausländische Gesellschaft mit Bezug zu Deutschland (Inbound); Deutsche Gesellschaft/Person mit Auslandsbezug (Outbound) | Pflicht | Löst Sichtbarkeit von Frage 7 aus (Wortlaut geändert 28.10.2026, Review Nils — vorher „Inbound“/„Outbound“ allein, siehe README.md Abschnitt H2) |
 | 2 | Rechtsform / Formulartyp | Auswahl | Einzelunternehmen; Kapitalgesellschaft oder Genossenschaft; Personengesellschaft oder -gemeinschaft; Körperschaft nach ausländischem Recht; BZSt2-Mitteilung | Pflicht | — |
-| 3 | Bereits steuerlich erfasst | Auswahl | Ja; Nein | Pflicht | Bei „Ja" → Frage 4 sichtbar; bei „Nein" → Frage 4 überspringen (Verzweigung auf Frage 5) |
+| 3 | Bereits steuerlich erfasst | Auswahl | Ja; Nein; Unbekannt | Nicht mehr Pflicht (seit 28.10.2026, `registration_status` ersetzt `already_registered` — ein Pflicht-Ja/Nein-Feld liess sich in SharePoint nur mit „Ja“ sauber speichern, siehe README.md Abschnitt C2, zweiter Fallen-Block Punkt 2) | Bei „Ja" → Frage 4 sichtbar; bei „Nein"/„Unbekannt" → Frage 4 überspringen (Verzweigung auf Frage 5) |
 | 4 | Bestehende Steuernummer | Text (kurz) | — | Bedingt (nur bei Frage 3 = Ja) | Ziel der Verzweigung aus Frage 3 |
-| 5 | Land des Finanzamts | Text (kurz) | — | Pflicht | — |
-| 6 | Zuständiges Finanzamt | Text (kurz) | — | Pflicht | — |
+| 5 | Land des Finanzamts | Auswahl | Deutschland; Österreich; Schweiz; Liechtenstein; Frankreich; Italien; Spanien; Niederlande; Belgien; Luxemburg; Polen; Vereinigtes Königreich; Vereinigte Staaten; Sonstiger EU/EWR-Staat; Sonstiger Staat; Unbekannt | Nicht mehr Pflicht (seit 28.10.2026 Auswahl statt Text; Ergebnisfeld, wird von der Kanzlei nach Prüfung ausgefüllt) | — |
+| 6 | Zuständiges Finanzamt | Text (kurz) | — | Nicht mehr Pflicht (Ergebnisfeld, wird von der Kanzlei nach Prüfung ausgefüllt) | — |
 | 7 | Zielmeldung (BZSt2-Sachverhalt) | Auswahl | Betriebe/Betriebsstätten; PersG-Beteiligung; KapG-Beteiligung; Drittstaat-Beherrschung; Negativmeldung | Bedingt (nur bei Frage 1 = Outbound) | Bei Frage 1 = Inbound → diese Frage in der Verzweigung von Frage 1 überspringen |
 | 8 | Persönliche Bearbeitungsnotiz | Text (lang) | — | Nein | — |
 
@@ -82,11 +82,11 @@ Empfohlene Bearbeitungsreihenfolge (steigende Komplexität, Formular 0 zuerst al
 
 1. Formular 0 (8 Fragen, ca. 10 Min.)
 2. Formular 8 (5 Fragen, ca. 5 Min. — Datei-Upload-Hinweis beachten)
-3. Formular 3, 5 (13–15 Fragen, je ca. 15 Min.)
-4. Formular 1 (34 Fragen, ca. 25 Min.)
+3. Formular 3, 5 (13–19 Fragen, je ca. 15 Min. — Formular 3 seit 28.10.2026 inkl. „Übliche Tätigkeitsorte“, siehe README.md Abschnitt H2)
+4. Formular 1 (37 Fragen, ca. 25 Min. — seit 28.10.2026 inkl. Rechtsform-Zwei-Fragen-Logik und Vermögensverwaltungs-Tatsachenfragen)
 5. Formular 4, 7 (16–18 Fragen, je ca. 20 Min.)
 6. Formular 6 (33 Fragen, ca. 30 Min. — seit Update 2 inkl. USt-Befreiungsblock, viele Branching-Fälle)
-7. Formular 2 (42 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle)
+7. Formular 2 (47 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle; seit 28.10.2026 zusätzlich Vorgänger-/Wirtschaftsjahr-Tatsachenfragen)
 
 Gesamtaufwand grob 3–3,5 Stunden für alle 9 Formulare inkl. Testklicks in der Vorschau (seit Update 2 durch Formular 2/6 erhöht gegenüber ursprünglich 2–2,5 Stunden).
 
