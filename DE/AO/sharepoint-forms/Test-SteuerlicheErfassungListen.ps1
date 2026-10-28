@@ -124,8 +124,23 @@ function Get-FieldDefinitionsFromScript {
             EnforceUniqueValues = [bool]$params['EnforceUniqueValues']
             Min                 = $params['Min']
             Max                 = $params['Max']
+            HideFromForms       = [bool]$params['HideFromForms']
         }
     }
+}
+
+function Get-NormalizedChoiceKey {
+    <#
+      Dieselbe Normalisierung wie in New-SteuerlicheErfassungListen.ps1
+      (Get-NormalizedChoiceKey dort, Review Nils 28.10.2026): erkennt
+      Schreibvarianten-Dubletten in Auswahlwerten (ä/ö/ü/ß vs. ae/oe/ue/ss,
+      Gross-/Kleinschreibung, mehrfache Leerzeichen).
+    #>
+    param([Parameter(Mandatory = $true)][string]$Value)
+    $normalized = $Value.Trim().ToLowerInvariant()
+    $normalized = $normalized.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace("ß", "ss")
+    $normalized = $normalized -replace '\s+', ' '
+    return $normalized
 }
 
 function Test-InternalFieldNamingRules {
@@ -236,6 +251,45 @@ foreach ($listenName in $listenNamen) {
             $fehlendeChoices = $def.Choices | Where-Object { $istChoices -notcontains $_ }
             Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Auswahlwerte vollstaendig" `
                 -Soll ($def.Choices -join ", ") -Ist ($istChoices -join ", ") -Ok (-not $fehlendeChoices)
+        }
+
+        if ($def.Type -eq "Choice" -and $istFeld.Choices) {
+            # Review Nils 28.10.2026 (2_Unternehmens_Gruendungsmodul): auf der
+            # LIVE-Site koennen sich ueber mehrere, nacheinander gelaufene
+            # Skriptversionen Schreibvarianten-Dubletten angesammelt haben
+            # (z. B. "UG" und "UG (haftungsbeschränkt)", "ausl. Rechtsform"
+            # einmal mit Umlaut/einmal als "ae") - die nicht-destruktive
+            # Angleichung des Hauptskripts ergaenzt Auswahlwerte nur, entfernt
+            # nie. Dies ist die dynamische Ergaenzung zum statischen Selbsttest
+            # Test-ChoiceValueDuplicates im Hauptskript (der nur EINEN
+            # Add-Field-Aufruf isoliert prueft, nie akkumulierte Live-Werte
+            # ueber mehrere Laeufe sehen kann).
+            $istChoicesLive = @($istFeld.Choices)
+            $gesehen = @{}
+            $dubletten = [System.Collections.Generic.List[string]]::new()
+            foreach ($choiceWert in $istChoicesLive) {
+                $key = Get-NormalizedChoiceKey -Value $choiceWert
+                if ($gesehen.ContainsKey($key) -and $gesehen[$key] -cne $choiceWert) {
+                    $dubletten.Add("'$($gesehen[$key])' vs. '$choiceWert'")
+                }
+                else {
+                    $gesehen[$key] = $choiceWert
+                }
+            }
+            $dublettenText = if ($dubletten.Count -gt 0) { $dubletten -join "; " } else { "keine Dubletten" }
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Auswahlwerte ohne Schreibvariante-Dubletten" `
+                -Soll "keine Dubletten" -Ist $dublettenText -Ok ($dubletten.Count -eq 0)
+        }
+
+        if ($def.HideFromForms) {
+            # Review Nils 28.10.2026 (access_code): Feld muss im nativen
+            # SharePoint-Neu-/Bearbeiten-Formular ausgeblendet sein (siehe
+            # Set-FieldFormVisibility im Hauptskript), damit niemand von Hand
+            # einen Wert eintraegt, der eigentlich nur vom Flow gesetzt wird.
+            $formVisibilityOk = -not $istFeld.ShowInNewForm -and -not $istFeld.ShowInEditForm
+            Add-Ergebnis -List $listenName -InternalName $def.InternalName -Check "Im Neu-/Bearbeiten-Formular ausgeblendet" `
+                -Soll "ShowInNewForm=False, ShowInEditForm=False" `
+                -Ist "ShowInNewForm=$($istFeld.ShowInNewForm), ShowInEditForm=$($istFeld.ShowInEditForm)" -Ok $formVisibilityOk
         }
 
         # Restrict/Cascade verlangen einen indizierten Lookup (siehe Hauptskript
