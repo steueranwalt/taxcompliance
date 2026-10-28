@@ -1064,7 +1064,24 @@ Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "nominal_share" -Display
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "share_percentage" -DisplayName "Beteiligung in Prozent" -Type Number -Required `
     -Min 0 -Max 100
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "fraction_numerator_denominator" -DisplayName "Zaehler / Nenner" -Type Text
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "trust_relationship" -DisplayName "Treuhandverhaeltnis" -Type Boolean -Required
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "trust_relationship_status" -DisplayName "Treuhandverhältnis" -Type Choice -Required `
+    -Choices @("Ja", "Nein")
+# trust_relationship_status (Audit 28.10.2026, gleiches Muster wie
+# registration_status/already_registered) ERSETZT "trust_relationship"
+# (Boolean, war -Required): ein als Pflicht markiertes Ja/Nein-Feld laesst sich
+# in SharePoint im nativen Formular nur mit "Ja" sauber ausfuellen (Checkbox-
+# Verhalten bei Required-Yes/No). Anders als registration_status bleibt dieses
+# Feld unbedingt Pflicht (ELSTER Kz 90, Datenmodell Abschnitt 2.2: "Treuhand-
+# verhaeltnis: ja/nein" ist bei jedem Beteiligten-Datensatz unbedingt zu
+# beantworten, "Unbekannt" ist hier fachlich nicht vorgesehen) - deshalb Choice
+# mit genau "Ja"/"Nein" statt eines dritten Wertes. Required funktioniert bei
+# Choice-Feldern korrekt (beide Optionen sind gleichwertige Auswahlwerte, kein
+# Checkbox-Default). "trust_relationship" wird von diesem Skript nicht mehr
+# angelegt oder angeglichen (Typaenderung Boolean -> Choice ist laut Punkt C
+# nicht automatisch moeglich) - auf Bestandssites manuell loeschen, siehe
+# README.md Abschnitt H (vor dem Loeschen pruefen, ob Liste 4 bereits befuellt
+# ist - anders als bei already_registered ist hier kein 0-Eintraege-Nachweis
+# bekannt).
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_opening_year" -DisplayName "Voraussichtlicher Gewinnanteil Eroeffnungsjahr" -Type Number
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_following_year" -DisplayName "Voraussichtlicher Gewinnanteil Folgejahr" -Type Number
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht" -Type Boolean
