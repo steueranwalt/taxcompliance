@@ -94,6 +94,24 @@ Es liest die Soll-Felder direkt aus `New-SteuerlicheErfassungListen.ps1` (per Pa
 1. **Lookup mit `RelationshipDeleteBehavior` braucht einen Index bereits bei der Erstanlage, nicht erst bei einer späteren Angleichung:** `Add-PnPFieldFromXml` brach auf der frischen Site beim Anlegen eines neuen Lookup-Felds mit `Restrict` ab: „Dieses Nachschlagefeld kann kein Verhalten für Beziehungen erzwingen, weil es nicht indiziert ist.“ Auf `obenhaus` fiel das nicht auf, weil die Lookups dort aus einem früheren Lauf bereits vorhanden und indiziert waren — das Skript lief dort nur noch durch die Angleichung (`Set-LookupDeleteBehavior`, die bereits zuerst indiziert). Fix: `Indexed='TRUE'` wird jetzt im Erstellungs-XML gesetzt, sobald `DeleteBehavior != "None"` — idempotent für frische **und** bestehende Sites.
 2. **Required-Boolean-Felder lassen sich im nativen SharePoint-Formular effektiv nur mit „Ja“ speichern:** `already_registered` (Pflicht, Boolean) liess sich beim Testdurchlauf auf der frischen Site nicht sauber mit „Nein“ ausfüllen — SharePoints Checkbox-Darstellung für ein Pflicht-Ja/Nein-Feld erzwingt praktisch den angehakten Zustand. Dasselbe Muster wurde bei `trust_relationship` gefunden. Fix: beide Felder durch ein **Choice**-Feld mit „Ja“/„Nein“ (ggf. zusätzlich „Unbekannt“) ersetzt — `registration_status`/`trust_relationship_status`, siehe Abschnitt H2. Eine Typänderung (`Boolean` → `Choice`) ist laut Punkt 3 oben nie automatisch möglich; die alten Spalten werden von diesem Skript nicht mehr angelegt/angeglichen und müssen auf Bestandssites manuell gelöscht werden (siehe Abschnitt H2 für den Entscheidungsstand je Feld).
 3. **Schreibvarianten-Dubletten in Auswahlwerten:** auf der frischen Site fanden sich Dubletten wie „UG“/„UG (haftungsbeschränkt)“ nebeneinander sowie eine Rechtsform einmal mit Umlaut, einmal als „ae“-Schreibweise — verursacht durch mehrere, nacheinander gegen dieselbe Site gelaufene historische Skriptversionen (die nicht-destruktive Angleichung ergänzt Auswahlwerte nur, entfernt nie). Fix: `New-SteuerlicheErfassungListen.ps1` prüft vor jeder Verbindung statisch jede `-Choices`-Liste auf Schreibvarianten (`Get-NormalizedChoiceKey`/`Test-ChoiceValueDuplicates`, Normalisierung über ä/ö/ü/ß ↔ ae/oe/ue/ss und Gross-/Kleinschreibung) und bricht bei einem Fund ab; `Test-SteuerlicheErfassungListen.ps1` prüft zusätzlich die tatsächlichen Auswahlwerte auf der Zielsite (Prüfung „Auswahlwerte ohne Schreibvariante-Dubletten“), da nur dort die über mehrere Läufe akkumulierten Altlasten sichtbar sind.
+4. **Required-Ergebnisfelder, gefunden vom parallelen Erfassungs-Chat-Generator (28.10.2026, PR #22, `DE/AO/erfassungs-chat/generator/output/required_ergebnis_konflikte.json`):** `formation_type` (Liste 2) und `site_type` (Liste 5) waren weiterhin `-Required`, obwohl beide nach der Grundregel Ergebnisfelder sind (Gründungsart inkl. Bar-/Sachgründung bzw. „feste/nicht feste Einrichtung“ nach § 12 AO sind selbst die rechtliche Einordnung, keine Mandanten-Tatsache). `tax_office` und `profit_determination_method` aus demselben Befund waren zu diesem Zeitpunkt bereits durch die Grundregel-Arbeit in diesem Skript behoben. Fix: beide Felder nicht mehr `-Required`, als Kanzleifeld gekennzeichnet (`-FieldRole "Ergebnis"`, siehe Abschnitt C3), neue Tatsachenfelder ergänzt (`capital_contribution_type`, `transformation_event`/`transformation_details` in Liste 2; `own_disposal_power` in Liste 5). Zusätzlich jetzt eine harte Invariante in `Add-Field`: ein `-Required`-Feld mit `-FieldRole "Ergebnis"` oder `"System"` (ausser `Type Lookup`, siehe `case_id`) löst sofort einen Fehler aus, damit dieses Muster nicht erneut unbemerkt entsteht.
+
+### C3. Feld-Metadaten für externe Generatoren (`-FieldRole`/`-AppliesTo`)
+
+Ergänzung zum parallelen PR #22 (`DE/AO/erfassungs-chat/`, Branch `cursor/erfassungs-chat-prototyp-8be4`): dessen Generator leitet aus diesem Skript ein JSON-Schema für einen Mandanten-Chat ab und muss dafür wissen, welche Felder er dem Mandanten überhaupt stellen darf (Grundregel: nur Tatsachen, nie eine Würdigung). Bis dahin pflegte der Generator eine von Hand erstellte, 169 Felder umfassende Übergangstabelle (`generator/classification_config.json`). `Add-Field` unterstützt deshalb jetzt zwei rein informative, **optionale** Parameter, die nie auf die SharePoint-Spalte selbst wirken (keine XML-/CSOM-Änderung), sondern ausschliesslich von einem Generator per Text-/AST-Parse dieses Skripts gelesen werden:
+
+| Parameter | Werte | Standard, wenn weggelassen | Bedeutung |
+|---|---|---|---|
+| `-FieldRole` | `"Tatsache"` / `"Ergebnis"` / `"System"` | `"Tatsache"` | `Tatsache`: darf ein Generator/Chat erfragen. `Ergebnis`: rechtliche/steuerliche Würdigung oder Prognose der Kanzlei — nie erfragen, bleibt für die Kanzlei leer. `System`: kein fachlicher Inhalt, entweder (a) technisches/internes Feld (Lookup-Anzeigefeld, Flow-Flag, `Title` o. ä.) oder (b) Kontaktdaten, die im CRM der Kanzlei gepflegt werden (siehe Abschnitt C, „Ja/Nein-Fragen“-Hinweis zu CRM-Feldern). |
+| `-AppliesTo` | `@("Alle")` / `@("Gesellschaft")` / `@("NatuerlichePerson")` | `@("Alle")` | Zweig, für den das Feld gilt — analog zum Branching in Abschnitt E (z. B. `party_type`/`person_type` = Firma/Person). `Alle` heisst: gilt unabhängig vom Zweig. |
+
+**Nicht jedes Feld muss explizit getaggt werden** — nur die Ausnahmen von den beiden Standardwerten. Ein Feld ohne `-FieldRole` ist implizit `Tatsache`, ein Feld ohne `-AppliesTo` gilt implizit für `Alle`. Das hält das Skript lesbar (die grosse Mehrheit der ca. 236 Felder sind einfache, zweigunabhängige Tatsachenfelder) und ist bewusst identisch mit der Konvention, die der Generator bereits erwartet (siehe dortiger Modulkommentar `generator/field_classification.py`, Abschnitt „Erwartetes Metadaten-Format“).
+
+**Harte Invariante:** `Add-Field` bricht sofort ab, wenn ein Feld `-Required` **und** `-FieldRole "Ergebnis"` oder `"System"` gesetzt hat (Ausnahme `Type Lookup`, z. B. `case_id` — ein technischer Fremdschlüssel wird vom Flow/der Session gesetzt, nie von einem Menschen über ein Pflicht-Formularfeld beantwortet). Das verhindert strukturell das genaue Muster, das der Erfassungs-Chat-Generator am 28.10.2026 für vier Felder meldete (siehe Punkt 4 oben) — `Test-SteuerlicheErfassungListen.ps1` prüft dieselbe Invariante zusätzlich statisch auf den Soll-Definitionen, bevor es sich verbindet.
+
+**Vollständig getaggt sind** (Stand dieses Commits) die sieben vom Erfassungs-Chat genutzten Listen (`1_Allgemeiner_Stammblock`, `2_Unternehmens_Gruendungsmodul`, `3_Personen_und_Vertretung`, `4_Beteiligte_und_Quoten`, `5_Betriebsstaetten`, `6_Steuer_und_Umsatzsteuerprofil`, `8_Unterlagen`) — die Klassifizierung dort wurde direkt aus der bereits vorhandenen, ausführlich begründeten `classification_config.json` des parallelen PRs übernommen (für umbenannte/restrukturierte Felder dieser Runde, z. B. `legal_form_category` statt `legal_form`, sinngemäss neu zugeordnet). `0_Fallsteuerung` (kanzleiintern, nie Teil des Mandanten-Chats), `7_Auslandsmitteilung_BZSt2` (Outbound-spezifisch) sowie die beiden internen Referenzlisten `Technische_Mindestfelder`/`Eingang_Fehler` sind bewusst nicht getaggt, da sie ausserhalb des heutigen Chat-Scopes liegen (siehe `generator/cli.py`, `CHAT_LISTS`).
+
+**Sobald PR #22 gemerged ist:** der Generator muss nur noch `MetadataClassificationProvider._read_metadata_role`/`_read_metadata_applies_to` in `field_classification.py` an diese beiden Attribute anpassen (die Kandidatennamen `field_role`/`applies_to` sind dort bereits exakt für dieses Format vorgesehen) sowie `pnp_schema_parser.py`s `FieldDef`/`_parse_add_field_block` um `field_role`/`applies_to` erweitern, damit der Text-Parser die beiden neuen `-FieldRole`/`-AppliesTo`-Parameter durchreicht (aktuell liest er zwar jeden `-ParamName`-Token, gibt aber nur die acht fest benannten `FieldDef`-Attribute weiter). `classification_config.json` bleibt als dauerhaftes Fallback für die beiden internen Listen bzw. für den Übergang bestehen — das ist bewusst so vorbereitet (siehe `CompositeClassificationProvider` dort).
 
 ## D. Fall-ID-Generator
 
@@ -211,21 +229,22 @@ Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort p
 
 ### E.2 Formular 2 — Unternehmens-/Gründungsmodul (Inbound; auch Einzelunternehmen und Personengesellschaften, siehe Routing-Tabelle E.9)
 
-**Grundlegend überarbeitet 28.10.2026 (Review Nils, Grundregel „Tatsachen statt rechtlicher Würdigung“ + „jede Stammangabe genau an einer Stelle“, siehe Datenmodell Abschnitt 10):** „Bezeichnung des Unternehmens“ und „Rechtsform“ entfernt (Stammangaben, leben jetzt nur noch in Formular 1 — diese Liste referenziert über `case_id`). „Vorheriger Inhaber“, „Abweichendes Wirtschaftsjahr“ und „Gewinnermittlungsart“ neu strukturiert.
+**Grundlegend überarbeitet 28.10.2026 (Review Nils, Grundregel „Tatsachen statt rechtlicher Würdigung“ + „jede Stammangabe genau an einer Stelle“, siehe Datenmodell Abschnitt 10):** „Bezeichnung des Unternehmens“ und „Rechtsform“ entfernt (Stammangaben, leben jetzt nur noch in Formular 1 — diese Liste referenziert über `case_id`). „Vorheriger Inhaber“, „Abweichendes Wirtschaftsjahr“ und „Gewinnermittlungsart“ neu strukturiert. **Ergänzt 28.10.2026 (Befund Erfassungs-Chat-Generator, PR #22):** „Gründungsart“ selbst ist eine rechtliche Einordnung (insb. Bar-/Sachgründung, Umwandlung) und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`formation_type`, `-FieldRole "Ergebnis"`, siehe Abschnitt C3) — ersetzt durch zwei neue Tatsachenfragen (18/19 unten).
 
 1. Fall-ID — Text (Pflicht)
-2. Gründungsart — Choice: Neugründung / Übernahme / Umwandlung / Bargründung / Sachgründung (Pflicht, 5 getrennte Optionen; Bar- und Sachgründung werden bewusst nicht zu einer Option zusammengefasst, da das Datenmodell beide als eigenständiges unbedingtes Pflichtfeld unterscheidet, Kz 91)
-3. Gründungsdatum — Date (Pflicht)
-4. Beginn der Tätigkeit — Date (Pflicht)
-5. Notarielle Errichtung / Musterprotokoll vom — Date
-   - Branching: nur bei Rechtsform = Kapitalgesellschaft/Genossenschaft (Kontextfrage aus Formular 0/1 wiederholen oder als eigene Frage 2a führen)
-6. Grund-/Stammkapital – Betrag — Number
+2. Gründungsdatum — Date (Pflicht)
+3. Beginn der Tätigkeit — Date (Pflicht)
+4. Notarielle Errichtung / Musterprotokoll vom — Date
+   - Branching: nur bei Rechtsform = Kapitalgesellschaft/Genossenschaft (Kontextfrage aus Formular 0/1 wiederholen oder als eigene Frage 3a führen)
+5. Grund-/Stammkapital – Betrag — Number
    - Branching: nur bei Kapitalgesellschaft
-7. Grund-/Stammkapital – Währung — Text
-   - Branching: wie 6
-8. Eingezahltes Kapital — Number
-   - Branching: wie 6
+6. Grund-/Stammkapital – Währung — Text
+   - Branching: wie 5
+7. Eingezahltes Kapital — Number
+   - Branching: wie 5
    - Hinweistext: „Bitte Gründungsurkunde/Satzung/Gesellschaftsvertrag über Formular 8 (Unterlagen, Dokumenttyp „Gründungsurkunde“/„Satzung“) hochladen“ (kein eigenes Upload-Feld hier, siehe Formular 8, Review Nils 28.10.2026)
+8. Grund-/Stammkapital erbracht als — Choice: Bareinlage / Sacheinlage / gemischt (Bar- und Sacheinlage)
+   - Branching: wie 5 (`capital_contribution_type`, **neu** 28.10.2026 — Tatsachenfrage zur Ableitung von „Gründungsart“, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
 9. Handelsregister-Status — Choice: beabsichtigt / beantragt / erfolgt (Pflicht)
 10. Ort des Amtsgerichts bzw. der ausländischen Registerbehörde — Text
     - Branching: nur wenn Frage 9 ≠ beabsichtigt (DisplayName seit 28.10.2026 verallgemeinert, deckt auch Körperschaft ausländischen Rechts ab, siehe Abschnitt H2 und E.9-Korrektur)
@@ -240,58 +259,61 @@ Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort p
     - Branching: wie 13 (`predecessor_scope`, **neu**)
 16. Übernommen ab — Date
     - Branching: wie 13 (`predecessor_since`, **neu**)
-17. Entspricht das Wirtschaftsjahr dem Kalenderjahr? — Choice Ja/Nein (`fiscal_year_matches_calendar`, ersetzt seit 28.10.2026 „Abweichendes Wirtschaftsjahr“ mit umgekehrtem Vorzeichen, siehe Abschnitt H2)
-18. Wirtschaftsjahr – Beginn — Date
-    - Branching: nur bei Frage 17 = Nein
-19. Wirtschaftsjahr – Ende — Date
-    - Branching: wie 18 (`fiscal_year_end`, **neu** — „Beginn“ ohne „Ende“ war bislang unvollständig)
-20. Voraussichtlicher Gewinn Eröffnungsjahr — Number (Pflicht)
-21. Voraussichtlicher Gewinn Folgejahr — Number (Pflicht)
-22. Buchführungs-/Bilanzierungspflicht nach ausländischem Recht — Choice Ja/Nein
+17. Ist das Unternehmen durch eine gesellschaftsrechtliche Umwandlung entstanden (z. B. Verschmelzung, Spaltung, Formwechsel)? — Choice Ja/Nein (`transformation_event`, **neu** 28.10.2026 — weitere Tatsachenfrage zur Ableitung von „Gründungsart“)
+18. Art der Umwandlung und beteiligte Rechtsträger — Text lang
+    - Branching: nur bei Frage 17 = Ja (`transformation_details`, **neu**)
+19. Entspricht das Wirtschaftsjahr dem Kalenderjahr? — Choice Ja/Nein (`fiscal_year_matches_calendar`, ersetzt seit 28.10.2026 „Abweichendes Wirtschaftsjahr“ mit umgekehrtem Vorzeichen, siehe Abschnitt H2)
+20. Wirtschaftsjahr – Beginn — Date
+    - Branching: nur bei Frage 19 = Nein
+21. Wirtschaftsjahr – Ende — Date
+    - Branching: wie 20 (`fiscal_year_end`, **neu** — „Beginn“ ohne „Ende“ war bislang unvollständig)
+22. Voraussichtlicher Gewinn Eröffnungsjahr — Number (Pflicht)
+23. Voraussichtlicher Gewinn Folgejahr — Number (Pflicht)
+24. Buchführungs-/Bilanzierungspflicht nach ausländischem Recht — Choice Ja/Nein
     - Branching: nur bei Formulartyp = Körperschaft nach ausländischem Recht (`foreign_bookkeeping_obligation`, **neu**, Tatsachenfeld statt der rechtlichen Würdigung „Gewinnermittlungsart“)
-23. Bereits bilanziert (freiwillig oder nach anderer Vorschrift) — Choice Ja/Nein (`voluntary_balance_sheet`, **neu**)
-24. Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht) — Text
-    - Branching: nur bei Frage 23 = Ja (`balance_sheet_basis`, **neu**; Handelsregister-Eintragung bereits über Frage 9, freiberufliche Tätigkeit bereits über Formular 1 Frage 10 abgedeckt — keine Dubletten angelegt. Die Kanzlei leitet „Gewinnermittlungsart“ aus den Fragen 9, 10 (Formular 1), 20-24 ab, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
-25. Konzernzugehörigkeit — Choice Ja/Nein
-26. Herrschendes Unternehmen – Name — Text
-    - Branching: nur bei Frage 25 = Ja
-27. Organträgerschaft — Choice Ja/Nein
-28. Rechtsfähigkeit — Choice Ja/Nein
+25. Bereits bilanziert (freiwillig oder nach anderer Vorschrift) — Choice Ja/Nein (`voluntary_balance_sheet`, **neu**)
+26. Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht) — Text
+    - Branching: nur bei Frage 25 = Ja (`balance_sheet_basis`, **neu**; Handelsregister-Eintragung bereits über Frage 9, freiberufliche Tätigkeit bereits über Formular 1 Frage 10 abgedeckt — keine Dubletten angelegt. Die Kanzlei leitet „Gewinnermittlungsart“ aus den Fragen 9, 10 (Formular 1), 8, 12-18, 22-26 ab, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
+27. Konzernzugehörigkeit — Choice Ja/Nein
+28. Herrschendes Unternehmen – Name — Text
+    - Branching: nur bei Frage 27 = Ja
+29. Organträgerschaft — Choice Ja/Nein
+30. Rechtsfähigkeit — Choice Ja/Nein
     - Branching: nur bei Formulartyp = Personengesellschaft oder -gemeinschaft (Kontextfrage aus Formular 0 wiederholen; Datenmodell Kz 33, dort für diesen Formulartyp unbedingtes Pflichtfeld)
-29. Aufteilungsschlüssel (Gewinn-/Verlustverteilung) — Text
-    - Branching: wie 28 (Datenmodell Kz 80, dort unbedingtes Pflichtfeld)
-30. Gründungsnotar — Name — Text
+31. Aufteilungsschlüssel (Gewinn-/Verlustverteilung) — Text
+    - Branching: wie 30 (Datenmodell Kz 80, dort unbedingtes Pflichtfeld)
+32. Gründungsnotar — Name — Text
     - Hinweistext in die Frage aufnehmen: „Falls ausgefüllt, bitte auch die Adresse in der folgenden Frage angeben“ (ELSTER-Portalprüfung 26.10.2026: sobald ein Notar genannt ist, wird dessen Adresse bedingt Pflicht — Forms kann eine Pflicht nicht von einem vorangehenden Freitext abhängig machen, siehe Datenmodell Abschnitt 9.6)
-31. Gründungsnotar — Adresse — Text lang
-    - Hinweistext wie 30
-32. Komplementärin einer KG — Choice Ja/Nein
-33. Bezeichnung der KG — Text
-    - Branching: nur bei Frage 32 = Ja
-34. Handelsregister — Datum (beantragt am / Tag der Eintragung) — Date
+33. Gründungsnotar — Adresse — Text lang
+    - Hinweistext wie 32
+34. Komplementärin einer KG — Choice Ja/Nein
+35. Bezeichnung der KG — Text
+    - Branching: nur bei Frage 34 = Ja
+36. Handelsregister — Datum (beantragt am / Tag der Eintragung) — Date
     - Branching: nur bei Frage 9 ≠ beabsichtigt
-35. Betriebsaufspaltung — Choice Ja/Nein
-36. Bezeichnung des Besitzunternehmens — Text
-    - Branching: nur bei Frage 35 = Ja
-37. Bezeichnung des überlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage) — Text
-    - Branching: wie 36 (Kanzleientscheid 27.10.2026, siehe Datenmodell Abschnitt 9.6 — Wortlaut der ELSTER-Fehlerliste nannte nur „Bezeichnung“ ohne weiteren Kontext, der Wortlaut dieser Frage ist daher Kanzleientscheid und im Portal nicht verifiziert)
-38. Beginn der tatsächlichen Nutzung — Date
-    - Branching: wie 36
-39. Anschrift und/oder Steuernummer des Besitzunternehmens — Text lang
-    - Branching: wie 36
-40. Körperschaftsteuerbefreiung nach § 5 KStG — Choice Ja/Nein
-41. Nummer nach § 5 Absatz 1 KStG — Text
-    - Branching: nur bei Frage 40 = Ja
-42. Feststellung nach § 60a AO — Choice Ja/Nein
-43. Zweck der Körperschaft — Text lang
+37. Betriebsaufspaltung — Choice Ja/Nein
+38. Bezeichnung des Besitzunternehmens — Text
+    - Branching: nur bei Frage 37 = Ja
+39. Bezeichnung des überlassenen Wirtschaftsguts (wesentliche Betriebsgrundlage) — Text
+    - Branching: wie 38 (Kanzleientscheid 27.10.2026, siehe Datenmodell Abschnitt 9.6 — Wortlaut der ELSTER-Fehlerliste nannte nur „Bezeichnung“ ohne weiteren Kontext, der Wortlaut dieser Frage ist daher Kanzleientscheid und im Portal nicht verifiziert)
+40. Beginn der tatsächlichen Nutzung — Date
+    - Branching: wie 38
+41. Anschrift und/oder Steuernummer des Besitzunternehmens — Text lang
+    - Branching: wie 38
+42. Körperschaftsteuerbefreiung nach § 5 KStG — Choice Ja/Nein
+43. Nummer nach § 5 Absatz 1 KStG — Text
     - Branching: nur bei Frage 42 = Ja
-44. Organgesellschaft (körperschaftsteuerliche Organschaft) — Choice Ja/Nein
-45. Name/Firma des Organträgers — Text
+44. Feststellung nach § 60a AO — Choice Ja/Nein
+45. Zweck der Körperschaft — Text lang
     - Branching: nur bei Frage 44 = Ja
-46. Umsatzsteuerliche Organschaft — Choice Ja/Nein
-47. Beginn der umsatzsteuerlichen Organschaft — Date
+46. Organgesellschaft (körperschaftsteuerliche Organschaft) — Choice Ja/Nein
+47. Name/Firma des Organträgers — Text
     - Branching: nur bei Frage 46 = Ja
+48. Umsatzsteuerliche Organschaft — Choice Ja/Nein
+49. Beginn der umsatzsteuerlichen Organschaft — Date
+    - Branching: nur bei Frage 48 = Ja
 
-Fragen 30-47 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelder, Status `belegt_bedingt`. Keine dieser Spalten ist in SharePoint bedingungslos `-Required`, da die Pflicht jeweils an die genannte Auswahl geknüpft ist — Details siehe Datenmodell Abschnitt 9.6.
+Fragen 32-49 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelder, Status `belegt_bedingt`. Keine dieser Spalten ist in SharePoint bedingungslos `-Required`, da die Pflicht jeweils an die genannte Auswahl geknüpft ist — Details siehe Datenmodell Abschnitt 9.6.
 
 ### E.3 Formular 3 — Personen und Vertretung (wenn vorhanden bzw. Pflicht)
 
@@ -357,13 +379,13 @@ Hinweis am Formularanfang: je Beteiligtem eine Antwort.
 
 ### E.5 Formular 5 — Betriebsstätten (wenn vorhanden)
 
-Hinweis: je Betriebsstätte/Einrichtung eine Antwort.
+Hinweis: je Betriebsstätte/Einrichtung eine Antwort. **Geändert 28.10.2026 (Befund Erfassungs-Chat-Generator, PR #22):** „Art der Einrichtung“ (fest/nicht fest) ist der Betriebsstätten-Begriff aus § 12 AO selbst und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`site_type`, `-FieldRole "Ergebnis"`, siehe Abschnitt C3) — ersetzt durch eine neue Tatsachenfrage (5 unten). Fragen 11 und 13 (`vat_relevant_site`/`payroll_tax_site`) sind nach derselben Grundregel-Lesart ebenfalls Ergebnisfelder (siehe Datenmodell Abschnitt 10.3, offener Punkt) — bleiben in dieser Runde aber bewusst als Forms-Fragen bestehen, da sie nicht Teil des aktuellen Generator-Befunds waren; Umstellung für eine künftige Runde vorgesehen.
 
 1. Fall-ID — Text (Pflicht)
 2. Bezeichnung der Betriebsstätte/Einrichtung — Text (Pflicht)
 3. Land — Text (Pflicht)
 4. Adresse — Text lang (Pflicht)
-5. Art der Einrichtung — Choice: fest / nicht fest (Pflicht)
+5. Eigene, nicht nur vorübergehende Verfügungsmacht über die Einrichtung (z. B. eigener Schlüssel/Zugang, eigener Arbeitsplatz) — Choice Ja/Nein (`own_disposal_power`, **neu** 28.10.2026 — zentrales Tatbestandsmerkmal zur Ableitung von „Art der Einrichtung“, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
 6. Eigentumsverhältnis — Choice: Eigentum / Miete / Nutzung
 7. Nutzungsart — Choice: Lagerung / Verarbeitung / Einkauf / Werbung / Sonstige
    - Branching: nur bei Formulartyp = Körperschaft nach ausländischem Recht UND Tätigkeit im Inland
@@ -553,6 +575,7 @@ Dieser Abschnitt dokumentiert den fachlichen Umbau aus der Pruefung von Nils (28
 | Lookup mit `RelationshipDeleteBehavior` braucht Index bereits bei Erstanlage | Skriptabbruch auf frischer Site beim Anlegen eines `case_id`-Lookups mit `Restrict` | `Indexed='TRUE'` im Erstellungs-XML, sobald `DeleteBehavior != None` (Abschnitt C2, zweiter Fallen-Block Punkt 1) |
 | Required-Boolean-Felder lassen sich nur mit „Ja“ speichern | `already_registered`, `trust_relationship` (beide Boolean, `-Required`) | Durch Choice-Feld Ja/Nein(/Unbekannt) ersetzt: `registration_status`, `trust_relationship_status` (Abschnitt C2, zweiter Fallen-Block Punkt 2) |
 | Schreibvarianten-Dubletten in Auswahlwerten | z. B. „UG“/„UG (haftungsbeschränkt)“, Rechtsform mit Umlaut/„ae“-Variante nebeneinander | Statischer Selbsttest `Test-ChoiceValueDuplicates` (Hauptskript) + Live-Pruefung in `Test-SteuerlicheErfassungListen.ps1` (Abschnitt C2, zweiter Fallen-Block Punkt 3) |
+| Required-Ergebnisfelder (Befund paralleler Erfassungs-Chat-Generator, PR #22) | `tax_office` (bereits behoben), `formation_type`, `profit_determination_method` (bereits behoben), `site_type` | Zwei verbleibende Felder nicht mehr -Required + als Kanzleifeld markiert; neue harte Invariante in `Add-Field` verhindert das Muster strukturell (siehe Abschnitt C2 Punkt 4 und Abschnitt C3) |
 
 ### H2.2 Feldaenderungen nach Liste
 
@@ -593,6 +616,8 @@ Dieser Abschnitt dokumentiert den fachlichen Umbau aus der Pruefung von Nils (28
 | `profit_determination_method` | nicht mehr Required, DisplayName als Kanzleifeld praezisiert | Rechtliche Wuerdigung (§ 4/5 EStG) |
 | `foreign_bookkeeping_obligation`, `voluntary_balance_sheet`, `balance_sheet_basis` | **neu** | Tatsachenfelder zur Ableitung der Gewinnermittlungsart |
 | `registry_court` | DisplayName verallgemeinert („... bzw. der auslaendischen Registerbehoerde“) | Deckt auch Koerperschaft auslaendischen Rechts ab (siehe E.9-Routing-Korrektur) |
+| `formation_type` | nicht mehr Required, DisplayName als Kanzleifeld praezisiert, `-FieldRole "Ergebnis"` | Befund Erfassungs-Chat-Generator 28.10.2026 (PR #22): "Gruendungsart" (Bar-/Sachgruendung, Umwandlung) ist selbst eine rechtliche Einordnung |
+| `capital_contribution_type`, `transformation_event`, `transformation_details` | **neu** | Tatsachenfelder zur Ableitung von "Gruendungsart" |
 
 **`3_Personen_und_Vertretung`:**
 
@@ -605,6 +630,13 @@ Dieser Abschnitt dokumentiert den fachlichen Umbau aus der Pruefung von Nils (28
 | Feld | Aenderung | Begruendung |
 |---|---|---|
 | `trust_relationship` → `trust_relationship_status` | Boolean -Required → Choice (Ja/Nein), weiterhin Required | Required-Boolean-Bug (siehe H2.1); bleibt Pflicht (ELSTER Kz 90), „Unbekannt“ hier nicht vorgesehen |
+
+**`5_Betriebsstaetten`:**
+
+| Feld | Aenderung | Begruendung |
+|---|---|---|
+| `site_type` | nicht mehr Required, DisplayName als Kanzleifeld praezisiert, `-FieldRole "Ergebnis"` | Befund Erfassungs-Chat-Generator 28.10.2026 (PR #22): "fest/nicht fest" ist der Betriebsstaetten-Begriff aus Paragraf 12 AO selbst |
+| `own_disposal_power` | **neu** | Tatsachenfeld (Verfuegungsmacht) zur Ableitung von "Art der Einrichtung" |
 
 **`8_Unterlagen`:**
 
