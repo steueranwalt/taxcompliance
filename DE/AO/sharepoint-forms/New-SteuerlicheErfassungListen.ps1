@@ -1153,7 +1153,17 @@ Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "trust_relationship_stat
 # bekannt).
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_opening_year" -DisplayName "Voraussichtlicher Gewinnanteil Eroeffnungsjahr" -Type Number
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_following_year" -DisplayName "Voraussichtlicher Gewinnanteil Folgejahr" -Type Number
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht (von der Kanzlei nach Paragraf 1 Abs. 4 EStG/Paragraf 2 Nr. 1 KStG eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
+# limited_tax_liability (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag "ALLE
+# Listen pruefen"): DisplayName praezisiert (war bereits -FieldRole Ergebnis
+# seit der vorigen Runde, aber ohne eigene Tatsachenfelder). "Beschraenkte
+# Steuerpflicht" ist die gesetzliche Rechtsfolge aus Paragraf 1 Abs. 4 EStG
+# (natuerliche Personen) bzw. Paragraf 2 Nr. 1 KStG (Koerperschaften), keine
+# Mandanten-Tatsache. Tatsachen stattdessen ueber die beiden neuen Felder
+# unten, je nach participant_type. Siehe DE/AO/ableitungsregeln.json fuer die
+# Wenn-Dann-Regel.
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "domestic_residence" -DisplayName "Wohnsitz oder gewoehnlicher Aufenthalt in Deutschland (Paragraf 8/9 AO)" -Type Boolean -AppliesTo @("NatuerlichePerson")
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "domestic_seat_or_management" -DisplayName "Sitz oder Ort der Geschaeftsleitung in Deutschland (Paragraf 10/11 AO)" -Type Boolean -AppliesTo @("Gesellschaft")
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participation_since" -DisplayName "Beteiligt seit dem" -Type DateOnly
 # --- Abschnitt 9 ergaenzt (Datenmodell 9.2 "Beteiligte": Stimmrechte) ---
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "voting_rights_percentage" -DisplayName "Stimmrechte in Prozent" -Type Number `
