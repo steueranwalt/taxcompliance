@@ -1198,9 +1198,29 @@ Add-Field -List "5_Betriebsstaetten" -InternalName "usage_type" -DisplayName "Nu
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_from" -DisplayName "Taetigkeitsdauer - von" -Type DateOnly
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_to" -DisplayName "Taetigkeitsdauer - bis" -Type DateOnly
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_to_unknown" -DisplayName "Taetigkeitsdauer bis unbekannt" -Type Boolean
-Add-Field -List "5_Betriebsstaetten" -InternalName "vat_relevant_site" -DisplayName "Umsatzsteuerliche Betriebsstätte" -Type Boolean -FieldRole "Ergebnis"
-Add-Field -List "5_Betriebsstaetten" -InternalName "contact" -DisplayName "Telefon / Internetadresse" -Type Text
-Add-Field -List "5_Betriebsstaetten" -InternalName "payroll_tax_site" -DisplayName "Lohnsteuerliche Betriebsstätte" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "5_Betriebsstaetten" -InternalName "staff_present_onsite" -DisplayName "Eigenes oder fuer den Meldepflichtigen taetiges Personal an dieser Einrichtung stationiert" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "employer_function_onsite" -DisplayName "Arbeitgeberfunktion wird an dieser Einrichtung ausgeuebt (z. B. Weisungsrecht gegenueber dem dortigen Personal)" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "wages_paid_from_site" -DisplayName "Loehne/Gehaelter werden von bzw. fuer diese Einrichtung aus gezahlt oder abgerechnet" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "vat_relevant_site" -DisplayName "Umsatzsteuerliche Betriebsstätte (von der Kanzlei nach Paragraf 3a UStG/Art. 11 MwSt-DVO eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "5_Betriebsstaetten" -InternalName "contact" -DisplayName "Internetadresse der Einrichtung" -Type Text
+# staff_present_onsite/employer_function_onsite/wages_paid_from_site (Grundregel-
+# Vertiefung 30.10.2026, Nils-Auftrag "ALLE Listen pruefen"): neue Tatsachen-
+# felder zur Ableitung von vat_relevant_site und payroll_tax_site (beide bereits
+# seit der vorigen Runde -FieldRole Ergebnis, aber ohne eigene Tatsachenfelder -
+# die bisherigen Tatsachen aus site_type - ownership_status/usage_type/
+# activity_period_*/own_disposal_power - reichen fuer die Lohnsteuer-/USt-
+# spezifischen Zusatzvoraussetzungen Personal/Arbeitgeberfunktion/Lohnzahlung
+# nicht aus). Siehe DE/AO/ableitungsregeln.json fuer die Wenn-Dann-Regeln.
+# contact (Grundregel-Vertiefung 30.10.2026): DisplayName von "Telefon /
+# Internetadresse" auf "Internetadresse der Einrichtung" verengt - eine
+# Telefonnummer ist Kontaktdatum der Kanzlei-CRM-Pflege (siehe crm_reference in
+# 0_Fallsteuerung), keine Fallangabe. Die oeffentliche Internetadresse der
+# Betriebsstaette selbst (falls vorhanden) bleibt als Tatsache erhalten (kein
+# -FieldRole-Tag, Default Tatsache), da sie keine Kontaktaufnahme mit dem
+# Mandanten betrifft, sondern eine oeffentliche Geschaeftsangabe ist (vgl.
+# website in 1_Allgemeiner_Stammblock, dort ebenfalls bewusst als Tatsache
+# behandelt).
+Add-Field -List "5_Betriebsstaetten" -InternalName "payroll_tax_site" -DisplayName "Lohnsteuerliche Betriebsstätte (von der Kanzlei nach Paragraf 41 Abs. 2 EStG eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
 Add-Field -List "5_Betriebsstaetten" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
 
 # ---------------------------------------------------------------------------
