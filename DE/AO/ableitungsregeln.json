@@ -1,0 +1,1742 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-10-30",
+  "hinweis_rechtsverbindlichkeit": "Diese Datei enthaelt VORSCHLAGSWERTE fuer Ergebnisfelder (Kanzleifelder), abgeleitet aus den vom Mandanten erhobenen Tatsachenfeldern. Sie ersetzt NICHT die fachliche Pruefung durch eine berufsrechtlich zugelassene Person. Ein Flow, der Erfassungs-Chat (DE/AO/erfassungs-chat/) oder ein kuenftiger ELSTER-Bot darf aus dieser Datei einen Vorschlag berechnen und anzeigen, aber NIEMALS automatisch in SharePoint oder ELSTER eintragen, ohne dass die Kanzlei den Vorschlag vorher bestaetigt hat. Rechtsstand-Angaben je Norm sind nach bestem Wissen zum genannten Datum erstellt; insbesondere kuerzlich reformierte Normen (Paragraf 19 UStG ab 1.1.2025, Paragraf 141 AO-Schwellen, Paragraf 20 UStG-Schwelle) sind vor produktivem Einsatz durch die Kanzlei zu verifizieren. Als 'unsicher' markierte Regelzeilen duerfen nicht als gesicherte Rechtsauskunft behandelt werden, sondern nur als Diskussionsgrundlage.",
+  "offene_fragen_global": [
+    "tax_office_country (0_Fallsteuerung): Nach der E.10-Pruefregel (Steuernummer/Land bei anderem Finanzamt) scheint das Feld faktisch eine TATSACHE zu sein (der Mandant kennt das Land einer bereits bestehenden Registrierung), ist aber seit der Grundregel-Runde vom 28.10.2026 als Ergebnis getaggt. Bitte klaeren: Tatsache (Land einer bereits bestehenden Registrierung) oder Ergebnis (von der Kanzlei bestimmte neue Zustaendigkeit)?",
+    "formation_type (2_Unternehmens_Gruendungsmodul): Die bestehende Choice-Liste (Neugruendung/Uebernahme/Umwandlung/Bargruendung/Sachgruendung) vermischt zwei unterschiedliche ELSTER-Dimensionen (Entstehungsart vs. Kapitalaufbringung). Bitte klaeren, ob die Spalte in zwei separate Ergebnisfelder aufgeteilt werden soll.",
+    "Kleinunternehmerregelung (small_business_rule, Paragraf 19 UStG) und Ist-Besteuerung (vat_taxation_method, Paragraf 20 UStG): Schwellenwerte wurden zum 1.1.2025 (Paragraf 19 UStG) bzw. 1.1.2024 (Paragraf 20 UStG) reformiert. Bitte die in dieser Datei angegebenen Schwellen (25.000 EUR / 100.000 EUR bzw. 800.000 EUR) sowie die Behandlung des Gruendungsjahres (keine Hochrechnung mehr?) gegen den aktuellen Rechtsstand pruefen.",
+    "Paragraf 141 AO-Schwellen (Buchfuehrungspflicht, relevant fuer profit_determination_method): in dieser Datei mit 800.000 EUR Umsatz / 80.000 EUR Gewinn angegeben (Stand nach Viertem Corona-Steuerhilfegesetz). Bitte aktuellen Rechtsstand bestaetigen.",
+    "Zustaendiges Finanzamt (tax_office): kann nicht als kategorialer Wert abgeleitet werden, da die konkrete Finanzamts-Zustaendigkeit je Bundesland unterschiedlich organisiert ist. Diese Datei bestimmt nur den Anknuepfungspunkt (Ort der Geschaeftsleitung bzw. Sitz bzw. Betriebsstaette); die Zuordnung zum konkreten Finanzamt erfordert einen Abgleich mit dem jeweiligen Zustaendigkeitsverzeichnis. Bitte klaeren, ob/wie ein solcher Abgleich automatisiert werden soll oder ob das dauerhaft manuelle Kanzleiarbeit bleibt."
+  ],
+  "regeln": [
+    {
+      "id": "0_Fallsteuerung__tax_office_country",
+      "ergebnisfeld": {
+        "liste": "0_Fallsteuerung",
+        "internal_name": "tax_office_country",
+        "display_name": "Land des Finanzamts"
+      },
+      "beschreibung": "Land, in dem eine ggf. bereits bestehende steuerliche Erfassung besteht (Kontext der Pruefregel E.10 'Steuernummer/Land bei anderem Finanzamt'). ACHTUNG Klassifizierung umstritten, siehe offene_fragen_global.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 19",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Zustaendigkeit nach Wohnsitz/Sitz der natuerlichen/juristischen Person"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "0_Fallsteuerung",
+          "internal_name": "registration_status"
+        },
+        {
+          "liste": "0_Fallsteuerung",
+          "internal_name": "existing_tax_number"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "registration_status = 'Nein' oder 'Unbekannt'.",
+          "ergebniswert": "Unbekannt",
+          "unsicher": false,
+          "bedingung": {
+            "oder": [
+              {
+                "vergleich": {
+                  "feld": "0_Fallsteuerung.registration_status",
+                  "op": "eq",
+                  "wert": "Nein"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "0_Fallsteuerung.registration_status",
+                  "op": "eq",
+                  "wert": "Unbekannt"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Keine bestehende Registrierung bekannt -> Feld bleibt 'Unbekannt', nicht 'Deutschland' erraten.",
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "registration_status = 'Ja', aber kein Land aus den Tatsachen ableitbar.",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": true,
+        "offene_frage_an_nils": "Siehe offene_fragen_global: ist dieses Feld ueberhaupt ein Ergebnis oder eine direkte Mandanten-Tatsache?"
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung); Klassifizierung seit 28.10.2026 ungeklaert"
+    },
+    {
+      "id": "0_Fallsteuerung__tax_office",
+      "ergebnisfeld": {
+        "liste": "0_Fallsteuerung",
+        "internal_name": "tax_office",
+        "display_name": "Zustaendiges Finanzamt"
+      },
+      "beschreibung": "Bestimmt NUR den Anknuepfungspunkt (Ort) der Zustaendigkeit fuer DIESEN neuen Fall, nicht den konkreten Finanzamts-Namen. Die Zuordnung Ort -> konkretes Finanzamt erfordert zusaetzlich einen Abgleich mit dem Zustaendigkeitsverzeichnis des jeweiligen Bundeslandes (ausserhalb dieser Datei, siehe offene_fragen_global).",
+      "wertetyp": "ortsbestimmung",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 19",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "natuerliche Personen: Wohnsitz/gewoehnlicher Aufenthalt"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 20 Abs. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Koerperschaften/Personenvereinigungen: Ort der Geschaeftsleitung"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 20 Abs. 2",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "hilfsweise Sitz, wenn Geschaeftsleitung im Ausland"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 20 Abs. 3",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "ausl. Koerperschaft ohne inl. Geschaeftsleitung: Finanzamt der (wirtschaftlich bedeutendsten) inlaendischen Betriebsstaette"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 18",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "gesonderte Feststellung bei Personengesellschaften: Ort der Geschaeftsleitung bzw. wertvollster Betriebsvermoegensteil"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "party_type"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "address_type"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "postal_code_city"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_category"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_jurisdiction"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "usual_workplace_country"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "usual_workplace_address"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "works_elsewhere"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "country"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "site_type"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "party_type = 'Person' und address_type = 'Inland'.",
+          "ergebniswert": "Anknuepfungspunkt: Wohnsitz/Ort gemaess postal_code_city (Liste 1)",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.party_type",
+                  "op": "eq",
+                  "wert": "Person"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.address_type",
+                  "op": "eq",
+                  "wert": "Inland"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Firma', legal_form_jurisdiction = 'nach deutschem Recht' und genau ein gesetzlicher Vertreter mit eindeutigem usual_workplace_* im Inland und works_elsewhere = Nein.",
+          "ergebniswert": "Anknuepfungspunkt: Ort der Geschaeftsleitung = usual_workplace_address dieses Vertreters (Liste 3)",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.party_type",
+                  "op": "eq",
+                  "wert": "Firma"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.works_elsewhere",
+                  "op": "eq",
+                  "wert": false
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Bei mehreren gesetzlichen Vertretern mit unterschiedlichen Taetigkeitsorten oder works_elsewhere = Ja: Schwerpunkt der Geschaeftsfuehrungsmassnahmen ist Einzelfallfrage (BFH-Rspr. zu § 10 AO) -> manuelle Pruefung.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Firma', legal_form_jurisdiction = 'nach ausländischem Recht', keine Geschaeftsleitung im Inland feststellbar, aber mindestens eine inlaendische Betriebsstaette (5_Betriebsstaetten.country = 'Deutschland' und site_type = 'fest').",
+          "ergebniswert": "Anknuepfungspunkt: Ort der wirtschaftlich bedeutendsten inlaendischen Betriebsstaette (§ 20 Abs. 3 AO)",
+          "unsicher": true,
+          "ausnahmen": "Bei mehreren inlaendischen Betriebsstaetten ist die wirtschaftlich bedeutendste massgeblich - das ist keine rein schwellenwertbasierte Entscheidung, sondern erfordert einen Vergleich (z. B. nach Umsatz/Personal je Standort).",
+          "offene_frage_an_nils": "Soll die 'wirtschaftlich bedeutendste' Betriebsstaette automatisiert ermittelt werden (z. B. nach einem noch zu definierenden Groessenmerkmal), oder bleibt das immer manuelle Kanzleientscheidung?"
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Kein eindeutiger Anknuepfungspunkt feststellbar (z. B. ausl. Gesellschaft ohne inlaendische Geschaeftsleitung und ohne inlaendische Betriebsstaette, oder widerspruechliche Arbeitsort-Angaben mehrerer Vertreter).",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+    },
+    {
+      "id": "0_Fallsteuerung__target_notification",
+      "ergebnisfeld": {
+        "liste": "0_Fallsteuerung",
+        "internal_name": "target_notification",
+        "display_name": "Zielmeldung (BZSt2-Sachverhalt)"
+      },
+      "beschreibung": "Welcher Mitteilungstatbestand nach § 138 Abs. 2 AO (BZSt2) einschlaegig ist.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Gruendung/Erwerb von Betrieben und Betriebsstaetten im Ausland"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 2",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Erwerb/Aenderung einer Beteiligung an einer Personengesellschaft im Ausland"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 3 i.V.m. Abs. 3",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Erwerb einer Beteiligung an einer ausl. Koerperschaft: mind. 10% der Anteile/Stimmrechte ODER Anschaffungskosten aller Beteiligungen > 150.000 EUR"
+        },
+        {
+          "gesetz": "AStG",
+          "fundstelle": "§ 1 Abs. 2",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Definition nahestehende Person fuer die Zurechnung bei § 138 Abs. 2 Satz 1 Nr. 4 AO"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 4",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "beherrschender oder bestimmender Einfluss auf eine Drittstaat-Gesellschaft"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "0_Fallsteuerung",
+          "internal_name": "direction"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "country"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "participation_type"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "share_percentage"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "nominal_share"
+        },
+        {
+          "liste": "7_Auslandsmitteilung_BZSt2",
+          "internal_name": "third_country_control"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "direction enthaelt 'Outbound' und mindestens eine Betriebsstaette im Ausland (5_Betriebsstaetten.country != 'Deutschland') existiert, keine Auslandsbeteiligung.",
+          "ergebniswert": "Betriebe/Betriebsstätten",
+          "unsicher": false,
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "Beteiligung an einer ausl. Personengesellschaft erworben oder geaendert.",
+          "ergebniswert": "PersG-Beteiligung",
+          "unsicher": false,
+          "ausnahmen": "Der konkrete 'Rechtsform im Ausland'-Nachweis (Personengesellschaft vs. Koerperschaft) haengt vom jeweiligen auslaendischen Gesellschaftsrecht ab - bei unklarer Rechtsformqualifikation manuelle Pruefung (Rechtstypenvergleich, vgl. Datenmodell Abschnitt 9.1 Status M).",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "Beteiligung an einer ausl. Koerperschaft: share_percentage >= 10 Prozent ODER Summe der Anschaffungskosten aller Beteiligungen an dieser Gesellschaft > 150.000 EUR.",
+          "ergebniswert": "KapG-Beteiligung",
+          "unsicher": true,
+          "bedingung": {
+            "oder": [
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.share_percentage",
+                  "op": "gte",
+                  "wert": 10,
+                  "einheit": "Prozent"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": "Die 150.000-EUR-Anschaffungskosten-Schwelle aus § 138 Abs. 3 AO ist in den aktuellen Tatsachenfeldern nicht direkt abgebildet (nominal_share ist der Nominalwert, nicht zwingend die Anschaffungskosten). Bitte bestaetigen, ob nominal_share hierfuer herangezogen werden darf oder ein eigenes Feld 'Anschaffungskosten' noetig ist."
+        },
+        {
+          "bedingung_text": "third_country_control = Ja (beherrschender/bestimmender Einfluss auf eine Drittstaat-Gesellschaft).",
+          "ergebniswert": "Drittstaat-Beherrschung",
+          "unsicher": false,
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Keiner der Sachverhalte Nr. 1-4 liegt nach den erhobenen Tatsachen vor, obwohl der Fall ueber direction = Outbound bzw. form_type = BZSt2-Mitteilung in dieses Mitteilungsmodul geroutet wurde.",
+        "ergebniswert": "Negativmeldung",
+        "unsicher": false,
+        "ausnahmen": "Eine Negativmeldung wird nur abgegeben, wenn tatsaechlich ein grundsaetzlicher Meldeanlass bestand und dieser sich bei Pruefung als nicht (mehr) einschlaegig erweist - nicht routinemaessig fuer jeden Fall ohne Meldeanlass.",
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung)"
+    },
+    {
+      "id": "2_Unternehmens_Gruendungsmodul__profit_determination_method",
+      "ergebnisfeld": {
+        "liste": "2_Unternehmens_Gruendungsmodul",
+        "internal_name": "profit_determination_method",
+        "display_name": "Gewinnermittlungsart"
+      },
+      "beschreibung": "Betriebsvermoegensvergleich (Bilanzierung) oder Einnahmenueberschussrechnung.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 5",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Betriebsvermoegensvergleich bei Buchfuehrungspflicht nach Handelsrecht oder § 141 AO"
+        },
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 4 Abs. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Betriebsvermoegensvergleich bei freiwilliger Buchfuehrung"
+        },
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 4 Abs. 3",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Einnahmenueberschussrechnung (Wahlrecht ohne Buchfuehrungspflicht)"
+        },
+        {
+          "gesetz": "HGB",
+          "fundstelle": "§ 238, § 6",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "handelsrechtliche Buchfuehrungspflicht; Kapitalgesellschaften sind Formkaufmann"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 141",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "steuerliche Buchfuehrungspflicht ab Umsatz > 800.000 EUR oder Gewinn > 80.000 EUR (Werte nach Viertem Corona-Steuerhilfegesetz, Rechtsstand pruefen)"
+        },
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 18 Abs. 1 Nr. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Freiberufler: § 141 AO nicht einschlaegig (nur Gewerbetreibende/Land- und Forstwirte)"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_category"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "register_status"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "domestic_bookkeeping_obligation"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "foreign_bookkeeping_obligation"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "voluntary_balance_sheet"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "legal_form_category = 'Kapitalgesellschaft'.",
+          "ergebniswert": "Betriebsvermögensvergleich",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "1_Allgemeiner_Stammblock.legal_form_category",
+              "op": "eq",
+              "wert": "Kapitalgesellschaft"
+            }
+          },
+          "ausnahmen": "Kapitalgesellschaften sind nach § 6 HGB stets Formkaufmann und damit immer buchfuehrungspflichtig, unabhaengig von Umsatz/Gewinn.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "register_status in ('beantragt', 'erfolgt') und legal_form_category != 'Freiberufliche Tätigkeit'.",
+          "ergebniswert": "Betriebsvermögensvergleich",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.register_status",
+                  "op": "in",
+                  "wert": [
+                    "beantragt",
+                    "erfolgt"
+                  ]
+                }
+              },
+              {
+                "nicht": {
+                  "vergleich": {
+                    "feld": "1_Allgemeiner_Stammblock.legal_form_category",
+                    "op": "eq",
+                    "wert": "Freiberufliche Tätigkeit"
+                  }
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Handelsregistereintragung begruendet grundsaetzlich Kaufmannseigenschaft (§ 1 ff. HGB) und damit handelsrechtliche Buchfuehrungspflicht; Freiberufler werden nicht ins Handelsregister eingetragen (Ausnahme bei Zusammenschluss mit Nicht-Freiberuflern, dann manuelle Pruefung).",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "domestic_bookkeeping_obligation = Ja.",
+          "ergebniswert": "Betriebsvermögensvergleich",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.domestic_bookkeeping_obligation",
+              "op": "is_true"
+            }
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "voluntary_balance_sheet = Ja.",
+          "ergebniswert": "Betriebsvermögensvergleich",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.voluntary_balance_sheet",
+              "op": "is_true"
+            }
+          },
+          "ausnahmen": "Freiwillige Bilanzierung bindet nach staendiger BFH-Rspr. fuer die Zukunft, bis ein wirksamer Wechsel zurueck erklaert wird.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "foreign_bookkeeping_obligation = Ja und keine der obigen Bedingungen trifft zu.",
+          "ergebniswert": "Betriebsvermögensvergleich",
+          "unsicher": true,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.foreign_bookkeeping_obligation",
+              "op": "is_true"
+            }
+          },
+          "offene_frage_an_nils": "Begruendet eine rein auslaendische Buchfuehrungspflicht fuer sich allein bereits eine inlaendische Gewinnermittlung durch Bestandsvergleich, oder ist dafuer zusaetzlich eine inlaendische Anknuepfung (Betriebsstaette, Massgeblichkeitsgrundsatz) noetig? Bitte im Einzelfall/grundsaetzlich bestaetigen."
+        },
+        {
+          "bedingung_text": "legal_form_category = 'Freiberufliche Tätigkeit' und keine der obigen Bedingungen trifft zu.",
+          "ergebniswert": "Einnahmenüberschussrechnung",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "1_Allgemeiner_Stammblock.legal_form_category",
+              "op": "eq",
+              "wert": "Freiberufliche Tätigkeit"
+            }
+          },
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Keine Buchfuehrungspflicht und keine freiwillige Bilanzierung feststellbar (typischer Fall: Einzelunternehmen/Personengesellschaft ohne Handelsregistereintragung unterhalb der § 141 AO-Schwellen).",
+        "ergebniswert": "Einnahmenüberschussrechnung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+    },
+    {
+      "id": "2_Unternehmens_Gruendungsmodul__formation_type",
+      "ergebnisfeld": {
+        "liste": "2_Unternehmens_Gruendungsmodul",
+        "internal_name": "formation_type",
+        "display_name": "Gründungsart"
+      },
+      "beschreibung": "ACHTUNG: Die bestehende Choice-Liste vermischt zwei ELSTER-Dimensionen (Entstehungsart: Neugruendung/Uebernahme/Umwandlung; Kapitalaufbringung: Bar-/Sachgruendung). Diese Regel bildet beide ab, kann aber bei gleichzeitigem Vorliegen beider Dimensionen (z. B. Neugruendung MIT Sacheinlage) nur einen Wert liefern - siehe offene_fragen_global.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "sonstige",
+          "fundstelle": "allgemeine gesellschaftsrechtliche Einordnung",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "keine einzelne gesetzliche Definition; ELSTER-Fragebogen-Kategorie"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "transformation_event"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "predecessor_exists"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "predecessor_scope"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "capital_contribution_type"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "transformation_event = Ja.",
+          "ergebniswert": "Umwandlung",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.transformation_event",
+              "op": "is_true"
+            }
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "predecessor_exists = Ja und predecessor_scope = 'ganz'.",
+          "ergebniswert": "Übernahme",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_scope",
+                  "op": "eq",
+                  "wert": "ganz"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "predecessor_exists = Ja und predecessor_scope = 'teilweise'.",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": true,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_scope",
+                  "op": "eq",
+                  "wert": "teilweise"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Teilweise Uebernahme kann gleichzeitig eine Neugruendung des hinzukommenden Teils bedeuten - keine saubere Ein-Wert-Zuordnung in der bestehenden Choice-Liste moeglich.",
+          "offene_frage_an_nils": "Siehe offene_fragen_global zur Aufspaltung des Feldes."
+        },
+        {
+          "bedingung_text": "kein Vorgaenger, keine Umwandlung, capital_contribution_type = 'Bareinlage'.",
+          "ergebniswert": "Bargründung",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.capital_contribution_type",
+              "op": "eq",
+              "wert": "Bareinlage"
+            }
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "kein Vorgaenger, keine Umwandlung, capital_contribution_type = 'Sacheinlage'.",
+          "ergebniswert": "Sachgründung",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.capital_contribution_type",
+              "op": "eq",
+              "wert": "Sacheinlage"
+            }
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "kein Vorgaenger, keine Umwandlung, capital_contribution_type = 'gemischt (Bar- und Sacheinlage)'.",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": true,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.capital_contribution_type",
+              "op": "eq",
+              "wert": "gemischt (Bar- und Sacheinlage)"
+            }
+          },
+          "ausnahmen": "Die bestehende Choice-Liste kennt keinen gemischten Wert.",
+          "offene_frage_an_nils": "Siehe offene_fragen_global."
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Kein Vorgaenger, keine Umwandlung, capital_contribution_type leer (z. B. Personengesellschaft ohne Kapitaleinlage-Konzept, Einzelunternehmen).",
+        "ergebniswert": "Neugründung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+    },
+    {
+      "id": "5_Betriebsstaetten__site_type",
+      "ergebnisfeld": {
+        "liste": "5_Betriebsstaetten",
+        "internal_name": "site_type",
+        "display_name": "Art der Einrichtung"
+      },
+      "beschreibung": "Feste oder nicht feste Geschaeftseinrichtung im Sinne des § 12 AO.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 12 Satz 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "feste Geschaeftseinrichtung/Anlage mit Verfuegungsmacht, die der Taetigkeit dient"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 12 Satz 2 Nr. 8",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Bauausfuehrung/Montage nur Betriebsstaette, wenn Dauer > 6 Monate"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "own_disposal_power"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "activity_period_from"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "activity_period_to"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "activity_period_to_unknown"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "usage_type"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "own_disposal_power = Nein.",
+          "ergebniswert": "nicht fest",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "5_Betriebsstaetten.own_disposal_power",
+              "op": "is_false"
+            }
+          },
+          "ausnahmen": "Fehlende Verfuegungsmacht ist das zentrale, nach BFH-Rspr. kaum verzichtbare Tatbestandsmerkmal.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "own_disposal_power = Ja und (activity_period_to_unknown = Ja oder Dauer activity_period_from bis activity_period_to >= 6 Monate).",
+          "ergebniswert": "fest",
+          "unsicher": true,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.own_disposal_power",
+                  "op": "is_true"
+                }
+              },
+              {
+                "oder": [
+                  {
+                    "vergleich": {
+                      "feld": "5_Betriebsstaetten.activity_period_to_unknown",
+                      "op": "is_true"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "ausnahmen": "Die '6-Monats-Dauer' ist gesetzlich nur fuer Bauausfuehrung/Montage (§ 12 Satz 2 Nr. 8 AO) vorgeschrieben; fuer sonstige Einrichtungen ist 'gewisse Dauer' ein unbestimmter Rechtsbegriff, den die Praxis haeufig analog mit 6 Monaten beurteilt.",
+          "offene_frage_an_nils": "Soll die 6-Monats-Grenze generell (nicht nur bei Bauausfuehrung) als Entscheidungsschwelle verwendet werden, oder nur als grobes Indiz mit Hinweis auf Einzelfallpruefung?"
+        },
+        {
+          "bedingung_text": "own_disposal_power = Ja und Dauer < 6 Monate (und nicht 'auf unbestimmte Zeit' angelegt).",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": true,
+          "ausnahmen": "Kurze, aber auf Dauer angelegte Nutzung kann ausnahmsweise bereits 'feste' Einrichtung sein (Einzelfallpruefung, kein starrer Automatismus ausser bei Bauausfuehrung).",
+          "offene_frage_an_nils": "Siehe oben."
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Keine der obigen Bedingungen trifft eindeutig zu (widerspruechliches oder unvollstaendiges Tatsachenbild).",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+    },
+    {
+      "id": "hilfsableitung__ort_der_geschaeftsleitung",
+      "ergebnisfeld": {
+        "liste": "0_Fallsteuerung",
+        "internal_name": "tax_office",
+        "display_name": "(Zwischenergebnis, keine eigene Spalte - siehe tax_office)"
+      },
+      "beschreibung": "Zwischenableitung 'Ort der tatsaechlichen Geschaeftsleitung' (§ 10 AO), die in die tax_office-Ableitung einfliesst. Keine eigene SharePoint-Spalte, nur dokumentiert, damit die Herleitung nachvollziehbar bleibt (vgl. Datenmodell Abschnitt 10.2).",
+      "wertetyp": "ortsbestimmung",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 10",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Mittelpunkt der geschaeftlichen Oberleitung - Ort, an dem der fuer die Geschaeftsfuehrung massgebliche Wille gebildet wird"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "role"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "usual_workplace_country"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "usual_workplace_address"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "works_elsewhere"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "other_workplace_details"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "genau ein Personendatensatz mit role = 'Gesetzlicher Vertreter' und works_elsewhere = Nein.",
+          "ergebniswert": "usual_workplace_address dieses Vertreters",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "3_Personen_und_Vertretung.works_elsewhere",
+              "op": "is_false"
+            }
+          },
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Mehrere gesetzliche Vertreter mit unterschiedlichen usual_workplace_*-Angaben, oder works_elsewhere = Ja bei mindestens einem.",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "ausnahmen": "BFH-Rspr.: massgeblich ist der Ort, an dem die fuer die Geschaeftsfuehrung notwendigen Massnahmen von einiger Wichtigkeit tatsaechlich angeordnet werden - das ist eine Gesamtbildbetrachtung, kein Mehrheitsentscheid nach Kopfzahl der Vertreter.",
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026"
+    },
+    {
+      "id": "hilfsableitung__ausschliesslich_vermoegensverwaltend",
+      "ergebnisfeld": {
+        "liste": "1_Allgemeiner_Stammblock",
+        "internal_name": "asset_management_present",
+        "display_name": "(Zwischenergebnis, keine eigene Spalte)"
+      },
+      "beschreibung": "Konzeptuelle Ableitung 'ausschliesslich vermoegensverwaltend taetig' (relevant z. B. fuer die erweiterte Kuerzung nach § 9 Nr. 1 Satz 2 GewStG bei reinen Grundstuecksunternehmen). Keine eigene Spalte - abhaengig vom konkreten Zweck der Pruefung ist die exakte Schwelle unterschiedlich, siehe Unsicherheiten unten.",
+      "wertetyp": "freitext",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 14 Satz 3",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "allgemeine Definition Vermoegensverwaltung (Kapitalvermoegen verzinslich anlegen, unbewegliches Vermoegen vermieten/verpachten)"
+        },
+        {
+          "gesetz": "GewStG",
+          "fundstelle": "§ 9 Nr. 1 Satz 2",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "erweiterte Kuerzung nur bei AUSSCHLIESSLICHER Verwaltung/Nutzung eigenen Grundbesitzes"
+        },
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 15 Abs. 3 Nr. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Abfaerbetheorie bei PersG: Bagatellgrenze fuer unschaedliche gewerbliche Mitttaetigkeit (BFH-Rspr., in dieser Datei mit Vorbehalt genannt)"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "asset_management_present"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "asset_management_type"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "asset_mgmt_share_revenue"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "asset_mgmt_share_profit"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "other_business_activities"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "asset_management_present = Nein.",
+          "ergebniswert": "nicht vermögensverwaltend",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "1_Allgemeiner_Stammblock.asset_management_present",
+              "op": "is_false"
+            }
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "asset_management_present = Ja, other_business_activities leer, asset_mgmt_share_revenue = 100 und asset_mgmt_share_profit = 100.",
+          "ergebniswert": "ausschliesslich vermögensverwaltend (Indiz)",
+          "unsicher": true,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.asset_mgmt_share_revenue",
+                  "op": "eq",
+                  "wert": 100,
+                  "einheit": "Prozent"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.asset_mgmt_share_profit",
+                  "op": "eq",
+                  "wert": 100,
+                  "einheit": "Prozent"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "'Ausschliesslich' ist je nach Zweck der Pruefung unterschiedlich streng auszulegen (z. B. erweiterte Kuerzung GewStG verlangt eine sehr enge Auslegung ohne jede gewerbliche Nebentaetigkeit).",
+          "offene_frage_an_nils": "Fuer welchen konkreten Zweck soll diese Ableitung primaer genutzt werden (GewStG erweiterte Kuerzung, Abfaerbetheorie, Gewerblichkeitsfiktion)? Die exakten Schwellen unterscheiden sich je nach Zweck erheblich."
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "asset_management_present = Ja mit Nebentaetigkeiten oder Anteilen < 100 Prozent.",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": true,
+        "ausnahmen": "Bagatellgrenze der Abfaerbetheorie (BFH-Rspr.) liegt nach bisheriger Rechtsprechung bei ca. 3 Prozent der Gesamtnettoumsatzerloese und max. 24.500 EUR im Veranlagungszeitraum - diese Zahlen sind mit Vorbehalt genannt und vor Anwendung zu verifizieren.",
+        "offene_frage_an_nils": "Bitte die genannten Abfaerbe-Bagatellgrenzen (3 Prozent / 24.500 EUR) gegen den aktuellen Rechtsstand/BFH-Rspr. bestaetigen."
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+    },
+    {
+      "id": "3_Personen_und_Vertretung__dependency_status",
+      "ergebnisfeld": {
+        "liste": "3_Personen_und_Vertretung",
+        "internal_name": "dependency_status",
+        "display_name": "Abhängige/unabhängige Person"
+      },
+      "beschreibung": "Abgrenzung abhaengiger/unabhaengiger staendiger Vertreter (relevant fuer Betriebsstaettenbegruendung).",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 13",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "staendiger Vertreter"
+        },
+        {
+          "gesetz": "OECD-MA",
+          "fundstelle": "Art. 5 Abs. 5",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "abhaengiger Vertreter begruendet Betriebsstaette"
+        },
+        {
+          "gesetz": "OECD-MA",
+          "fundstelle": "Art. 5 Abs. 6",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "unabhaengiger Vertreter begruendet i. d. R. keine Betriebsstaette, sofern rechtlich UND wirtschaftlich unabhaengig und im Rahmen gewoehnlicher Geschaeftstaetigkeit handelnd"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "instruction_bound"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "integrated_into_organization"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "bears_entrepreneurial_risk"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "fixed_remuneration"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "instruction_bound = Ja oder integrated_into_organization = Ja.",
+          "ergebniswert": "abhängig",
+          "unsicher": false,
+          "bedingung": {
+            "oder": [
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.instruction_bound",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.integrated_into_organization",
+                  "op": "is_true"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Rechtliche Unselbststaendigkeit (Weisungsgebundenheit/Eingliederung) genuegt bereits allein fuer 'abhaengig', unabhaengig vom wirtschaftlichen Risiko.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "bears_entrepreneurial_risk = Nein und fixed_remuneration = Ja (und instruction_bound/integrated_into_organization = Nein).",
+          "ergebniswert": "abhängig",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.bears_entrepreneurial_risk",
+                  "op": "is_false"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.fixed_remuneration",
+                  "op": "is_true"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Wirtschaftliche Unselbststaendigkeit (kein Risiko, garantierte Verguetung) genuegt ebenfalls allein.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "instruction_bound = Nein, integrated_into_organization = Nein, bears_entrepreneurial_risk = Ja, fixed_remuneration = Nein.",
+          "ergebniswert": "unabhängig",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.instruction_bound",
+                  "op": "is_false"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.integrated_into_organization",
+                  "op": "is_false"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.bears_entrepreneurial_risk",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "3_Personen_und_Vertretung.fixed_remuneration",
+                  "op": "is_false"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Gemischtes Bild (z. B. kein Risiko, aber auch keine Weisungsgebundenheit; oder widerspruechliche Angaben).",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "ausnahmen": "Die Einordnung ist stets eine Gesamtbildbetrachtung nach dem OECD-Kommentar zu Art. 5 Abs. 6 OECD-MA; auch die klar zugeordneten Faelle oben sind starke Indizien, keine abschliessende Subsumtion ohne Plausibilisierung.",
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder)"
+    },
+    {
+      "id": "4_Beteiligte_und_Quoten__limited_tax_liability",
+      "ergebnisfeld": {
+        "liste": "4_Beteiligte_und_Quoten",
+        "internal_name": "limited_tax_liability",
+        "display_name": "Beschränkte Steuerpflicht"
+      },
+      "beschreibung": "Beschraenkte vs. unbeschraenkte Steuerpflicht eines Beteiligten.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 1 Abs. 4 i.V.m. § 49",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "beschraenkte Einkommensteuerpflicht natuerlicher Personen ohne Wohnsitz/gewoehnlichen Aufenthalt im Inland, sofern inlaendische Einkuenfte vorliegen"
+        },
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 1 Abs. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "unbeschraenkte Einkommensteuerpflicht bei Wohnsitz/gewoehnlichem Aufenthalt im Inland"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 8, § 9",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Definition Wohnsitz/gewoehnlicher Aufenthalt"
+        },
+        {
+          "gesetz": "KStG",
+          "fundstelle": "§ 2 Nr. 1 i.V.m. § 8 Abs. 1 EStG § 49",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "beschraenkte Koerperschaftsteuerpflicht ohne Sitz/Geschaeftsleitung im Inland, sofern inlaendische Einkuenfte vorliegen"
+        },
+        {
+          "gesetz": "KStG",
+          "fundstelle": "§ 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "unbeschraenkte Koerperschaftsteuerpflicht bei Sitz oder Geschaeftsleitung im Inland"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 10, § 11",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Definition Geschaeftsleitung/Sitz"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "participant_type"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "domestic_residence"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "domestic_seat_or_management"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "participant_type = 'natürlich' und domestic_residence = Nein.",
+          "ergebniswert": "Ja",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.participant_type",
+                  "op": "eq",
+                  "wert": "natürlich"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.domestic_residence",
+                  "op": "is_false"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Setzt zusaetzlich inlaendische Einkuenfte i.S.d. § 49 EStG voraus - wird hier unterstellt, da der Beteiligte im Erfassungskontext ueberhaupt gefuehrt wird. Doppelte Ansaessigkeit kann abkommensrechtlich (Art. 4 OECD-MA) das Besteuerungsrecht einschraenken, aendert aber nichts am innerstaatlichen Status.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "participant_type = 'natürlich' und domestic_residence = Ja.",
+          "ergebniswert": "Nein",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.participant_type",
+                  "op": "eq",
+                  "wert": "natürlich"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.domestic_residence",
+                  "op": "is_true"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "participant_type = 'nicht natürlich' und domestic_seat_or_management = Nein.",
+          "ergebniswert": "Ja",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.participant_type",
+                  "op": "eq",
+                  "wert": "nicht natürlich"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.domestic_seat_or_management",
+                  "op": "is_false"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "participant_type = 'nicht natürlich' und domestic_seat_or_management = Ja.",
+          "ergebniswert": "Nein",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.participant_type",
+                  "op": "eq",
+                  "wert": "nicht natürlich"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "4_Beteiligte_und_Quoten.domestic_seat_or_management",
+                  "op": "is_true"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Keine der obigen Bedingungen trifft eindeutig zu (widerspruechliches oder unvollstaendiges Tatsachenbild).",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder)"
+    },
+    {
+      "id": "5_Betriebsstaetten__vat_relevant_site",
+      "ergebnisfeld": {
+        "liste": "5_Betriebsstaetten",
+        "internal_name": "vat_relevant_site",
+        "display_name": "Umsatzsteuerliche Betriebsstätte"
+      },
+      "beschreibung": "Feste Niederlassung im umsatzsteuerlichen Sinn.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "UStG",
+          "fundstelle": "§ 3a Abs. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Ort der sonstigen Leistung vom Sitz bzw. einer feste Niederlassung aus"
+        },
+        {
+          "gesetz": "MwSt-DVO",
+          "fundstelle": "Art. 11",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "feste Niederlassung: ausreichender Grad an Bestaendigkeit sowie geeignete Personal- und Sachausstattung"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "site_type"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "staff_present_onsite"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "site_type = 'fest' und staff_present_onsite = Ja.",
+          "ergebniswert": "Ja",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.site_type",
+                  "op": "eq",
+                  "wert": "fest"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.staff_present_onsite",
+                  "op": "is_true"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "site_type = 'nicht fest'.",
+          "ergebniswert": "Nein",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "5_Betriebsstaetten.site_type",
+              "op": "eq",
+              "wert": "nicht fest"
+            }
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "site_type = 'fest' und staff_present_onsite = Nein.",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": true,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.site_type",
+                  "op": "eq",
+                  "wert": "fest"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.staff_present_onsite",
+                  "op": "is_false"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Eine feste Einrichtung ohne eigenes Personal kann nach EuGH-Rechtsprechung (u. a. 'Berlin Chemie A. Menarini', 'Cabot Plastics') ausnahmsweise dennoch keine feste Niederlassung sein bzw. umgekehrt in Sonderfaellen genuegen - die Abgrenzung ist streitig und einzelfallabhaengig.",
+          "offene_frage_an_nils": "Soll 'site_type = fest ohne Personal' standardmaessig als 'Nein' statt 'manuelle Pruefung' vorgeschlagen werden, um den haeufigeren Fall abzudecken?"
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Keine der obigen Bedingungen trifft eindeutig zu (widerspruechliches oder unvollstaendiges Tatsachenbild).",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder)"
+    },
+    {
+      "id": "5_Betriebsstaetten__payroll_tax_site",
+      "ergebnisfeld": {
+        "liste": "5_Betriebsstaetten",
+        "internal_name": "payroll_tax_site",
+        "display_name": "Lohnsteuerliche Betriebsstätte"
+      },
+      "beschreibung": "Betriebsstaette im Sinne des Lohnsteuerabzugsverfahrens.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 41 Abs. 2",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "lohnsteuerliche Betriebsstaette = Betriebsstaette i.S.d. § 12 AO, in der die lohnsteuerlich massgebenden Unterlagen gefuehrt bzw. der Arbeitslohn ermittelt wird"
+        },
+        {
+          "gesetz": "EStG",
+          "fundstelle": "§ 38 Abs. 3",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Arbeitgeber behaelt die Lohnsteuer bei Auszahlung des Arbeitslohns ein"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "site_type"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "staff_present_onsite"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "employer_function_onsite"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "wages_paid_from_site"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "staff_present_onsite = Nein.",
+          "ergebniswert": "Nein",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "5_Betriebsstaetten.staff_present_onsite",
+              "op": "is_false"
+            }
+          },
+          "ausnahmen": "Ohne Personal vor Ort findet an dieser Einrichtung kein Lohnsteuerabzug statt.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "site_type = 'fest', staff_present_onsite = Ja, employer_function_onsite = Ja und wages_paid_from_site = Ja.",
+          "ergebniswert": "Ja",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.site_type",
+                  "op": "eq",
+                  "wert": "fest"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.staff_present_onsite",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.employer_function_onsite",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.wages_paid_from_site",
+                  "op": "is_true"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "staff_present_onsite = Ja, aber employer_function_onsite = Nein oder wages_paid_from_site = Nein.",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "5_Betriebsstaetten.staff_present_onsite",
+                  "op": "is_true"
+                }
+              },
+              {
+                "oder": [
+                  {
+                    "vergleich": {
+                      "feld": "5_Betriebsstaetten.employer_function_onsite",
+                      "op": "is_false"
+                    }
+                  },
+                  {
+                    "vergleich": {
+                      "feld": "5_Betriebsstaetten.wages_paid_from_site",
+                      "op": "is_false"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "ausnahmen": "Personal vor Ort, aber Lohnabrechnung zentral an einer anderen Betriebsstaette/Hauptverwaltung -> die lohnsteuerliche Betriebsstaette liegt dann dort, nicht hier.",
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Keine der obigen Bedingungen trifft eindeutig zu (widerspruechliches oder unvollstaendiges Tatsachenbild).",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder)"
+    },
+    {
+      "id": "6_Steuer_und_Umsatzsteuerprofil__small_business_rule",
+      "ergebnisfeld": {
+        "liste": "6_Steuer_und_Umsatzsteuerprofil",
+        "internal_name": "small_business_rule",
+        "display_name": "Kleinunternehmer-Regelung"
+      },
+      "beschreibung": "Anwendbarkeit der Kleinunternehmerregelung (Umsatzsteuerbefreiung).",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "UStG",
+          "fundstelle": "§ 19 Abs. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Rechtsstand ab 1.1.2025 (Jahressteuergesetz 2024, UNBEDINGT vor produktivem Einsatz pruefen): Vorjahresumsatz <= 25.000 EUR UND voraussichtlicher Umsatz im laufenden Kalenderjahr <= 100.000 EUR (echte Grenze - Ueberschreiten waehrend des Jahres beendet die Steuerbefreiung ab dem Ueberschreiten, nicht erst im Folgejahr). Bis 31.12.2024: 22.000 EUR Vorjahr / 50.000 EUR Prognose laufendes Jahr (nur Prognose, Ueberschreiten im laufenden Jahr war frueher unschaedlich)."
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "6_Steuer_und_Umsatzsteuerprofil",
+          "internal_name": "prior_year_revenue"
+        },
+        {
+          "liste": "6_Steuer_und_Umsatzsteuerprofil",
+          "internal_name": "estimated_revenue_opening_year"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "activity_start_date"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "predecessor_exists"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "predecessor_exists = Nein (bzw. activity_start_date liegt im laufenden Erfassungsjahr, echte Neugruendung ohne Vorjahr) und estimated_revenue_opening_year <= 100.000 EUR.",
+          "ergebniswert": "Ja",
+          "unsicher": true,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
+                  "op": "is_false"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "6_Steuer_und_Umsatzsteuerprofil.estimated_revenue_opening_year",
+                  "op": "lte",
+                  "wert": 100000,
+                  "einheit": "EUR"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Im Gruendungsjahr gilt nach bisherigem Verstaendnis nur die Grenze des laufenden Jahres (kein Vorjahresvergleich). Ob die vor der Reform 2025 teils vertretene Hochrechnung bei unterjaehriger Gruendung auf einen Jahresbetrag weiterhin gilt, ist unklar.",
+          "offene_frage_an_nils": "Gilt bei unterjaehriger Neugruendung weiterhin eine Hochrechnung auf einen vollen Jahresumsatz, oder zaehlt seit der Reform 2025 nur der tatsaechliche Umsatz bis Jahresende gegen die 100.000-EUR-Grenze?"
+        },
+        {
+          "bedingung_text": "predecessor_exists = Ja (Tätigkeit wurde bereits vorher ausgeuebt): prior_year_revenue <= 25.000 EUR und estimated_revenue_opening_year <= 100.000 EUR.",
+          "ergebniswert": "Ja",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "6_Steuer_und_Umsatzsteuerprofil.prior_year_revenue",
+                  "op": "lte",
+                  "wert": 25000,
+                  "einheit": "EUR"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "6_Steuer_und_Umsatzsteuerprofil.estimated_revenue_opening_year",
+                  "op": "lte",
+                  "wert": 100000,
+                  "einheit": "EUR"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "prior_year_revenue > 25.000 EUR oder estimated_revenue_opening_year > 100.000 EUR.",
+          "ergebniswert": "Nein",
+          "unsicher": false,
+          "bedingung": {
+            "oder": [
+              {
+                "vergleich": {
+                  "feld": "6_Steuer_und_Umsatzsteuerprofil.prior_year_revenue",
+                  "op": "gt",
+                  "wert": 25000,
+                  "einheit": "EUR"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "6_Steuer_und_Umsatzsteuerprofil.estimated_revenue_opening_year",
+                  "op": "gt",
+                  "wert": 100000,
+                  "einheit": "EUR"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "Werte liegen sehr nah an einer der Grenzen (z. B. innerhalb 5 Prozent) oder Prognoseunsicherheit ist hoch.",
+        "ergebniswert": "manuelle Pruefung",
+        "unsicher": false,
+        "ausnahmen": "Bei Grenzwertnaehe empfiehlt sich Ruecksprache mit dem Mandanten statt automatischer Einordnung, da eine Fehleinschaetzung unmittelbare Rechtsfolgen hat (Steuerschuld nach § 14c UStG bei zu Unrecht ausgewiesener USt).",
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neues Tatsachenfeld prior_year_revenue; Korrektur der Vorrunde, die small_business_rule faelschlich noch als Tatsachenfrage auswies)"
+    },
+    {
+      "id": "6_Steuer_und_Umsatzsteuerprofil__vat_taxation_method",
+      "ergebnisfeld": {
+        "liste": "6_Steuer_und_Umsatzsteuerprofil",
+        "internal_name": "vat_taxation_method",
+        "display_name": "Soll-/Ist-Besteuerung"
+      },
+      "beschreibung": "Vorschlag, ob ein Antrag auf Ist-Besteuerung sinnvoll/moeglich erscheint. Ist-Besteuerung wird NIE automatisch gewaehrt, sondern erfordert immer einen Antrag beim Finanzamt (§ 20 UStG) - der hier abgeleitete Wert ist ein ANTRAGSVORSCHLAG, keine Tatsachenfeststellung.",
+      "wertetyp": "kategorial",
+      "normen": [
+        {
+          "gesetz": "UStG",
+          "fundstelle": "§ 16 Abs. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Soll-Besteuerung ist der gesetzliche Regelfall"
+        },
+        {
+          "gesetz": "UStG",
+          "fundstelle": "§ 20 Satz 1 Nr. 1",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Ist-Besteuerung auf Antrag, wenn Vorjahresumsatz <= 800.000 EUR (Schwelle seit 1.1.2024 durch Wachstumschancengesetz, vorher 600.000 EUR - Rechtsstand pruefen)"
+        },
+        {
+          "gesetz": "UStG",
+          "fundstelle": "§ 20 Satz 1 Nr. 2",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Ist-Besteuerung auf Antrag, wenn von der Buchfuehrungspflicht nach § 148 AO befreit (i. d. R. Land-/Forstwirtschaft)"
+        },
+        {
+          "gesetz": "UStG",
+          "fundstelle": "§ 20 Satz 1 Nr. 3",
+          "rechtsstand": "2026-10-30",
+          "kurzbeschreibung": "Ist-Besteuerung auf Antrag fuer Umsaetze aus freiberuflicher Taetigkeit i.S.d. § 18 Abs. 1 Nr. 1 EStG, unabhaengig vom Umsatz"
+        }
+      ],
+      "tatsachenfelder": [
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_category"
+        },
+        {
+          "liste": "6_Steuer_und_Umsatzsteuerprofil",
+          "internal_name": "prior_year_revenue"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "domestic_bookkeeping_obligation"
+        },
+        {
+          "liste": "2_Unternehmens_Gruendungsmodul",
+          "internal_name": "predecessor_exists"
+        }
+      ],
+      "ableitungszeilen": [
+        {
+          "bedingung_text": "legal_form_category = 'Freiberufliche Tätigkeit'.",
+          "ergebniswert": "Ist-Besteuerung",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "1_Allgemeiner_Stammblock.legal_form_category",
+              "op": "eq",
+              "wert": "Freiberufliche Tätigkeit"
+            }
+          },
+          "ausnahmen": "Anspruch unabhaengig von der Umsatzhoehe (§ 20 Satz 1 Nr. 3 UStG).",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "domestic_bookkeeping_obligation = Nein und keine Kapitalgesellschaft (Befreiung von § 148 AO, typischerweise Land-/Forstwirtschaft).",
+          "ergebniswert": "Ist-Besteuerung",
+          "unsicher": true,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.domestic_bookkeeping_obligation",
+                  "op": "is_false"
+                }
+              },
+              {
+                "nicht": {
+                  "vergleich": {
+                    "feld": "1_Allgemeiner_Stammblock.legal_form_category",
+                    "op": "eq",
+                    "wert": "Kapitalgesellschaft"
+                  }
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": "Ist 'keine Buchfuehrungspflicht bekannt' bei den hier typischen Rechtsformen (Kapitalgesellschaft, Personengesellschaft mit Gewerbebetrieb) ueberhaupt ein praktisch relevanter Fall fuer § 20 Satz 1 Nr. 2 UStG, oder sollte diese Zeile entfallen, da sie fast ausschliesslich Land-/Forstwirte betrifft (fuer die dieses Datenmodell aktuell keine eigene Tatsachenerhebung vorsieht)?"
+        },
+        {
+          "bedingung_text": "predecessor_exists = Ja und prior_year_revenue <= 800.000 EUR.",
+          "ergebniswert": "Ist-Besteuerung",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
+                  "op": "is_true"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "6_Steuer_und_Umsatzsteuerprofil.prior_year_revenue",
+                  "op": "lte",
+                  "wert": 800000,
+                  "einheit": "EUR"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "predecessor_exists = Nein (echte Neugruendung, kein Vorjahresumsatz vorhanden).",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": true,
+          "bedingung": {
+            "vergleich": {
+              "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
+              "op": "is_false"
+            }
+          },
+          "ausnahmen": "Im Gruendungsjahr fehlt der Vorjahresumsatz als Anknuepfungspunkt fuer § 20 Satz 1 Nr. 1 UStG; die Finanzverwaltung laesst in der Praxis haeufig eine Schaetzung des voraussichtlichen Jahresumsatzes zu, das ist aber keine gesetzlich geregelte Fallgruppe.",
+          "offene_frage_an_nils": "Soll fuer echte Neugruendungen ohne Vorjahresumsatz ein Vorschlag auf Basis von estimated_revenue_opening_year erfolgen, oder grundsaetzlich 'manuelle Pruefung'?"
+        }
+      ],
+      "fallback": {
+        "bedingung_text": "prior_year_revenue > 800.000 EUR und keine der obigen Alternativen greift.",
+        "ergebniswert": "Soll-Besteuerung",
+        "unsicher": false,
+        "ausnahmen": "Gesetzlicher Regelfall nach § 16 Abs. 1 UStG, wenn keine der Ist-Besteuerungs-Alternativen des § 20 UStG erfuellt ist.",
+        "offene_frage_an_nils": null
+      },
+      "kanzlei_bestaetigung_erforderlich": true,
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder prior_year_revenue, domestic_bookkeeping_obligation; Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+    }
+  ]
+}
