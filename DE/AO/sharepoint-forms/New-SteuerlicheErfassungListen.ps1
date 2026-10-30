@@ -988,18 +988,31 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_end"
 # ausgefuellt werden (Forms-Branching, siehe README.md E.2).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_determination_method" -DisplayName "Gewinnermittlungsart (von der Kanzlei abgeleitet)" -Type Choice `
     -Choices @("Betriebsvermögensvergleich", "Einnahmenüberschussrechnung")
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "domestic_bookkeeping_obligation" -DisplayName "Buchführungspflicht nach deutschem Recht (Paragraf 140/141 AO, Paragraf 238 HGB) bekannt" -Type Boolean
+# domestic_bookkeeping_obligation (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag
+# "ALLE Listen pruefen"): bislang fehlte die INLAENDISCHE Buchfuehrungspflicht als
+# eigene Tatsache - nur die auslaendische (foreign_bookkeeping_obligation
+# darunter) war erfasst. Beide zusammen mit register_status/legal_form_category
+# tragen jetzt sowohl profit_determination_method (hier) als auch
+# vat_taxation_method (Liste 6) - siehe DE/AO/ableitungsregeln.json fuer die
+# vollstaendige Wenn-Dann-Regel. Bewusst als einfache Ja/Nein-Tatsachenfrage
+# ("ist Ihnen eine Buchfuehrungspflicht bekannt") formuliert, nicht als
+# Berechnung der Schwellenwerte selbst - die Schwellenwertpruefung (Umsatz/
+# Gewinn nach Paragraf 141 AO) bleibt Sache der Kanzlei.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "foreign_bookkeeping_obligation" -DisplayName "Buchführungs-/Bilanzierungspflicht nach ausländischem Recht" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "voluntary_balance_sheet" -DisplayName "Bereits bilanziert (freiwillig oder nach anderer Vorschrift)" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "balance_sheet_basis" -DisplayName "Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht)" -Type Text
 # profit_determination_method (Review Nils 28.10.2026): nicht mehr Pflicht und
 # jetzt als Kanzleifeld gekennzeichnet - "Gewinnermittlungsart" ist eine
 # rechtliche Wuerdigung (§ 4/§ 5 EStG), kein Mandanten-Fakt. Stattdessen werden
-# die Tatsachen erhoben (Buchfuehrungspflicht nach auslaendischem Recht,
-# freiwillige Bilanzierung, Rechtsgrundlage; Handelsregister-Eintragung bereits
-# ueber register_status, freiberufliche Taetigkeit bereits ueber
+# die Tatsachen erhoben (Buchfuehrungspflicht nach deutschem UND auslaendischem
+# Recht, freiwillige Bilanzierung, Rechtsgrundlage; Handelsregister-Eintragung
+# bereits ueber register_status, freiberufliche Taetigkeit bereits ueber
 # legal_form_category in Liste 1 abgedeckt - keine Dubletten dafuer angelegt).
 # Die Kanzlei leitet die Gewinnermittlungsart daraus ab, siehe Datenmodell
-# Abschnitt 10 Ableitungstabelle.
+# Abschnitt 10 Ableitungstabelle und DE/AO/ableitungsregeln.json (30.10.2026:
+# domestic_bookkeeping_obligation ergaenzt - war bislang eine Luecke, da nur
+# die auslaendische Buchfuehrungspflicht erfasst war).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_opening_year" -DisplayName "Voraussichtlicher Gewinn Eroeffnungsjahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_following_year" -DisplayName "Voraussichtlicher Gewinn Folgejahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "part_of_group" -DisplayName "Konzernzugehoerigkeit" -Type Boolean
