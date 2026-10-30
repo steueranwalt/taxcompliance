@@ -1073,8 +1073,23 @@ Add-Field -List "3_Personen_und_Vertretung" -InternalName "profession" -DisplayN
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "address" -DisplayName "Adresse" -Type Note -Required
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "phone" -DisplayName "Telefon" -Type Text -FieldRole "System"
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "tax_reference" -DisplayName "Steuerliche Kennzeichen" -Type Text
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -DisplayName "Abhaengige/unabhaengige Person" -Type Choice -FieldRole "Ergebnis" `
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -DisplayName "Abhaengige/unabhaengige Person (von der Kanzlei nach Paragraf 13 AO/Art. 5 OECD-MA eingeordnet)" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("abhängig", "unabhängig")
+# dependency_status (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag "ALLE
+# Listen pruefen"): DisplayName praezisiert (war bereits -FieldRole Ergebnis
+# seit der vorigen Runde, aber ohne eigene Tatsachenfelder und ohne
+# Kanzleifeld-Kennzeichnung im DisplayName). "Abhaengig/unabhaengig" ist die
+# abkommensrechtliche Einordnung nach Art. 5 Abs. 5/6 OECD-MA (bzw. Paragraf 13
+# AO "staendiger Vertreter"), keine Tatsache, die der Mandant selbst feststellen
+# kann. Tatsachen stattdessen ueber die vier neuen Felder unten (klassische
+# Abgrenzungskriterien zur Scheinselbststaendigkeit/arbeitnehmeraehnlichen
+# Taetigkeit, analog zur OECD-Kommentierung zu Art. 5 Abs. 6 OECD-MA). Siehe
+# DE/AO/ableitungsregeln.json fuer die Wenn-Dann-Regel (Gesamtbildbetrachtung,
+# kein starrer Automatismus).
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "instruction_bound" -DisplayName "Bei der Taetigkeit fuer den Meldepflichtigen weisungsgebunden" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "integrated_into_organization" -DisplayName "In die Arbeitsorganisation des Meldepflichtigen eingegliedert (z. B. feste Arbeitszeiten/-ort, dessen Betriebsmittel)" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "bears_entrepreneurial_risk" -DisplayName "Traegt ein eigenes unternehmerisches Risiko (z. B. eigene Betriebsmittel, eigenes Personal, erfolgsabhaengige Verguetung)" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "fixed_remuneration" -DisplayName "Erhaelt eine feste Verguetung unabhaengig vom Erfolg einzelner Geschaefte" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "power_to_conclude_contracts" -DisplayName "Abschlussvollmacht" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "is_authorized_recipient" -DisplayName "Empfangsbevollmaechtigt" -Type Boolean
 # --- Uebliche Taetigkeitsorte der Person (Review Nils 28.10.2026, verschoben
