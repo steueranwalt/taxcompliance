@@ -1231,13 +1231,46 @@ Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "case_id" -Displ
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "estimated_revenue_opening_year" -DisplayName "Geschaetzter Umsatz Eroeffnungsjahr" -Type Number -Required
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "estimated_revenue_following_year" -DisplayName "Geschaetzter Umsatz Folgejahr" -Type Number -Required
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule" -DisplayName "Kleinunternehmer-Regelung" -Type Boolean -FieldRole "Ergebnis"
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule_waiver" -DisplayName "Verzicht auf Kleinunternehmer-Regelung" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "prior_year_revenue" -DisplayName "Tatsaechlicher Umsatz des Vorjahres (falls bereits taetig)" -Type Number
+# prior_year_revenue (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag "ALLE
+# Listen pruefen"): neues Tatsachenfeld zur Ableitung von small_business_rule
+# und vat_taxation_method. Bewusst NICHT dasselbe Feld wie
+# estimated_revenue_opening_year (das ist der SCHAETZWERT fuer das
+# Eroeffnungsjahr dieses Falls, waehrend prior_year_revenue der TATSAECHLICHE
+# Umsatz des VORJAHRES ist - nur bei bereits vorher ausgeuebter Taetigkeit
+# relevant, siehe predecessor_exists in Liste 2; bei echter Neugruendung bleibt
+# dieses Feld leer/0, siehe DE/AO/ableitungsregeln.json). "Beginn der
+# Taetigkeit" wird NICHT erneut erfragt (bereits activity_start_date in
+# Liste 2 vorhanden) - jeden Sachverhalt nur einmal abfragen.
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule" -DisplayName "Kleinunternehmer-Regelung (von der Kanzlei nach Paragraf 19 UStG eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule_waiver" -DisplayName "Verzicht auf Kleinunternehmer-Regelung gewuenscht (falls anwendbar)" -Type Boolean
+# small_business_rule (Grundregel-Vertiefung 30.10.2026): DisplayName
+# praezisiert (war bereits -FieldRole Ergebnis seit der vorigen Runde, aber
+# ohne eigene Tatsachenfelder - die Ableitungstabelle der Vorrunde nannte
+# small_business_rule faelschlich noch als "bleibt Tatsachenfrage", obwohl das
+# Skript es schon als Ergebnis fuehrte; diese Inkonsistenz ist mit dieser
+# Aenderung aufgeloest). Tatsachen stattdessen ueber prior_year_revenue (oben),
+# estimated_revenue_opening_year (bestehend) und activity_start_date (Liste 2,
+# bestehend) - siehe DE/AO/ableitungsregeln.json.
+# small_business_rule_waiver (Korrektur 30.10.2026): zurueck auf -FieldRole
+# Tatsache (Default) gestellt - der Verzicht ist eine Willenserklaerung des
+# Mandanten (vergleichbar mit par27_ao_agreement), keine rechtliche Wuerdigung;
+# die Kanzlei muss diesen Wunsch ohnehin separat erfragen, sobald sie die
+# Kleinunternehmer-Eignung aus den Tatsachen abgeleitet hat (das Forms-
+# Branching "nur wenn Kleinunternehmer-Regelung = Ja" funktioniert nicht mehr
+# innerhalb von Formular 6, da small_business_rule dort keine Frage mehr ist -
+# siehe README.md Abschnitt E.6 fuer den dadurch noetigen Prozess-Hinweis).
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_vat_amount" -DisplayName "Voraussichtliche USt (Zahllast/Ueberschuss)" -Type Number -FieldRole "Ergebnis"
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_filing_period" -DisplayName "Voranmeldungszeitraum" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Monat", "Quartal")
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_taxation_method" -DisplayName "Soll-/Ist-Besteuerung" -Type Choice -FieldRole "Ergebnis" `
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_taxation_method" -DisplayName "Soll-/Ist-Besteuerung (von der Kanzlei nach Paragraf 16/20 UStG vorgeschlagen, Antrag noetig)" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Soll-Besteuerung", "Ist-Besteuerung")
+# vat_taxation_method (Grundregel-Vertiefung 30.10.2026): DisplayName
+# praezisiert - Ist-Besteuerung ist IMMER nur auf Antrag beim Finanzamt moeglich
+# (Paragraf 20 UStG), nie automatisch; der von der Kanzlei abgeleitete Wert ist
+# ein VORSCHLAG zur Antragstellung, keine Tatsachenfeststellung. Tatsachen zur
+# Ableitung: prior_year_revenue (oben), domestic_bookkeeping_obligation (Liste
+# 2, neu), legal_form_category (Liste 1) - siehe DE/AO/ableitungsregeln.json.
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "request_vat_id" -DisplayName "USt-IdNr. beantragen" -Type Boolean
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "previous_vat_id" -DisplayName "Fruehere USt-IdNr." -Type Text
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "oss_procedure" -DisplayName "OSS-Verfahren" -Type Boolean
