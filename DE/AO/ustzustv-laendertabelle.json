@@ -1,0 +1,374 @@
+{
+  "schema_version": "1.1.0",
+  "stand": "2026-10-31",
+  "befuellungsstatus": "befuellt (Rechtsstand 2025-12-19)",
+  "hinweis": [
+    "Befuellt am 31.10.2026 aus dem amtlichen Text von UStZustV § 1 Abs. 1",
+    "auf https://www.gesetze-im-internet.de/ustzustv/__1.html (amtliches Werk). Nicht aus dem Gedaechtnis.",
+    "Fassung: Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372).",
+    "",
+    "iso_code stammt NICHT aus der UStZustV, sondern aus ISO 3166-1 alpha-2",
+    "(oeffentliche Norm, zur maschinellen Zuordnung ergaenzt).",
+    "bundesland stammt NICHT aus der UStZustV, sondern ist das Land des",
+    "Sitzes des in der Verordnung namentlich genannten Finanzamts",
+    "(oeffentliche Behoerdenangabe).",
+    "",
+    "Polen (§ 1 Abs. 1 Nr. 20) hat vier namensabhaengige Zustaendigkeiten",
+    "plus eine Sonderzustaendigkeit (Buchst. e, OSS/IOSS) beim Finanzamt Cottbus.",
+    "§ 1 Abs. 2 (Auffangzustaendigkeit Finanzamt Berlin International) ist als",
+    "letzte Zeile 'sonstige Staaten' abgebildet.",
+    "§ 1 Abs. 2a (Mini-One-Stop-Shop, § 18 Abs. 4c UStG -> BZSt) und",
+    "§ 1 Abs. 2b (Ansässigkeit fingiert im Anzeige-Mitgliedstaat) sind",
+    "keine Laenderzeilen und hier nur als Hinweis festgehalten.",
+    "",
+    "Aussengebiete, Ueberseegebiete und Selbstverwaltungsgebiete der in",
+    "Abs. 1 genannten Staaten folgen dem Stammstaat (Abs. 1 Satz 2)."
+  ],
+  "quelle_verordnung": "Umsatzsteuerzustaendigkeitsverordnung (UStZustV) § 1 Abs. 1 (amtlicher Text auf gesetze-im-internet.de, abgerufen 2026-10-31)",
+  "fassung": "Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372)",
+  "quelle_url": "https://www.gesetze-im-internet.de/ustzustv/__1.html",
+  "zuordnungen": [
+    {
+      "land": "Belgien",
+      "finanzamt_name": "Finanzamt Trier",
+      "bundesland": "Rheinland-Pfalz",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 1; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "BE"
+    },
+    {
+      "land": "Bulgarien",
+      "finanzamt_name": "Finanzamt Neuwied",
+      "bundesland": "Rheinland-Pfalz",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 2; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "BG"
+    },
+    {
+      "land": "Dänemark",
+      "finanzamt_name": "Finanzamt Flensburg",
+      "bundesland": "Schleswig-Holstein",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 3; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "DK"
+    },
+    {
+      "land": "Estland",
+      "finanzamt_name": "Finanzamt Rostock",
+      "bundesland": "Mecklenburg-Vorpommern",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 4; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "EE"
+    },
+    {
+      "land": "Finnland",
+      "finanzamt_name": "Finanzamt Bremen",
+      "bundesland": "Bremen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 5; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "FI"
+    },
+    {
+      "land": "Frankreich",
+      "finanzamt_name": "Finanzamt Offenburg",
+      "bundesland": "Baden-Württemberg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 6; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "FR",
+      "anmerkung": "Gemeinsam mit Monaco in § 1 Abs. 1 Nr. 6."
+    },
+    {
+      "land": "Monaco",
+      "finanzamt_name": "Finanzamt Offenburg",
+      "bundesland": "Baden-Württemberg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 6; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "MC",
+      "anmerkung": "Gemeinsam mit Frankreich in § 1 Abs. 1 Nr. 6."
+    },
+    {
+      "land": "Vereinigtes Königreich",
+      "finanzamt_name": "Finanzamt Hannover-Nord",
+      "bundesland": "Niedersachsen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 7; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "GB",
+      "anmerkung": "Gemeinsam mit Insel Man in § 1 Abs. 1 Nr. 7."
+    },
+    {
+      "land": "Insel Man",
+      "finanzamt_name": "Finanzamt Hannover-Nord",
+      "bundesland": "Niedersachsen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 7; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "IM",
+      "anmerkung": "Gemeinsam mit dem Vereinigten Koenigreich in § 1 Abs. 1 Nr. 7."
+    },
+    {
+      "land": "Griechenland",
+      "finanzamt_name": "Finanzamt Berlin International",
+      "bundesland": "Berlin",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 8; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "GR"
+    },
+    {
+      "land": "Irland",
+      "finanzamt_name": "Finanzamt Hamburg-Nord",
+      "bundesland": "Hamburg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 9; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "IE"
+    },
+    {
+      "land": "Italien",
+      "finanzamt_name": "Finanzamt München",
+      "bundesland": "Bayern",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 10; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "IT"
+    },
+    {
+      "land": "Kroatien",
+      "finanzamt_name": "Finanzamt Kassel",
+      "bundesland": "Hessen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 11; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "HR"
+    },
+    {
+      "land": "Lettland",
+      "finanzamt_name": "Finanzamt Bremen",
+      "bundesland": "Bremen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 12; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "LV"
+    },
+    {
+      "land": "Liechtenstein",
+      "finanzamt_name": "Finanzamt Konstanz",
+      "bundesland": "Baden-Württemberg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 13; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "LI"
+    },
+    {
+      "land": "Litauen",
+      "finanzamt_name": "Finanzamt Mühlhausen",
+      "bundesland": "Thüringen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 14; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "LT"
+    },
+    {
+      "land": "Luxemburg",
+      "finanzamt_name": "Finanzamt Saarbrücken I",
+      "bundesland": "Saarland",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 15; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "LU"
+    },
+    {
+      "land": "Nordmazedonien",
+      "finanzamt_name": "Finanzamt Berlin International",
+      "bundesland": "Berlin",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 16; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "MK"
+    },
+    {
+      "land": "Niederlande",
+      "finanzamt_name": "Finanzamt Kleve",
+      "bundesland": "Nordrhein-Westfalen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 17; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "NL"
+    },
+    {
+      "land": "Norwegen",
+      "finanzamt_name": "Finanzamt Bremen",
+      "bundesland": "Bremen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 18; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "NO"
+    },
+    {
+      "land": "Österreich",
+      "finanzamt_name": "Finanzamt München",
+      "bundesland": "Bayern",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 19; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "AT"
+    },
+    {
+      "land": "Polen",
+      "finanzamt_name": "Finanzamt Hameln-Holzminden",
+      "bundesland": "Niedersachsen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 20; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "PL",
+      "name_range": "A-G",
+      "anmerkung": "§ 1 Abs. 1 Nr. 20 Buchst. a: Nachname oder Firmenname beginnt mit A bis G."
+    },
+    {
+      "land": "Polen",
+      "finanzamt_name": "Finanzamt Oranienburg",
+      "bundesland": "Brandenburg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 20; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "PL",
+      "name_range": "H-Ł",
+      "anmerkung": "§ 1 Abs. 1 Nr. 20 Buchst. b: Nachname oder Firmenname beginnt mit H bis Ł (amtlicher Buchstabe Ł)."
+    },
+    {
+      "land": "Polen",
+      "finanzamt_name": "Finanzamt Cottbus",
+      "bundesland": "Brandenburg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 20; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "PL",
+      "name_range": "M-R",
+      "anmerkung": "§ 1 Abs. 1 Nr. 20 Buchst. c: Nachname oder Firmenname beginnt mit M bis R."
+    },
+    {
+      "land": "Polen",
+      "finanzamt_name": "Finanzamt Nördlingen",
+      "bundesland": "Bayern",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 20; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "PL",
+      "name_range": "S-Ż",
+      "anmerkung": "§ 1 Abs. 1 Nr. 20 Buchst. d: Nachname oder Firmenname beginnt mit S bis Ż (amtlicher Buchstabe Ż)."
+    },
+    {
+      "land": "Polen",
+      "finanzamt_name": "Finanzamt Cottbus",
+      "bundesland": "Brandenburg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 20; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "PL",
+      "name_range": "OSS/IOSS",
+      "anmerkung": "§ 1 Abs. 1 Nr. 20 Buchst. e: ungeachtet a-d Finanzamt Cottbus fuer Verfahren nach § 18 Abs. 4e, § 18j oder § 18k UStG."
+    },
+    {
+      "land": "Portugal",
+      "finanzamt_name": "Finanzamt Kassel",
+      "bundesland": "Hessen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 21; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "PT"
+    },
+    {
+      "land": "Rumänien",
+      "finanzamt_name": "Finanzamt Chemnitz-Süd",
+      "bundesland": "Sachsen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 22; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "RO"
+    },
+    {
+      "land": "Russische Föderation",
+      "finanzamt_name": "Finanzamt Magdeburg",
+      "bundesland": "Sachsen-Anhalt",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 23; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "RU"
+    },
+    {
+      "land": "Schweden",
+      "finanzamt_name": "Finanzamt Hamburg-Nord",
+      "bundesland": "Hamburg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 24; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "SE"
+    },
+    {
+      "land": "Schweiz",
+      "finanzamt_name": "Finanzamt Konstanz",
+      "bundesland": "Baden-Württemberg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 25; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "CH"
+    },
+    {
+      "land": "Slowakei",
+      "finanzamt_name": "Finanzamt Chemnitz-Süd",
+      "bundesland": "Sachsen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 26; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "SK"
+    },
+    {
+      "land": "Spanien",
+      "finanzamt_name": "Finanzamt Kassel",
+      "bundesland": "Hessen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 27; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "ES"
+    },
+    {
+      "land": "Slowenien",
+      "finanzamt_name": "Finanzamt Oranienburg",
+      "bundesland": "Brandenburg",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 28; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "SI"
+    },
+    {
+      "land": "Tschechien",
+      "finanzamt_name": "Finanzamt Chemnitz-Süd",
+      "bundesland": "Sachsen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 29; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "CZ"
+    },
+    {
+      "land": "Türkei",
+      "finanzamt_name": "Finanzamt Dortmund-Unna",
+      "bundesland": "Nordrhein-Westfalen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 30; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "TR"
+    },
+    {
+      "land": "Ukraine",
+      "finanzamt_name": "Finanzamt Magdeburg",
+      "bundesland": "Sachsen-Anhalt",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 31; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "UA"
+    },
+    {
+      "land": "Ungarn",
+      "finanzamt_name": "Zentralfinanzamt Nürnberg",
+      "bundesland": "Bayern",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 32; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "HU"
+    },
+    {
+      "land": "Weissrussland",
+      "finanzamt_name": "Finanzamt Magdeburg",
+      "bundesland": "Sachsen-Anhalt",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 33; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "BY"
+    },
+    {
+      "land": "Vereinigte Staaten",
+      "finanzamt_name": "Finanzamt Bonn-Innenstadt",
+      "bundesland": "Nordrhein-Westfalen",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 1 Nr. 34; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "iso_code": "US"
+    },
+    {
+      "land": "sonstige Staaten",
+      "finanzamt_name": "Finanzamt Berlin International",
+      "bundesland": "Berlin",
+      "rechtsstand": "2025-12-19",
+      "fundstelle": "UStZustV § 1 Abs. 2; Umsatzsteuerzustaendigkeitsverordnung vom 20. Dezember 2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Artikel 8 der Verordnung vom 19. Dezember 2025 (BGBl. 2025 I Nr. 372); abgerufen 2026-10-31 von https://www.gesetze-im-internet.de/ustzustv/__1.html",
+      "anmerkung": "§ 1 Abs. 2: Unternehmer, die nicht von Abs. 1 erfasst werden. Aussen-/Uebersee-/Selbstverwaltungsgebiete der in Abs. 1 genannten Staaten folgen Abs. 1 Satz 2 dem jeweiligen Stammstaat."
+    }
+  ]
+}

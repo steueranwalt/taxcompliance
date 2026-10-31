@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/steueranwalt/taxcompliance/DE/AO/ustzustv-laendertabelle.schema.json",
+  "title": "UStZustV-Laendertabelle: zentrale Umsatzsteuer-Zustaendigkeit fuer im Ausland ansaessige Unternehmer",
+  "description": "Maschinenlesbare Laender-zu-Finanzamt-Zuordnung nach UStZustV § 1 Abs. 1 (amtlicher Text auf gesetze-im-internet.de). Siehe ustzustv-laendertabelle.json.",
+  "type": "object",
+  "required": ["schema_version", "stand", "befuellungsstatus", "quelle_verordnung", "fassung", "zuordnungen"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string" },
+    "stand": { "type": "string", "format": "date", "description": "Datum des Abrufs der amtlichen Quelle." },
+    "befuellungsstatus": { "type": "string" },
+    "hinweis": {
+      "oneOf": [
+        { "type": "array", "items": { "type": "string" } },
+        { "type": "string" }
+      ]
+    },
+    "quelle_verordnung": { "type": "string" },
+    "fassung": {
+      "type": "string",
+      "description": "Vollzitat der herangezogenen UStZustV-Fassung."
+    },
+    "quelle_url": { "type": "string" },
+    "zuordnungen": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/zuordnung" }
+    }
+  },
+  "$defs": {
+    "zuordnung": {
+      "type": "object",
+      "required": ["land", "finanzamt_name", "rechtsstand", "fundstelle"],
+      "additionalProperties": false,
+      "properties": {
+        "land": { "type": "string" },
+        "iso_code": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2; nicht in der UStZustV enthalten, ergaenzt aus der ISO-Norm zur maschinellen Zuordnung."
+        },
+        "finanzamt_name": { "type": "string" },
+        "bundesland": {
+          "type": "string",
+          "description": "Land des Sitzes des benannten Finanzamts; nicht in der UStZustV enthalten."
+        },
+        "name_range": {
+          "type": "string",
+          "description": "Nur Polen (§ 1 Abs. 1 Nr. 20): Anfangsbuchstaben des Nach- bzw. Firmennamens."
+        },
+        "rechtsstand": { "type": "string", "format": "date" },
+        "fundstelle": { "type": "string" },
+        "anmerkung": { "type": "string" }
+      }
+    }
+  }
+}

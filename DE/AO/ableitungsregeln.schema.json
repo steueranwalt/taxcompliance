@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/steueranwalt/taxcompliance/DE/AO/ableitungsregeln.schema.json",
+  "title": "Ableitungsregeln Ergebnisfeld -> Tatsachenfelder (Grundregel Tatsachen/Rechtsfolgen)",
+  "description": "Maschinenlesbares Format der Uebersetzungstabelle 'wenn diese Tatsachen, dann diese Rechtsfolge = einzutragender Wert' fuer jedes Ergebnisfeld (Kanzleifeld) im Datenmodell. Siehe Einheitliches-Datenmodell-steuerliche-Erfassung-DE-Auslandsbezug.md Abschnitt 10 fuer die Grundregel und die lesbare Fassung dieser Tabelle. Ein Flow, der Erfassungs-Chat (DE/AO/erfassungs-chat/) oder ein kuenftiger ELSTER-Bot kann diese Datei nutzen, um einen VORSCHLAGSWERT zu berechnen; die Kanzlei (eine berufsrechtlich zugelassene Person) bestaetigt jeden Vorschlag vor der tatsaechlichen Eintragung in SharePoint/ELSTER. Kein automatisches Schreiben ohne Kanzlei-Bestaetigung vorgesehen oder zulaessig.",
+  "type": "object",
+  "required": ["schema_version", "stand", "hinweis_rechtsverbindlichkeit", "regeln"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Semantische Version dieser Datenstruktur (nicht der Rechtsinhalte)."
+    },
+    "stand": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum, zu dem die Ableitungsregeln zuletzt fachlich durchgesehen wurden (globaler Default-Rechtsstand, sofern eine einzelne Norm keinen abweichenden rechtsstand angibt)."
+    },
+    "hinweis_rechtsverbindlichkeit": {
+      "type": "string",
+      "description": "Verbindlicher Haftungs-/Nutzungshinweis, der von jedem Konsumenten dieser Datei (Flow, Chat, ELSTER-Bot) eingehalten werden muss."
+    },
+    "offene_fragen_global": {
+      "type": "array",
+      "description": "Fachliche Fragen, die das gesamte Regelwerk betreffen und vor produktivem Einsatz mit Nils (Steueranwalt) zu klaeren sind.",
+      "items": { "type": "string" }
+    },
+    "regeln": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/ableitungsregel" }
+    }
+  },
+  "$defs": {
+    "feldreferenz": {
+      "type": "object",
+      "required": ["liste", "internal_name"],
+      "additionalProperties": false,
+      "properties": {
+        "liste": {
+          "type": "string",
+          "description": "SharePoint-Listenname wie in New-SteuerlicheErfassungListen.ps1 (-List)."
+        },
+        "internal_name": {
+          "type": "string",
+          "description": "Interner SharePoint-Feldname wie in New-SteuerlicheErfassungListen.ps1 (-InternalName)."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Optionaler Anzeigename zur Lesbarkeit; massgeblich ist internal_name."
+        }
+      }
+    },
+    "norm": {
+      "type": "object",
+      "required": ["gesetz", "fundstelle", "rechtsstand"],
+      "additionalProperties": false,
+      "properties": {
+        "gesetz": { "type": "string", "description": "z. B. 'AO', 'UStG', 'EStG', 'KStG', 'OECD-MA'." },
+        "fundstelle": { "type": "string", "description": "z. B. '§ 19 Abs. 1'." },
+        "rechtsstand": {
+          "type": "string",
+          "format": "date",
+          "description": "Datum, zu dem diese konkrete Norm/dieser Schwellenwert zuletzt geprueft wurde. Weicht vom globalen 'stand' ab, wenn die Norm kuerzlich reformiert wurde."
+        },
+        "kurzbeschreibung": { "type": "string" }
+      }
+    },
+    "bedingungsausdruck": {
+      "description": "Rekursiver boolescher Ausdruck ueber Tatsachenfelder. Genau eines der Felder und/oder/nicht/vergleich muss gesetzt sein.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "und": { "type": "array", "items": { "$ref": "#/$defs/bedingungsausdruck" }, "minItems": 1 },
+        "oder": { "type": "array", "items": { "$ref": "#/$defs/bedingungsausdruck" }, "minItems": 1 },
+        "nicht": { "$ref": "#/$defs/bedingungsausdruck" },
+        "vergleich": { "$ref": "#/$defs/vergleich" }
+      }
+    },
+    "vergleich": {
+      "type": "object",
+      "required": ["feld", "op"],
+      "additionalProperties": false,
+      "properties": {
+        "feld": {
+          "type": "string",
+          "description": "Feldreferenz als 'Liste.internal_name', z. B. '1_Allgemeiner_Stammblock.legal_form_jurisdiction'."
+        },
+        "op": {
+          "type": "string",
+          "enum": ["eq", "ne", "lte", "gte", "lt", "gt", "in", "not_in", "is_true", "is_false", "is_empty", "is_not_empty"]
+        },
+        "wert": {
+          "description": "Vergleichswert; Typ haengt von 'op' ab (Zahl, String oder Array von Strings bei 'in'/'not_in'). Entfaellt bei is_true/is_false/is_empty/is_not_empty."
+        },
+        "einheit": { "type": "string", "description": "z. B. 'EUR', 'Prozent', 'Monate' - nur bei numerischen Schwellen." }
+      }
+    },
+    "ableitungszeile": {
+      "type": "object",
+      "required": ["bedingung_text", "ergebniswert", "unsicher"],
+      "additionalProperties": false,
+      "properties": {
+        "bedingung_text": {
+          "type": "string",
+          "description": "Menschenlesbare Bedingung (immer vorhanden, auch wenn 'bedingung' strukturiert fehlt)."
+        },
+        "bedingung": {
+          "$ref": "#/$defs/bedingungsausdruck",
+          "description": "Strukturierte, maschinell auswertbare Fassung von bedingung_text. Kann fehlen, wenn die Bedingung nicht sauber strukturierbar ist (z. B. Gesamtbildbetrachtung) - dann ist bedingung_text massgeblich und 'unsicher' bzw. 'manuelle_pruefung_erforderlich' sollte gesetzt sein."
+        },
+        "ergebniswert": {
+          "type": "string",
+          "description": "Exakter einzutragender Wert (z. B. identischer Choice-Text wie im PnP-Skript, oder 'manuelle Pruefung' als Sammelwert, wenn die Regel nicht eindeutig entscheidet)."
+        },
+        "ausnahmen": {
+          "type": "string",
+          "description": "Bekannte Ausnahmen von dieser Zeile, falls vorhanden."
+        },
+        "unsicher": {
+          "type": "boolean",
+          "description": "true, wenn diese einzelne Regelzeile fachlich nicht abschliessend gesichert ist und vor produktivem Einsatz durch Nils bestaetigt werden muss."
+        },
+        "offene_frage_an_nils": {
+          "type": ["string", "null"],
+          "description": "Konkrete Frage an Nils, falls unsicher = true. Pflicht, wenn unsicher = true."
+        }
+      }
+    },
+    "ableitungsregel": {
+      "type": "object",
+      "required": [
+        "id", "ergebnisfeld", "wertetyp", "normen", "tatsachenfelder",
+        "ableitungszeilen", "fallback", "kanzlei_bestaetigung_erforderlich", "quelle"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Eindeutige ID, Konvention '<Liste>__<internal_name>'."
+        },
+        "ergebnisfeld": { "$ref": "#/$defs/feldreferenz" },
+        "beschreibung": {
+          "type": "string",
+          "description": "Kurze fachliche Beschreibung, was dieses Ergebnisfeld bedeutet und warum es ein Kanzleifeld ist (keine Mandanten-Tatsache)."
+        },
+        "wertetyp": {
+          "type": "string",
+          "enum": ["kategorial", "ortsbestimmung", "berechnung", "freitext"],
+          "description": "'kategorial': fester Choice-Wert wird vorgeschlagen. 'ortsbestimmung': die Regel bestimmt nur einen Anknuepfungspunkt (z. B. Ort), der konkrete einzutragende Wert (z. B. Finanzamt-Name) erfordert zusaetzlich einen Abgleich mit einem externen Verzeichnis. 'berechnung': der Wert ist eine Zahl/Formel, keine Kategorie. 'freitext': der Wert ist ein unstrukturierter Text ohne feste Werteliste."
+        },
+        "normen": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/norm" }
+        },
+        "tatsachenfelder": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/feldreferenz" }
+        },
+        "ableitungszeilen": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/ableitungszeile" }
+        },
+        "fallback": {
+          "$ref": "#/$defs/ableitungszeile",
+          "description": "Regel, wenn keine der ableitungszeilen zutrifft. Typischerweise ergebniswert = 'manuelle Pruefung'."
+        },
+        "kanzlei_bestaetigung_erforderlich": {
+          "const": true,
+          "description": "Immer true. Kein Vorschlag aus dieser Datei darf ohne Bestaetigung durch eine berufsrechtlich zugelassene Person uebernommen werden."
+        },
+        "quelle": {
+          "type": "string",
+          "description": "Herkunft/Review-Datum, z. B. 'Grundregel-Review Nils 30.10.2026'."
+        }
+      }
+    }
+  }
+}

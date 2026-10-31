@@ -2,7 +2,7 @@
 <#
     .SYNOPSIS
     Legt die SharePoint-Listenfamilie "Steuerliche Erfassung DE / Auslandsbezug" an
-    (Liste 0-8, die internen Referenzlisten "Technische_Mindestfelder" und
+    (Liste 0-9, die internen Referenzlisten "Technische_Mindestfelder" und
     "Eingang_Fehler") bzw. gleicht eine bereits vorhandene Installation an den
     aktuellen Feldkatalog an.
 
@@ -335,7 +335,7 @@ function Set-FieldFormVisibility {
       Review Nils 28.10.2026 (0_Fallsteuerung): access_code wird ausschliesslich
       von einem Flow gesetzt, nie von Hand. Damit niemand versehentlich ueber das
       native SharePoint-Listenformular (NewForm.aspx/EditForm.aspx - zu
-      unterscheiden von den Microsoft-Forms-Umfragen F0-F8!) einen eigenen Wert
+      unterscheiden von den Microsoft-Forms-Umfragen F0-F9!) einen eigenen Wert
       eintraegt, wird das Feld dort ausgeblendet (ShowInNewForm/ShowInEditForm =
       FALSE). In der Anzeige (DisplayForm) bleibt es sichtbar, damit die Kanzlei
       den Code bei Bedarf nachschlagen kann. Gilt fuer neue und bestehende Felder
@@ -772,7 +772,7 @@ Add-Field -List "0_Fallsteuerung" -InternalName "access_code" -DisplayName "Zuga
 # den Wert von Hand ein - der fallanlegende Power-Automate-Flow erzeugt ihn IM
 # SELBEN "Element erstellen"-Schritt wie case_id (z. B. per Ausdruck
 # toUpper(substring(guid(),0,10))) und baut ihn in den vorausgefuellten Link zu
-# den Formularen 1-8 ein. Spaetere Flows pruefen case_id UND access_code
+# den Formularen 1-9 ein. Spaetere Flows pruefen case_id UND access_code
 # gemeinsam, bevor eine Formularantwort einem Fall zugeordnet wird. Deshalb
 # -HideFromForms (im nativen SharePoint-Neu-/Bearbeiten-Formular ausgeblendet,
 # siehe Set-FieldFormVisibility) und bewusst weiterhin nicht -Required (ein
@@ -801,7 +801,7 @@ Add-Field -List "0_Fallsteuerung" -InternalName "registration_status" -DisplayNa
 # (beide bislang bekannten Sites hatten beim Wechsel 0 Eintraege in
 # 0_Fallsteuerung, die alte Spalte kann also gefahrlos entfernt werden).
 Add-Field -List "0_Fallsteuerung" -InternalName "existing_tax_number" -DisplayName "Bestehende Steuernummer" -Type Text
-Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayName "Land des Finanzamts (von der Kanzlei nach Pruefung ausgefuellt)" -Type Choice `
+Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayName "Land des Finanzamts (von der Kanzlei nach Pruefung ausgefuellt)" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Deutschland", "Österreich", "Schweiz", "Liechtenstein", "Frankreich", "Italien", "Spanien", "Niederlande", "Belgien", "Luxemburg", "Polen", "Vereinigtes Königreich", "Vereinigte Staaten", "Sonstiger EU/EWR-Staat", "Sonstiger Staat", "Unbekannt")
 # tax_office_country (Review Nils 28.10.2026): nicht mehr Pflicht (vorher Text
 # -Required) und jetzt Choice statt freiem Text - Deutschland als erster Wert
@@ -812,12 +812,22 @@ Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayNam
 # Mandanten-Tatsache - die zugrunde liegenden Tatsachen (Ort der
 # Geschaeftsleitung, Sitz, Betriebsstaette in DE usw.) stehen in Liste 1/2/5,
 # siehe Datenmodell Ableitungstabelle.
-Add-Field -List "0_Fallsteuerung" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt (von der Kanzlei nach Pruefung ausgefuellt)" -Type Text
+# Klaerung Nils 31.10.2026 (Antwort auf PR #24 offene Frage): die
+# Klassifizierung als Ergebnisfeld ist bestaetigt - das zustaendige Bundesland/
+# Finanzamt-Land ist Folge einer Rechtspruefung (Sitz, Ort der Geschaeftsleitung,
+# Betriebsstaetten-/Grundstueckslage, Wohnsitz bei natuerlichen Personen), nicht
+# vom Mandanten selbst zu bestimmen. Jetzt explizit -FieldRole "Ergebnis"
+# (vorher nur im DisplayName/in der Doku als Ergebnisfeld beschrieben, da Liste
+# 0 ausserhalb des Erfassungs-Chat-Metadaten-Scopes lag - siehe README.md
+# Abschnitt C3). Dieselbe Praezisierung jetzt auch bei tax_office/
+# target_notification darunter, da beides ebenfalls dokumentierte
+# Ergebnisfelder dieser internen Liste sind.
+Add-Field -List "0_Fallsteuerung" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt (von der Kanzlei nach Pruefung ausgefuellt)" -Type Text -FieldRole "Ergebnis"
 # tax_office (Review Nils 28.10.2026): nicht mehr Pflicht - das bestimmt die
 # Kanzlei anhand der erhobenen Tatsachen, nicht der Mandant (Grundregel, siehe
 # oben). War bislang zusaetzlich dupliziert in Liste 1 (dort jetzt entfernt,
 # siehe README.md Abschnitt H) - lebt jetzt nur noch hier.
-Add-Field -List "0_Fallsteuerung" -InternalName "target_notification" -DisplayName "Zielmeldung (BZSt2-Sachverhalt) - wird von der Kanzlei nach Pruefung der Angaben festgelegt" -Type Choice `
+Add-Field -List "0_Fallsteuerung" -InternalName "target_notification" -DisplayName "Zielmeldung (BZSt2-Sachverhalt) - wird von der Kanzlei nach Pruefung der Angaben festgelegt" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Betriebe/Betriebsstätten", "PersG-Beteiligung", "KapG-Beteiligung", "Drittstaat-Beherrschung", "Negativmeldung")
 Add-Field -List "0_Fallsteuerung" -InternalName "processing_note" -DisplayName "Persoenliche Bearbeitungsnotiz" -Type Note
 Add-Field -List "0_Fallsteuerung" -InternalName "case_status" -DisplayName "Status" -Type Choice -Required `
@@ -892,6 +902,16 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_reven
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_profit" -DisplayName "Anteil Vermögensverwaltung am Gewinn in Prozent" -Type Number -AppliesTo @("Gesellschaft") `
     -Min 0 -Max 100
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "other_business_activities" -DisplayName "Weitere Tätigkeiten" -Type Note -AppliesTo @("Gesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "real_estate_owned" -DisplayName "Gehoeren Ihnen Grundstuecke?" -Type Boolean
+# real_estate_owned (Klaerung Nils 31.10.2026 zu PR #24, Punkt 1): Ja/Nein-
+# Tatsache "Gehoeren Ihnen Grundstuecke?" - weltweit, nicht nur Deutschland.
+# Die einzelnen Grundstuecke (Adresse inkl. Land/PLZ/Ort, Nutzung) leben in
+# der eigenen Wiederholungsliste 9_Grundbesitz (analog 5_Betriebsstaetten,
+# Lookup ueber case_id). Bewusst NICHT mit asset_management_present
+# ("Verwaltet Vermoegen ... Immobilien ...") zusammengelegt: das ist die
+# Taetigkeitsfrage (Vermoegensverwaltung als Geschaeft), dies hier ist das
+# Eigentum an konkreten Grundstuecken - zwei verschiedene Tatsachen, siehe
+# README.md Abschnitt H5.
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_id_type" -DisplayName "Art der Steuernummer-Angabe" -Type Choice -Required `
     -Choices @("bestehend", "neu beantragen")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_number" -DisplayName "Steuernummer" -Type Text
@@ -928,27 +948,39 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "case_id" -Displa
 # Rechtsform sind Stammangaben und leben jetzt ausschliesslich in
 # 1_Allgemeiner_Stammblock (last_name_or_company, legal_form_*) - diese Liste
 # verweist ueber case_id statt eine eigene Kopie zu fuehren.
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_type" -DisplayName "Gruendungsart (von der Kanzlei eingeordnet)" -Type Choice -FieldRole Ergebnis `
-    -Choices @("Neugründung", "Übernahme", "Umwandlung", "Bargründung", "Sachgründung")
-# formation_type (Befund Erfassungs-Chat-Generator 28.10.2026, PR #22,
-# generator/output/required_ergebnis_konflikte.json): "Gruendungsart" (insb.
-# Bar-/Sachgruendung, Umwandlung) ist selbst eine rechtliche Einordnung, kein
-# Tatsachenfeld - war bislang -Required, was dem Generator-Befund und der
-# Grundregel (Datenmodell Abschnitt 10) widersprach. Jetzt nicht mehr
-# -Required, als Kanzleifeld gekennzeichnet (-FieldRole Ergebnis, siehe
-# README.md Abschnitt C3). Tatsachen stattdessen ueber predecessor_exists
-# (siehe oben), capital_contribution_type und transformation_event (neu,
-# siehe unten) sowie den Upload der Gruendungsurkunde/Satzung (Liste 8).
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribution_type" -DisplayName "Grund-/Stammkapital erbracht als" -Type Choice `
-    -Choices @("Bareinlage", "Sacheinlage", "gemischt (Bar- und Sacheinlage)")
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_event" -DisplayName "Entstehung durch gesellschaftsrechtliche Umwandlung (z. B. Verschmelzung, Spaltung, Formwechsel)" -Type Boolean
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_origin" -DisplayName "Entstehungsart" -Type Choice `
+    -Choices @("Neugründung", "Übernahme oder Erwerb", "Umwandlung")
+# formation_type (ALT, entfernt 31.10.2026, Klaerung Nils zu PR #24): die
+# bisherige Choice-Liste vermengte zwei ELSTER-Dimensionen in einem einzigen
+# Ergebnisfeld (Entstehungsart UND Kapitalaufbringung). Nils-Entscheid: beide
+# Dimensionen werden stattdessen direkt als zwei Tatsachenfelder erhoben -
+# formation_type wird von diesem Skript nicht mehr angelegt oder angeglichen
+# (Typ-/Konzeptaenderung ist laut Punkt C nie automatisch moeglich). Auf
+# Bestandssites nur loeschen, wo die Liste nachweislich 0 Eintraege hat, und
+# erst nach Freigabe durch die Kanzlei (siehe README.md Abschnitt H4 - anders
+# als bei already_registered liegt fuer formation_type noch KEIN
+# 0-Eintraege-Nachweis vor, da dieses Feld noch nie gegen eine Site gelaufen
+# ist).
+# formation_origin (Klaerung Nils 31.10.2026, zweite Runde): EINZIGE
+# Mandantenfrage zur Entstehungsart. predecessor_exists und
+# transformation_event werden von diesem Skript nicht mehr angelegt oder
+# angeglichen (Dublette zu formation_origin) - zur Loeschung vorgemerkt,
+# nur wo 0 Eintraege bestaetigt UND nach Freigabe, siehe README.md
+# Abschnitt H5. Angaben zum Vorgaenger (predecessor_*) nur bedingt bei
+# Entstehungsart = "Uebernahme oder Erwerb" oder "Umwandlung";
+# transformation_details nur bei Entstehungsart = "Umwandlung"
+# (Forms-Branching, siehe README.md E.2).
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribution_type" -DisplayName "Kapitalaufbringung" -Type Choice `
+    -Choices @("Bargründung", "Sachgründung", "gemischt (Bar- und Sachgründung)")
+# capital_contribution_type (DisplayName/Choices praezisiert 31.10.2026,
+# Klaerung Nils: Wortlaut "Bargruendung"/"Sachgruendung" statt "Bareinlage"/
+# "Sacheinlage", identisch mit dem ELSTER-Original-Wortlaut Kz 91. Feld wurde
+# erst in der vorigen Runde eingefuehrt und noch nie gegen eine Site
+# ausgefuehrt - Choices-Aenderung deshalb ohne Live-Drift-Risiko.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_details" -DisplayName "Art der Umwandlung und beteiligte Rechtstraeger" -Type Note
-# capital_contribution_type/transformation_event/transformation_details
-# (neu, Grundregel-Ableitung fuer formation_type): Bar- vs. Sacheinlage ist
-# eine vom Mandanten feststellbare Tatsache (wurde Geld oder ein
-# Vermoegensgegenstand eingebracht), waehrend "Sachgruendung" als Rechtsbegriff
-# selbst eine Einordnung ist. Ebenso ist "liegt eine Umwandlung vor" eine
-# Tatsache, "welche Gruendungsart daraus rechtlich folgt" nicht.
+# transformation_details bleibt (bedingt bei formation_origin = "Umwandlung").
+# transformation_event (ALT, entfernt 31.10.2026 zweite Runde): Dublette zu
+# formation_origin, siehe README.md Abschnitt H5.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_date" -DisplayName "Gruendungsdatum" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "activity_start_date" -DisplayName "Beginn der Taetigkeit" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notarial_deed_date" -DisplayName "Notarielle Errichtung / Musterprotokoll vom" -Type DateOnly
@@ -967,16 +999,16 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_number"
 # deutsche Amtsgericht - deckt damit einen Teil des Befunds "Registerangaben
 # fehlen bei Koerperschaft auslaendischen Rechts" ab (siehe README.md
 # Abschnitt H zur ebenfalls ergaenzten E.9-Routing-Korrektur).
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_exists" -DisplayName "Wurde die Tätigkeit vorher ganz oder teilweise von einem anderen Unternehmen bzw. einer anderen Person ausgeübt?" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_name" -DisplayName "Vorheriger Inhaber / Vorunternehmen - Name" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_tax_or_address" -DisplayName "Vorheriger Inhaber / Vorunternehmen - Steuernummer bzw. Anschrift" -Type Note
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_scope" -DisplayName "Übernahme ganz oder teilweise" -Type Choice `
     -Choices @("ganz", "teilweise")
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_since" -DisplayName "Übernommen ab" -Type DateOnly
-# predecessor_* ersetzt das bisherige einzelne Freitextfeld "predecessor"
-# (Review Nils 28.10.2026): erst Ja/Nein-Tatsache, dann bei Ja die
-# strukturierten Folgefragen (wer, Steuernummer/Anschrift, ganz/teilweise,
-# ab wann).
+# predecessor_* (Name/Anschrift/Scope/Datum) bleiben als bedingte
+# Folgefragen, eingeblendet wenn formation_origin = "Uebernahme oder Erwerb"
+# oder "Umwandlung" (siehe README.md E.2). predecessor_exists (ALT, entfernt
+# 31.10.2026 zweite Runde): Dublette zu formation_origin, zur Loeschung
+# vorgemerkt (0 Eintraege UND Freigabe, siehe README.md Abschnitt H5).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_matches_calendar" -DisplayName "Entspricht das Wirtschaftsjahr dem Kalenderjahr?" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_start" -DisplayName "Wirtschaftsjahr - Beginn" -Type DateOnly
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_end" -DisplayName "Wirtschaftsjahr - Ende" -Type DateOnly
@@ -988,18 +1020,31 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_end"
 # ausgefuellt werden (Forms-Branching, siehe README.md E.2).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "profit_determination_method" -DisplayName "Gewinnermittlungsart (von der Kanzlei abgeleitet)" -Type Choice `
     -Choices @("Betriebsvermögensvergleich", "Einnahmenüberschussrechnung")
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "domestic_bookkeeping_obligation" -DisplayName "Buchführungspflicht nach deutschem Recht (Paragraf 140/141 AO, Paragraf 238 HGB) bekannt" -Type Boolean
+# domestic_bookkeeping_obligation (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag
+# "ALLE Listen pruefen"): bislang fehlte die INLAENDISCHE Buchfuehrungspflicht als
+# eigene Tatsache - nur die auslaendische (foreign_bookkeeping_obligation
+# darunter) war erfasst. Beide zusammen mit register_status/legal_form_category
+# tragen jetzt sowohl profit_determination_method (hier) als auch
+# vat_taxation_method (Liste 6) - siehe DE/AO/ableitungsregeln.json fuer die
+# vollstaendige Wenn-Dann-Regel. Bewusst als einfache Ja/Nein-Tatsachenfrage
+# ("ist Ihnen eine Buchfuehrungspflicht bekannt") formuliert, nicht als
+# Berechnung der Schwellenwerte selbst - die Schwellenwertpruefung (Umsatz/
+# Gewinn nach Paragraf 141 AO) bleibt Sache der Kanzlei.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "foreign_bookkeeping_obligation" -DisplayName "Buchführungs-/Bilanzierungspflicht nach ausländischem Recht" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "voluntary_balance_sheet" -DisplayName "Bereits bilanziert (freiwillig oder nach anderer Vorschrift)" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "balance_sheet_basis" -DisplayName "Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht)" -Type Text
 # profit_determination_method (Review Nils 28.10.2026): nicht mehr Pflicht und
 # jetzt als Kanzleifeld gekennzeichnet - "Gewinnermittlungsart" ist eine
 # rechtliche Wuerdigung (§ 4/§ 5 EStG), kein Mandanten-Fakt. Stattdessen werden
-# die Tatsachen erhoben (Buchfuehrungspflicht nach auslaendischem Recht,
-# freiwillige Bilanzierung, Rechtsgrundlage; Handelsregister-Eintragung bereits
-# ueber register_status, freiberufliche Taetigkeit bereits ueber
+# die Tatsachen erhoben (Buchfuehrungspflicht nach deutschem UND auslaendischem
+# Recht, freiwillige Bilanzierung, Rechtsgrundlage; Handelsregister-Eintragung
+# bereits ueber register_status, freiberufliche Taetigkeit bereits ueber
 # legal_form_category in Liste 1 abgedeckt - keine Dubletten dafuer angelegt).
 # Die Kanzlei leitet die Gewinnermittlungsart daraus ab, siehe Datenmodell
-# Abschnitt 10 Ableitungstabelle.
+# Abschnitt 10 Ableitungstabelle und DE/AO/ableitungsregeln.json (30.10.2026:
+# domestic_bookkeeping_obligation ergaenzt - war bislang eine Luecke, da nur
+# die auslaendische Buchfuehrungspflicht erfasst war).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_opening_year" -DisplayName "Voraussichtlicher Gewinn Eroeffnungsjahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "expected_profit_following_year" -DisplayName "Voraussichtlicher Gewinn Folgejahr" -Type Number -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "part_of_group" -DisplayName "Konzernzugehoerigkeit" -Type Boolean
@@ -1060,8 +1105,23 @@ Add-Field -List "3_Personen_und_Vertretung" -InternalName "profession" -DisplayN
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "address" -DisplayName "Adresse" -Type Note -Required
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "phone" -DisplayName "Telefon" -Type Text -FieldRole "System"
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "tax_reference" -DisplayName "Steuerliche Kennzeichen" -Type Text
-Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -DisplayName "Abhaengige/unabhaengige Person" -Type Choice -FieldRole "Ergebnis" `
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "dependency_status" -DisplayName "Abhaengige/unabhaengige Person (von der Kanzlei nach Paragraf 13 AO/Art. 5 OECD-MA eingeordnet)" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("abhängig", "unabhängig")
+# dependency_status (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag "ALLE
+# Listen pruefen"): DisplayName praezisiert (war bereits -FieldRole Ergebnis
+# seit der vorigen Runde, aber ohne eigene Tatsachenfelder und ohne
+# Kanzleifeld-Kennzeichnung im DisplayName). "Abhaengig/unabhaengig" ist die
+# abkommensrechtliche Einordnung nach Art. 5 Abs. 5/6 OECD-MA (bzw. Paragraf 13
+# AO "staendiger Vertreter"), keine Tatsache, die der Mandant selbst feststellen
+# kann. Tatsachen stattdessen ueber die vier neuen Felder unten (klassische
+# Abgrenzungskriterien zur Scheinselbststaendigkeit/arbeitnehmeraehnlichen
+# Taetigkeit, analog zur OECD-Kommentierung zu Art. 5 Abs. 6 OECD-MA). Siehe
+# DE/AO/ableitungsregeln.json fuer die Wenn-Dann-Regel (Gesamtbildbetrachtung,
+# kein starrer Automatismus).
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "instruction_bound" -DisplayName "Bei der Taetigkeit fuer den Meldepflichtigen weisungsgebunden" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "integrated_into_organization" -DisplayName "In die Arbeitsorganisation des Meldepflichtigen eingegliedert (z. B. feste Arbeitszeiten/-ort, dessen Betriebsmittel)" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "bears_entrepreneurial_risk" -DisplayName "Traegt ein eigenes unternehmerisches Risiko (z. B. eigene Betriebsmittel, eigenes Personal, erfolgsabhaengige Verguetung)" -Type Boolean
+Add-Field -List "3_Personen_und_Vertretung" -InternalName "fixed_remuneration" -DisplayName "Erhaelt eine feste Verguetung unabhaengig vom Erfolg einzelner Geschaefte" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "power_to_conclude_contracts" -DisplayName "Abschlussvollmacht" -Type Boolean
 Add-Field -List "3_Personen_und_Vertretung" -InternalName "is_authorized_recipient" -DisplayName "Empfangsbevollmaechtigt" -Type Boolean
 # --- Uebliche Taetigkeitsorte der Person (Review Nils 28.10.2026, verschoben
@@ -1125,8 +1185,46 @@ Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "trust_relationship_stat
 # bekannt).
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_opening_year" -DisplayName "Voraussichtlicher Gewinnanteil Eroeffnungsjahr" -Type Number
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "profit_share_following_year" -DisplayName "Voraussichtlicher Gewinnanteil Folgejahr" -Type Number
-Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" -DisplayName "Beschraenkte Steuerpflicht (von der Kanzlei nach Paragraf 1 Abs. 4 EStG/Paragraf 2 Nr. 1 KStG eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
+# limited_tax_liability (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag "ALLE
+# Listen pruefen"): DisplayName praezisiert (war bereits -FieldRole Ergebnis
+# seit der vorigen Runde, aber ohne eigene Tatsachenfelder). "Beschraenkte
+# Steuerpflicht" ist die gesetzliche Rechtsfolge aus Paragraf 1 Abs. 4 EStG
+# (natuerliche Personen) bzw. Paragraf 2 Nr. 1 KStG (Koerperschaften), keine
+# Mandanten-Tatsache. Tatsachen stattdessen ueber die beiden neuen Felder
+# unten, je nach participant_type. Siehe DE/AO/ableitungsregeln.json fuer die
+# Wenn-Dann-Regel.
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "domestic_residence" -DisplayName "Wohnsitz oder gewoehnlicher Aufenthalt in Deutschland (Paragraf 8/9 AO)" -Type Boolean -AppliesTo @("NatuerlichePerson")
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "domestic_seat_or_management" -DisplayName "Sitz oder Ort der Geschaeftsleitung in Deutschland (Paragraf 10/11 AO)" -Type Boolean -AppliesTo @("Gesellschaft")
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participation_since" -DisplayName "Beteiligt seit dem" -Type DateOnly
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "disposal_date" -DisplayName "Beteiligung veraeussert am (falls zutreffend)" -Type DateOnly
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "purchase_price" -DisplayName "Kaufpreis der Anteile" -Type Number
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "acquisition_incidental_costs" -DisplayName "Sonstige Zahlungen zum Erwerb der Anteile (z. B. Vermittler, Berater, Notar)" -Type Number
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "acquisition_costs_description" -DisplayName "Beschreibung der sonstigen Zahlungen zum Erwerb" -Type Note
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "target_seat_and_mgmt_abroad" -DisplayName "Sitz UND Ort der Geschaeftsleitung der Gesellschaft im Ausland" -Type Boolean
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "target_stock_listed" -DisplayName "Gesellschaft an einer Boerse notiert" -Type Boolean
+# disposal_date/purchase_price/acquisition_incidental_costs/
+# acquisition_costs_description/target_seat_and_mgmt_abroad/target_stock_listed
+# (Klaerung Nils 31.10.2026 zu PR #24, Befund "Nominalwert reicht nicht" fuer
+# Paragraf 138 Abs. 2 Satz 1 Nr. 3 AO): die Meldeschwelle (10 Prozent Beteiligung
+# ODER Summe der Anschaffungskosten > 150.000 EUR) bezieht sich auf die EIGENEN
+# Anschaffungskosten des Steuerpflichtigen (nicht den Nominalwert und nicht
+# Wertsteigerungen) - purchase_price/acquisition_incidental_costs bilden das ab.
+# disposal_date ergaenzt participation_since (bislang nur Erwerbsdatum erfasst,
+# die Meldepflicht erfasst auch Veraeusserungen). target_seat_and_mgmt_abroad
+# und target_stock_listed sind Tatbestandsvoraussetzungen: ohne Sitz UND
+# Geschaeftsleitung im Ausland greift Nr. 3 nicht; die Boersenklausel befreit
+# boersennotierte Gesellschaften bei einer Beteiligung unter 1 Prozent. Diese
+# sechs Felder betreffen inhaltlich vor allem den Outbound-/BZSt2-Kontext
+# dieser Liste (siehe README.md Abschnitt E.4 fuer das Forms-Branching); bei
+# Inbound-Nutzung (Anteilseigner der eigenen Gesellschaft) bleiben sie leer.
+# Die unmittelbare UND mittelbare Quote werden fuer die 10-Prozent-Schwelle
+# ZUSAMMENGERECHNET (participation_type direkt/mittelbar je Datensatz, Summe
+# ueber alle Datensaetze derselben Person/Gesellschaft und desselben
+# Zielunternehmens - Berechnung obliegt der Kanzlei/dem Flow, siehe
+# DE/AO/ableitungsregeln.json). Fundstelle (nur Referenz, keine Wiedergabe von
+# Kommentartexten): Klein/Raetke, AO, 19. Aufl. 2025, Paragraf 138 Rn. 24-31;
+# BMF 26.4.2022, BStBl. I 2022, 576.
 # --- Abschnitt 9 ergaenzt (Datenmodell 9.2 "Beteiligte": Stimmrechte) ---
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "voting_rights_percentage" -DisplayName "Stimmrechte in Prozent" -Type Number `
     -Min 0 -Max 100
@@ -1160,9 +1258,29 @@ Add-Field -List "5_Betriebsstaetten" -InternalName "usage_type" -DisplayName "Nu
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_from" -DisplayName "Taetigkeitsdauer - von" -Type DateOnly
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_to" -DisplayName "Taetigkeitsdauer - bis" -Type DateOnly
 Add-Field -List "5_Betriebsstaetten" -InternalName "activity_period_to_unknown" -DisplayName "Taetigkeitsdauer bis unbekannt" -Type Boolean
-Add-Field -List "5_Betriebsstaetten" -InternalName "vat_relevant_site" -DisplayName "Umsatzsteuerliche Betriebsstätte" -Type Boolean -FieldRole "Ergebnis"
-Add-Field -List "5_Betriebsstaetten" -InternalName "contact" -DisplayName "Telefon / Internetadresse" -Type Text
-Add-Field -List "5_Betriebsstaetten" -InternalName "payroll_tax_site" -DisplayName "Lohnsteuerliche Betriebsstätte" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "5_Betriebsstaetten" -InternalName "staff_present_onsite" -DisplayName "Eigenes oder fuer den Meldepflichtigen taetiges Personal an dieser Einrichtung stationiert" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "employer_function_onsite" -DisplayName "Arbeitgeberfunktion wird an dieser Einrichtung ausgeuebt (z. B. Weisungsrecht gegenueber dem dortigen Personal)" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "wages_paid_from_site" -DisplayName "Loehne/Gehaelter werden von bzw. fuer diese Einrichtung aus gezahlt oder abgerechnet" -Type Boolean
+Add-Field -List "5_Betriebsstaetten" -InternalName "vat_relevant_site" -DisplayName "Umsatzsteuerliche Betriebsstätte (von der Kanzlei nach Paragraf 3a UStG/Art. 11 MwSt-DVO eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "5_Betriebsstaetten" -InternalName "contact" -DisplayName "Internetadresse der Einrichtung" -Type Text
+# staff_present_onsite/employer_function_onsite/wages_paid_from_site (Grundregel-
+# Vertiefung 30.10.2026, Nils-Auftrag "ALLE Listen pruefen"): neue Tatsachen-
+# felder zur Ableitung von vat_relevant_site und payroll_tax_site (beide bereits
+# seit der vorigen Runde -FieldRole Ergebnis, aber ohne eigene Tatsachenfelder -
+# die bisherigen Tatsachen aus site_type - ownership_status/usage_type/
+# activity_period_*/own_disposal_power - reichen fuer die Lohnsteuer-/USt-
+# spezifischen Zusatzvoraussetzungen Personal/Arbeitgeberfunktion/Lohnzahlung
+# nicht aus). Siehe DE/AO/ableitungsregeln.json fuer die Wenn-Dann-Regeln.
+# contact (Grundregel-Vertiefung 30.10.2026): DisplayName von "Telefon /
+# Internetadresse" auf "Internetadresse der Einrichtung" verengt - eine
+# Telefonnummer ist Kontaktdatum der Kanzlei-CRM-Pflege (siehe crm_reference in
+# 0_Fallsteuerung), keine Fallangabe. Die oeffentliche Internetadresse der
+# Betriebsstaette selbst (falls vorhanden) bleibt als Tatsache erhalten (kein
+# -FieldRole-Tag, Default Tatsache), da sie keine Kontaktaufnahme mit dem
+# Mandanten betrifft, sondern eine oeffentliche Geschaeftsangabe ist (vgl.
+# website in 1_Allgemeiner_Stammblock, dort ebenfalls bewusst als Tatsache
+# behandelt).
+Add-Field -List "5_Betriebsstaetten" -InternalName "payroll_tax_site" -DisplayName "Lohnsteuerliche Betriebsstätte (von der Kanzlei nach Paragraf 41 Abs. 2 EStG eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
 Add-Field -List "5_Betriebsstaetten" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
 
 # ---------------------------------------------------------------------------
@@ -1173,13 +1291,46 @@ Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "case_id" -Displ
     -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "estimated_revenue_opening_year" -DisplayName "Geschaetzter Umsatz Eroeffnungsjahr" -Type Number -Required
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "estimated_revenue_following_year" -DisplayName "Geschaetzter Umsatz Folgejahr" -Type Number -Required
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule" -DisplayName "Kleinunternehmer-Regelung" -Type Boolean -FieldRole "Ergebnis"
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule_waiver" -DisplayName "Verzicht auf Kleinunternehmer-Regelung" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "prior_year_revenue" -DisplayName "Tatsaechlicher Umsatz des Vorjahres (falls bereits taetig)" -Type Number
+# prior_year_revenue (Grundregel-Vertiefung 30.10.2026, Nils-Auftrag "ALLE
+# Listen pruefen"): neues Tatsachenfeld zur Ableitung von small_business_rule
+# und vat_taxation_method. Bewusst NICHT dasselbe Feld wie
+# estimated_revenue_opening_year (das ist der SCHAETZWERT fuer das
+# Eroeffnungsjahr dieses Falls, waehrend prior_year_revenue der TATSAECHLICHE
+# Umsatz des VORJAHRES ist - nur bei bereits vorher ausgeuebter Taetigkeit
+# relevant, siehe formation_origin in Liste 2; bei echter Neugruendung bleibt
+# dieses Feld leer/0, siehe DE/AO/ableitungsregeln.json). "Beginn der
+# Taetigkeit" wird NICHT erneut erfragt (bereits activity_start_date in
+# Liste 2 vorhanden) - jeden Sachverhalt nur einmal abfragen.
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule" -DisplayName "Kleinunternehmer-Regelung (von der Kanzlei nach Paragraf 19 UStG eingeordnet)" -Type Boolean -FieldRole "Ergebnis"
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "small_business_rule_waiver" -DisplayName "Verzicht auf Kleinunternehmer-Regelung gewuenscht (falls anwendbar)" -Type Boolean
+# small_business_rule (Grundregel-Vertiefung 30.10.2026): DisplayName
+# praezisiert (war bereits -FieldRole Ergebnis seit der vorigen Runde, aber
+# ohne eigene Tatsachenfelder - die Ableitungstabelle der Vorrunde nannte
+# small_business_rule faelschlich noch als "bleibt Tatsachenfrage", obwohl das
+# Skript es schon als Ergebnis fuehrte; diese Inkonsistenz ist mit dieser
+# Aenderung aufgeloest). Tatsachen stattdessen ueber prior_year_revenue (oben),
+# estimated_revenue_opening_year (bestehend) und activity_start_date (Liste 2,
+# bestehend) - siehe DE/AO/ableitungsregeln.json.
+# small_business_rule_waiver (Korrektur 30.10.2026): zurueck auf -FieldRole
+# Tatsache (Default) gestellt - der Verzicht ist eine Willenserklaerung des
+# Mandanten (vergleichbar mit par27_ao_agreement), keine rechtliche Wuerdigung;
+# die Kanzlei muss diesen Wunsch ohnehin separat erfragen, sobald sie die
+# Kleinunternehmer-Eignung aus den Tatsachen abgeleitet hat (das Forms-
+# Branching "nur wenn Kleinunternehmer-Regelung = Ja" funktioniert nicht mehr
+# innerhalb von Formular 6, da small_business_rule dort keine Frage mehr ist -
+# siehe README.md Abschnitt E.6 fuer den dadurch noetigen Prozess-Hinweis).
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "expected_vat_amount" -DisplayName "Voraussichtliche USt (Zahllast/Ueberschuss)" -Type Number -FieldRole "Ergebnis"
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_filing_period" -DisplayName "Voranmeldungszeitraum" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Monat", "Quartal")
-Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_taxation_method" -DisplayName "Soll-/Ist-Besteuerung" -Type Choice -FieldRole "Ergebnis" `
+Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "vat_taxation_method" -DisplayName "Soll-/Ist-Besteuerung (von der Kanzlei nach Paragraf 16/20 UStG vorgeschlagen, Antrag noetig)" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Soll-Besteuerung", "Ist-Besteuerung")
+# vat_taxation_method (Grundregel-Vertiefung 30.10.2026): DisplayName
+# praezisiert - Ist-Besteuerung ist IMMER nur auf Antrag beim Finanzamt moeglich
+# (Paragraf 20 UStG), nie automatisch; der von der Kanzlei abgeleitete Wert ist
+# ein VORSCHLAG zur Antragstellung, keine Tatsachenfeststellung. Tatsachen zur
+# Ableitung: prior_year_revenue (oben), domestic_bookkeeping_obligation (Liste
+# 2, neu), legal_form_category (Liste 1) - siehe DE/AO/ableitungsregeln.json.
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "request_vat_id" -DisplayName "USt-IdNr. beantragen" -Type Boolean
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "previous_vat_id" -DisplayName "Fruehere USt-IdNr." -Type Text
 Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "oss_procedure" -DisplayName "OSS-Verfahren" -Type Boolean
@@ -1305,6 +1456,28 @@ Add-Field -List "8_Unterlagen" -InternalName "related_site" -DisplayName "Bezug:
 # Fall-Bezug bereits ueber case_id (oben, Restrict) gesichert ist.
 
 # ---------------------------------------------------------------------------
+# Liste 9: Grundbesitz (weltweit; Wiederholungsliste, analog 5_Betriebsstaetten)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "9_Grundbesitz"
+Add-Field -List "9_Grundbesitz" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
+    -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
+Add-Field -List "9_Grundbesitz" -InternalName "street" -DisplayName "Strasse, Hausnummer, Zusatz" -Type Text -Required
+Add-Field -List "9_Grundbesitz" -InternalName "postal_code_city" -DisplayName "Postleitzahl, Ort" -Type Text -Required
+Add-Field -List "9_Grundbesitz" -InternalName "country" -DisplayName "Land" -Type Text -Required
+Add-Field -List "9_Grundbesitz" -InternalName "usage" -DisplayName "Nutzung" -Type Choice -Required `
+    -Choices @("vermietet", "selbst genutzt", "unbebaut")
+# 9_Grundbesitz (Klaerung Nils 31.10.2026 zu PR #24, Punkt 1): eigene
+# Wiederholungsliste statt unstrukturiertem Freitext in asset_management_type.
+# Ja/Nein "Gehoeren Ihnen Grundstuecke?" steht in Liste 1 (real_estate_owned);
+# hier ein Datensatz je Grundstueck (Adresse inkl. Land/PLZ/Ort, Nutzung).
+# Lookup nur auf den Fall (case_id), analog 5_Betriebsstaetten - die Frage
+# richtet sich an den Meldepflichtigen, nicht an einzelne Beteiligte.
+# Weltweit, nicht auf Deutschland beschraenkt. Lagefinanzamt (§ 18 AO) ist
+# das Kanzleifeld lage_tax_office darunter.
+Add-Field -List "9_Grundbesitz" -InternalName "lage_tax_office" -DisplayName "Lagefinanzamt (von der Kanzlei nach Paragraf 18 AO ausgefuellt)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "9_Grundbesitz" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
+
+# ---------------------------------------------------------------------------
 # Referenzliste (intern, kein Form): Technische Mindestfelder
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Technische_Mindestfelder"
@@ -1342,7 +1515,7 @@ Add-Field -List "Technische_Mindestfelder" -InternalName "verification_date" -Di
 # stillschweigend verworfen dokumentiert.
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Eingang_Fehler"
-Add-Field -List "Eingang_Fehler" -InternalName "form_no" -DisplayName "Formular-Nr. (0-8)" -Type Number -Required
+Add-Field -List "Eingang_Fehler" -InternalName "form_no" -DisplayName "Formular-Nr. (0-9)" -Type Number -Required
 Add-Field -List "Eingang_Fehler" -InternalName "case_id_raw" -DisplayName "Fall-ID (Rohantwort)" -Type Text
 Add-Field -List "Eingang_Fehler" -InternalName "reason" -DisplayName "Fehlerursache" -Type Text -Required
 Add-Field -List "Eingang_Fehler" -InternalName "payload" -DisplayName "Rohdaten der Formularantwort" -Type Note
@@ -1350,6 +1523,6 @@ Add-Field -List "Eingang_Fehler" -InternalName "status" -DisplayName "Status" -T
     -Choices @("offen", "in Prüfung", "behoben", "verworfen")
 
 Write-Host ""
-Write-Host "Fertig. Alle 9 Fachlisten (0-8) sowie die internen Referenzlisten"
+Write-Host "Fertig. Alle 10 Fachlisten (0-9) sowie die internen Referenzlisten"
 Write-Host "'Technische_Mindestfelder' und 'Eingang_Fehler' sind angelegt bzw. angeglichen."
 Write-Host "Naechster Schritt: siehe DE/AO/sharepoint-forms/README.md, Abschnitt E (Forms-Einrichtung) und F (Freigabe/Rollout)."

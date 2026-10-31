@@ -23,7 +23,7 @@ Vor Ausführung prüfen (Website-Einstellungen → Freigabe → Erweiterte Einst
 .\New-SteuerlicheErfassungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/<ziel-site>" -ClientId "<Entra-App-ClientId>"
 ```
 
-Legt an bzw. gleicht an: `0_Fallsteuerung`, `1_Allgemeiner_Stammblock`, `2_Unternehmens_Gruendungsmodul`, `3_Personen_und_Vertretung`, `4_Beteiligte_und_Quoten`, `5_Betriebsstaetten`, `6_Steuer_und_Umsatzsteuerprofil`, `7_Auslandsmitteilung_BZSt2`, `8_Unterlagen`, `Technische_Mindestfelder` (intern, kein Form) sowie neu `Eingang_Fehler` (intern, kein Form; Protokoll fehlgeschlagener Formular-Übernahmen, siehe Abschnitt D1) — jeweils mit allen Spalten aus dem Auftrag, inkl. `case_id`-Lookup auf `0_Fallsteuerung` in jeder Folgeliste.
+Legt an bzw. gleicht an: `0_Fallsteuerung`, `1_Allgemeiner_Stammblock`, `2_Unternehmens_Gruendungsmodul`, `3_Personen_und_Vertretung`, `4_Beteiligte_und_Quoten`, `5_Betriebsstaetten`, `6_Steuer_und_Umsatzsteuerprofil`, `7_Auslandsmitteilung_BZSt2`, `8_Unterlagen`, `9_Grundbesitz`, `Technische_Mindestfelder` (intern, kein Form) sowie neu `Eingang_Fehler` (intern, kein Form; Protokoll fehlgeschlagener Formular-Übernahmen, siehe Abschnitt D1) — jeweils mit allen Spalten aus dem Auftrag, inkl. `case_id`-Lookup auf `0_Fallsteuerung` in jeder Folgeliste.
 
 **Idempotenz/Angleichung:** Das Skript legt fehlende Listen/Spalten an. Bereits vorhandene Spalten werden **angeglichen**, nicht nur übersprungen: Anzeigename und Pflichtstatus werden nachgezogen, fehlende Auswahlwerte werden **ergänzt** (nie entfernt). Es werden nie Listen, Spalten oder Auswahlwerte gelöscht. Angleichungen, die an vorhandenen Daten scheitern können (z. B. „eindeutige Werte“ bei bereits vorhandenen Duplikaten), brechen den Lauf nicht ab, sondern erzeugen nur eine Warnung in der Konsole — diese Zeilen danach manuell prüfen.
 
@@ -43,9 +43,9 @@ Legt an bzw. gleicht an: `0_Fallsteuerung`, `1_Allgemeiner_Stammblock`, `2_Unter
 
 Die Lookup-Anzeigefelder (`ShowField`) für `related_person`, `related_participation` und `related_site` sind jeweils `display_label` (neue Textspalte in Liste 3/4/5), nicht `last_name_or_company`/`site_name` — letztere sind bei Namensgleichheit nicht eindeutig. Ein Flow sollte `display_label` unmittelbar nach Elementanlage befüllen, z. B. `"<Name> (<Rolle>, Fall <case_id>, ID <ID>)"`.
 
-**`-HideFromForms` blendet Flow-generierte Felder im nativen SharePoint-Formular aus.** Felder, die nie von Hand, sondern ausschliesslich von einem Flow gesetzt werden (aktuell `access_code`), werden im nativen SharePoint-Neu-/Bearbeiten-Formular (nicht zu verwechseln mit den Microsoft-Forms-Umfragen F0-F8!) ausgeblendet (`ShowInNewForm`/`ShowInEditForm` = `FALSE`), bleiben aber in der Anzeige (DisplayForm) sichtbar, damit die Kanzlei den Wert bei Bedarf nachschlagen kann.
+**`-HideFromForms` blendet Flow-generierte Felder im nativen SharePoint-Formular aus.** Felder, die nie von Hand, sondern ausschliesslich von einem Flow gesetzt werden (aktuell `access_code`), werden im nativen SharePoint-Neu-/Bearbeiten-Formular (nicht zu verwechseln mit den Microsoft-Forms-Umfragen F0-F9!) ausgeblendet (`ShowInNewForm`/`ShowInEditForm` = `FALSE`), bleiben aber in der Anzeige (DisplayForm) sichtbar, damit die Kanzlei den Wert bei Bedarf nachschlagen kann.
 
-**Löschverhalten der `case_id`-Lookups:** In allen Folgelisten (1-8, `Technische_Mindestfelder`) ist der `case_id`-Lookup auf `0_Fallsteuerung` mit `RelationshipDeleteBehavior="Restrict"` angelegt — ein Fallsteuerungs-Datensatz kann nicht gelöscht werden, solange noch Folgedatensätze referenzieren. Die optionalen Sekundär-Lookups in Liste 8 (`related_person`, `related_participation`, `related_site`, `related_case`) bleiben beim Standardverhalten `None`, damit das Löschen einer Person/Beteiligung/Betriebsstätte nicht an einer angehängten Unterlage scheitert.
+**Löschverhalten der `case_id`-Lookups:** In allen Folgelisten (1-9, `Technische_Mindestfelder`) ist der `case_id`-Lookup auf `0_Fallsteuerung` mit `RelationshipDeleteBehavior="Restrict"` angelegt — ein Fallsteuerungs-Datensatz kann nicht gelöscht werden, solange noch Folgedatensätze referenzieren. Die optionalen Sekundär-Lookups in Liste 8 (`related_person`, `related_participation`, `related_site`, `related_case`) bleiben beim Standardverhalten `None`, damit das Löschen einer Person/Beteiligung/Betriebsstätte nicht an einer angehängten Unterlage scheitert.
 
 ### C1. ClientId / tenant-eigene Entra-App-Registrierung (statt PnP Management Shell)
 
@@ -121,7 +121,7 @@ Ergänzung zum parallelen PR #22 (`DE/AO/erfassungs-chat/`, Branch `cursor/erfas
 
 ### D1. Zugangscode (`access_code`) und `Eingang_Fehler`
 
-Fall-IDs im Format `JJJJ-NNNN` sind fortlaufend und damit leicht erratbar. Liste 0 erhält deshalb zusätzlich die Spalte `access_code` (Text, indiziert, eindeutige Werte erzwungen, **nicht** `-Required` — ein nachträgliches Pflichtfeld ohne Default würde bei bereits vorhandenen Fallsteuerungs-Einträgen die Spaltenanlage verhindern). Empfehlung: Der fallanlegende Flow setzt `access_code` unmittelbar bei Fallanlage, z. B. per Power-Automate-Ausdruck `toUpper(substring(guid(),0,10))`. Jeder Flow, der eine Formularantwort (1-8) einem Fall zuordnet, sollte künftig `case_id` **und** `access_code` gemeinsam prüfen (z. B. als vorausgefüllte, aber unsichtbare/geschützte Felder im Formularlink), bevor ein Element in der Zielliste erzeugt wird.
+Fall-IDs im Format `JJJJ-NNNN` sind fortlaufend und damit leicht erratbar. Liste 0 erhält deshalb zusätzlich die Spalte `access_code` (Text, indiziert, eindeutige Werte erzwungen, **nicht** `-Required` — ein nachträgliches Pflichtfeld ohne Default würde bei bereits vorhandenen Fallsteuerungs-Einträgen die Spaltenanlage verhindern). Empfehlung: Der fallanlegende Flow setzt `access_code` unmittelbar bei Fallanlage, z. B. per Power-Automate-Ausdruck `toUpper(substring(guid(),0,10))`. Jeder Flow, der eine Formularantwort (1-9) einem Fall zuordnet, sollte künftig `case_id` **und** `access_code` gemeinsam prüfen (z. B. als vorausgefüllte, aber unsichtbare/geschützte Felder im Formularlink), bevor ein Element in der Zielliste erzeugt wird.
 
 Schlägt diese Prüfung fehl (unbekannte/fehlende `case_id`, falscher `access_code`, sonstige Validierungsfehler), landet die Formularantwort nicht kommentarlos im Nichts, sondern wird in der neuen internen Liste **`Eingang_Fehler`** protokolliert (`form_no`, `case_id_raw`, `reason`, `payload`, `status`). Diese Liste regelmässig sichten (siehe Abschnitt F).
 
@@ -152,9 +152,9 @@ Nur intern (Kanzlei), nicht an Mandanten versendet — dient der Fallanlage. Die
 3. Bereits steuerlich erfasst — Choice: Ja / Nein / Unbekannt (nicht mehr Pflicht, seit 28.10.2026 `registration_status` statt `already_registered`, siehe Abschnitt H2 — ein Pflicht-Ja/Nein-Feld liess sich in SharePoint nur mit „Ja“ sauber speichern)
 4. Bestehende Steuernummer — Text
    - **Branching:** nur einblenden, wenn Frage 3 = Ja
-5. Land des Finanzamts — Choice: Deutschland / Österreich / Schweiz / Liechtenstein / Frankreich / Italien / Spanien / Niederlande / Belgien / Luxemburg / Polen / Vereinigtes Königreich / Vereinigte Staaten / Sonstiger EU/EWR-Staat / Sonstiger Staat / Unbekannt (nicht mehr Pflicht, seit 28.10.2026 Choice statt Text; wird von der Kanzlei nach Prüfung ausgefüllt, Ergebnisfeld — siehe Abschnitt H2 und Datenmodell Abschnitt 10)
-6. Zuständiges Finanzamt — Text (nicht mehr Pflicht, von der Kanzlei nach Prüfung ausgefüllt, Ergebnisfeld)
-7. Zielmeldung (BZSt2-Sachverhalt) — Choice: Betriebe/Betriebsstätten / PersG-Beteiligung / KapG-Beteiligung / Drittstaat-Beherrschung / Negativmeldung (wird von der Kanzlei nach Prüfung der Angaben festgelegt)
+5. Land des Finanzamts — Choice: Deutschland / Österreich / Schweiz / Liechtenstein / Frankreich / Italien / Spanien / Niederlande / Belgien / Luxemburg / Polen / Vereinigtes Königreich / Vereinigte Staaten / Sonstiger EU/EWR-Staat / Sonstiger Staat / Unbekannt (nicht mehr Pflicht, seit 28.10.2026 Choice statt Text; wird von der Kanzlei nach Prüfung ausgefüllt, Ergebnisfeld — Klassifizierung 31.10.2026 von Nils bestätigt und jetzt explizit `-FieldRole "Ergebnis"`, siehe Abschnitt H4.1 und Datenmodell Abschnitt 10)
+6. Zuständiges Finanzamt — Text (nicht mehr Pflicht, von der Kanzlei nach Prüfung ausgefüllt, Ergebnisfeld, seit 31.10.2026 explizit `-FieldRole "Ergebnis"`, siehe Abschnitt H4.1)
+7. Zielmeldung (BZSt2-Sachverhalt) — Choice: Betriebe/Betriebsstätten / PersG-Beteiligung / KapG-Beteiligung / Drittstaat-Beherrschung / Negativmeldung (wird von der Kanzlei nach Prüfung der Angaben festgelegt, seit 31.10.2026 explizit `-FieldRole "Ergebnis"`, siehe Abschnitt H4.1)
    - **Branching:** nur einblenden, wenn Frage 1 = Outbound
 8. Persönliche Bearbeitungsnotiz — Text (lang)
 
@@ -162,7 +162,7 @@ Nicht als Forms-Frage, sondern Kanzleifelder, von der Kanzlei direkt in `0_Falls
 
 Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort passenden Folgeformularen (siehe Routing-Tabelle Abschnitt E.9).
 
-**Hinweis `access_code`:** Keine Forms-Frage. Der die Fallanlage auslösende Flow setzt beim Anlegen des `0_Fallsteuerung`-Elements zusätzlich `access_code` (Zufallswert, siehe Abschnitt D1) und übergibt `case_id` + `access_code` gemeinsam in den vorausgefüllten Links zu den Formularen 1-8, damit spätere Flows beide Werte prüfen können, bevor sie eine Formularantwort einem Fall zuordnen. Seit 28.10.2026 ist `access_code` zusätzlich im nativen SharePoint-Neu-/Bearbeiten-Formular ausgeblendet (`-HideFromForms`, siehe Abschnitt C), damit niemand den Wert versehentlich von Hand überschreibt.
+**Hinweis `access_code`:** Keine Forms-Frage. Der die Fallanlage auslösende Flow setzt beim Anlegen des `0_Fallsteuerung`-Elements zusätzlich `access_code` (Zufallswert, siehe Abschnitt D1) und übergibt `case_id` + `access_code` gemeinsam in den vorausgefüllten Links zu den Formularen 1-9, damit spätere Flows beide Werte prüfen können, bevor sie eine Formularantwort einem Fall zuordnen. Seit 28.10.2026 ist `access_code` zusätzlich im nativen SharePoint-Neu-/Bearbeiten-Formular ausgeblendet (`-HideFromForms`, siehe Abschnitt C), damit niemand den Wert versehentlich von Hand überschreibt.
 
 ### E.1 Formular 1 — Allgemeiner Stammblock (immer)
 
@@ -224,12 +224,13 @@ Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort p
     - Branching: nur bei Frage 2 = Firma (`foreign_tax_id`, **neu**, Review Nils 28.10.2026: bislang fehlende Firmenangabe, Cross-Check gegen Formular 2 ergab keine Dublette)
 37. Bestehende USt-IdNr. — Text
     - Branching: wie 36 (`vat_id_existing`, **neu**)
+38. Gehören Ihnen Grundstücke? — Choice Ja/Nein (`real_estate_owned`, **neu** 31.10.2026, Klärung Nils zu PR #24 — weltweit, nicht nur Deutschland; bei Ja Formular 9 ausfüllen, siehe Abschnitt E.9a. Bewusst nicht mit Frage 23 „Verwaltet Vermögen … Immobilien …“ zusammengelegt: das ist die Tätigkeit, dies hier ist das Eigentum an konkreten Grundstücken)
 
 **Entfernt (28.10.2026, siehe Abschnitt H2 für Details je Feld):** „Zuständiges Finanzamt“ (Dublette zu Formular 0), „Telefon“/„Rückfrage-E-Mail“ (CRM-Kontaktdaten der Kanzlei, ersetzt durch `crm_reference` in Formular 0), „SEPA-Lastschrift gewünscht“ (vorerst ganz entfernt), „Zustimmung zur Zuständigkeitsvereinbarung nach § 27 AO“ (als Kanzleifeld nach Formular 0 verschoben, Mandant soll keine Zustimmung zu einer Zuständigkeitsvereinbarung selbst einschätzen), „Abweichender Ort der Geschäftsleitung“/„Ort der Geschäftsleitung – Adresse“ (als Tatsachenfelder zu den einzelnen Personen nach Formular 3 verschoben — der Ort der tatsächlichen Geschäftsleitung ist ein Ergebnisfeld, das die Kanzlei ableitet, siehe Datenmodell Abschnitt 10).
 
 ### E.2 Formular 2 — Unternehmens-/Gründungsmodul (Inbound; auch Einzelunternehmen und Personengesellschaften, siehe Routing-Tabelle E.9)
 
-**Grundlegend überarbeitet 28.10.2026 (Review Nils, Grundregel „Tatsachen statt rechtlicher Würdigung“ + „jede Stammangabe genau an einer Stelle“, siehe Datenmodell Abschnitt 10):** „Bezeichnung des Unternehmens“ und „Rechtsform“ entfernt (Stammangaben, leben jetzt nur noch in Formular 1 — diese Liste referenziert über `case_id`). „Vorheriger Inhaber“, „Abweichendes Wirtschaftsjahr“ und „Gewinnermittlungsart“ neu strukturiert. **Ergänzt 28.10.2026 (Befund Erfassungs-Chat-Generator, PR #22):** „Gründungsart“ selbst ist eine rechtliche Einordnung (insb. Bar-/Sachgründung, Umwandlung) und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`formation_type`, `-FieldRole "Ergebnis"`, siehe Abschnitt C3) — ersetzt durch zwei neue Tatsachenfragen (18/19 unten).
+**Grundlegend überarbeitet 28.10.2026 (Review Nils, Grundregel „Tatsachen statt rechtlicher Würdigung“ + „jede Stammangabe genau an einer Stelle“, siehe Datenmodell Abschnitt 10):** „Bezeichnung des Unternehmens“ und „Rechtsform“ entfernt (Stammangaben, leben jetzt nur noch in Formular 1 — diese Liste referenziert über `case_id`). „Vorheriger Inhaber“, „Abweichendes Wirtschaftsjahr“ und „Gewinnermittlungsart“ neu strukturiert. **Geändert 31.10.2026 (Klärung Nils zu PR #24, siehe Abschnitt H4):** das zwischenzeitliche Ergebnisfeld `formation_type` („Gründungsart“, vermengte Entstehungsart und Kapitalaufbringung in einer Choice-Liste) wurde noch vor dem ersten Live-Lauf wieder entfernt und durch zwei getrennte Tatsachenfragen ersetzt: Frage 9 unten (`formation_origin`, Entstehungsart) und die bereits bestehende Frage 8 (`capital_contribution_type`, jetzt mit auf den ELSTER-Wortlaut Kz 91 präzisierten Auswahlwerten „Kapitalaufbringung“). **Nachgeschärft 31.10.2026 (zweite Klärungsrunde, siehe Abschnitt H5):** nur noch die Entstehungsart (`formation_origin`) wird als Mandantenfrage gestellt; `predecessor_exists` und `transformation_event` entfallen als Dubletten (zur Löschung vorgemerkt). Angaben zum Vorgänger und zur Umwandlung erscheinen nur noch bedingt nach Frage 9.
 
 1. Fall-ID — Text (Pflicht)
 2. Gründungsdatum — Date (Pflicht)
@@ -243,37 +244,37 @@ Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort p
 7. Eingezahltes Kapital — Number
    - Branching: wie 5
    - Hinweistext: „Bitte Gründungsurkunde/Satzung/Gesellschaftsvertrag über Formular 8 (Unterlagen, Dokumenttyp „Gründungsurkunde“/„Satzung“) hochladen“ (kein eigenes Upload-Feld hier, siehe Formular 8, Review Nils 28.10.2026)
-8. Grund-/Stammkapital erbracht als — Choice: Bareinlage / Sacheinlage / gemischt (Bar- und Sacheinlage)
-   - Branching: wie 5 (`capital_contribution_type`, **neu** 28.10.2026 — Tatsachenfrage zur Ableitung von „Gründungsart“, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
-9. Handelsregister-Status — Choice: beabsichtigt / beantragt / erfolgt (Pflicht)
-10. Ort des Amtsgerichts bzw. der ausländischen Registerbehörde — Text
-    - Branching: nur wenn Frage 9 ≠ beabsichtigt (DisplayName seit 28.10.2026 verallgemeinert, deckt auch Körperschaft ausländischen Rechts ab, siehe Abschnitt H2 und E.9-Korrektur)
-11. Register / Registernummer — Text
-    - Branching: wie 10
-12. Wurde die Tätigkeit vorher ganz oder teilweise von einem anderen Unternehmen bzw. einer anderen Person ausgeübt? — Choice Ja/Nein (`predecessor_exists`, ersetzt seit 28.10.2026 das Freitextfeld „Vorheriger Inhaber/Vorunternehmen“, siehe Abschnitt H2)
+8. Kapitalaufbringung — Choice: Bargründung / Sachgründung / gemischt (Bar- und Sachgründung)
+   - Branching: wie 5 (`capital_contribution_type`, Auswahlwerte präzisiert 31.10.2026 auf den ELSTER-Original-Wortlaut Kz 91 — vorher „Bareinlage“/„Sacheinlage“, siehe Abschnitt H4; Feld wurde noch nie gegen eine Site ausgeführt, Choices-Änderung deshalb ohne Live-Drift-Risiko)
+9. Entstehungsart — Choice: Neugründung / Übernahme oder Erwerb / Umwandlung (`formation_origin`, **neu** 31.10.2026 — einzige Mandantenfrage zur Entstehungsart; `predecessor_exists` und `transformation_event` entfallen als Dubletten, siehe Abschnitt H5)
+10. Handelsregister-Status — Choice: beabsichtigt / beantragt / erfolgt (Pflicht)
+11. Ort des Amtsgerichts bzw. der ausländischen Registerbehörde — Text
+    - Branching: nur wenn Frage 10 ≠ beabsichtigt (DisplayName seit 28.10.2026 verallgemeinert, deckt auch Körperschaft ausländischen Rechts ab, siehe Abschnitt H2 und E.9-Korrektur)
+12. Register / Registernummer — Text
+    - Branching: wie 11
 13. Vorheriger Inhaber / Vorunternehmen — Name — Text
-    - Branching: nur bei Frage 12 = Ja (`predecessor_name`, **neu**)
+    - Branching: nur bei Frage 9 = Übernahme oder Erwerb oder Umwandlung (`predecessor_name`)
 14. Vorheriger Inhaber / Vorunternehmen — Steuernummer bzw. Anschrift — Text lang
-    - Branching: wie 13 (`predecessor_tax_or_address`, **neu**)
+    - Branching: wie 13 (`predecessor_tax_or_address`)
 15. Übernahme ganz oder teilweise — Choice: ganz / teilweise
-    - Branching: wie 13 (`predecessor_scope`, **neu**)
+    - Branching: wie 13 (`predecessor_scope`)
 16. Übernommen ab — Date
-    - Branching: wie 13 (`predecessor_since`, **neu**)
-17. Ist das Unternehmen durch eine gesellschaftsrechtliche Umwandlung entstanden (z. B. Verschmelzung, Spaltung, Formwechsel)? — Choice Ja/Nein (`transformation_event`, **neu** 28.10.2026 — weitere Tatsachenfrage zur Ableitung von „Gründungsart“)
-18. Art der Umwandlung und beteiligte Rechtsträger — Text lang
-    - Branching: nur bei Frage 17 = Ja (`transformation_details`, **neu**)
-19. Entspricht das Wirtschaftsjahr dem Kalenderjahr? — Choice Ja/Nein (`fiscal_year_matches_calendar`, ersetzt seit 28.10.2026 „Abweichendes Wirtschaftsjahr“ mit umgekehrtem Vorzeichen, siehe Abschnitt H2)
-20. Wirtschaftsjahr – Beginn — Date
-    - Branching: nur bei Frage 19 = Nein
-21. Wirtschaftsjahr – Ende — Date
-    - Branching: wie 20 (`fiscal_year_end`, **neu** — „Beginn“ ohne „Ende“ war bislang unvollständig)
-22. Voraussichtlicher Gewinn Eröffnungsjahr — Number (Pflicht)
-23. Voraussichtlicher Gewinn Folgejahr — Number (Pflicht)
-24. Buchführungs-/Bilanzierungspflicht nach ausländischem Recht — Choice Ja/Nein
+    - Branching: wie 13 (`predecessor_since`)
+17. Art der Umwandlung und beteiligte Rechtsträger — Text lang
+    - Branching: nur bei Frage 9 = Umwandlung (`transformation_details`)
+18. Entspricht das Wirtschaftsjahr dem Kalenderjahr? — Choice Ja/Nein (`fiscal_year_matches_calendar`, ersetzt seit 28.10.2026 „Abweichendes Wirtschaftsjahr“ mit umgekehrtem Vorzeichen, siehe Abschnitt H2)
+19. Wirtschaftsjahr – Beginn — Date
+    - Branching: nur bei Frage 18 = Nein
+20. Wirtschaftsjahr – Ende — Date
+    - Branching: wie 19 (`fiscal_year_end`, **neu** — „Beginn“ ohne „Ende“ war bislang unvollständig)
+21. Voraussichtlicher Gewinn Eröffnungsjahr — Number (Pflicht)
+22. Voraussichtlicher Gewinn Folgejahr — Number (Pflicht)
+23. Buchführungs-/Bilanzierungspflicht nach ausländischem Recht — Choice Ja/Nein
     - Branching: nur bei Formulartyp = Körperschaft nach ausländischem Recht (`foreign_bookkeeping_obligation`, **neu**, Tatsachenfeld statt der rechtlichen Würdigung „Gewinnermittlungsart“)
-25. Bereits bilanziert (freiwillig oder nach anderer Vorschrift) — Choice Ja/Nein (`voluntary_balance_sheet`, **neu**)
-26. Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht) — Text
-    - Branching: nur bei Frage 25 = Ja (`balance_sheet_basis`, **neu**; Handelsregister-Eintragung bereits über Frage 9, freiberufliche Tätigkeit bereits über Formular 1 Frage 10 abgedeckt — keine Dubletten angelegt. Die Kanzlei leitet „Gewinnermittlungsart“ aus den Fragen 9, 10 (Formular 1), 8, 12-18, 22-26 ab, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
+24. Bereits bilanziert (freiwillig oder nach anderer Vorschrift) — Choice Ja/Nein (`voluntary_balance_sheet`, **neu**)
+25. Rechtsgrundlage der Bilanzierung (z. B. Handelsrecht, ausländisches Recht) — Text
+    - Branching: nur bei Frage 24 = Ja (`balance_sheet_basis`, **neu**; Handelsregister-Eintragung bereits über Frage 10, freiberufliche Tätigkeit bereits über Formular 1 Frage 10 abgedeckt — keine Dubletten angelegt. Die Kanzlei leitet „Gewinnermittlungsart“ aus den Fragen 8, 9, 10, 13-17 und 21-25 dieses Formulars sowie aus Formular 1 Frage 10 ab, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
+26. Buchführungspflicht nach deutschem Recht (Paragraf 140/141 AO, Paragraf 238 HGB) bekannt — Choice Ja/Nein (`domestic_bookkeeping_obligation`, **neu** 30.10.2026 — bislang fehlte die inländische Buchführungspflicht als eigene Tatsache, nur die ausländische war erfasst; die Kanzlei leitet „Gewinnermittlungsart“ jetzt aus beiden plus Frage 10 dieses Formulars sowie Formular 1 Frage 10 ab, siehe `../ableitungsregeln.json`)
 27. Konzernzugehörigkeit — Choice Ja/Nein
 28. Herrschendes Unternehmen – Name — Text
     - Branching: nur bei Frage 27 = Ja
@@ -290,7 +291,7 @@ Formularende: Textblock mit Link-Liste zu Formular 1 sowie den je nach Antwort p
 35. Bezeichnung der KG — Text
     - Branching: nur bei Frage 34 = Ja
 36. Handelsregister — Datum (beantragt am / Tag der Eintragung) — Date
-    - Branching: nur bei Frage 9 ≠ beabsichtigt
+    - Branching: nur bei Frage 10 ≠ beabsichtigt
 37. Betriebsaufspaltung — Choice Ja/Nein
 38. Bezeichnung des Besitzunternehmens — Text
     - Branching: nur bei Frage 37 = Ja
@@ -317,7 +318,7 @@ Fragen 32-49 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelde
 
 ### E.3 Formular 3 — Personen und Vertretung (wenn vorhanden bzw. Pflicht)
 
-Hinweis am Formularanfang: „Bitte für jede Person/Rolle eine eigene Antwort einreichen (Formular mehrfach ausfüllen).“ — Forms unterstützt keine wiederholbaren Unterobjekte innerhalb einer Antwort.
+Hinweis am Formularanfang: „Bitte für jede Person/Rolle eine eigene Antwort einreichen (Formular mehrfach ausfüllen).“ — Forms unterstützt keine wiederholbaren Unterobjekte innerhalb einer Antwort. **Geändert 30.10.2026 (Nils-Auftrag „Grundregel für alle Listen"):** „Abhängige/unabhängige Person“ ist die abkommensrechtliche Einordnung nach Art. 5 Abs. 5/6 OECD-MA selbst und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`dependency_status`, `-FieldRole "Ergebnis"`) — ersetzt durch vier neue Tatsachenfragen (13-16 unten, siehe `../ableitungsregeln.json` für die Ableitungsregel).
 
 1. Fall-ID — Text (Pflicht)
 2. Rolle — Choice: Gesetzlicher Vertreter / Ständiger Vertreter / Empfangsbevollmächtigter / Steuerliche Beratung / Ehegatte/Lebenspartner (Pflicht)
@@ -334,23 +335,29 @@ Hinweis am Formularanfang: „Bitte für jede Person/Rolle eine eigene Antwort e
 10. Adresse — Text lang (Pflicht)
 11. Telefon — Text
 12. Steuerliche Kennzeichen (Land/Steuernummer/Finanzamt) — Text
-13. Abhängige/unabhängige Person — Choice
-    - Branching: nur bei Frage 2 = Ständiger Vertreter
-14. Abschlussvollmacht — Choice Ja/Nein
+13. Bei der Tätigkeit für den Meldepflichtigen weisungsgebunden — Choice Ja/Nein
+    - Branching: nur bei Frage 2 = Ständiger Vertreter (`instruction_bound`, **neu** 30.10.2026)
+14. In die Arbeitsorganisation des Meldepflichtigen eingegliedert (z. B. feste Arbeitszeiten/-ort, dessen Betriebsmittel) — Choice Ja/Nein
+    - Branching: wie 13 (`integrated_into_organization`, **neu**)
+15. Trägt ein eigenes unternehmerisches Risiko (z. B. eigene Betriebsmittel, eigenes Personal, erfolgsabhängige Vergütung) — Choice Ja/Nein
+    - Branching: wie 13 (`bears_entrepreneurial_risk`, **neu**)
+16. Erhält eine feste Vergütung unabhängig vom Erfolg einzelner Geschäfte — Choice Ja/Nein
+    - Branching: wie 13 (`fixed_remuneration`, **neu**; die Kanzlei leitet daraus „abhängig“/„unabhängig“ ab, siehe `../ableitungsregeln.json` — Gesamtbildbetrachtung nach OECD-Kommentar, kein starrer Automatismus)
+17. Abschlussvollmacht — Choice Ja/Nein
     - Branching: wie 13
-15. Empfangsbevollmächtigt — Choice Ja/Nein
-16. Übliches Land der Tätigkeit (dieser Person) — Text
+18. Empfangsbevollmächtigt — Choice Ja/Nein
+19. Übliches Land der Tätigkeit (dieser Person) — Text
     - Branching: nur bei Frage 2 = Gesetzlicher Vertreter oder Ständiger Vertreter (`usual_workplace_country`, **neu** 28.10.2026, Review Nils — verschoben von Formular 1, siehe Abschnitt H2: der Ort der tatsächlichen Geschäftsleitung des Unternehmens ist ein Ergebnisfeld, das die Kanzlei aus den üblichen Tätigkeitsorten der gesetzlichen Vertreter ableitet, siehe Datenmodell Abschnitt 10 Ableitungstabelle)
-17. Übliche Adresse/Ort der Tätigkeit (dieser Person) — Text lang
-    - Branching: wie 16 (`usual_workplace_address`, **neu**)
-18. Arbeitet auch regelmässig an einem anderen Ort — Choice Ja/Nein
-    - Branching: wie 16 (`works_elsewhere`, **neu**)
-19. Anderer Tätigkeitsort – wo und Anteil der Arbeitszeit — Text lang
-    - Branching: nur bei Frage 18 = Ja (`other_workplace_details`, **neu**)
+20. Übliche Adresse/Ort der Tätigkeit (dieser Person) — Text lang
+    - Branching: wie 19 (`usual_workplace_address`, **neu**)
+21. Arbeitet auch regelmässig an einem anderen Ort — Choice Ja/Nein
+    - Branching: wie 19 (`works_elsewhere`, **neu**)
+22. Anderer Tätigkeitsort – wo und Anteil der Arbeitszeit — Text lang
+    - Branching: nur bei Frage 21 = Ja (`other_workplace_details`, **neu**)
 
 ### E.4 Formular 4 — Beteiligte und Quoten (KapG, PersG, Ausland, BZSt2)
 
-Hinweis am Formularanfang: je Beteiligtem eine Antwort.
+Hinweis am Formularanfang: je Beteiligtem eine Antwort. **Geändert 30.10.2026 (Nils-Auftrag „Grundregel für alle Listen"):** „Beschränkte Steuerpflicht“ ist die gesetzliche Rechtsfolge aus § 1 Abs. 4 EStG/§ 2 Nr. 1 KStG selbst und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`limited_tax_liability`, `-FieldRole "Ergebnis"`) — ersetzt durch zwei neue, nach Frage 3 verzweigte Tatsachenfragen (16/17 unten, siehe `../ableitungsregeln.json`). **Ergänzt 31.10.2026 (Klärung Nils zu PR #24, Befund „Nominalwert reicht nicht“ für § 138 Abs. 2 Satz 1 Nr. 3 AO, siehe Abschnitt H4):** sechs neue Tatsachenfragen (19-24 unten) zu Veräusserungsdatum, Kaufpreis/Anschaffungsnebenkosten und den Tatbestandsvoraussetzungen Sitz-und-Geschäftsleitung-im-Ausland sowie Börsennotierung — betreffen inhaltlich vor allem den Outbound-/BZSt2-Kontext dieser Liste, bleiben bei Inbound-Nutzung (Anteilseigner der eigenen Gesellschaft) leer.
 
 1. Fall-ID — Text (Pflicht)
 2. Laufende Nummer / Zeichnernummer — Number (Pflicht)
@@ -371,15 +378,30 @@ Hinweis am Formularanfang: je Beteiligtem eine Antwort.
     - Branching: wie 12
 15. Voraussichtlicher Gewinnanteil Folgejahr — Number
     - Branching: wie 12
-16. Beschränkte Steuerpflicht — Choice Ja/Nein
-17. Beteiligt seit dem — Date
+16. Wohnsitz oder gewöhnlicher Aufenthalt in Deutschland — Choice Ja/Nein
+    - Branching: nur bei Frage 3 = natürlich (`domestic_residence`, **neu** 30.10.2026)
+17. Sitz oder Ort der Geschäftsleitung in Deutschland — Choice Ja/Nein
+    - Branching: nur bei Frage 3 = nicht natürlich (`domestic_seat_or_management`, **neu**; die Kanzlei leitet „beschränkte Steuerpflicht“ daraus ab, siehe `../ableitungsregeln.json`)
+18. Beteiligt seit dem — Date
     - Branching: nur bei Richtung = Outbound/BZSt2
-18. Stimmrechte in Prozent — Number
+19. Beteiligung veräussert am (falls zutreffend) — Date
+    - Branching: wie 18 (`disposal_date`, **neu** 31.10.2026 — ergänzt Frage 18 um das Veräusserungsdatum, die Meldepflicht nach § 138 Abs. 2 Satz 1 Nr. 3 AO erfasst auch Veräusserungen)
+20. Kaufpreis der Anteile — Number
+    - Branching: wie 18 (`purchase_price`, **neu**; zusammen mit Frage 21 massgeblich für die 150.000-EUR-Schwelle, siehe `../ableitungsregeln.json` — nicht der Nominalwert der Anteile)
+21. Sonstige Zahlungen zum Erwerb der Anteile (z. B. Vermittler, Berater, Notar) — Number
+    - Branching: wie 18 (`acquisition_incidental_costs`, **neu**)
+22. Beschreibung der sonstigen Zahlungen zum Erwerb — Text lang
+    - Branching: nur wenn Frage 21 ausgefüllt wurde (Forms kann eine Pflicht nicht von einem numerischen Wert abhängig machen — Hinweistext statt harter Verzweigung) (`acquisition_costs_description`, **neu**)
+23. Sitz UND Ort der Geschäftsleitung der Gesellschaft im Ausland — Choice Ja/Nein
+    - Branching: wie 18 (`target_seat_and_mgmt_abroad`, **neu**; ohne Sitz UND Geschäftsleitung im Ausland greift § 138 Abs. 2 Satz 1 Nr. 3 AO nicht)
+24. Gesellschaft an einer Börse notiert — Choice Ja/Nein
+    - Branching: wie 18 (`target_stock_listed`, **neu**; Börsenklausel — boersennotierte Gesellschaften sind bei einer Beteiligung unter 1 Prozent von der Meldepflicht ausgenommen)
+25. Stimmrechte in Prozent — Number
     - Bezieht sich auf Frage 11 (Beteiligung in Prozent); nur ausfüllen, falls die Stimmrechtsquote von der Kapitalquote abweicht (Datenmodell 9.2 „Beteiligte“)
 
 ### E.5 Formular 5 — Betriebsstätten (wenn vorhanden)
 
-Hinweis: je Betriebsstätte/Einrichtung eine Antwort. **Geändert 28.10.2026 (Befund Erfassungs-Chat-Generator, PR #22):** „Art der Einrichtung“ (fest/nicht fest) ist der Betriebsstätten-Begriff aus § 12 AO selbst und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`site_type`, `-FieldRole "Ergebnis"`, siehe Abschnitt C3) — ersetzt durch eine neue Tatsachenfrage (5 unten). Fragen 11 und 13 (`vat_relevant_site`/`payroll_tax_site`) sind nach derselben Grundregel-Lesart ebenfalls Ergebnisfelder (siehe Datenmodell Abschnitt 10.3, offener Punkt) — bleiben in dieser Runde aber bewusst als Forms-Fragen bestehen, da sie nicht Teil des aktuellen Generator-Befunds waren; Umstellung für eine künftige Runde vorgesehen.
+Hinweis: je Betriebsstätte/Einrichtung eine Antwort. **Geändert 28.10.2026 (Befund Erfassungs-Chat-Generator, PR #22):** „Art der Einrichtung“ (fest/nicht fest) ist der Betriebsstätten-Begriff aus § 12 AO selbst und daher ab sofort **keine Forms-Frage mehr**, sondern Kanzleifeld (`site_type`, `-FieldRole "Ergebnis"`, siehe Abschnitt C3) — ersetzt durch eine neue Tatsachenfrage (5 unten). **Geändert 30.10.2026 (Nils-Auftrag „Grundregel für alle Listen"):** „Umsatzsteuerliche Betriebsstätte“ und „Lohnsteuerliche Betriebsstätte“ sind ebenfalls die gesetzliche Rechtsfolge selbst (§ 3a UStG/Art. 11 MwSt-DVO bzw. § 41 Abs. 2 EStG) und daher jetzt ebenfalls **keine Forms-Fragen mehr**, sondern Kanzleifelder — ersetzt durch drei neue Tatsachenfragen (11-13 unten, siehe `../ableitungsregeln.json`). Ausserdem: „Telefon“ aus Frage 14 entfernt (CRM-Kontaktdatum der Kanzlei, siehe `crm_reference` in Formular 0), nur die öffentliche Internetadresse der Einrichtung bleibt als Tatsache stehen.
 
 1. Fall-ID — Text (Pflicht)
 2. Bezeichnung der Betriebsstätte/Einrichtung — Text (Pflicht)
@@ -393,63 +415,68 @@ Hinweis: je Betriebsstätte/Einrichtung eine Antwort. **Geändert 28.10.2026 (Be
 9. Tätigkeitsdauer bis unbekannt (noch andauernd) — Choice Ja/Nein
 10. Tätigkeitsdauer – bis — Date
     - Branching: nur einblenden, wenn Frage 9 = Nein (Forms verzweigt nur vorwärts, siehe KLICKANLEITUNG-FORMS.md Abschnitt C)
-11. Umsatzsteuerliche Betriebsstätte — Choice Ja/Nein
-12. Telefon / Internetadresse — Text
-13. Lohnsteuerliche Betriebsstätte — Choice Ja/Nein
+11. Eigenes oder für den Meldepflichtigen tätiges Personal an dieser Einrichtung stationiert — Choice Ja/Nein (`staff_present_onsite`, **neu** 30.10.2026)
+12. Arbeitgeberfunktion wird an dieser Einrichtung ausgeübt (z. B. Weisungsrecht gegenüber dem dortigen Personal) — Choice Ja/Nein
+    - Branching: nur bei Frage 11 = Ja (`employer_function_onsite`, **neu**)
+13. Löhne/Gehälter werden von bzw. für diese Einrichtung aus gezahlt oder abgerechnet — Choice Ja/Nein
+    - Branching: wie 12 (`wages_paid_from_site`, **neu**; die Kanzlei leitet daraus „Umsatzsteuerliche Betriebsstätte“ und „Lohnsteuerliche Betriebsstätte“ ab, siehe `../ableitungsregeln.json`)
+14. Internetadresse der Einrichtung — Text (`contact`, DisplayName seit 30.10.2026 von „Telefon / Internetadresse“ auf „Internetadresse der Einrichtung“ verengt)
 
 ### E.6 Formular 6 — Steuer- und Umsatzsteuerprofil (nur Inbound)
+
+**Geändert 30.10.2026 (Nils-Auftrag „Grundregel für alle Listen"):** „Kleinunternehmer-Regelung“ (§ 19 UStG) und „Soll-/Ist-Besteuerung“ (§§ 16/20 UStG) sind die gesetzliche Rechtsfolge bzw. ein Antragsvorschlag selbst und daher ab sofort **keine Forms-Fragen mehr**, sondern Kanzleifelder (`small_business_rule`/`vat_taxation_method`, `-FieldRole "Ergebnis"`) — siehe `../ableitungsregeln.json` für die vollständige Wenn-Dann-Regel inkl. Schwellenwerten. „Verzicht auf Kleinunternehmer-Regelung“ (Frage 5) bleibt eine direkte Frage (Willenserklärung des Mandanten, keine Würdigung), kann aber **nicht mehr innerhalb dieses Formulars** auf die jetzt entfernte Frage 4 verzweigen — die Kanzlei muss den Verzicht nach Ableitung der Kleinunternehmer-Eignung ggf. gesondert mit dem Mandanten klären (Hinweistext in der Frage statt Forms-Branching).
 
 1. Fall-ID — Text (Pflicht)
 2. Geschätzter Umsatz Eröffnungsjahr — Number (Pflicht)
 3. Geschätzter Umsatz Folgejahr — Number (Pflicht)
-4. Kleinunternehmer-Regelung — Choice Ja/Nein
-5. Verzicht auf Kleinunternehmer-Regelung — Choice Ja/Nein
-   - Branching: nur bei Frage 4 = Ja
+4. Tatsächlicher Umsatz des Vorjahres (falls bereits tätig) — Number
+   - Branching: nur wenn in Formular 2 „Wurde die Tätigkeit vorher ganz oder teilweise ausgeübt?“ = Ja (Kontextfrage wiederholen; `prior_year_revenue`, **neu** 30.10.2026 — Tatsachenfeld zur Ableitung von „Kleinunternehmer-Regelung“ und „Soll-/Ist-Besteuerung“; bei echter Neugründung leer lassen, „Beginn der Tätigkeit“ wird nicht erneut erfragt, siehe `activity_start_date` in Formular 2)
+5. Verzicht auf Kleinunternehmer-Regelung gewünscht (falls anwendbar) — Choice Ja/Nein
+   - Hinweistext: „Nur relevant, falls für Sie die Kleinunternehmerregelung infrage kommt — das prüft die Kanzlei anhand Ihrer Umsatzangaben.“ (keine Forms-Branching-Bedingung mehr möglich, da die Eignung selbst kein Formular-6-Feld mehr ist)
 6. Voraussichtliche USt (Zahllast/Überschuss) — Number
 7. Voranmeldungszeitraum — Choice: Monat / Quartal
-8. Soll-/Ist-Besteuerung — Choice: Soll-Besteuerung / Ist-Besteuerung
-9. USt-IdNr. beantragen — Choice Ja/Nein
-10. Frühere USt-IdNr. — Text
-    - Branching: nur bei Frage 9 = Nein (bereits vorhanden)
-11. OSS-Verfahren — Choice Ja/Nein
-12. Eigener Webshop — Choice Ja/Nein
-13. Elektronische Schnittstelle — Text
-    - Branching: nur bei Frage 12 = Ja
-14. Bauleistungen über 10 % Weltumsatz — Choice Ja/Nein
-15. Anzahl Arbeitnehmer insgesamt — Number
-16. Beginn Lohnzahlungen — Date
-    - Branching: nur bei Frage 15 > 0
-17. Voraussichtliche Lohnsteuer — Number
-    - Branching: wie 16
-18. Freistellungsbescheinigung § 48b EStG — Choice Ja/Nein
-19. Steuerfreie Umsätze nach § 4 UStG — Choice Ja/Nein
-20. Art des Umsatzes (steuerfrei) — Text
-    - Branching: nur bei Frage 19 = Ja
-21. Ermässigter Steuersatz — Choice Ja/Nein
-22. Art des Umsatzes (ermässigter Satz) — Text
-    - Branching: nur bei Frage 21 = Ja
-23. Nullsteuersatz — Choice Ja/Nein
-24. Art des Umsatzes (Nullsteuersatz) — Text
-    - Branching: nur bei Frage 23 = Ja
-25. Rechtsvorschrift zum Nullsteuersatz — Text
-    - Branching: wie 24
-26. Durchschnittssatzbesteuerung § 24 UStG (Land-/Forstwirtschaft) — Choice Ja/Nein
-27. Art des Umsatzes (§ 24 UStG) — Text
-    - Branching: nur bei Frage 26 = Ja
-28. Durchschnittssatzbesteuerung beibehalten oder Verzicht — Choice: Durchschnittssatzbesteuerung beibehalten / Verzicht auf Durchschnittssatzbesteuerung
-    - Branching: wie 27
-29. Vorsteuervergütung beantragt — Choice Ja/Nein
+8. USt-IdNr. beantragen — Choice Ja/Nein
+9. Frühere USt-IdNr. — Text
+   - Branching: nur bei Frage 8 = Nein (bereits vorhanden)
+10. OSS-Verfahren — Choice Ja/Nein
+11. Eigener Webshop — Choice Ja/Nein
+12. Elektronische Schnittstelle — Text
+    - Branching: nur bei Frage 11 = Ja
+13. Bauleistungen über 10 % Weltumsatz — Choice Ja/Nein
+14. Anzahl Arbeitnehmer insgesamt — Number
+15. Beginn Lohnzahlungen — Date
+    - Branching: nur bei Frage 14 > 0
+16. Voraussichtliche Lohnsteuer — Number
+    - Branching: wie 15
+17. Freistellungsbescheinigung § 48b EStG — Choice Ja/Nein
+18. Steuerfreie Umsätze nach § 4 UStG — Choice Ja/Nein
+19. Art des Umsatzes (steuerfrei) — Text
+    - Branching: nur bei Frage 18 = Ja
+20. Ermässigter Steuersatz — Choice Ja/Nein
+21. Art des Umsatzes (ermässigter Satz) — Text
+    - Branching: nur bei Frage 20 = Ja
+22. Nullsteuersatz — Choice Ja/Nein
+23. Art des Umsatzes (Nullsteuersatz) — Text
+    - Branching: nur bei Frage 22 = Ja
+24. Rechtsvorschrift zum Nullsteuersatz — Text
+    - Branching: wie 23
+25. Durchschnittssatzbesteuerung § 24 UStG (Land-/Forstwirtschaft) — Choice Ja/Nein
+26. Art des Umsatzes (§ 24 UStG) — Text
+    - Branching: nur bei Frage 25 = Ja
+27. Durchschnittssatzbesteuerung beibehalten oder Verzicht — Choice: Durchschnittssatzbesteuerung beibehalten / Verzicht auf Durchschnittssatzbesteuerung
+    - Branching: wie 26
+28. Vorsteuervergütung beantragt — Choice Ja/Nein
     - Branching: nur bei Formulartyp = Körperschaft nach ausländischem Recht (Kontextfrage aus Formular 0 wiederholen; nur in diesem Formulartyp laut ELSTER-Portalprüfung bestätigt)
-30. Datum der Vorsteuervergütung — Date
-    - Branching: nur bei Frage 29 = Ja
-31. Aktenzeichen Vorsteuervergütung — Text
-    - Branching: wie 30
-32. Internetadresse (URL) des Webshops — Text
-    - Branching: nur bei Frage 12 = Ja (Eigener Webshop)
-33. Identifikationsmerkmal der elektronischen Schnittstelle — Text
-    - Branching: nur bei Frage 13 ausgefüllt (Elektronische Schnittstelle)
+29. Datum der Vorsteuervergütung — Date
+    - Branching: nur bei Frage 28 = Ja
+30. Aktenzeichen Vorsteuervergütung — Text
+    - Branching: wie 29
+31. Internetadresse (URL) des Webshops — Text
+    - Branching: nur bei Frage 11 = Ja (Eigener Webshop)
+32. Identifikationsmerkmal der elektronischen Schnittstelle — Text
+    - Branching: nur bei Frage 12 ausgefüllt (Elektronische Schnittstelle)
 
-Fragen 19-33 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelder, Status `belegt_bedingt`, keine Spalte bedingungslos `-Required` — Details siehe Datenmodell Abschnitt 9.6.
+Fragen 18-32 (Update 2, ELSTER-Portalprüfung 26.10.2026): bedingte Pflichtfelder, Status `belegt_bedingt`, keine Spalte bedingungslos `-Required` — Details siehe Datenmodell Abschnitt 9.6.
 
 ### E.7 Formular 7 — Auslandsmitteilung BZSt2 (nur Outbound)
 
@@ -492,17 +519,29 @@ Nicht als Forms-Frage, sondern durch Flow/manuell befüllt: `required`/`uploaded
 
 **Hinweis Datei-Upload:** Der Forms-Fragetyp „Datei hochladen“ verlangt vom Antwortenden zwingend die Anmeldung mit einem Microsoft-Konto (auch bei „Jeder mit dem Link kann antworten“). Externe Mandanten ohne Microsoft-Konto können daher Formular 8 nicht direkt nutzen — Alternativen: (a) Dateien per E-Mail/Kanzlei-Upload-Link separat einsammeln, den Link in `file_link` hinterlegen und Formular 8 nur für die Metadaten (Dokumenttyp, Hinweis) nutzen, oder (b) Formular 8 ausschliesslich für angemeldete Mandanten mit Microsoft-/Gastkonto vorsehen.
 
+### E.9a Formular 9 — Grundbesitz (bedingt, weltweit)
+
+Hinweis am Formularanfang: je Grundstück eine Antwort (Formular mehrfach ausfüllen). **Neu 31.10.2026 (Klärung Nils zu PR #24, Punkt 1):** schliesst die offene Frage „Grundstückslage unstrukturiert“ — die Lage wird nicht mehr als Freitext in `asset_management_type` (Formular 1) erfasst, sondern als eigene Wiederholungsliste `9_Grundbesitz` mit Lookup auf den Fall (`case_id`), analog Formular 5. Nur einblenden bzw. verlinken, wenn Formular 1 Frage 38 = Ja.
+
+1. Fall-ID — Text (Pflicht)
+2. Strasse, Hausnummer, Zusatz — Text (Pflicht)
+3. Postleitzahl, Ort — Text (Pflicht)
+4. Land — Text (Pflicht; weltweit, nicht auf Deutschland beschränkt)
+5. Nutzung — Choice: vermietet / selbst genutzt / unbebaut (Pflicht)
+
+Nicht als Forms-Frage, sondern Kanzleifeld: `lage_tax_office` (Lagefinanzamt nach § 18 AO, `-FieldRole "Ergebnis"`, Abgleich gegen den aktuellen GemFA-XML-Export, siehe `../gemfa-quelle.md` und `../ableitungsregeln.json`).
+
 ### E.9 Routing (Formular 0 → Folgeformulare)
 
 Formularende von Formular 0 als Textblock mit bedingten Linklisten (Forms selbst kann kein formularübergreifendes Routing):
 
 | Formulartyp | Pflicht-Folgeformulare |
 |---|---|
-| Einzelunternehmen | 1, 2, 3 (falls Vertretung/Empfangsbevollmächtigter), 6, 8 |
-| Kapitalgesellschaft oder Genossenschaft | 1, 2, 3, 4, 5 (falls Betriebsstätten), 6, 8 |
-| Personengesellschaft oder -gemeinschaft | 1, 2, 3 (falls Vertretung), 4, 5 (falls Betriebsstätten), 6, 8 |
-| Körperschaft nach ausländischem Recht | 1, 2, 3, 5, 8 |
-| BZSt2-Mitteilung | 1, 4 (falls Beteiligungssachverhalt), 7, 8 |
+| Einzelunternehmen | 1, 2, 3 (falls Vertretung/Empfangsbevollmächtigter), 6, 8, 9 (falls Grundstücke) |
+| Kapitalgesellschaft oder Genossenschaft | 1, 2, 3, 4, 5 (falls Betriebsstätten), 6, 8, 9 (falls Grundstücke) |
+| Personengesellschaft oder -gemeinschaft | 1, 2, 3 (falls Vertretung), 4, 5 (falls Betriebsstätten), 6, 8, 9 (falls Grundstücke) |
+| Körperschaft nach ausländischem Recht | 1, 2, 3, 5, 8, 9 (falls Grundstücke) |
+| BZSt2-Mitteilung | 1, 4 (falls Beteiligungssachverhalt), 7, 8, 9 (falls Grundstücke) |
 
 **Routing-Korrektur 28.10.2026 (Review Nils, Audit Formular 1):** Formular 2 fehlte bislang bei „Körperschaft nach ausländischem Recht“, obwohl diese Rechtsform Registerangaben (Handelsregister-Status, Ort der Registerbehörde, Registernummer/-datum, siehe `registry_court`-DisplayName-Anpassung in Abschnitt H2), Gründungsdatum/-art und die neuen Tatsachenfelder zur Gewinnermittlung (`foreign_bookkeeping_obligation` usw.) genauso benötigt wie die übrigen Formulartypen. Formular 2 ergänzt.
 
@@ -512,7 +551,7 @@ Formularende von Formular 0 als Textblock mit bedingten Linklisten (Forms selbst
 
 ### E.10 Prüfregeln für Power-Automate-Flows (bedingte Pflichtfelder, die Forms nicht abbilden kann)
 
-Die meisten in Datenmodell Abschnitt 9.6 gelisteten bedingten Pflichtfelder (Update 2, ELSTER-Portalprüfung 26.10.2026) lassen sich über reguläres Forms-Branching abbilden (siehe Fragen 30-47 in E.2 und 19-33 in E.6 oben). Zwei Bedingungen kann Forms grundsätzlich nicht abbilden und müssen stattdessen als Prüfregel im jeweiligen Power-Automate-Flow (Formular-Antwort → Element erstellen) umgesetzt werden:
+Die meisten in Datenmodell Abschnitt 9.6 gelisteten bedingten Pflichtfelder (Update 2, ELSTER-Portalprüfung 26.10.2026) lassen sich über reguläres Forms-Branching abbilden (siehe Fragen 32-49 in E.2 und 18-32 in E.6 oben). Zwei Bedingungen kann Forms grundsätzlich nicht abbilden und müssen stattdessen als Prüfregel im jeweiligen Power-Automate-Flow (Formular-Antwort → Element erstellen) umgesetzt werden:
 
 1. **Steuernummer/Land bei anderem Finanzamt** (Formular 1, Fragen 28/29 „Art der Steuernummer-Angabe“/„Steuernummer“, **nicht mehr** in Kombination mit einer Formular-1-Frage zu § 27 AO, da `par27_ao_agreement` seit 28.10.2026 als Kanzleifeld nur noch in `0_Fallsteuerung` existiert — die Bedingung verknüpft seitdem zwei Felder **innerhalb von** `0_Fallsteuerung` selbst, bleibt aber trotzdem eine Power-Automate-Prüfregel, da Forms für Formular 1 ohnehin keine Sicht auf `0_Fallsteuerung`-Felder hat): **Prüfregel:** Der Flow, der Formular-1-Antworten nach `1_Allgemeiner_Stammblock` überträgt, soll vor dem „Element erstellen“-Schritt per „Element abrufen“ aus `0_Fallsteuerung` prüfen, ob `par27_ao_agreement` = Ja **und** `registration_status` = Ja gilt (Feld seit 28.10.2026 umbenannt, vorher `already_registered`, siehe Abschnitt H2); ist dann `existing_tax_number` oder `tax_office_country` leer, Element stattdessen in `Eingang_Fehler` anlegen (`form_no` = 1, `reason` = „Steuernummer/Land bei anderem Finanzamt fehlt trotz § 27 AO-Zustimmung“, `payload` = Rohantwort) statt den unvollständigen Datensatz kommentarlos zu übernehmen.
 2. **BIC nur bei bestimmten IBAN-Ländern** (Formular 1, Frage 34 „Bank – BIC“): Forms kann den Inhalt eines Textfelds nicht inspizieren, um eine Frage bedingt einzublenden. **Prüfregel:** Der Flow soll nach Übertragung prüfen, ob `bank_iban` mit einem der Länderpräfixe `AL`, `MD`, `MC`, `ME`, `MK`, `SM`, `CH` beginnt; falls ja und `bank_bic` leer ist, Element in `Eingang_Fehler` anlegen (`form_no` = 1, `reason` = „BIC fehlt bei nicht-SEPA-IBAN“) statt nur die bestehende Hinweistext-Lösung in Frage 34 zu verlassen.
@@ -522,7 +561,7 @@ Beide Prüfregeln ersetzen **nicht** die reguläre Übertragung — sie laufen z
 ## F. Freigabe und Rollout
 
 1. Je Formular unter „…“ → Einstellungen → „Wer kann antworten“ → **„Jeder mit dem Link kann antworten“** aktivieren (Ausnahme Formular 8 bei Datei-Upload, siehe Hinweis oben).
-2. Formular 0 als Startpunkt verlinken/einbetten (E-Mail an Mandant oder Einbettung auf einer Kanzlei-Landingpage). Der fallanlegende Flow setzt dabei `access_code` (Abschnitt D1) und baut die vorausgefüllten Links zu den Formularen 1-8 mit `case_id` **und** `access_code` auf.
+2. Formular 0 als Startpunkt verlinken/einbetten (E-Mail an Mandant oder Einbettung auf einer Kanzlei-Landingpage). Der fallanlegende Flow setzt dabei `access_code` (Abschnitt D1) und baut die vorausgefüllten Links zu den Formularen 1-9 mit `case_id` **und** `access_code` auf.
 3. Optional: Power-Automate-Flow „Bei neuer Microsoft-Forms-Antwort → Element in SharePoint-Liste erstellen“ je Formular/Liste-Paar, inkl. Zuordnung `case_id`/Lookup. Jeder dieser Flows sollte vor dem „Element erstellen“-Schritt `case_id` + `access_code` gegen `0_Fallsteuerung` prüfen und bei Fehlschlag stattdessen ein Element in `Eingang_Fehler` anlegen (Abschnitt D1), statt die Antwort kommentarlos zu verwerfen.
 4. Testdurchlauf mit Dummy-Fall über den externen Link vor Versand an echte Mandanten: prüfen, ob alle Branching-Regeln (Abschnitt E) korrekt greifen und ob die Antworten korrekt in die zugehörige SharePoint-Liste geschrieben werden.
 5. `Eingang_Fehler` regelmässig sichten (z. B. wöchentlich), um fehlgeschlagene Formular-Übernahmen zeitnah manuell nachzubearbeiten.
@@ -657,3 +696,127 @@ Dieses Skript legt eine Typaenderung (z. B. Boolean → Choice) **nie automatisc
 | `4_Beteiligte_und_Quoten` | `trust_relationship` | `trust_relationship_status` | **Kein 0-Eintraege-Nachweis bekannt** (anders als bei `already_registered`) — vor dem Loeschen auf beiden Sites pruefen, ob Liste 4 bereits befuellt ist |
 
 **Empfohlene Reihenfolge je Site:** (1) aktualisiertes Skript einmal laufen lassen (idempotent, legt die neuen Spalten an/gleicht sie an, ruehrt die alten Spalten nicht an), (2) `Test-SteuerlicheErfassungListen.ps1` laufen lassen und `ERGEBNIS: OK` abwarten, (3) je Zeile oben pruefen, ob die Liste tatsaechlich leer ist bzw. ob vorhandene Werte zuerst manuell in die neue Spalte uebertragen werden muessen, (4) alte Spalte in der SharePoint-Listeneinstellung loeschen.
+
+## H3. Changelog 30.10.2026: Grundregel vollstaendig fuer alle Listen (Nils-Auftrag)
+
+Nils-Auftrag: die Grundregel „Tatsachen statt rechtlicher Wuerdigung“ fuer **alle** Listen vollstaendig umsetzen, ausgehend von `main` nach Merge von PR #23 (Commit `3636519`). Betrifft die in Datenmodell Abschnitt 10.3 der Vorversion vorgemerkten sechs Ergebnisfelder sowie einen anschliessenden systematischen Audit aller Listen 0-8.
+
+### H3.1 Umgestellte Ergebnisfelder (Kanzleifeld-DisplayName + `-FieldRole "Ergebnis"` praezisiert)
+
+Bei allen sechs Feldern war `-FieldRole "Ergebnis"` bereits seit der vorigen Runde (28.10.2026) gesetzt, aber ohne eigene Tatsachenfelder und ohne Kanzleifeld-Kennzeichnung im DisplayName — die zugehoerigen Forms-Fragen standen deshalb bislang unveraendert als direkte Fragen in `sharepoint-forms/README.md`. **Keine Typaenderung, kein interner Namenswechsel** — nur DisplayName-Angleichung (normale Angleichungslogik, kein manuelles Loeschen noetig, siehe H3.3):
+
+| Feld | Liste | Neue Tatsachenfelder |
+|---|---|---|
+| `dependency_status` | 3 | `instruction_bound`, `integrated_into_organization`, `bears_entrepreneurial_risk`, `fixed_remuneration` |
+| `limited_tax_liability` | 4 | `domestic_residence` (AppliesTo NatuerlichePerson), `domestic_seat_or_management` (AppliesTo Gesellschaft) |
+| `vat_relevant_site` | 5 | `staff_present_onsite` |
+| `payroll_tax_site` | 5 | `staff_present_onsite`, `employer_function_onsite`, `wages_paid_from_site` |
+| `small_business_rule` | 6 | `prior_year_revenue` (bei bereits vorher ausgeuebter Taetigkeit), `estimated_revenue_opening_year` (bestehend) |
+| `vat_taxation_method` | 6 | `prior_year_revenue`, `domestic_bookkeeping_obligation` (Liste 2), `legal_form_category` (Liste 1) |
+
+Ausserdem neu in Liste 2: `domestic_bookkeeping_obligation` (schliesst eine Luecke bei `profit_determination_method` — bislang war nur die auslaendische Buchfuehrungspflicht erfasst).
+
+**Korrektur:** `small_business_rule_waiver` (Liste 6) war seit der vorigen Runde faelschlich `-FieldRole "Ergebnis"` — der Verzicht auf die Kleinunternehmerregelung ist eine Willenserklaerung des Mandanten (vergleichbar mit `par27_ao_agreement`), keine rechtliche Wuerdigung. Zurueck auf `-FieldRole` Default (Tatsache) gestellt.
+
+### H3.2 Systematischer Audit aller Listen 0-8: weitere Funde
+
+- `contact` (Liste 5): DisplayName von „Telefon / Internetadresse“ auf „Internetadresse der Einrichtung“ verengt — eine Telefonnummer ist CRM-Kontaktdatum der Kanzlei (siehe `crm_reference`), keine Fallangabe. Die oeffentliche Internetadresse der Einrichtung selbst bleibt Tatsache (vgl. `website` in Liste 1).
+- `formation_type` (Liste 2): die bestehende Choice-Liste vermischt zwei ELSTER-Dimensionen (Entstehungsart: Neugruendung/Uebernahme/Umwandlung; Kapitalaufbringung: Bar-/Sachgruendung) — als offene fachliche Frage an Nils dokumentiert (siehe `ableitungsregeln.json`), nicht eigenmaechtig aufgespalten. **Beantwortet 31.10.2026, siehe Abschnitt H4.2.**
+- `tax_office_country` (Liste 0): Klassifizierung als Ergebnis wird durch die Formulierung der Pruefregel E.10 infrage gestellt (koennte tatsaechlich eine direkte Tatsache sein) — als offene fachliche Frage an Nils dokumentiert, **nicht** eigenmaechtig umklassifiziert. **Beantwortet 31.10.2026, siehe Abschnitt H4.1.**
+- Weitere, bereits `-FieldRole "Ergebnis"` getaggte, aber **nicht** in dieser Runde mit eigenen Ableitungsregeln ausgestattete Felder identifiziert (Liste 2: `is_tax_group_parent`, `legal_capacity`, `split_ownership_structure`-Gruppe, `kst_exemption`-Gruppe, `par60a_ao_determination`-Gruppe, `is_tax_group_subsidiary`, `is_vat_group_member`; Liste 6: `vat_filing_period`, `expected_vat_amount`, `expected_payroll_tax`, `construction_services_over_10pct`, die UStG-Ausnahmetatbestands-Felder; Liste 7: `third_country_control`) — siehe Datenmodell Abschnitt 10.3 fuer die vollstaendige Liste und Begruendung, warum diese Runde bewusst nicht erweitert wurde (Rechtsstand-Risiko bei hastiger Schaetzung).
+- Keine neuen Dubletten/Mehrfachabfragen gefunden; `prior_year_revenue` (neu) wurde bewusst NICHT mit `estimated_revenue_opening_year` oder `activity_start_date` (beide bestehend) dupliziert, siehe Kommentare im Skript.
+
+### H3.3 Auf Bestandssites manuell zu loeschende Spalten (diese Runde)
+
+**Keine.** Diese Runde hat ausschliesslich neue Spalten ergaenzt sowie DisplayName/`-FieldRole`-Metadaten auf bestehenden Spalten angeglichen (keine Typaenderung, kein interner Namenswechsel, keine Entfernung) — die normale Angleichungslogik des Skripts zieht DisplayName-Aenderungen automatisch nach, ein manueller Eingriff auf `obenhaus.sharepoint.com/sites/steueranwaltskanzlei` oder `transferpricingdocs.sharepoint.com/sites/steuerdaten` ist fuer diese Runde nicht erforderlich.
+
+### H3.4 Maschinenlesbare Ableitungsregeln
+
+Neu: [`../ableitungsregeln.json`](../ableitungsregeln.json) (Schema: [`../ableitungsregeln.schema.json`](../ableitungsregeln.schema.json)) — vollstaendige Wenn-Dann-Uebersetzungstabelle fuer alle 14 Ergebnisfelder der Ableitungstabelle, siehe Datenmodell Abschnitt 10.4.
+
+## H4. Changelog 31.10.2026: Klaerung Nils zu PR #24 umgesetzt
+
+Nils (Steueranwalt) hat die am Ende von H3 offen gebliebenen fachlichen Fragen zu PR #24 beantwortet. Diese Runde setzt die Antworten um, ohne gegen eine SharePoint-Site auszufuehren.
+
+### H4.1 `tax_office_country`/`tax_office`/`target_notification` (Liste 0): Ergebnisfeld-Klassifizierung bestaetigt
+
+Die in H3.2 offen gelassene Frage, ob `tax_office_country` tatsaechlich ein Ergebnisfeld ist, hat Nils bestaetigt: die Zustaendigkeit des Finanzamts/Bundeslands ist Folge einer Rechtspruefung (Sitz, Ort der Geschaeftsleitung, Betriebsstaetten-/Grundstueckslage, Wohnsitz bei natuerlichen Personen), nicht vom Mandanten selbst zu bestimmen. Alle drei Felder tragen jetzt explizit `-FieldRole "Ergebnis"` (vorher nur im DisplayName/in der Doku als Ergebnisfeld beschrieben) — keine Forms-Frage, keine Typaenderung, keine manuelle Loeschung noetig (normale Angleichungslogik zieht die Metadatenaenderung nach). Die vollstaendige Ableitungsregel fuer `tax_office_country` (sechs Faelle nach §§ 18/19/20 AO) sowie die UStZustV-/GemFA-Teilautomatisierung fuer `tax_office` stehen in `../ableitungsregeln.json`.
+
+### H4.2 `formation_type` (Liste 2) aufgespalten in `formation_origin` + `capital_contribution_type`
+
+Nils-Entscheid: die in H3.2 als offene Frage dokumentierte Vermengung von Entstehungsart und Kapitalaufbringung in `formation_type` wird durch zwei getrennte Tatsachenfelder aufgeloest:
+
+- `formation_origin` (**neu**): Entstehungsart — Neugruendung / Uebernahme oder Erwerb / Umwandlung. Siehe README Abschnitt E.2 Frage 9 fuer die neue Forms-Frage und die dort dokumentierte, bewusst beibehaltene inhaltliche Ueberschneidung mit den Fragen „Vorheriger Inhaber“/„Umwandlung“ (13/18).
+- `capital_contribution_type` (bereits seit der vorigen Runde vorhanden): DisplayName auf „Kapitalaufbringung“ und Auswahlwerte auf den ELSTER-Original-Wortlaut Kz 91 praezisiert (Bargruendung / Sachgruendung / gemischt, vorher Bareinlage / Sacheinlage / gemischt). Siehe README Abschnitt E.2 Frage 8.
+
+`formation_type` wird von `New-SteuerlicheErfassungListen.ps1` **nicht mehr** angelegt oder angeglichen. **Anders als bei `already_registered` (H2.3) liegt fuer `formation_type` noch KEIN 0-Eintraege-Nachweis vor** — das Feld wurde noch nie gegen eine der beiden bekannten Sites ausgefuehrt (es ist Teil des noch nicht gemergten PR #24), aber das ist keine automatische Gewissheit, dass die Spalte auf einer Site, auf der zwischenzeitlich ein anderer Skriptstand lief, tatsaechlich leer ist. **Vor jeder manuellen Loeschung:** auf beiden bekannten Sites (`obenhaus.sharepoint.com/sites/steueranwaltskanzlei` und `transferpricingdocs.sharepoint.com/sites/steuerdaten`) pruefen, ob die Spalte `formation_type` in `2_Unternehmens_Gruendungsmodul` tatsaechlich 0 Eintraege hat, UND die Loeschung von der Kanzlei freigeben lassen — diese Pruefung/Freigabe wurde in dieser Runde **nicht** durchgefuehrt (keine Ausfuehrung gegen SharePoint).
+
+| Liste | Alte Spalte | Ersetzt durch | Hinweis vor dem Loeschen |
+|---|---|---|---|
+| `2_Unternehmens_Gruendungsmodul` | `formation_type` | `formation_origin` (neu) + `capital_contribution_type` (praezisiert) | **Kein 0-Eintraege-Nachweis** — vor dem Loeschen auf beiden Sites pruefen UND Freigabe der Kanzlei einholen |
+
+### H4.3 Rechtsstand/Fundstellen praezisiert (§§ 19/20 UStG, § 141 AO, § 138 Abs. 2 Satz 1 Nr. 3 AO)
+
+Keine Forms-/Spaltenaenderung, nur Praezisierung in `../ableitungsregeln.json`:
+
+- § 19 UStG (Kleinunternehmerregelung): 25.000/100.000 EUR seit 1.1.2025 (vorher 22.000/50.000 EUR).
+- § 20 UStG (Ist-Besteuerung): 800.000 EUR seit 1.1.2024 durch das Wachstumschancengesetz vom 27.3.2024 (BGBl. 2024 I Nr. 108), Art. 97 § 19 Abs. 3 und 4 EGAO (vorher 600.000 EUR).
+- § 141 AO (Buchfuehrungspflicht): 800.000 EUR Umsatz/80.000 EUR Gewinn seit 1.1.2024, selbe Rechtsgrundlage. **Neu ergaenzt:** § 141 AO gilt dem Wortlaut nach nicht fuer Angehoerige freier Berufe (§ 18 Abs. 1 Nr. 1 EStG) — eine eigene, vorrangige Ableitungszeile fuer `legal_form_category = 'Freiberufliche Taetigkeit'` wurde in `../ableitungsregeln.json` ergaenzt (die Tatsache „Art der Taetigkeit“ existierte dafuer bereits ueber `legal_form_category`, Liste 1).
+- § 138 Abs. 2 Satz 1 Nr. 3 AO (BZSt2-Meldepflicht): siehe H4.4.
+
+Kommentarliteratur (Klein/Raetke, AO, 19. Aufl. 2025) wird in `../ableitungsregeln.json` ausschliesslich als Fundstelle zitiert (z. B. „§ 141 Rn. 3-11“, „§ 138 Rn. 24-31“), kein Kommentartext wird wiedergegeben oder paraphrasiert — der Verlag schliesst eine KI-/TDM-Nutzung aus.
+
+### H4.4 § 138 Abs. 2 Satz 1 Nr. 3 AO: „Nominalwert reicht nicht“ — sechs neue Tatsachenfelder in Liste 4
+
+Befund Nils: der bisherige Nominalwert der Anteile (`nominal_share` in der Vorrunde als offene Frage markiert) genuegt nicht fuer die Meldeschwelle — massgeblich sind die EIGENEN Anschaffungskosten des Steuerpflichtigen (keine Wertsteigerungen). Neue Tatsachenfelder in `4_Beteiligte_und_Quoten` (siehe README Abschnitt E.4 Fragen 19-24):
+
+- `disposal_date` — Veraeusserungsdatum (ergaenzt `participation_since`, das bislang nur das Erwerbsdatum erfasste).
+- `purchase_price`, `acquisition_incidental_costs`, `acquisition_costs_description` — Kaufpreis und sonstige Zahlungen zum Erwerb (z. B. Vermittler, Berater, Notar).
+- `target_seat_and_mgmt_abroad`, `target_stock_listed` — Tatbestandsvoraussetzungen (Sitz UND Geschaeftsleitung im Ausland; Boersenklausel bei Beteiligung unter 1 Prozent).
+
+Fundstelle (nur Referenz, keine Wiedergabe von Kommentartexten): Klein/Raetke, AO, 19. Aufl. 2025, § 138 Rn. 24-31; BMF 26.4.2022, BStBl. I 2022, 576. Die vollstaendige Ableitungsregel (10-Prozent-Schwelle ODER 150.000-EUR-Anschaffungskosten, Boersenklausel) steht in `../ableitungsregeln.json`; die Aggregation unmittelbarer und mittelbarer Quoten sowie der Anschaffungskosten ueber mehrere Datensaetze derselben Person/desselben Zielunternehmens ist als Flow-/Kanzlei-Prozessschritt dokumentiert (kein eigenes Objekt, Klaerung Nils 31.10.2026 zweite Runde, siehe H5.4).
+
+### H4.5 Finanzamt-Lookup: UStZustV-Laendertabelle (Platzhalter) + GemFA-Pruefung
+
+Neu: [`../ustzustv-laendertabelle.json`](../ustzustv-laendertabelle.json) (Schema: [`../ustzustv-laendertabelle.schema.json`](../ustzustv-laendertabelle.schema.json)) — Struktur fuer eine zentrale, nach Herkunftsland gestaffelte USt-Zustaendigkeitstabelle (Umsatzsteuerzustaendigkeitsverordnung) fuer im Ausland ansaessige Unternehmer ohne inlaendische Betriebsstaette. **In dieser Runde bewusst nicht befuellt** (keine Zuordnung aus dem Gedaechtnis). Fuer den allgemeinen Ertragsteuer-Inlandsfall (§§ 18-21 AO) war zu diesem Zeitpunkt noch keine gepruefte GemFA-Quelle dokumentiert. **Beide Punkte sind in der zweiten Klaerungsrunde beantwortet** (Tabelle befuellt, GemFA-XML-Export gefunden): siehe H5.3 und H5.5.
+
+### H4.6 Offene fachliche Punkte nach dieser Runde
+
+Die fünf offenen Punkte dieser Runde sind in der zweiten Klärungsrunde vom 31.10.2026 beantwortet (siehe Abschnitt H5). Unverändert offen bleibt nur die noch nicht ausgeführte Löschung von `formation_type` (siehe H4.2) sowie — neu — die Löschung von `predecessor_exists` und `transformation_event` (siehe H5.2).
+
+## H5. Changelog 31.10.2026 (zweite Runde): Klaerung Nils zu PR #24
+
+Nils hat die in H4.6 offenen Punkte beantwortet. Diese Runde setzt die Antworten um, ohne gegen eine SharePoint-Site auszufuehren.
+
+### H5.1 Grundbesitz weltweit als eigene Liste `9_Grundbesitz`
+
+Neue Ja/Nein-Tatsache `real_estate_owned` in Liste 1 („Gehoeren Ihnen Grundstuecke?“) und neue Wiederholungsliste `9_Grundbesitz` (Lookup `case_id` auf den Fall, analog `5_Betriebsstaetten`): je Grundstueck Strasse, PLZ/Ort, Land, Nutzung (vermietet / selbst genutzt / unbebaut). Weltweit, nicht auf Deutschland beschraenkt. Kanzleifeld `lage_tax_office` (`-FieldRole "Ergebnis"`, nicht Required) fuer das Lagefinanzamt nach § 18 AO. Ableitungsregeln: `9_Grundbesitz__lage_tax_office` und ergaenzte Zeilen in `0_Fallsteuerung__tax_office` / `tax_office_country` (inlaendischer Grundbesitz als Anknuepfung, auch fuer § 20 Abs. 3 AO hilfsweise). Die offene Frage „Grundstueckslage unstrukturiert“ ist damit geschlossen. Forms: E.1 Frage 38, neues Formular E.9a, Routing-Tabelle um „9 (falls Grundstuecke)“ ergaenzt.
+
+### H5.2 Nur noch `formation_origin` als Entstehungsfrage
+
+`predecessor_exists` und `transformation_event` werden von `New-SteuerlicheErfassungListen.ps1` nicht mehr angelegt oder angeglichen (Dubletten zu `formation_origin`). Angaben zum Vorgaenger (`predecessor_name` / `predecessor_tax_or_address` / `predecessor_scope` / `predecessor_since`) nur noch bei Entstehungsart = Uebernahme oder Erwerb oder Umwandlung; `transformation_details` nur bei Entstehungsart = Umwandlung (siehe E.2). Ableitungsregeln, die bisher `predecessor_exists` verwendeten (`small_business_rule`, `vat_taxation_method`), referenzieren jetzt `formation_origin`.
+
+| Liste | Alte Spalte | Ersetzt durch | Hinweis vor dem Loeschen |
+|---|---|---|---|
+| `2_Unternehmens_Gruendungsmodul` | `predecessor_exists` | `formation_origin` (bereits vorhanden) | **Kein 0-Eintraege-Nachweis** — vor dem Loeschen auf beiden Sites pruefen UND Freigabe der Kanzlei einholen |
+| `2_Unternehmens_Gruendungsmodul` | `transformation_event` | `formation_origin` (bereits vorhanden) | wie oben |
+
+`formation_type` bleibt ebenfalls zur Loeschung vorgemerkt (H4.2); dieselben Vorbehalte.
+
+### H5.3 GemFA-Quelle gefunden
+
+Amtlicher, maschinenlesbarer XML-Export des BZSt (GemFA 2.0), Aktualisierung am 1. und 15. jedes Monats, XSD gueltig ab 05.03.2026. Seite: <https://www.bzst.de/DE/Service/Behoerdenwegweiser/Finanzamtsuche/finanzamtsuche.html> (Seitenstand 15.10.2026). Nutzungsbedingungen laut GovData: amtliches Werk, lizenzfrei nach § 5 Abs. 1 UrhG, freie Nutzung. Die XML-Datei wird bewusst **nicht** ins Repo gelegt (2 MB, zweimal monatlich aktualisiert). Die Regel `0_Fallsteuerung__tax_office` stuetzt den Inlands-Abgleich jetzt auf den jeweils aktuellen Export; siehe [`../gemfa-quelle.md`](../gemfa-quelle.md).
+
+### H5.4 § 138-Aggregation: kein eigenes Objekt
+
+Nils-Entscheid: die Summierung unmittelbarer und mittelbarer Quoten sowie der Anschaffungskosten ueber mehrere `4_Beteiligte_und_Quoten`-Datensaetze bleibt ein Prozessschritt der Flow-/Kanzleipruefung. Kein eigenes „Beteiligungsgruppe“-Objekt. Die offene Frage ist geschlossen.
+
+### H5.5 UStZustV-Laendertabelle befuellt
+
+[`../ustzustv-laendertabelle.json`](../ustzustv-laendertabelle.json) ist aus dem amtlichen Text von UStZustV § 1 Abs. 1 auf <https://www.gesetze-im-internet.de/ustzustv/__1.html> befuellt (41 Zeilen: 36 Staaten/Gebiete aus Abs. 1, davon Polen mit vier Namensbereichen plus OSS/IOSS-Sonderfall, zuzueglich Abs. 2 Auffangzustaendigkeit). Fassung: UStZustV vom 20.12.2001 (BGBl. I S. 3794, 3814), zuletzt geaendert durch Art. 8 der Verordnung vom 19.12.2025 (BGBl. 2025 I Nr. 372). ISO-Codes (ISO 3166-1 alpha-2) und Bundesland des benannten Finanzamts sind in der Verordnung selbst nicht enthalten und als ergaenzte Angaben gekennzeichnet. Nicht aus dem Gedaechtnis befuellt.
+
+### H5.6 Offene fachliche Punkte nach dieser Runde
+
+- „Wirtschaftlich bedeutendste“ inlaendische Betriebsstaette (§ 20 Abs. 3 AO) bei mehreren Standorten bleibt Einzelfallpruefung.
+- UStZustV-Polen: Namensabgleich und OSS/IOSS-Sonderzustaendigkeit sind in den bestehenden Tatsachenfeldern nur teilweise abgebildet.
+- Loeschungen `formation_type` / `predecessor_exists` / `transformation_event`: 0-Eintraege-Pruefung auf beiden Sites UND Freigabe der Kanzlei stehen aus (nicht in dieser Runde ausgefuehrt).

@@ -1,6 +1,6 @@
 # Klickanleitung: Microsoft-Forms-Formulare manuell anlegen
 
-Diese Anleitung ergänzt [`README.md`](README.md), Abschnitt E. Sie beschreibt die konkreten Klicks in [forms.office.com](https://forms.office.com), damit jede Person ohne Vorkenntnisse die 9 Formulare selbst zusammenstellen kann. Die Mechanik (A–D) wird einmal erklärt; danach folgt für jedes Formular nur noch die Fragenliste mit Typ, Pflicht/Bedingt und ggf. Branching-Hinweis — die allgemeinen Klickschritte aus A–D gelten dafür jeweils sinngemäß.
+Diese Anleitung ergänzt [`README.md`](README.md), Abschnitt E. Sie beschreibt die konkreten Klicks in [forms.office.com](https://forms.office.com), damit jede Person ohne Vorkenntnisse die 10 Formulare (0-9) selbst zusammenstellen kann. Die Mechanik (A–D) wird einmal erklaert; danach folgt fuer jedes Formular nur noch die Fragenliste mit Typ, Pflicht/Bedingt und ggf. Branching-Hinweis — die allgemeinen Klickschritte aus A–D gelten dafuer jeweils sinngemaess.
 
 ## A. Formular anlegen (einmalig pro Formular)
 
@@ -68,13 +68,13 @@ Titel: „0 – Fallsteuerung – Steuerliche Erfassung DE / Auslandsbezug"
 | 7 | Zielmeldung (BZSt2-Sachverhalt) | Auswahl | Betriebe/Betriebsstätten; PersG-Beteiligung; KapG-Beteiligung; Drittstaat-Beherrschung; Negativmeldung | Bedingt (nur bei Frage 1 = Outbound) | Bei Frage 1 = Inbound → diese Frage in der Verzweigung von Frage 1 überspringen |
 | 8 | Persönliche Bearbeitungsnotiz | Text (lang) | — | Nein | — |
 
-Am Ende des Formulars (Textabschnitt statt Frage: über **„+ Neu hinzufügen"** → **„Abschnitt"**, dort nur Beschreibungstext ohne Frage einfügen) folgende Routing-Hinweise als Fliesstext einfügen, mit den Links aus den bereits angelegten Formularen 1–8 (Abschnitt E.9 der README):
+Am Ende des Formulars (Textabschnitt statt Frage: über **„+ Neu hinzufügen"** → **„Abschnitt"**, dort nur Beschreibungstext ohne Frage einfügen) folgende Routing-Hinweise als Fliesstext einfügen, mit den Links aus den bereits angelegten Formularen 1–9 (Abschnitt E.9 der README):
 
 > „Vielen Dank. Bitte fahren Sie je nach Ihrer Auswahl mit folgenden Formularen fort: [Linkliste gemäss README Abschnitt E.9]."
 
-**Zugangscode nicht vergessen:** Formular 0 selbst fragt keinen Zugangscode ab — der fallanlegende Flow (bzw. die Kanzleiperson) setzt `access_code` direkt in `0_Fallsteuerung`, sobald das Element angelegt ist, und baut die Links zu den Formularen 1–8 mit `case_id` **und** `access_code` auf (README Abschnitt D1). Ohne Flow: `access_code` manuell in der Liste eintragen, bevor der Formularlink an den Mandanten geht.
+**Zugangscode nicht vergessen:** Formular 0 selbst fragt keinen Zugangscode ab — der fallanlegende Flow (bzw. die Kanzleiperson) setzt `access_code` direkt in `0_Fallsteuerung`, sobald das Element angelegt ist, und baut die Links zu den Formularen 1–9 mit `case_id` **und** `access_code` auf (README Abschnitt D1). Ohne Flow: `access_code` manuell in der Liste eintragen, bevor der Formularlink an den Mandanten geht.
 
-Danach: Schritte A–D für die Formulare 1–8 identisch wiederholen, mit den Fragenlisten aus `README.md` Abschnitte E.1–E.8. Die dortigen Zeilen sind bereits im selben Format (Frage / Typ / Pflicht / Branching-Bedingung) gehalten und lassen sich 1:1 in die Tabellenspalten dieser Klickanleitung übertragen.
+Danach: Schritte A–D für die Formulare 1–9 identisch wiederholen, mit den Fragenlisten aus `README.md` Abschnitte E.1–E.8 und E.9a (Grundbesitz). Die dortigen Zeilen sind bereits im selben Format (Frage / Typ / Pflicht / Branching-Bedingung) gehalten und lassen sich 1:1 in die Tabellenspalten dieser Klickanleitung übertragen.
 
 ## F. Reihenfolge und Zeitaufwand
 
@@ -83,12 +83,13 @@ Empfohlene Bearbeitungsreihenfolge (steigende Komplexität, Formular 0 zuerst al
 1. Formular 0 (8 Fragen, ca. 10 Min.)
 2. Formular 8 (5 Fragen, ca. 5 Min. — Datei-Upload-Hinweis beachten)
 3. Formular 3, 5 (13–19 Fragen, je ca. 15 Min. — Formular 3 seit 28.10.2026 inkl. „Übliche Tätigkeitsorte“, siehe README.md Abschnitt H2)
-4. Formular 1 (37 Fragen, ca. 25 Min. — seit 28.10.2026 inkl. Rechtsform-Zwei-Fragen-Logik und Vermögensverwaltungs-Tatsachenfragen)
-5. Formular 4, 7 (16–18 Fragen, je ca. 20 Min.)
-6. Formular 6 (33 Fragen, ca. 30 Min. — seit Update 2 inkl. USt-Befreiungsblock, viele Branching-Fälle)
-7. Formular 2 (49 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle; seit 28.10.2026 zusätzlich Vorgänger-/Wirtschaftsjahr-/Umwandlungs-Tatsachenfragen)
+4. Formular 1 (38 Fragen, ca. 25 Min. — seit 28.10.2026 inkl. Rechtsform-Zwei-Fragen-Logik und Vermögensverwaltungs-Tatsachenfragen; seit 31.10.2026 zusaetzlich „Gehoeren Ihnen Grundstuecke?“)
+5. Formular 9 (5 Fragen, ca. 5 Min. — nur wenn Formular 1 „Gehoeren Ihnen Grundstuecke?“ = Ja; je Grundstueck eine Antwort, siehe README Abschnitt E.9a)
+6. Formular 4, 7 (16–18 Fragen, je ca. 20 Min.)
+7. Formular 6 (33 Fragen, ca. 30 Min. — seit Update 2 inkl. USt-Befreiungsblock, viele Branching-Fälle)
+8. Formular 2 (49 Fragen, ca. 35 Min. — seit Update 2 inkl. Notar-, Organschafts- und Betriebsaufspaltungs-Fragen, meiste Branching-Fälle; seit 28.10.2026 zusätzlich Vorgänger-/Wirtschaftsjahr-/Umwandlungs-Tatsachenfragen; seit 31.10.2026 nur noch eine Entstehungsfrage)
 
-Gesamtaufwand grob 3–3,5 Stunden für alle 9 Formulare inkl. Testklicks in der Vorschau (seit Update 2 durch Formular 2/6 erhöht gegenüber ursprünglich 2–2,5 Stunden).
+Gesamtaufwand grob 3,5–4 Stunden für alle 10 Formulare inkl. Testklicks in der Vorschau (seit 31.10.2026 durch Formular 9 erhoeht).
 
 ## G. Nach Fertigstellung
 
