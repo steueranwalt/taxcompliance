@@ -1,13 +1,16 @@
 {
   "schema_version": "1.0.0",
-  "stand": "2026-10-30",
+  "stand": "2026-10-31",
   "hinweis_rechtsverbindlichkeit": "Diese Datei enthaelt VORSCHLAGSWERTE fuer Ergebnisfelder (Kanzleifelder), abgeleitet aus den vom Mandanten erhobenen Tatsachenfeldern. Sie ersetzt NICHT die fachliche Pruefung durch eine berufsrechtlich zugelassene Person. Ein Flow, der Erfassungs-Chat (DE/AO/erfassungs-chat/) oder ein kuenftiger ELSTER-Bot darf aus dieser Datei einen Vorschlag berechnen und anzeigen, aber NIEMALS automatisch in SharePoint oder ELSTER eintragen, ohne dass die Kanzlei den Vorschlag vorher bestaetigt hat. Rechtsstand-Angaben je Norm sind nach bestem Wissen zum genannten Datum erstellt; insbesondere kuerzlich reformierte Normen (Paragraf 19 UStG ab 1.1.2025, Paragraf 141 AO-Schwellen, Paragraf 20 UStG-Schwelle) sind vor produktivem Einsatz durch die Kanzlei zu verifizieren. Als 'unsicher' markierte Regelzeilen duerfen nicht als gesicherte Rechtsauskunft behandelt werden, sondern nur als Diskussionsgrundlage.",
   "offene_fragen_global": [
-    "tax_office_country (0_Fallsteuerung): Nach der E.10-Pruefregel (Steuernummer/Land bei anderem Finanzamt) scheint das Feld faktisch eine TATSACHE zu sein (der Mandant kennt das Land einer bereits bestehenden Registrierung), ist aber seit der Grundregel-Runde vom 28.10.2026 als Ergebnis getaggt. Bitte klaeren: Tatsache (Land einer bereits bestehenden Registrierung) oder Ergebnis (von der Kanzlei bestimmte neue Zustaendigkeit)?",
-    "formation_type (2_Unternehmens_Gruendungsmodul): Die bestehende Choice-Liste (Neugruendung/Uebernahme/Umwandlung/Bargruendung/Sachgruendung) vermischt zwei unterschiedliche ELSTER-Dimensionen (Entstehungsart vs. Kapitalaufbringung). Bitte klaeren, ob die Spalte in zwei separate Ergebnisfelder aufgeteilt werden soll.",
     "Kleinunternehmerregelung (small_business_rule, Paragraf 19 UStG) und Ist-Besteuerung (vat_taxation_method, Paragraf 20 UStG): Schwellenwerte wurden zum 1.1.2025 (Paragraf 19 UStG) bzw. 1.1.2024 (Paragraf 20 UStG) reformiert. Bitte die in dieser Datei angegebenen Schwellen (25.000 EUR / 100.000 EUR bzw. 800.000 EUR) sowie die Behandlung des Gruendungsjahres (keine Hochrechnung mehr?) gegen den aktuellen Rechtsstand pruefen.",
     "Paragraf 141 AO-Schwellen (Buchfuehrungspflicht, relevant fuer profit_determination_method): in dieser Datei mit 800.000 EUR Umsatz / 80.000 EUR Gewinn angegeben (Stand nach Viertem Corona-Steuerhilfegesetz). Bitte aktuellen Rechtsstand bestaetigen.",
-    "Zustaendiges Finanzamt (tax_office): kann nicht als kategorialer Wert abgeleitet werden, da die konkrete Finanzamts-Zustaendigkeit je Bundesland unterschiedlich organisiert ist. Diese Datei bestimmt nur den Anknuepfungspunkt (Ort der Geschaeftsleitung bzw. Sitz bzw. Betriebsstaette); die Zuordnung zum konkreten Finanzamt erfordert einen Abgleich mit dem jeweiligen Zustaendigkeitsverzeichnis. Bitte klaeren, ob/wie ein solcher Abgleich automatisiert werden soll oder ob das dauerhaft manuelle Kanzleiarbeit bleibt."
+    "Zustaendiges Finanzamt (tax_office): kann nicht als kategorialer Wert abgeleitet werden, da die konkrete Finanzamts-Zustaendigkeit je Bundesland unterschiedlich organisiert ist. Diese Datei bestimmt nur den Anknuepfungspunkt (Ort der Geschaeftsleitung bzw. Sitz bzw. Betriebsstaette); die Zuordnung zum konkreten Finanzamt erfordert einen Abgleich mit dem jeweiligen Zustaendigkeitsverzeichnis. Bitte klaeren, ob/wie ein solcher Abgleich automatisiert werden soll oder ob das dauerhaft manuelle Kanzleiarbeit bleibt.",
+    "tax_office (0_Fallsteuerung): Grundbesitz-Lage wird aktuell nur unstrukturiert in asset_management_type (Freitext, Liste 1) erfasst - kein eigenes Lagestaat-/Lageort-Feld fuer Grundbesitz. Relevant fuer § 18 AO (gesonderte Feststellung bei Grundbesitz). Soll ein strukturiertes Feld ergaenzt werden?",
+    "tax_office (0_Fallsteuerung): ../ustzustv-laendertabelle.json ist bewusst NICHT befuellt (Risiko einer falschen Finanzamt-Zuordnung bei geraten Angaben). Bitte die aktuelle Anlage zur UStZustV pruefen und die Tabelle befuellen, sobald Kapazitaet besteht - danach kann der Auslands-USt-Sonderfall in dieser Regel automatisiert vorschlagen statt 'manuelle Pruefung'.",
+    "tax_office (0_Fallsteuerung): fuer die allgemeine Ertragsteuer-Zustaendigkeit (§§ 18-21 AO) wurde kein im Rahmen dieser Aufgabe pruefbarer, lizenzrechtlich nutzbarer GemFA-Datenexport des BZSt/der Laender identifiziert - bleibt 'manuelle Pruefung'. Falls der Kanzlei eine konkrete GemFA-Datenquelle bekannt ist, bitte mitteilen.",
+    "target_notification (0_Fallsteuerung) / § 138 Abs. 2 Satz 1 Nr. 3 AO: die Aggregation unmittelbarer+mittelbarer Quoten sowie der Anschaffungskosten ueber mehrere 4_Beteiligte_und_Quoten-Datensaetze derselben Person/desselben Zielunternehmens ist als Prozessschritt dokumentiert, aber nicht in der strukturierten 'bedingung' des Einzeldatensatzes abgebildet (das waere datensatzuebergreifend und sprengt den Rahmen eines einzelnen booleschen Ausdrucks ueber EIN Objekt). Bitte bestaetigen, ob das als Flow-/Kanzlei-Prozessschritt ausreicht oder eine datensatzuebergreifende Aggregationsregel (z. B. eigenes 'Beteiligungsgruppe'-Objekt) noetig ist.",
+    "2_Unternehmens_Gruendungsmodul.formation_origin: ueberschneidet sich inhaltlich mit predecessor_exists/transformation_event (beide bereits vorhanden). Bewusst als eigene Tatsachenfrage beibehalten (Nils-Vorgabe), da 'Uebernahme oder Erwerb' weiter gefasst ist (z. B. Share Deal). Bitte bestaetigen, ob eine Konsistenzpruefung zwischen diesen Feldern im Flow ergaenzt werden soll."
   ],
   "regeln": [
     {
@@ -17,61 +20,193 @@
         "internal_name": "tax_office_country",
         "display_name": "Land des Finanzamts"
       },
-      "beschreibung": "Land, in dem eine ggf. bereits bestehende steuerliche Erfassung besteht (Kontext der Pruefregel E.10 'Steuernummer/Land bei anderem Finanzamt'). ACHTUNG Klassifizierung umstritten, siehe offene_fragen_global.",
+      "beschreibung": "Bestimmt das Land (bei Deutschland: den Anknuepfungspunkt fuer das zustaendige Bundesland/Finanzamt), dessen Steuerbehoerde fuer DIESEN Fall zustaendig ist. Klassifizierung als Ergebnisfeld am 31.10.2026 von Nils bestaetigt (zuvor als offene Frage markiert, siehe PR #24): die Zustaendigkeit ist Folge einer Rechtspruefung (Sitz, Ort der Geschaeftsleitung, Betriebsstaetten-/Grundstueckslage, Wohnsitz bei natuerlichen Personen), nicht vom Mandanten selbst zu bestimmen.",
       "wertetyp": "kategorial",
       "normen": [
         {
           "gesetz": "AO",
           "fundstelle": "§ 19",
-          "rechtsstand": "2026-10-30",
-          "kurzbeschreibung": "Zustaendigkeit nach Wohnsitz/Sitz der natuerlichen/juristischen Person"
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "natuerliche Personen: Wohnsitz/gewoehnlicher Aufenthalt"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 20 Abs. 1",
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "Koerperschaften/Personenvereinigungen: Ort der Geschaeftsleitung"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 20 Abs. 2",
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "hilfsweise Sitz, wenn Geschaeftsleitung im Ausland"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 20 Abs. 3",
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "auslaendische Koerperschaft ohne inlaendische Geschaeftsleitung: Finanzamt der inlaendischen Betriebsstaette"
+        },
+        {
+          "gesetz": "AO",
+          "fundstelle": "§ 18",
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "gesonderte Feststellung bei Grundbesitz/Personengesellschaften: Lage des Grundbesitzes bzw. Ort der Geschaeftsleitung"
         }
       ],
       "tatsachenfelder": [
         {
-          "liste": "0_Fallsteuerung",
-          "internal_name": "registration_status"
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "party_type"
         },
         {
-          "liste": "0_Fallsteuerung",
-          "internal_name": "existing_tax_number"
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "address_type"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "country"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_category"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_jurisdiction"
+        },
+        {
+          "liste": "1_Allgemeiner_Stammblock",
+          "internal_name": "legal_form_foreign_country"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "usual_workplace_country"
+        },
+        {
+          "liste": "3_Personen_und_Vertretung",
+          "internal_name": "works_elsewhere"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "country"
+        },
+        {
+          "liste": "5_Betriebsstaetten",
+          "internal_name": "site_type"
         }
       ],
       "ableitungszeilen": [
         {
-          "bedingung_text": "registration_status = 'Nein' oder 'Unbekannt'.",
-          "ergebniswert": "Unbekannt",
+          "bedingung_text": "party_type = 'Person' und address_type = 'Inland'.",
+          "ergebniswert": "Deutschland",
           "unsicher": false,
           "bedingung": {
-            "oder": [
+            "und": [
               {
                 "vergleich": {
-                  "feld": "0_Fallsteuerung.registration_status",
+                  "feld": "1_Allgemeiner_Stammblock.party_type",
                   "op": "eq",
-                  "wert": "Nein"
+                  "wert": "Person"
                 }
               },
               {
                 "vergleich": {
-                  "feld": "0_Fallsteuerung.registration_status",
+                  "feld": "1_Allgemeiner_Stammblock.address_type",
                   "op": "eq",
-                  "wert": "Unbekannt"
+                  "wert": "Inland"
                 }
               }
             ]
           },
-          "ausnahmen": "Keine bestehende Registrierung bekannt -> Feld bleibt 'Unbekannt', nicht 'Deutschland' erraten.",
+          "ausnahmen": "Setzt Wohnsitz oder gewoehnlichen Aufenthalt im Inland voraus (§ 19 AO); bei Wohnsitz im Ausland siehe naechste Zeile.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Person' und address_type = 'Ausland', aber mindestens eine inlaendische Betriebsstaette (5_Betriebsstaetten.country = 'Deutschland').",
+          "ergebniswert": "Deutschland",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.party_type",
+                  "op": "eq",
+                  "wert": "Person"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.address_type",
+                  "op": "eq",
+                  "wert": "Ausland"
+                }
+              }
+            ]
+          },
+          "ausnahmen": "Beschraenkte Steuerpflicht mit inlaendischer Anknuepfung (§ 18/19 AO); das konkrete Bundesland richtet sich nach der Lage der Betriebsstaette bzw. des Grundbesitzes.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Firma', legal_form_jurisdiction = 'nach deutschem Recht'.",
+          "ergebniswert": "Deutschland",
+          "unsicher": false,
+          "bedingung": {
+            "und": [
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.party_type",
+                  "op": "eq",
+                  "wert": "Firma"
+                }
+              },
+              {
+                "vergleich": {
+                  "feld": "1_Allgemeiner_Stammblock.legal_form_jurisdiction",
+                  "op": "eq",
+                  "wert": "nach deutschem Recht"
+                }
+              }
+            ]
+          },
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Firma', legal_form_jurisdiction = 'nach ausländischem Recht', aber Ort der Geschaeftsleitung (Hilfsableitung, siehe hilfsableitung__ort_der_geschaeftsleitung) liegt im Inland.",
+          "ergebniswert": "Deutschland",
+          "unsicher": false,
+          "ausnahmen": "§ 20 Abs. 1 AO knuepft primaer an den Ort der Geschaeftsleitung an, nicht an den Satzungssitz.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Firma', legal_form_jurisdiction = 'nach ausländischem Recht', keine inlaendische Geschaeftsleitung, aber mindestens eine inlaendische Betriebsstaette (5_Betriebsstaetten.country = 'Deutschland' und site_type = 'fest').",
+          "ergebniswert": "Deutschland",
+          "unsicher": false,
+          "ausnahmen": "§ 20 Abs. 3 AO: Anknuepfung an die (bei mehreren: wirtschaftlich bedeutendste) inlaendische Betriebsstaette.",
+          "offene_frage_an_nils": null
+        },
+        {
+          "bedingung_text": "party_type = 'Firma', legal_form_jurisdiction = 'nach ausländischem Recht', keine inlaendische Geschaeftsleitung und keine inlaendische Betriebsstaette, aber inlaendischer Grundbesitz (z. B. im Rahmen von asset_management_present/asset_management_type, Liste 1).",
+          "ergebniswert": "Deutschland",
+          "unsicher": true,
+          "offene_frage_an_nils": "Grundbesitz-Lage wird aktuell nur unstrukturiert in asset_management_type (Freitext) erfasst, kein eigenes Lagestaat-Feld. Reicht das, oder soll ein strukturiertes Feld 'Lage des Grundbesitzes' ergaenzt werden?"
+        },
+        {
+          "bedingung_text": "legal_form_foreign_country ist gesetzt und keine der obigen inlaendischen Anknuepfungen trifft zu.",
+          "ergebniswert": "Wert von legal_form_foreign_country, sofern in der Choice-Liste vorhanden, sonst 'Sonstiger Staat'",
+          "unsicher": false,
+          "ausnahmen": "Betrifft Faelle ohne jede inlaendische Anknuepfung (sollte im Erfassungsprozess die Ausnahme sein, da der Fall sonst gar nicht registrierungspflichtig waere).",
           "offene_frage_an_nils": null
         }
       ],
       "fallback": {
-        "bedingung_text": "registration_status = 'Ja', aber kein Land aus den Tatsachen ableitbar.",
-        "ergebniswert": "manuelle Pruefung",
-        "unsicher": true,
-        "offene_frage_an_nils": "Siehe offene_fragen_global: ist dieses Feld ueberhaupt ein Ergebnis oder eine direkte Mandanten-Tatsache?"
+        "bedingung_text": "Keine eindeutige Anknuepfung feststellbar oder widerspruechliche Angaben.",
+        "ergebniswert": "Unbekannt",
+        "unsicher": false,
+        "offene_frage_an_nils": null
       },
       "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung); Klassifizierung seit 28.10.2026 ungeklaert"
+      "quelle": "Klaerung Nils 31.10.2026 zu PR #24 (Antwort auf offene Frage aus der Vorrunde)"
     },
     {
       "id": "0_Fallsteuerung__tax_office",
@@ -112,6 +247,12 @@
           "fundstelle": "§ 18",
           "rechtsstand": "2026-10-30",
           "kurzbeschreibung": "gesonderte Feststellung bei Personengesellschaften: Ort der Geschaeftsleitung bzw. wertvollster Betriebsvermoegensteil"
+        },
+        {
+          "gesetz": "UStZustV",
+          "fundstelle": "Anlage (Laenderzuordnung)",
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "fuer im Ausland ansaessige Unternehmer OHNE inlaendische Betriebsstaette gilt eine zentrale, nach Herkunftsland gestaffelte USt-Zustaendigkeit eines einzelnen Finanzamts je Laendergruppe - unabhaengig von den allgemeinen Zustaendigkeitsregeln der §§ 18-21 AO"
         }
       ],
       "tatsachenfelder": [
@@ -212,6 +353,20 @@
           "unsicher": true,
           "ausnahmen": "Bei mehreren inlaendischen Betriebsstaetten ist die wirtschaftlich bedeutendste massgeblich - das ist keine rein schwellenwertbasierte Entscheidung, sondern erfordert einen Vergleich (z. B. nach Umsatz/Personal je Standort).",
           "offene_frage_an_nils": "Soll die 'wirtschaftlich bedeutendste' Betriebsstaette automatisiert ermittelt werden (z. B. nach einem noch zu definierenden Groessenmerkmal), oder bleibt das immer manuelle Kanzleientscheidung?"
+        },
+        {
+          "bedingung_text": "Sonderfall auslaendischer Unternehmer: party_type = 'Firma', legal_form_jurisdiction = 'nach ausländischem Recht', keine inlaendische Geschaeftsleitung und KEINE inlaendische Betriebsstaette (nur Registrierung fuer Umsatzsteuerzwecke, z. B. OSS-Alternative oder reine USt-Registrierung ohne Ertragsteuer-Anknuepfung).",
+          "ergebniswert": "Zentral zustaendiges Finanzamt laut Anlage zur UStZustV fuer das Herkunftsland (country/legal_form_foreign_country)",
+          "unsicher": true,
+          "ausnahmen": "Setzt eine befuellte Laendertabelle voraus - siehe ../ustzustv-laendertabelle.json (zum Zeitpunkt dieser Regel NICHT befuellt, da die Laenderzuordnung mehrfach reformiert wurde und ein Fehler eine Mitteilung an ein unzustaendiges Finanzamt zur Folge haette). Bis zur Befuellung bleibt dieser Fall 'manuelle Pruefung'.",
+          "offene_frage_an_nils": "../ustzustv-laendertabelle.json muss mit der aktuellen UStZustV-Anlage befuellt werden, bevor dieser Zweig automatisiert vorschlagen kann - siehe Hinweis in dieser Datei."
+        },
+        {
+          "bedingung_text": "Allgemeiner Inlandsfall (Ertragsteuer, §§ 18-21 AO), kein reiner USt-Auslandsfall: die konkrete Zuordnung Ort -> Finanzamt haengt von einem amtlichen, PLZ-/Strassen-genauen Zustaendigkeitsverzeichnis (GemFA-Daten des BZSt bzw. der Landesfinanzverwaltungen) ab, das in dieser Pruefung nicht ohne Weiteres als statische, zuverlaessig aktuell zu haltende Datei im Repo abgebildet werden kann (regelmaessige Aenderungen bei Finanzamts-Zusammenlegungen/-Umstrukturierungen; kein im Rahmen dieser Aufgabe geprueft nutzbarer Bulk-Export/API-Zugang identifiziert).",
+          "ergebniswert": "manuelle Pruefung",
+          "unsicher": false,
+          "ausnahmen": "Empfehlung: ein spaeterer Anlauf koennte pruefen, ob die Landesfinanzverwaltungen oder das BZSt eine aktuelle, lizenzrechtlich nutzbare GemFA-Datenquelle (Datei- oder API-Export) bereitstellen; bis dahin bleibt die Zuordnung zum konkreten Finanzamt manuelle Kanzleiarbeit, auch wenn der Anknuepfungspunkt (Ort/Bundesland) oben bereits vorgeschlagen wird.",
+          "offene_frage_an_nils": null
         }
       ],
       "fallback": {
@@ -221,7 +376,7 @@
         "offene_frage_an_nils": null
       },
       "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026); ergaenzt 31.10.2026 (Klaerung Nils, UStZustV-Teilautomatisierung + GemFA-Pruefung)"
     },
     {
       "id": "0_Fallsteuerung__target_notification",
@@ -236,31 +391,31 @@
         {
           "gesetz": "AO",
           "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 1",
-          "rechtsstand": "2026-10-30",
+          "rechtsstand": "2026-10-31",
           "kurzbeschreibung": "Gruendung/Erwerb von Betrieben und Betriebsstaetten im Ausland"
         },
         {
           "gesetz": "AO",
           "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 2",
-          "rechtsstand": "2026-10-30",
+          "rechtsstand": "2026-10-31",
           "kurzbeschreibung": "Erwerb/Aenderung einer Beteiligung an einer Personengesellschaft im Ausland"
         },
         {
           "gesetz": "AO",
           "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 3 i.V.m. Abs. 3",
-          "rechtsstand": "2026-10-30",
-          "kurzbeschreibung": "Erwerb einer Beteiligung an einer ausl. Koerperschaft: mind. 10% der Anteile/Stimmrechte ODER Anschaffungskosten aller Beteiligungen > 150.000 EUR"
+          "rechtsstand": "2026-10-31",
+          "kurzbeschreibung": "Erwerb oder Veraeusserung einer Beteiligung an einer Koerperschaft, Personenvereinigung oder Vermoegensmasse mit Sitz UND Geschaeftsleitung im Ausland: Meldepflicht bei Erreichen/Ueberschreiten von 10 Prozent (unmittelbare und mittelbare Beteiligung werden zusammengerechnet) ODER wenn die Summe der eigenen Anschaffungskosten des Steuerpflichtigen an dieser Gesellschaft 150.000 EUR uebersteigt (nur tatsaechlich gezahlte Anschaffungskosten, keine blossen Wertsteigerungen). Boersenklausel: boersennotierte Gesellschaften sind bei einer Beteiligung unter 1 Prozent von der Meldepflicht nach Nr. 3 ausgenommen. Bestaetigt 31.10.2026 (Klaerung Nils). Fundstelle (nur Referenz, keine Wiedergabe von Kommentartexten): Klein/Raetke, AO, 19. Aufl. 2025, § 138 Rn. 24-31; BMF 26.4.2022, BStBl. I 2022, 576."
         },
         {
           "gesetz": "AStG",
           "fundstelle": "§ 1 Abs. 2",
-          "rechtsstand": "2026-10-30",
+          "rechtsstand": "2026-10-31",
           "kurzbeschreibung": "Definition nahestehende Person fuer die Zurechnung bei § 138 Abs. 2 Satz 1 Nr. 4 AO"
         },
         {
           "gesetz": "AO",
           "fundstelle": "§ 138 Abs. 2 Satz 1 Nr. 4",
-          "rechtsstand": "2026-10-30",
+          "rechtsstand": "2026-10-31",
           "kurzbeschreibung": "beherrschender oder bestimmender Einfluss auf eine Drittstaat-Gesellschaft"
         }
       ],
@@ -283,7 +438,27 @@
         },
         {
           "liste": "4_Beteiligte_und_Quoten",
-          "internal_name": "nominal_share"
+          "internal_name": "purchase_price"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "acquisition_incidental_costs"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "participation_since"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "disposal_date"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "target_seat_and_mgmt_abroad"
+        },
+        {
+          "liste": "4_Beteiligte_und_Quoten",
+          "internal_name": "target_stock_listed"
         },
         {
           "liste": "7_Auslandsmitteilung_BZSt2",
@@ -305,22 +480,41 @@
           "offene_frage_an_nils": null
         },
         {
-          "bedingung_text": "Beteiligung an einer ausl. Koerperschaft: share_percentage >= 10 Prozent ODER Summe der Anschaffungskosten aller Beteiligungen an dieser Gesellschaft > 150.000 EUR.",
+          "bedingung_text": "target_seat_and_mgmt_abroad = Ja (Sitz UND Geschaeftsleitung der Gesellschaft im Ausland) UND NICHT (target_stock_listed = Ja UND Gesamtquote < 1 Prozent, Boersenklausel) UND (Gesamtquote [unmittelbar + mittelbar, ueber alle Datensaetze derselben Person/desselben Zielunternehmens summiert] >= 10 Prozent ODER Summe aus purchase_price + acquisition_incidental_costs [ueber dieselben Datensaetze summiert] > 150.000 EUR), mit Datum aus participation_since (Erwerb) oder disposal_date (Veraeusserung).",
           "ergebniswert": "KapG-Beteiligung",
           "unsicher": true,
           "bedingung": {
-            "oder": [
+            "und": [
               {
                 "vergleich": {
-                  "feld": "4_Beteiligte_und_Quoten.share_percentage",
-                  "op": "gte",
-                  "wert": 10,
-                  "einheit": "Prozent"
+                  "feld": "4_Beteiligte_und_Quoten.target_seat_and_mgmt_abroad",
+                  "op": "is_true"
                 }
+              },
+              {
+                "nicht": {
+                  "vergleich": {
+                    "feld": "4_Beteiligte_und_Quoten.target_stock_listed",
+                    "op": "is_true"
+                  }
+                }
+              },
+              {
+                "oder": [
+                  {
+                    "vergleich": {
+                      "feld": "4_Beteiligte_und_Quoten.share_percentage",
+                      "op": "gte",
+                      "wert": 10,
+                      "einheit": "Prozent"
+                    }
+                  }
+                ]
               }
             ]
           },
-          "offene_frage_an_nils": "Die 150.000-EUR-Anschaffungskosten-Schwelle aus § 138 Abs. 3 AO ist in den aktuellen Tatsachenfeldern nicht direkt abgebildet (nominal_share ist der Nominalwert, nicht zwingend die Anschaffungskosten). Bitte bestaetigen, ob nominal_share hierfuer herangezogen werden darf oder ein eigenes Feld 'Anschaffungskosten' noetig ist."
+          "ausnahmen": "Die Summierung unmittelbarer und mittelbarer Quoten sowie der Anschaffungskosten UEBER MEHRERE Datensaetze derselben Person/desselben Zielunternehmens ist eine Aggregation, die der Flow/die Kanzlei ausserhalb dieser einzelnen Bedingung durchfuehren muss - die strukturierte 'bedingung' oben bildet nur den Einzeldatensatz-Fall ab. Nur EIGENE Anschaffungskosten des Steuerpflichtigen zaehlen, keine Wertsteigerungen.",
+          "offene_frage_an_nils": "Die Boersenklausel-Bedingung ('target_stock_listed = Ja UND Quote < 1 Prozent') ist in der obigen strukturierten Bedingung nur teilweise abgebildet (target_stock_listed wird geprueft, die 1-Prozent-Schwelle fuer die Ausnahme selbst nicht separat verglichen). Bitte bestaetigen, ob eine Verfeinerung noetig ist oder die Gesamtbildpruefung durch die Kanzlei ausreicht."
         },
         {
           "bedingung_text": "third_country_control = Ja (beherrschender/bestimmender Einfluss auf eine Drittstaat-Gesellschaft).",
@@ -337,7 +531,7 @@
         "offene_frage_an_nils": null
       },
       "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung)"
+      "quelle": "Klaerung Nils 31.10.2026 zu PR #24 (vollstaendige § 138 Abs. 2 Nr. 3 AO-Logik, Boersenklausel, eigene Anschaffungskosten statt Nominalwert)"
     },
     {
       "id": "2_Unternehmens_Gruendungsmodul__profit_determination_method",
@@ -376,8 +570,8 @@
         {
           "gesetz": "AO",
           "fundstelle": "§ 141",
-          "rechtsstand": "2026-10-30",
-          "kurzbeschreibung": "steuerliche Buchfuehrungspflicht ab Umsatz > 800.000 EUR oder Gewinn > 80.000 EUR (Werte nach Viertem Corona-Steuerhilfegesetz, Rechtsstand pruefen)"
+          "rechtsstand": "2024-01-01",
+          "kurzbeschreibung": "steuerliche Buchfuehrungspflicht ab Umsatz > 800.000 EUR oder Gewinn > 80.000 EUR im Kalenderjahr, jeweils bestaetigter Schwellenwert seit 1.1.2024 durch das Wachstumschancengesetz vom 27.3.2024 (BGBl. 2024 I Nr. 108), Art. 97 § 19 Abs. 3 und 4 EGAO. Gilt nach dem Wortlaut NICHT fuer Angehoerige freier Berufe (§ 18 Abs. 1 Nr. 1 EStG) - diese sind von § 141 AO von vornherein nicht erfasst, unabhaengig von Umsatz/Gewinn. Fundstelle (nur Referenz, keine Wiedergabe von Kommentartexten): Klein/Raetke, AO, 19. Aufl. 2025, § 141 Rn. 3-11."
         },
         {
           "gesetz": "EStG",
@@ -409,6 +603,20 @@
         }
       ],
       "ableitungszeilen": [
+        {
+          "bedingung_text": "legal_form_category = 'Freiberufliche Tätigkeit'.",
+          "ergebniswert": "Einnahmenüberschussrechnung",
+          "unsicher": false,
+          "bedingung": {
+            "vergleich": {
+              "feld": "1_Allgemeiner_Stammblock.legal_form_category",
+              "op": "eq",
+              "wert": "Freiberufliche Tätigkeit"
+            }
+          },
+          "ausnahmen": "§ 141 AO erfasst nach seinem Wortlaut nur gewerbliche Unternehmer sowie Land- und Forstwirte, nicht Angehoerige freier Berufe (§ 18 Abs. 1 Nr. 1 EStG) - die Schwellenwerte oben sind fuer Freiberufler deshalb von vornherein nicht einschlaegig. Diese Zeile hat Vorrang vor den folgenden Buchfuehrungspflicht-Zeilen.",
+          "offene_frage_an_nils": null
+        },
         {
           "bedingung_text": "legal_form_category = 'Kapitalgesellschaft'.",
           "ergebniswert": "Betriebsvermögensvergleich",
@@ -489,19 +697,6 @@
             }
           },
           "offene_frage_an_nils": "Begruendet eine rein auslaendische Buchfuehrungspflicht fuer sich allein bereits eine inlaendische Gewinnermittlung durch Bestandsvergleich, oder ist dafuer zusaetzlich eine inlaendische Anknuepfung (Betriebsstaette, Massgeblichkeitsgrundsatz) noetig? Bitte im Einzelfall/grundsaetzlich bestaetigen."
-        },
-        {
-          "bedingung_text": "legal_form_category = 'Freiberufliche Tätigkeit' und keine der obigen Bedingungen trifft zu.",
-          "ergebniswert": "Einnahmenüberschussrechnung",
-          "unsicher": false,
-          "bedingung": {
-            "vergleich": {
-              "feld": "1_Allgemeiner_Stammblock.legal_form_category",
-              "op": "eq",
-              "wert": "Freiberufliche Tätigkeit"
-            }
-          },
-          "offene_frage_an_nils": null
         }
       ],
       "fallback": {
@@ -511,152 +706,7 @@
         "offene_frage_an_nils": null
       },
       "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
-    },
-    {
-      "id": "2_Unternehmens_Gruendungsmodul__formation_type",
-      "ergebnisfeld": {
-        "liste": "2_Unternehmens_Gruendungsmodul",
-        "internal_name": "formation_type",
-        "display_name": "Gründungsart"
-      },
-      "beschreibung": "ACHTUNG: Die bestehende Choice-Liste vermischt zwei ELSTER-Dimensionen (Entstehungsart: Neugruendung/Uebernahme/Umwandlung; Kapitalaufbringung: Bar-/Sachgruendung). Diese Regel bildet beide ab, kann aber bei gleichzeitigem Vorliegen beider Dimensionen (z. B. Neugruendung MIT Sacheinlage) nur einen Wert liefern - siehe offene_fragen_global.",
-      "wertetyp": "kategorial",
-      "normen": [
-        {
-          "gesetz": "sonstige",
-          "fundstelle": "allgemeine gesellschaftsrechtliche Einordnung",
-          "rechtsstand": "2026-10-30",
-          "kurzbeschreibung": "keine einzelne gesetzliche Definition; ELSTER-Fragebogen-Kategorie"
-        }
-      ],
-      "tatsachenfelder": [
-        {
-          "liste": "2_Unternehmens_Gruendungsmodul",
-          "internal_name": "transformation_event"
-        },
-        {
-          "liste": "2_Unternehmens_Gruendungsmodul",
-          "internal_name": "predecessor_exists"
-        },
-        {
-          "liste": "2_Unternehmens_Gruendungsmodul",
-          "internal_name": "predecessor_scope"
-        },
-        {
-          "liste": "2_Unternehmens_Gruendungsmodul",
-          "internal_name": "capital_contribution_type"
-        }
-      ],
-      "ableitungszeilen": [
-        {
-          "bedingung_text": "transformation_event = Ja.",
-          "ergebniswert": "Umwandlung",
-          "unsicher": false,
-          "bedingung": {
-            "vergleich": {
-              "feld": "2_Unternehmens_Gruendungsmodul.transformation_event",
-              "op": "is_true"
-            }
-          },
-          "offene_frage_an_nils": null
-        },
-        {
-          "bedingung_text": "predecessor_exists = Ja und predecessor_scope = 'ganz'.",
-          "ergebniswert": "Übernahme",
-          "unsicher": false,
-          "bedingung": {
-            "und": [
-              {
-                "vergleich": {
-                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
-                  "op": "is_true"
-                }
-              },
-              {
-                "vergleich": {
-                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_scope",
-                  "op": "eq",
-                  "wert": "ganz"
-                }
-              }
-            ]
-          },
-          "offene_frage_an_nils": null
-        },
-        {
-          "bedingung_text": "predecessor_exists = Ja und predecessor_scope = 'teilweise'.",
-          "ergebniswert": "manuelle Pruefung",
-          "unsicher": true,
-          "bedingung": {
-            "und": [
-              {
-                "vergleich": {
-                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_exists",
-                  "op": "is_true"
-                }
-              },
-              {
-                "vergleich": {
-                  "feld": "2_Unternehmens_Gruendungsmodul.predecessor_scope",
-                  "op": "eq",
-                  "wert": "teilweise"
-                }
-              }
-            ]
-          },
-          "ausnahmen": "Teilweise Uebernahme kann gleichzeitig eine Neugruendung des hinzukommenden Teils bedeuten - keine saubere Ein-Wert-Zuordnung in der bestehenden Choice-Liste moeglich.",
-          "offene_frage_an_nils": "Siehe offene_fragen_global zur Aufspaltung des Feldes."
-        },
-        {
-          "bedingung_text": "kein Vorgaenger, keine Umwandlung, capital_contribution_type = 'Bareinlage'.",
-          "ergebniswert": "Bargründung",
-          "unsicher": false,
-          "bedingung": {
-            "vergleich": {
-              "feld": "2_Unternehmens_Gruendungsmodul.capital_contribution_type",
-              "op": "eq",
-              "wert": "Bareinlage"
-            }
-          },
-          "offene_frage_an_nils": null
-        },
-        {
-          "bedingung_text": "kein Vorgaenger, keine Umwandlung, capital_contribution_type = 'Sacheinlage'.",
-          "ergebniswert": "Sachgründung",
-          "unsicher": false,
-          "bedingung": {
-            "vergleich": {
-              "feld": "2_Unternehmens_Gruendungsmodul.capital_contribution_type",
-              "op": "eq",
-              "wert": "Sacheinlage"
-            }
-          },
-          "offene_frage_an_nils": null
-        },
-        {
-          "bedingung_text": "kein Vorgaenger, keine Umwandlung, capital_contribution_type = 'gemischt (Bar- und Sacheinlage)'.",
-          "ergebniswert": "manuelle Pruefung",
-          "unsicher": true,
-          "bedingung": {
-            "vergleich": {
-              "feld": "2_Unternehmens_Gruendungsmodul.capital_contribution_type",
-              "op": "eq",
-              "wert": "gemischt (Bar- und Sacheinlage)"
-            }
-          },
-          "ausnahmen": "Die bestehende Choice-Liste kennt keinen gemischten Wert.",
-          "offene_frage_an_nils": "Siehe offene_fragen_global."
-        }
-      ],
-      "fallback": {
-        "bedingung_text": "Kein Vorgaenger, keine Umwandlung, capital_contribution_type leer (z. B. Personengesellschaft ohne Kapitaleinlage-Konzept, Einzelunternehmen).",
-        "ergebniswert": "Neugründung",
-        "unsicher": false,
-        "offene_frage_an_nils": null
-      },
-      "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+      "quelle": "Grundregel-Review Nils 30.10.2026 (Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026); Normen/Fundstellen praezisiert 31.10.2026 (Klaerung Nils: WachstumschancenG-Zitat, Klein/Raetke als reine Fundstellen-Referenz, Freiberufler-Ausnahme bestaetigt)"
     },
     {
       "id": "5_Betriebsstaetten__site_type",
@@ -1481,7 +1531,7 @@
           "gesetz": "UStG",
           "fundstelle": "§ 19 Abs. 1",
           "rechtsstand": "2026-10-30",
-          "kurzbeschreibung": "Rechtsstand ab 1.1.2025 (Jahressteuergesetz 2024, UNBEDINGT vor produktivem Einsatz pruefen): Vorjahresumsatz <= 25.000 EUR UND voraussichtlicher Umsatz im laufenden Kalenderjahr <= 100.000 EUR (echte Grenze - Ueberschreiten waehrend des Jahres beendet die Steuerbefreiung ab dem Ueberschreiten, nicht erst im Folgejahr). Bis 31.12.2024: 22.000 EUR Vorjahr / 50.000 EUR Prognose laufendes Jahr (nur Prognose, Ueberschreiten im laufenden Jahr war frueher unschaedlich)."
+          "kurzbeschreibung": "Rechtsstand ab 1.1.2025 (Jahressteuergesetz 2024, bestaetigt 31.10.2026): Vorjahresumsatz <= 25.000 EUR UND voraussichtlicher Umsatz im laufenden Kalenderjahr <= 100.000 EUR (echte Grenze - Ueberschreiten waehrend des Jahres beendet die Steuerbefreiung ab dem Ueberschreiten, nicht erst im Folgejahr). Bis 31.12.2024: 22.000 EUR Vorjahr / 50.000 EUR Prognose laufendes Jahr (nur Prognose, Ueberschreiten im laufenden Jahr war frueher unschaedlich)."
         }
       ],
       "tatsachenfelder": [
@@ -1595,7 +1645,7 @@
         "offene_frage_an_nils": null
       },
       "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (neues Tatsachenfeld prior_year_revenue; Korrektur der Vorrunde, die small_business_rule faelschlich noch als Tatsachenfrage auswies)"
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neues Tatsachenfeld prior_year_revenue; Korrektur der Vorrunde, die small_business_rule faelschlich noch als Tatsachenfrage auswies); Schwellenwerte 31.10.2026 bestaetigt (Klaerung Nils)"
     },
     {
       "id": "6_Steuer_und_Umsatzsteuerprofil__vat_taxation_method",
@@ -1616,8 +1666,8 @@
         {
           "gesetz": "UStG",
           "fundstelle": "§ 20 Satz 1 Nr. 1",
-          "rechtsstand": "2026-10-30",
-          "kurzbeschreibung": "Ist-Besteuerung auf Antrag, wenn Vorjahresumsatz <= 800.000 EUR (Schwelle seit 1.1.2024 durch Wachstumschancengesetz, vorher 600.000 EUR - Rechtsstand pruefen)"
+          "rechtsstand": "2024-01-01",
+          "kurzbeschreibung": "Ist-Besteuerung auf Antrag, wenn Vorjahresumsatz <= 800.000 EUR - Schwelle bestaetigt seit 1.1.2024 durch das Wachstumschancengesetz vom 27.3.2024 (BGBl. 2024 I Nr. 108), Art. 97 § 19 Abs. 3 und 4 EGAO (vorher 600.000 EUR)."
         },
         {
           "gesetz": "UStG",
@@ -1736,7 +1786,7 @@
         "offene_frage_an_nils": null
       },
       "kanzlei_bestaetigung_erforderlich": true,
-      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder prior_year_revenue, domestic_bookkeeping_obligation; Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026)"
+      "quelle": "Grundregel-Review Nils 30.10.2026 (neue Tatsachenfelder prior_year_revenue, domestic_bookkeeping_obligation; Vertiefung des Ableitungstabellen-Eintrags vom 28.10.2026); Schwellenwert 31.10.2026 bestaetigt (Klaerung Nils, WachstumschancenG-Zitat)"
     }
   ]
 }
