@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-10-31",
+  "befuellungsstatus": "nicht befuellt",
+  "hinweis": [
+    "Diese Datei ist als Platzhalter angelegt (Klaerung Nils 31.10.2026 zu PR #24, Punkt 4: zentrale",
+    "Umsatzsteuer-Zustaendigkeit fuer im Ausland ansaessige Unternehmer ohne inlaendische Betriebsstaette",
+    "als maschinenlesbare Tabelle hinterlegen). Die Laenderzuordnung zum jeweils zustaendigen Finanzamt",
+    "nach der Umsatzsteuerzustaendigkeitsverordnung (UStZustV) wurde NICHT aus dem Gedaechtnis befuellt,",
+    "weil diese Zuordnung (a) mehrfach geaendert wurde (u. a. im Zuge des Brexit und bei spaeteren",
+    "Zustaendigkeitsreformen) und (b) bei einem Fehler eine Mitteilung an ein unzustaendiges Finanzamt",
+    "zur Folge haette - ein Risiko, das diese Pruefung bewusst nicht eingehen wollte, statt eine nicht",
+    "zuverlaessig geprueft Zuordnung zu erraten.",
+    "",
+    "Zum Befuellen: die aktuelle Anlage zur UStZustV in der jeweils geltenden Fassung nachschlagen (z. B.",
+    "www.gesetze-im-internet.de/ustzustv/), die Laender-zu-Finanzamt-Zuordnung in 'zuordnungen' unten",
+    "eintragen und 'befuellungsstatus' auf 'befuellt (Rechtsstand <Datum>)' aendern. Jede Zeile sollte den",
+    "Rechtsstand UND die Fundstelle der jeweils herangezogenen Fassung der Verordnung tragen, damit",
+    "spaetere Aenderungen der Verordnung nicht unbemerkt veralten.",
+    "",
+    "Sobald befuellt, kann die Regel '0_Fallsteuerung__tax_office' in ableitungsregeln.json fuer den",
+    "Spezialfall 'auslaendischer Unternehmer ohne inlaendische Betriebsstaette, nur USt-Registrierung'",
+    "einen kategorialen Vorschlag statt 'manuelle Pruefung' liefern - siehe dortige Ableitungszeile."
+  ],
+  "quelle_verordnung": "Umsatzsteuerzustaendigkeitsverordnung (UStZustV) in der bei Abruf jeweils geltenden Fassung",
+  "zuordnungen": []
+}
