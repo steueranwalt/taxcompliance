@@ -938,27 +938,45 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "case_id" -Displa
 # Rechtsform sind Stammangaben und leben jetzt ausschliesslich in
 # 1_Allgemeiner_Stammblock (last_name_or_company, legal_form_*) - diese Liste
 # verweist ueber case_id statt eine eigene Kopie zu fuehren.
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_type" -DisplayName "Gruendungsart (von der Kanzlei eingeordnet)" -Type Choice -FieldRole Ergebnis `
-    -Choices @("Neugründung", "Übernahme", "Umwandlung", "Bargründung", "Sachgründung")
-# formation_type (Befund Erfassungs-Chat-Generator 28.10.2026, PR #22,
-# generator/output/required_ergebnis_konflikte.json): "Gruendungsart" (insb.
-# Bar-/Sachgruendung, Umwandlung) ist selbst eine rechtliche Einordnung, kein
-# Tatsachenfeld - war bislang -Required, was dem Generator-Befund und der
-# Grundregel (Datenmodell Abschnitt 10) widersprach. Jetzt nicht mehr
-# -Required, als Kanzleifeld gekennzeichnet (-FieldRole Ergebnis, siehe
-# README.md Abschnitt C3). Tatsachen stattdessen ueber predecessor_exists
-# (siehe oben), capital_contribution_type und transformation_event (neu,
-# siehe unten) sowie den Upload der Gruendungsurkunde/Satzung (Liste 8).
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribution_type" -DisplayName "Grund-/Stammkapital erbracht als" -Type Choice `
-    -Choices @("Bareinlage", "Sacheinlage", "gemischt (Bar- und Sacheinlage)")
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_origin" -DisplayName "Entstehungsart" -Type Choice `
+    -Choices @("Neugründung", "Übernahme oder Erwerb", "Umwandlung")
+# formation_type (ALT, entfernt 31.10.2026, Klaerung Nils zu PR #24): die
+# bisherige Choice-Liste vermengte zwei ELSTER-Dimensionen in einem einzigen
+# Ergebnisfeld (Entstehungsart UND Kapitalaufbringung). Nils-Entscheid: beide
+# Dimensionen werden stattdessen direkt als zwei Tatsachenfelder erhoben -
+# formation_type wird von diesem Skript nicht mehr angelegt oder angeglichen
+# (Typ-/Konzeptaenderung ist laut Punkt C nie automatisch moeglich). Auf
+# Bestandssites nur loeschen, wo die Liste nachweislich 0 Eintraege hat, und
+# erst nach Freigabe durch die Kanzlei (siehe README.md Abschnitt H4 - anders
+# als bei already_registered liegt fuer formation_type noch KEIN
+# 0-Eintraege-Nachweis vor, da dieses Feld noch nie gegen eine Site gelaufen
+# ist).
+# formation_origin (neu): Tatsachenfeld fuer die Entstehungsart. Inhaltlich
+# ueberschneidet sich dies mit predecessor_exists/transformation_event (beide
+# bereits vorhanden) - bewusst trotzdem als eigene direkte Frage gefuehrt
+# (Nils-Vorgabe), da "Uebernahme oder Erwerb" hier bewusst weiter gefasst ist
+# als predecessor_exists (das nur die Fortfuehrung einer bestehenden Taetigkeit
+# erfasst, nicht z. B. einen reinen Anteilserwerb/Share Deal). Die Kanzlei
+# sollte die Antwort auf Plausibilitaet gegen predecessor_exists/
+# transformation_event pruefen (Datenmodell Abschnitt 10.3, offener Punkt zur
+# Konsistenzpruefung).
+Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribution_type" -DisplayName "Kapitalaufbringung" -Type Choice `
+    -Choices @("Bargründung", "Sachgründung", "gemischt (Bar- und Sachgründung)")
+# capital_contribution_type (DisplayName/Choices praezisiert 31.10.2026,
+# Klaerung Nils: Wortlaut "Bargruendung"/"Sachgruendung" statt "Bareinlage"/
+# "Sacheinlage", identisch mit dem ELSTER-Original-Wortlaut Kz 91. Feld wurde
+# erst in der vorigen Runde eingefuehrt und noch nie gegen eine Site
+# ausgefuehrt - Choices-Aenderung deshalb ohne Live-Drift-Risiko.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_event" -DisplayName "Entstehung durch gesellschaftsrechtliche Umwandlung (z. B. Verschmelzung, Spaltung, Formwechsel)" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_details" -DisplayName "Art der Umwandlung und beteiligte Rechtstraeger" -Type Note
 # capital_contribution_type/transformation_event/transformation_details
-# (neu, Grundregel-Ableitung fuer formation_type): Bar- vs. Sacheinlage ist
-# eine vom Mandanten feststellbare Tatsache (wurde Geld oder ein
-# Vermoegensgegenstand eingebracht), waehrend "Sachgruendung" als Rechtsbegriff
-# selbst eine Einordnung ist. Ebenso ist "liegt eine Umwandlung vor" eine
-# Tatsache, "welche Gruendungsart daraus rechtlich folgt" nicht.
+# (capital_contribution_type neu seit der Vorrunde, Choices praezisiert
+# 31.10.2026): Bar- vs. Sachgruendung ist eine vom Mandanten feststellbare
+# Tatsache (wurde Geld oder ein Vermoegensgegenstand eingebracht); ebenso ist
+# "liegt eine Umwandlung vor" eine pruefbare Tatsache. Zusammen mit
+# formation_origin (oben) decken diese drei Felder ab, was zuvor im
+# Ergebnisfeld formation_type zusammengefasst war - siehe README.md
+# Abschnitt H4.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_date" -DisplayName "Gruendungsdatum" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "activity_start_date" -DisplayName "Beginn der Taetigkeit" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notarial_deed_date" -DisplayName "Notarielle Errichtung / Musterprotokoll vom" -Type DateOnly
