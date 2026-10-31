@@ -2,7 +2,7 @@
 <#
     .SYNOPSIS
     Legt die SharePoint-Listenfamilie "Steuerliche Erfassung DE / Auslandsbezug" an
-    (Liste 0-8, die internen Referenzlisten "Technische_Mindestfelder" und
+    (Liste 0-9, die internen Referenzlisten "Technische_Mindestfelder" und
     "Eingang_Fehler") bzw. gleicht eine bereits vorhandene Installation an den
     aktuellen Feldkatalog an.
 
@@ -335,7 +335,7 @@ function Set-FieldFormVisibility {
       Review Nils 28.10.2026 (0_Fallsteuerung): access_code wird ausschliesslich
       von einem Flow gesetzt, nie von Hand. Damit niemand versehentlich ueber das
       native SharePoint-Listenformular (NewForm.aspx/EditForm.aspx - zu
-      unterscheiden von den Microsoft-Forms-Umfragen F0-F8!) einen eigenen Wert
+      unterscheiden von den Microsoft-Forms-Umfragen F0-F9!) einen eigenen Wert
       eintraegt, wird das Feld dort ausgeblendet (ShowInNewForm/ShowInEditForm =
       FALSE). In der Anzeige (DisplayForm) bleibt es sichtbar, damit die Kanzlei
       den Code bei Bedarf nachschlagen kann. Gilt fuer neue und bestehende Felder
@@ -772,7 +772,7 @@ Add-Field -List "0_Fallsteuerung" -InternalName "access_code" -DisplayName "Zuga
 # den Wert von Hand ein - der fallanlegende Power-Automate-Flow erzeugt ihn IM
 # SELBEN "Element erstellen"-Schritt wie case_id (z. B. per Ausdruck
 # toUpper(substring(guid(),0,10))) und baut ihn in den vorausgefuellten Link zu
-# den Formularen 1-8 ein. Spaetere Flows pruefen case_id UND access_code
+# den Formularen 1-9 ein. Spaetere Flows pruefen case_id UND access_code
 # gemeinsam, bevor eine Formularantwort einem Fall zugeordnet wird. Deshalb
 # -HideFromForms (im nativen SharePoint-Neu-/Bearbeiten-Formular ausgeblendet,
 # siehe Set-FieldFormVisibility) und bewusst weiterhin nicht -Required (ein
@@ -902,6 +902,16 @@ Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_reven
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "asset_mgmt_share_profit" -DisplayName "Anteil Vermögensverwaltung am Gewinn in Prozent" -Type Number -AppliesTo @("Gesellschaft") `
     -Min 0 -Max 100
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "other_business_activities" -DisplayName "Weitere Tätigkeiten" -Type Note -AppliesTo @("Gesellschaft")
+Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "real_estate_owned" -DisplayName "Gehoeren Ihnen Grundstuecke?" -Type Boolean
+# real_estate_owned (Klaerung Nils 31.10.2026 zu PR #24, Punkt 1): Ja/Nein-
+# Tatsache "Gehoeren Ihnen Grundstuecke?" - weltweit, nicht nur Deutschland.
+# Die einzelnen Grundstuecke (Adresse inkl. Land/PLZ/Ort, Nutzung) leben in
+# der eigenen Wiederholungsliste 9_Grundbesitz (analog 5_Betriebsstaetten,
+# Lookup ueber case_id). Bewusst NICHT mit asset_management_present
+# ("Verwaltet Vermoegen ... Immobilien ...") zusammengelegt: das ist die
+# Taetigkeitsfrage (Vermoegensverwaltung als Geschaeft), dies hier ist das
+# Eigentum an konkreten Grundstuecken - zwei verschiedene Tatsachen, siehe
+# README.md Abschnitt H5.
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_id_type" -DisplayName "Art der Steuernummer-Angabe" -Type Choice -Required `
     -Choices @("bestehend", "neu beantragen")
 Add-Field -List "1_Allgemeiner_Stammblock" -InternalName "tax_number" -DisplayName "Steuernummer" -Type Text
@@ -951,15 +961,15 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_origin
 # als bei already_registered liegt fuer formation_type noch KEIN
 # 0-Eintraege-Nachweis vor, da dieses Feld noch nie gegen eine Site gelaufen
 # ist).
-# formation_origin (neu): Tatsachenfeld fuer die Entstehungsart. Inhaltlich
-# ueberschneidet sich dies mit predecessor_exists/transformation_event (beide
-# bereits vorhanden) - bewusst trotzdem als eigene direkte Frage gefuehrt
-# (Nils-Vorgabe), da "Uebernahme oder Erwerb" hier bewusst weiter gefasst ist
-# als predecessor_exists (das nur die Fortfuehrung einer bestehenden Taetigkeit
-# erfasst, nicht z. B. einen reinen Anteilserwerb/Share Deal). Die Kanzlei
-# sollte die Antwort auf Plausibilitaet gegen predecessor_exists/
-# transformation_event pruefen (Datenmodell Abschnitt 10.3, offener Punkt zur
-# Konsistenzpruefung).
+# formation_origin (Klaerung Nils 31.10.2026, zweite Runde): EINZIGE
+# Mandantenfrage zur Entstehungsart. predecessor_exists und
+# transformation_event werden von diesem Skript nicht mehr angelegt oder
+# angeglichen (Dublette zu formation_origin) - zur Loeschung vorgemerkt,
+# nur wo 0 Eintraege bestaetigt UND nach Freigabe, siehe README.md
+# Abschnitt H5. Angaben zum Vorgaenger (predecessor_*) nur bedingt bei
+# Entstehungsart = "Uebernahme oder Erwerb" oder "Umwandlung";
+# transformation_details nur bei Entstehungsart = "Umwandlung"
+# (Forms-Branching, siehe README.md E.2).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribution_type" -DisplayName "Kapitalaufbringung" -Type Choice `
     -Choices @("Bargründung", "Sachgründung", "gemischt (Bar- und Sachgründung)")
 # capital_contribution_type (DisplayName/Choices praezisiert 31.10.2026,
@@ -967,16 +977,10 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "capital_contribu
 # "Sacheinlage", identisch mit dem ELSTER-Original-Wortlaut Kz 91. Feld wurde
 # erst in der vorigen Runde eingefuehrt und noch nie gegen eine Site
 # ausgefuehrt - Choices-Aenderung deshalb ohne Live-Drift-Risiko.
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_event" -DisplayName "Entstehung durch gesellschaftsrechtliche Umwandlung (z. B. Verschmelzung, Spaltung, Formwechsel)" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "transformation_details" -DisplayName "Art der Umwandlung und beteiligte Rechtstraeger" -Type Note
-# capital_contribution_type/transformation_event/transformation_details
-# (capital_contribution_type neu seit der Vorrunde, Choices praezisiert
-# 31.10.2026): Bar- vs. Sachgruendung ist eine vom Mandanten feststellbare
-# Tatsache (wurde Geld oder ein Vermoegensgegenstand eingebracht); ebenso ist
-# "liegt eine Umwandlung vor" eine pruefbare Tatsache. Zusammen mit
-# formation_origin (oben) decken diese drei Felder ab, was zuvor im
-# Ergebnisfeld formation_type zusammengefasst war - siehe README.md
-# Abschnitt H4.
+# transformation_details bleibt (bedingt bei formation_origin = "Umwandlung").
+# transformation_event (ALT, entfernt 31.10.2026 zweite Runde): Dublette zu
+# formation_origin, siehe README.md Abschnitt H5.
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "formation_date" -DisplayName "Gruendungsdatum" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "activity_start_date" -DisplayName "Beginn der Taetigkeit" -Type DateOnly -Required
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "notarial_deed_date" -DisplayName "Notarielle Errichtung / Musterprotokoll vom" -Type DateOnly
@@ -995,16 +999,16 @@ Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "register_number"
 # deutsche Amtsgericht - deckt damit einen Teil des Befunds "Registerangaben
 # fehlen bei Koerperschaft auslaendischen Rechts" ab (siehe README.md
 # Abschnitt H zur ebenfalls ergaenzten E.9-Routing-Korrektur).
-Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_exists" -DisplayName "Wurde die Tätigkeit vorher ganz oder teilweise von einem anderen Unternehmen bzw. einer anderen Person ausgeübt?" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_name" -DisplayName "Vorheriger Inhaber / Vorunternehmen - Name" -Type Text
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_tax_or_address" -DisplayName "Vorheriger Inhaber / Vorunternehmen - Steuernummer bzw. Anschrift" -Type Note
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_scope" -DisplayName "Übernahme ganz oder teilweise" -Type Choice `
     -Choices @("ganz", "teilweise")
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "predecessor_since" -DisplayName "Übernommen ab" -Type DateOnly
-# predecessor_* ersetzt das bisherige einzelne Freitextfeld "predecessor"
-# (Review Nils 28.10.2026): erst Ja/Nein-Tatsache, dann bei Ja die
-# strukturierten Folgefragen (wer, Steuernummer/Anschrift, ganz/teilweise,
-# ab wann).
+# predecessor_* (Name/Anschrift/Scope/Datum) bleiben als bedingte
+# Folgefragen, eingeblendet wenn formation_origin = "Uebernahme oder Erwerb"
+# oder "Umwandlung" (siehe README.md E.2). predecessor_exists (ALT, entfernt
+# 31.10.2026 zweite Runde): Dublette zu formation_origin, zur Loeschung
+# vorgemerkt (0 Eintraege UND Freigabe, siehe README.md Abschnitt H5).
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_matches_calendar" -DisplayName "Entspricht das Wirtschaftsjahr dem Kalenderjahr?" -Type Boolean
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_start" -DisplayName "Wirtschaftsjahr - Beginn" -Type DateOnly
 Add-Field -List "2_Unternehmens_Gruendungsmodul" -InternalName "fiscal_year_end" -DisplayName "Wirtschaftsjahr - Ende" -Type DateOnly
@@ -1294,7 +1298,7 @@ Add-Field -List "6_Steuer_und_Umsatzsteuerprofil" -InternalName "prior_year_reve
 # estimated_revenue_opening_year (das ist der SCHAETZWERT fuer das
 # Eroeffnungsjahr dieses Falls, waehrend prior_year_revenue der TATSAECHLICHE
 # Umsatz des VORJAHRES ist - nur bei bereits vorher ausgeuebter Taetigkeit
-# relevant, siehe predecessor_exists in Liste 2; bei echter Neugruendung bleibt
+# relevant, siehe formation_origin in Liste 2; bei echter Neugruendung bleibt
 # dieses Feld leer/0, siehe DE/AO/ableitungsregeln.json). "Beginn der
 # Taetigkeit" wird NICHT erneut erfragt (bereits activity_start_date in
 # Liste 2 vorhanden) - jeden Sachverhalt nur einmal abfragen.
@@ -1452,6 +1456,28 @@ Add-Field -List "8_Unterlagen" -InternalName "related_site" -DisplayName "Bezug:
 # Fall-Bezug bereits ueber case_id (oben, Restrict) gesichert ist.
 
 # ---------------------------------------------------------------------------
+# Liste 9: Grundbesitz (weltweit; Wiederholungsliste, analog 5_Betriebsstaetten)
+# ---------------------------------------------------------------------------
+New-ListIfMissing -Title "9_Grundbesitz"
+Add-Field -List "9_Grundbesitz" -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
+    -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
+Add-Field -List "9_Grundbesitz" -InternalName "street" -DisplayName "Strasse, Hausnummer, Zusatz" -Type Text -Required
+Add-Field -List "9_Grundbesitz" -InternalName "postal_code_city" -DisplayName "Postleitzahl, Ort" -Type Text -Required
+Add-Field -List "9_Grundbesitz" -InternalName "country" -DisplayName "Land" -Type Text -Required
+Add-Field -List "9_Grundbesitz" -InternalName "usage" -DisplayName "Nutzung" -Type Choice -Required `
+    -Choices @("vermietet", "selbst genutzt", "unbebaut")
+# 9_Grundbesitz (Klaerung Nils 31.10.2026 zu PR #24, Punkt 1): eigene
+# Wiederholungsliste statt unstrukturiertem Freitext in asset_management_type.
+# Ja/Nein "Gehoeren Ihnen Grundstuecke?" steht in Liste 1 (real_estate_owned);
+# hier ein Datensatz je Grundstueck (Adresse inkl. Land/PLZ/Ort, Nutzung).
+# Lookup nur auf den Fall (case_id), analog 5_Betriebsstaetten - die Frage
+# richtet sich an den Meldepflichtigen, nicht an einzelne Beteiligte.
+# Weltweit, nicht auf Deutschland beschraenkt. Lagefinanzamt (§ 18 AO) ist
+# das Kanzleifeld lage_tax_office darunter.
+Add-Field -List "9_Grundbesitz" -InternalName "lage_tax_office" -DisplayName "Lagefinanzamt (von der Kanzlei nach Paragraf 18 AO ausgefuellt)" -Type Text -FieldRole "Ergebnis"
+Add-Field -List "9_Grundbesitz" -InternalName "display_label" -DisplayName "Anzeigelabel (eindeutig, fuer Lookups)" -Type Text -FieldRole "System"
+
+# ---------------------------------------------------------------------------
 # Referenzliste (intern, kein Form): Technische Mindestfelder
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Technische_Mindestfelder"
@@ -1489,7 +1515,7 @@ Add-Field -List "Technische_Mindestfelder" -InternalName "verification_date" -Di
 # stillschweigend verworfen dokumentiert.
 # ---------------------------------------------------------------------------
 New-ListIfMissing -Title "Eingang_Fehler"
-Add-Field -List "Eingang_Fehler" -InternalName "form_no" -DisplayName "Formular-Nr. (0-8)" -Type Number -Required
+Add-Field -List "Eingang_Fehler" -InternalName "form_no" -DisplayName "Formular-Nr. (0-9)" -Type Number -Required
 Add-Field -List "Eingang_Fehler" -InternalName "case_id_raw" -DisplayName "Fall-ID (Rohantwort)" -Type Text
 Add-Field -List "Eingang_Fehler" -InternalName "reason" -DisplayName "Fehlerursache" -Type Text -Required
 Add-Field -List "Eingang_Fehler" -InternalName "payload" -DisplayName "Rohdaten der Formularantwort" -Type Note
@@ -1497,6 +1523,6 @@ Add-Field -List "Eingang_Fehler" -InternalName "status" -DisplayName "Status" -T
     -Choices @("offen", "in Prüfung", "behoben", "verworfen")
 
 Write-Host ""
-Write-Host "Fertig. Alle 9 Fachlisten (0-8) sowie die internen Referenzlisten"
+Write-Host "Fertig. Alle 10 Fachlisten (0-9) sowie die internen Referenzlisten"
 Write-Host "'Technische_Mindestfelder' und 'Eingang_Fehler' sind angelegt bzw. angeglichen."
 Write-Host "Naechster Schritt: siehe DE/AO/sharepoint-forms/README.md, Abschnitt E (Forms-Einrichtung) und F (Freigabe/Rollout)."
