@@ -1,0 +1,96 @@
+{
+  "list": "5_Betriebsstaetten",
+  "fields": [
+    {
+      "internal_name": "site_name",
+      "display_name": "Bezeichnung der Betriebsstätte/Einrichtung",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "country",
+      "display_name": "Land",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "address",
+      "display_name": "Adresse",
+      "sharepoint_type": "Note",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "ownership_status",
+      "display_name": "Eigentumsverhältnis",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [
+        "Eigentum",
+        "Miete",
+        "Nutzung"
+      ],
+      "note": null
+    },
+    {
+      "internal_name": "usage_type",
+      "display_name": "Nutzungsart",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [
+        "Lagerung",
+        "Verarbeitung",
+        "Einkauf",
+        "Werbung",
+        "Sonstige"
+      ],
+      "note": "Beschreibt die tatsaechliche Nutzung der Raeumlichkeiten, keine rechtliche Einordnung."
+    },
+    {
+      "internal_name": "activity_period_from",
+      "display_name": "Taetigkeitsdauer - von",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "activity_period_to",
+      "display_name": "Taetigkeitsdauer - bis",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "activity_period_to_unknown",
+      "display_name": "Taetigkeitsdauer bis unbekannt",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "contact",
+      "display_name": "Telefon / Internetadresse",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Nur die Internetadresse der Betriebsstaette erfragen, KEINE Telefonnummer (Kontaktdaten liegen im CRM der Kanzlei, Vorgabe Nils Obenhaus) - siehe flow_config fuer die Frageformulierung."
+    }
+  ]
+}

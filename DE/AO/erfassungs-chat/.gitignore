@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+backend/mocks/uploads/
+backend/local.settings.json

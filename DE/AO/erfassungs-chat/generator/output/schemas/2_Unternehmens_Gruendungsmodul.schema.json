@@ -1,0 +1,219 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "2_Unternehmens_Gruendungsmodul",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "2_Unternehmens_Gruendungsmodul",
+      "additionalProperties": false,
+      "properties": {
+        "company_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bezeichnung des Unternehmens"
+        },
+        "legal_form": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rechtsform Zulaessige Werte: Einzelunternehmen, Freiberufliche Tätigkeit.",
+          "enum": [
+            "Einzelunternehmen",
+            "Freiberufliche Tätigkeit",
+            null
+          ]
+        },
+        "formation_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gruendungsdatum Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "activity_start_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Beginn der Taetigkeit Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "notarial_deed_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Notarielle Errichtung / Musterprotokoll vom Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "share_capital_amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Grund-/Stammkapital - Betrag"
+        },
+        "share_capital_currency": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Grund-/Stammkapital - Waehrung"
+        },
+        "paid_in_capital": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Eingezahltes Kapital"
+        },
+        "register_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Handelsregister-Status Zulaessige Werte: beabsichtigt, beantragt, erfolgt.",
+          "enum": [
+            "beabsichtigt",
+            "beantragt",
+            "erfolgt",
+            null
+          ]
+        },
+        "registry_court": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ort des Amtsgerichts"
+        },
+        "register_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Register / Registernummer"
+        },
+        "predecessor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Vorheriger Inhaber / Vorunternehmen"
+        },
+        "deviating_fiscal_year": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Abweichendes Wirtschaftsjahr"
+        },
+        "fiscal_year_start": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Wirtschaftsjahr - Beginn Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "expected_profit_opening_year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Voraussichtlicher Gewinn Eroeffnungsjahr"
+        },
+        "expected_profit_following_year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Voraussichtlicher Gewinn Folgejahr"
+        },
+        "part_of_group": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Konzernzugehoerigkeit"
+        },
+        "controlling_company_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Herrschendes Unternehmen - Name"
+        },
+        "profit_distribution_key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Aufteilungsschluessel (Gewinn-/Verlustverteilung)"
+        },
+        "notary_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gruendungsnotar - Name"
+        },
+        "notary_address": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Gruendungsnotar - Adresse"
+        },
+        "is_general_partner_of_kg": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Komplementaerin einer KG"
+        },
+        "general_partner_kg_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bezeichnung der KG (falls Komplementaerin)"
+        },
+        "register_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Handelsregister - Datum (beantragt am / Tag der Eintragung) Format JJJJ-MM-TT, kein Textformat erzwungen."
+        }
+      },
+      "required": [
+        "company_name",
+        "legal_form",
+        "formation_date",
+        "activity_start_date",
+        "notarial_deed_date",
+        "share_capital_amount",
+        "share_capital_currency",
+        "paid_in_capital",
+        "register_status",
+        "registry_court",
+        "register_number",
+        "predecessor",
+        "deviating_fiscal_year",
+        "fiscal_year_start",
+        "expected_profit_opening_year",
+        "expected_profit_following_year",
+        "part_of_group",
+        "controlling_company_name",
+        "profit_distribution_key",
+        "notary_name",
+        "notary_address",
+        "is_general_partner_of_kg",
+        "general_partner_kg_name",
+        "register_date"
+      ]
+    }
+  }
+}

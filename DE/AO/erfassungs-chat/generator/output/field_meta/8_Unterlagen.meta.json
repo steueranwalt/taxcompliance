@@ -1,0 +1,32 @@
+{
+  "list": "8_Unterlagen",
+  "fields": [
+    {
+      "internal_name": "document_type",
+      "display_name": "Dokumenttyp",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "Gesellschaftsvertrag",
+        "Vollmacht Steuerberatung",
+        "Empfangsvollmacht",
+        "SEPA-Mandat",
+        "Handelsregisterauszug",
+        "Sachgründungsbericht",
+        "Ansässigkeitsbescheinigung",
+        "Sonstiges"
+      ],
+      "note": "Checkliste des Dokumenttyps, keine Wuerdigung."
+    },
+    {
+      "internal_name": "note",
+      "display_name": "Hinweis",
+      "sharepoint_type": "Note",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Freitext-Hinweis zum Dokument, z. B. Seitenzahl oder Besonderheit."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "ask_once": {
+    "1_Allgemeiner_Stammblock": [
+      "last_name_or_company",
+      "legal_form",
+      "id_number",
+      "address_type",
+      "street",
+      "address_supplement",
+      "postal_code_city",
+      "country",
+      "po_box"
+    ],
+    "2_Unternehmens_Gruendungsmodul": ["company_name", "legal_form"]
+  },
+  "vermoegensverwaltung_keywords": [
+    "vermögensverwaltung",
+    "vermoegensverwaltung",
+    "vermiet",
+    "verpacht",
+    "kapitalanlage",
+    "beteiligungsverwaltung",
+    "eigenes vermögen",
+    "eigenes vermoegen"
+  ],
+  "prompts": {
+    "1_Allgemeiner_Stammblock.party_type": {
+      "frage": "Ist der Meldepflichtige eine Firma/Gesellschaft oder eine natürliche Person?",
+      "erklaerung": "Davon hängt ab, welche weiteren Fragen wir Ihnen stellen - bei einer Firma fragen wir z. B. nicht nach Geburtsdatum."
+    },
+    "legal_form_grundtyp": {
+      "frage": "Um welche Art von Rechtsträger handelt es sich: Einzelunternehmen, Freiberufler, Personengesellschaft oder Kapitalgesellschaft?",
+      "erklaerung": "Eine Kapitalgesellschaft ist z. B. eine GmbH, Ltd. oder AG. Eine Personengesellschaft ist z. B. eine OHG, KG oder Partnership. Falls Sie unsicher sind, beschreiben Sie einfach kurz die Rechtsform, wir ordnen das ein."
+    },
+    "legal_form_rechtsordnung": {
+      "frage": "Ist das deutsches oder ausländisches Recht?"
+    },
+    "legal_form_auslaendisch_wortlaut": {
+      "frage": "Wie lautet die Rechtsform genau im Wortlaut (z. B. 'Private Limited Company'), und nach dem Recht welches Staates wurde sie gegründet?"
+    },
+    "taetigkeit_offen": {
+      "frage": "Was macht das Unternehmen genau? Bitte beschreiben Sie die Tätigkeit kurz in eigenen Worten.",
+      "erklaerung": "Es reicht eine allgemeine Beschreibung, z. B. 'Handel mit Elektronikartikeln' oder 'Verwaltung von Immobilien'."
+    },
+    "vermoegensverwaltung_anteil_umsatz": {
+      "frage": "Welcher Anteil des Umsatzes entfällt ungefähr auf die Verwaltung eigenen Vermögens (z. B. Vermietung, Kapitalanlagen)?"
+    },
+    "vermoegensverwaltung_anteil_gewinn": {
+      "frage": "Und welcher Anteil des Gewinns entfällt ungefähr darauf?"
+    },
+    "wirtschaftsjahr_kalenderjahr": {
+      "frage": "Entspricht Ihr Wirtschaftsjahr dem Kalenderjahr (1. Januar bis 31. Dezember)?",
+      "erklaerung": "Das Wirtschaftsjahr ist der Zeitraum, fuer den Ihr Unternehmen seinen Gewinn ermittelt. Bei den meisten Unternehmen ist das das Kalenderjahr."
+    },
+    "wirtschaftsjahr_beginn": {
+      "frage": "Wann beginnt Ihr Wirtschaftsjahr (Tag und Monat)?"
+    },
+    "predecessor": {
+      "frage": "Wurde die Tätigkeit vorher ganz oder teilweise von jemand anderem ausgeübt? Wenn ja, von wem?"
+    },
+    "geschaeftsfuehrer_arbeitsort": {
+      "frage": "Wo arbeiten Sie üblicherweise?"
+    },
+    "geschaeftsfuehrer_arbeitsort_andere_orte": {
+      "frage": "Arbeiten Sie auch an anderen Orten? Wenn ja, wie oft bzw. wie regelmäßig?"
+    },
+    "dokument_upload": {
+      "frage": "Falls vorhanden, können Sie jetzt die Gründungsurkunde bzw. Satzung/den Gesellschaftsvertrag hochladen (PDF, JPG oder PNG, maximal 15 MB). Das ist freiwillig und kann auch später nachgereicht werden.",
+      "erklaerung": "Wir benötigen diese Unterlagen, damit die Kanzlei die Rechtsform und die Gründung pruefen kann. Eine Pruefung auf Schadsoftware findet aktuell nicht automatisch statt - laden Sie deshalb bitte nur Dateien hoch, denen Sie vertrauen."
+    }
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "1_Allgemeiner_Stammblock__gesellschaft",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "1_Allgemeiner_Stammblock",
+      "additionalProperties": false,
+      "properties": {
+        "party_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Art des Meldepflichtigen Zulaessige Werte: Person, Firma.",
+          "enum": [
+            "Person",
+            "Firma",
+            null
+          ]
+        },
+        "last_name_or_company": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name / Firma"
+        },
+        "id_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identifikationsnummer / Wirtschafts-IdNr."
+        },
+        "legal_form": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rechtsform"
+        },
+        "address_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Adressart Zulaessige Werte: Inland, Ausland.",
+          "enum": [
+            "Inland",
+            "Ausland",
+            null
+          ]
+        },
+        "street": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Strasse, Hausnummer, Zusatz"
+        },
+        "address_supplement": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Adressergänzung"
+        },
+        "postal_code_city": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Postleitzahl, Ort"
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Staat"
+        },
+        "po_box": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Postfach"
+        },
+        "website": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Internetadresse"
+        },
+        "business_activity": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Genaue Taetigkeit"
+        },
+        "management_address": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ort der Geschäftsleitung - Adresse"
+        },
+        "tax_id_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Art der Steuernummer-Angabe Zulaessige Werte: bestehend, neu beantragen.",
+          "enum": [
+            "bestehend",
+            "neu beantragen",
+            null
+          ]
+        },
+        "tax_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Steuernummer"
+        },
+        "tax_advisor_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Steuerliche Beratung - Name/Firma"
+        },
+        "tax_advisor_address": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Steuerliche Beratung - Adresse"
+        },
+        "advisor_is_authorized_recipient": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Steuerliche Beratung ist empfangsbevollmächtigt"
+        },
+        "bank_iban": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bank - IBAN"
+        },
+        "bank_bic": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bank - BIC"
+        },
+        "bank_account_holder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Bank - Kontoinhaber"
+        },
+        "sepa_desired": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "SEPA-Lastschrift gewuenscht"
+        },
+        "par27_ao_agreement": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Zustimmung zur Zustaendigkeitsvereinbarung nach Paragraf 27 AO"
+        }
+      },
+      "required": [
+        "party_type",
+        "last_name_or_company",
+        "id_number",
+        "legal_form",
+        "address_type",
+        "street",
+        "address_supplement",
+        "postal_code_city",
+        "country",
+        "po_box",
+        "website",
+        "business_activity",
+        "management_address",
+        "tax_id_type",
+        "tax_number",
+        "tax_advisor_name",
+        "tax_advisor_address",
+        "advisor_is_authorized_recipient",
+        "bank_iban",
+        "bank_bic",
+        "bank_account_holder",
+        "sepa_desired",
+        "par27_ao_agreement"
+      ]
+    }
+  }
+}
