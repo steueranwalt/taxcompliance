@@ -801,7 +801,7 @@ Add-Field -List "0_Fallsteuerung" -InternalName "registration_status" -DisplayNa
 # (beide bislang bekannten Sites hatten beim Wechsel 0 Eintraege in
 # 0_Fallsteuerung, die alte Spalte kann also gefahrlos entfernt werden).
 Add-Field -List "0_Fallsteuerung" -InternalName "existing_tax_number" -DisplayName "Bestehende Steuernummer" -Type Text
-Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayName "Land des Finanzamts (von der Kanzlei nach Pruefung ausgefuellt)" -Type Choice `
+Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayName "Land des Finanzamts (von der Kanzlei nach Pruefung ausgefuellt)" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Deutschland", "Österreich", "Schweiz", "Liechtenstein", "Frankreich", "Italien", "Spanien", "Niederlande", "Belgien", "Luxemburg", "Polen", "Vereinigtes Königreich", "Vereinigte Staaten", "Sonstiger EU/EWR-Staat", "Sonstiger Staat", "Unbekannt")
 # tax_office_country (Review Nils 28.10.2026): nicht mehr Pflicht (vorher Text
 # -Required) und jetzt Choice statt freiem Text - Deutschland als erster Wert
@@ -812,12 +812,22 @@ Add-Field -List "0_Fallsteuerung" -InternalName "tax_office_country" -DisplayNam
 # Mandanten-Tatsache - die zugrunde liegenden Tatsachen (Ort der
 # Geschaeftsleitung, Sitz, Betriebsstaette in DE usw.) stehen in Liste 1/2/5,
 # siehe Datenmodell Ableitungstabelle.
-Add-Field -List "0_Fallsteuerung" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt (von der Kanzlei nach Pruefung ausgefuellt)" -Type Text
+# Klaerung Nils 31.10.2026 (Antwort auf PR #24 offene Frage): die
+# Klassifizierung als Ergebnisfeld ist bestaetigt - das zustaendige Bundesland/
+# Finanzamt-Land ist Folge einer Rechtspruefung (Sitz, Ort der Geschaeftsleitung,
+# Betriebsstaetten-/Grundstueckslage, Wohnsitz bei natuerlichen Personen), nicht
+# vom Mandanten selbst zu bestimmen. Jetzt explizit -FieldRole "Ergebnis"
+# (vorher nur im DisplayName/in der Doku als Ergebnisfeld beschrieben, da Liste
+# 0 ausserhalb des Erfassungs-Chat-Metadaten-Scopes lag - siehe README.md
+# Abschnitt C3). Dieselbe Praezisierung jetzt auch bei tax_office/
+# target_notification darunter, da beides ebenfalls dokumentierte
+# Ergebnisfelder dieser internen Liste sind.
+Add-Field -List "0_Fallsteuerung" -InternalName "tax_office" -DisplayName "Zustaendiges Finanzamt (von der Kanzlei nach Pruefung ausgefuellt)" -Type Text -FieldRole "Ergebnis"
 # tax_office (Review Nils 28.10.2026): nicht mehr Pflicht - das bestimmt die
 # Kanzlei anhand der erhobenen Tatsachen, nicht der Mandant (Grundregel, siehe
 # oben). War bislang zusaetzlich dupliziert in Liste 1 (dort jetzt entfernt,
 # siehe README.md Abschnitt H) - lebt jetzt nur noch hier.
-Add-Field -List "0_Fallsteuerung" -InternalName "target_notification" -DisplayName "Zielmeldung (BZSt2-Sachverhalt) - wird von der Kanzlei nach Pruefung der Angaben festgelegt" -Type Choice `
+Add-Field -List "0_Fallsteuerung" -InternalName "target_notification" -DisplayName "Zielmeldung (BZSt2-Sachverhalt) - wird von der Kanzlei nach Pruefung der Angaben festgelegt" -Type Choice -FieldRole "Ergebnis" `
     -Choices @("Betriebe/Betriebsstätten", "PersG-Beteiligung", "KapG-Beteiligung", "Drittstaat-Beherrschung", "Negativmeldung")
 Add-Field -List "0_Fallsteuerung" -InternalName "processing_note" -DisplayName "Persoenliche Bearbeitungsnotiz" -Type Note
 Add-Field -List "0_Fallsteuerung" -InternalName "case_status" -DisplayName "Status" -Type Choice -Required `
