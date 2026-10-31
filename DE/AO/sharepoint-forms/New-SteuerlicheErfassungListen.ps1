@@ -1193,6 +1193,34 @@ Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "limited_tax_liability" 
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "domestic_residence" -DisplayName "Wohnsitz oder gewoehnlicher Aufenthalt in Deutschland (Paragraf 8/9 AO)" -Type Boolean -AppliesTo @("NatuerlichePerson")
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "domestic_seat_or_management" -DisplayName "Sitz oder Ort der Geschaeftsleitung in Deutschland (Paragraf 10/11 AO)" -Type Boolean -AppliesTo @("Gesellschaft")
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "participation_since" -DisplayName "Beteiligt seit dem" -Type DateOnly
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "disposal_date" -DisplayName "Beteiligung veraeussert am (falls zutreffend)" -Type DateOnly
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "purchase_price" -DisplayName "Kaufpreis der Anteile" -Type Number
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "acquisition_incidental_costs" -DisplayName "Sonstige Zahlungen zum Erwerb der Anteile (z. B. Vermittler, Berater, Notar)" -Type Number
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "acquisition_costs_description" -DisplayName "Beschreibung der sonstigen Zahlungen zum Erwerb" -Type Note
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "target_seat_and_mgmt_abroad" -DisplayName "Sitz UND Ort der Geschaeftsleitung der Gesellschaft im Ausland" -Type Boolean
+Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "target_stock_listed" -DisplayName "Gesellschaft an einer Boerse notiert" -Type Boolean
+# disposal_date/purchase_price/acquisition_incidental_costs/
+# acquisition_costs_description/target_seat_and_mgmt_abroad/target_stock_listed
+# (Klaerung Nils 31.10.2026 zu PR #24, Befund "Nominalwert reicht nicht" fuer
+# Paragraf 138 Abs. 2 Satz 1 Nr. 3 AO): die Meldeschwelle (10 Prozent Beteiligung
+# ODER Summe der Anschaffungskosten > 150.000 EUR) bezieht sich auf die EIGENEN
+# Anschaffungskosten des Steuerpflichtigen (nicht den Nominalwert und nicht
+# Wertsteigerungen) - purchase_price/acquisition_incidental_costs bilden das ab.
+# disposal_date ergaenzt participation_since (bislang nur Erwerbsdatum erfasst,
+# die Meldepflicht erfasst auch Veraeusserungen). target_seat_and_mgmt_abroad
+# und target_stock_listed sind Tatbestandsvoraussetzungen: ohne Sitz UND
+# Geschaeftsleitung im Ausland greift Nr. 3 nicht; die Boersenklausel befreit
+# boersennotierte Gesellschaften bei einer Beteiligung unter 1 Prozent. Diese
+# sechs Felder betreffen inhaltlich vor allem den Outbound-/BZSt2-Kontext
+# dieser Liste (siehe README.md Abschnitt E.4 fuer das Forms-Branching); bei
+# Inbound-Nutzung (Anteilseigner der eigenen Gesellschaft) bleiben sie leer.
+# Die unmittelbare UND mittelbare Quote werden fuer die 10-Prozent-Schwelle
+# ZUSAMMENGERECHNET (participation_type direkt/mittelbar je Datensatz, Summe
+# ueber alle Datensaetze derselben Person/Gesellschaft und desselben
+# Zielunternehmens - Berechnung obliegt der Kanzlei/dem Flow, siehe
+# DE/AO/ableitungsregeln.json). Fundstelle (nur Referenz, keine Wiedergabe von
+# Kommentartexten): Klein/Raetke, AO, 19. Aufl. 2025, Paragraf 138 Rn. 24-31;
+# BMF 26.4.2022, BStBl. I 2022, 576.
 # --- Abschnitt 9 ergaenzt (Datenmodell 9.2 "Beteiligte": Stimmrechte) ---
 Add-Field -List "4_Beteiligte_und_Quoten" -InternalName "voting_rights_percentage" -DisplayName "Stimmrechte in Prozent" -Type Number `
     -Min 0 -Max 100
