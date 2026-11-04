@@ -3,8 +3,8 @@
 Zentrale Fortschrittsdatei gemäss Master-Prompt Abschnitt 17.
 
 **Aktualisiert:** 04.11.2026  
-**Aktuelle Phase:** 0 abgeschlossen (dieser PR); Phase 1 als nächster PR  
-**Gesamtstand:** Inventur und Planung im Repo; noch kein ausführbarer Rechtsgraph
+**Aktuelle Phase:** 1 in diesem Branch; Phase 0 liegt in PR #25  
+**Gesamtstand:** Inventur plus gültiges Graph-Schema mit Validator; keine juristische Freigabe
 
 Statuswerte: `NOT_STARTED`, `IN_PROGRESS`, `BLOCKED`, `IMPLEMENTED`, `TESTED`, `REVIEW_REQUIRED`, `ACCEPTED`.
 
@@ -15,7 +15,7 @@ Als abgeschlossen gilt ein Paket nur, wenn die Abnahmekriterien erfüllt sind. T
 | ID | Agent | Aufgabe | Priorität | Status | Dateien | Commit | Tests | Offene Abhängigkeiten | Blocker | Nächster Schritt |
 |---|---|---|---|---|---|---|---|---|---|---|
 | P0 | A0 + A1 | Bestandsaufnahme, Gap, Plan, Entscheidungen | P0 | REVIEW_REQUIRED | `docs/implementation/INVENTORY.md`, `GAP_ANALYSIS.md`, `IMPLEMENTATION_PLAN.md`, `DECISIONS.md`, `STATUS.md` | dieser Branch | keine automatisierten Tests vorgesehen (Dokumentationspaket) | SharePoint, `qm`, `steuerkanzlei`, Voragent | Zugang extern | Review Nils; danach P1-PR |
-| P1 | A2 | Schemas, Normversionierung, Validator, Tests | P0 | NOT_STARTED | geplant: `schema/lkg/`, `data/lkg/`, `tools/lkg-validate/` | — | ausstehend | D-2026-11-04-07, D-2026-11-04-13 | keiner für den technischen Entwurf | eigener PR nach Merge-Freigabe oder parallel auf neuem Branch |
+| P1 | A2 | Schemas, Normversionierung, Validator, Tests | P0 | TESTED | `schema/lkg/`, `data/lkg/examples/`, `tools/lkg-validate/` | dieser Branch | `cd tools/lkg-validate && npm test` | D-2026-11-04-07 (AGENTS.md) | keiner technisch | Review Nils; danach P2 § 171 erweitern, nicht freigeben |
 | P2 | A3 / A6 | Vertikale Referenz A, § 171 AO | P0 | NOT_STARTED | — | — | — | P1; Quellenlage § 171 | keine fachliche Freigabe fingieren | nach P1 |
 | P3 | A3 | Verfahrenslandkarte DE Kern | P1 | NOT_STARTED | — | — | — | P1 | — | nach P1 |
 | P4 | A6 | Fristen-Engine Kern | P1 | NOT_STARTED | — | — | — | P1, P2 | — | nach P2 |
@@ -76,6 +76,36 @@ Siehe `DECISIONS.md`, insbesondere:
 
 ### 6. Welche nächste Phase beginnt?
 
-Phase 1: verbindliches Datenmodell und Normversionierung in einem eigenen PR. Anschliessend erster vertikaler Referenzdatensatz § 171 AO (P2), ohne die Fristen-Engine vorwegzunehmen.
+Phase 1 ist in diesem Branch umgesetzt. Nächster PR: P2, vertikale Referenz A (§ 171 AO) um geprüfte Einzeltatbestände erweitern, ohne Fristen-Engine und ohne `LEGAL_APPROVED`.
 
-Phase 1 startet ohne Halt, weil sie keine fachliche Freigabe, keine Fremdrepos und kein SharePoint-Schreiben braucht. Halt vor `LEGAL_APPROVED`, vor CH-Tatbestandswahl und vor jeder Migration.
+---
+
+## Phase 1 – Zusammenfassung (Abschnitt 17)
+
+### 1. Was wurde tatsächlich implementiert?
+
+JSON-Schema für den Legal Knowledge Graph (alle Phase-1-Objektklassen), semantischer Validator (Referenzen, Geltungszeiträume, Pflichtangaben) und ein gültiger §-171-Kerndatensatz mit Status `LEGAL_REVIEW_REQUIRED`. Änderungsfolgen einer Normversion sind über Relationen auffindbar.
+
+### 2. Welche Dateien erstellt/geändert?
+
+Neu: `schema/lkg/graph.schema.json`, `schema/lkg/README.md`, `data/lkg/examples/*`, `tools/lkg-validate/` (Validator, Tests, `package-lock.json`).
+
+Geändert: `AGENTS.md`, `INDEX.md`, `docs/implementation/STATUS.md`, `docs/implementation/DECISIONS.md` (D-2026-11-04-13).
+
+Nicht geändert: DE/CH-Fristenregister, `ableitungsregeln.json`, SharePoint-Skripte.
+
+### 3. Welche Tests ausgeführt?
+
+`cd tools/lkg-validate && npm test` — 7 Tests, 0 Fehler (gültiger Datensatz; fehlende Pflichtfelder; hängende Referenz; ungültiger Zeitraum; überlappende Fassungen; Änderungsfolgen; leerer Graph).
+
+### 4. Welche fehlgeschlagen?
+
+Keine.
+
+### 5. Welche fachlichen oder technischen Fragen sind offen?
+
+Weiterhin D-2026-11-04-02a, 07, 08, 09, 10, 11. Zusätzlich: gesetzlicher Geltungsbeginn von § 171 AO ist nicht aus dem Fristenregister ableitbar; `valid_from` im Beispiel ist der Register-Prüfstand.
+
+### 6. Welche nächste Phase beginnt?
+
+P2: Referenz A vertiefen (Einzeltatbestände nur mit belegter Quelle). Halt vor fachlicher Freigabe.

@@ -113,4 +113,6 @@ Steuerung der maschinenlesbaren Schicht (Phase 0 ff.). Keine zweite juristische 
 | [`GAP_ANALYSIS.md`](docs/implementation/GAP_ANALYSIS.md) | Lücken gegen die neun Zielgebiete |
 | [`IMPLEMENTATION_PLAN.md`](docs/implementation/IMPLEMENTATION_PLAN.md) | PR-Reihenfolge |
 | [`DECISIONS.md`](docs/implementation/DECISIONS.md) | Entscheidungen Nils und offene Fragen |
-| [`STATUS.md`](docs/implementation/STATUS.md) | Fortschritt
+| [`STATUS.md`](docs/implementation/STATUS.md) | Fortschritt |
+
+Maschinenlesbare Schicht (Phase 1): [`schema/lkg/`](schema/lkg/README.md), Instanzen unter [`data/lkg/examples/`](data/lkg/examples/valid-ao-171.json), Validator [`tools/lkg-validate/`](tools/lkg-validate/package.json).

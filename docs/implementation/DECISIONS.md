@@ -98,9 +98,10 @@ Diese fünf Ablage-Entscheide gehen Abschnitt 3 des Master-Prompts vor, soweit s
 
 ### D-2026-11-04-13 – Schema-Stack
 
-- **Status:** VORGESCHLAGEN
+- **Status:** VORGESCHLAGEN, technisch umgesetzt in Phase 1 (PR `cursor/phase-1-lkg-schema-bffc`)
 - **Vorschlag:** JSON Schema Draft 2020-12; Validator Node/ajv unter `tools/lkg-validate/`; Instanzen unter `data/lkg/`; LKG-Markdown bleibt Leitdokument.
 - **Alternative (verworfen vom Agenten, Nils kann sie wählen):** Python/`jsonschema`; YAML-Instanzen; neues Graphdatenbank-Framework. Begründung der Verwerfung: vorhandenes JSON-Schema in `DE/AO/`, Master-Prompt «bestehende Sprache verwenden», Kosten.
+- **Hinweis:** Die Umsetzung ist widerrufbar (Ordner löschen). Kein Merge nach `main` ohne Review.
 
 ### D-2026-11-04-14 – Wiederverwendung Fall/Person
 
