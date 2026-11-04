@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-11-04",
+  "hinweis_rechtsverbindlichkeit": "Negativbeispiel: Pflichtfelder fehlen.",
+  "norms": [
+    {
+      "id": "DE-AO-0000",
+      "jurisdiction": "DE",
+      "verification_status": "DRAFT"
+    }
+  ]
+}

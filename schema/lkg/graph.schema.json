@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/steueranwalt/taxcompliance/schema/lkg/graph.schema.json",
+  "title": "Legal Knowledge Graph DE/CH",
+  "description": "Maschinenlesbarer Container fuer NORM, NORM_VERSION, SOURCE, RELATION und die verfahrens-, fristen- und compliancebezogenen Objektklassen. Ergaenzt schema/legal-knowledge-graph.md. Ersetzt weder die Markdown-Register noch DE/AO/ableitungsregeln.json. Technisch gueltig ist keine juristische Freigabe.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stand", "hinweis_rechtsverbindlichkeit"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantische Version dieses Graph-Dokuments, nicht des Rechtsstands."
+    },
+    "stand": {
+      "type": "string",
+      "format": "date",
+      "description": "Datum der letzten technischen Durchsicht dieses Dokuments."
+    },
+    "hinweis_rechtsverbindlichkeit": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Verbindlicher Nutzungshinweis. LEGAL_APPROVED darf nur eine fachliche Stelle setzen."
+    },
+    "norms": { "type": "array", "default": [], "items": { "$ref": "#/$defs/norm" } },
+    "norm_versions": { "type": "array", "default": [], "items": { "$ref": "#/$defs/norm_version" } },
+    "sources": { "type": "array", "default": [], "items": { "$ref": "#/$defs/source" } },
+    "relations": { "type": "array", "default": [], "items": { "$ref": "#/$defs/relation" } },
+    "procedures": { "type": "array", "default": [], "items": { "$ref": "#/$defs/procedure" } },
+    "procedure_steps": { "type": "array", "default": [], "items": { "$ref": "#/$defs/procedure_step" } },
+    "events": { "type": "array", "default": [], "items": { "$ref": "#/$defs/event" } },
+    "states": { "type": "array", "default": [], "items": { "$ref": "#/$defs/state" } },
+    "decisions": { "type": "array", "default": [], "items": { "$ref": "#/$defs/decision" } },
+    "transitions": { "type": "array", "default": [], "items": { "$ref": "#/$defs/transition" } },
+    "deadlines": { "type": "array", "default": [], "items": { "$ref": "#/$defs/deadline" } },
+    "limitations": { "type": "array", "default": [], "items": { "$ref": "#/$defs/limitation" } },
+    "obligations": { "type": "array", "default": [], "items": { "$ref": "#/$defs/obligation" } },
+    "evidence": { "type": "array", "default": [], "items": { "$ref": "#/$defs/evidence_item" } },
+    "findings": { "type": "array", "default": [], "items": { "$ref": "#/$defs/finding" } },
+    "actions": { "type": "array", "default": [], "items": { "$ref": "#/$defs/action" } }
+  },
+  "$defs": {
+    "object_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]{1,127}$",
+      "description": "Stabile fachliche ID nach schema/legal-knowledge-graph.md Abschnitt 7."
+    },
+    "object_type": {
+      "type": "string",
+      "enum": [
+        "NORM",
+        "NORM_VERSION",
+        "SOURCE",
+        "RELATION",
+        "PROCEDURE",
+        "PROCEDURE_STEP",
+        "EVENT",
+        "STATE",
+        "DECISION",
+        "TRANSITION",
+        "DEADLINE",
+        "LIMITATION",
+        "OBLIGATION",
+        "EVIDENCE",
+        "FINDING",
+        "ACTION",
+        "WIKI_NOTE",
+        "RULE"
+      ]
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "SOURCE_VERIFIED",
+        "LEGAL_REVIEW_REQUIRED",
+        "LEGAL_APPROVED",
+        "SUPERSEDED"
+      ],
+      "description": "Fachlicher Status. LEGAL_APPROVED setzt keine Maschine."
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": ["DE", "CH", "EU", "MULTILATERAL"]
+    },
+    "legal_system_type": {
+      "type": "string",
+      "enum": ["domestic", "supranational", "international"]
+    },
+    "legal_level": {
+      "type": "string",
+      "enum": ["international", "union", "federal", "state", "canton", "municipal"]
+    },
+    "instrument_type": {
+      "type": "string",
+      "enum": [
+        "constitution",
+        "statute",
+        "ordinance",
+        "eu_regulation",
+        "eu_directive",
+        "eu_decision",
+        "treaty",
+        "multilateral_convention",
+        "protocol",
+        "model_convention",
+        "commentary",
+        "guideline",
+        "recommendation",
+        "standard",
+        "peer_review",
+        "administrative_agreement"
+      ]
+    },
+    "iso_date": { "type": "string", "format": "date" },
+    "iso_datetime": { "type": "string", "format": "date-time" },
+    "id_list": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/object_id" },
+      "uniqueItems": true
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["state", "supranational_organisation", "international_organisation", "treaty_parties"]
+        },
+        "organisation": { "type": "string" },
+        "states": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 2 }
+        }
+      }
+    },
+    "territory": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "countries": { "type": "array", "items": { "type": "string" } },
+        "subdivisions": { "type": "array", "items": { "type": "string" } },
+        "municipalities": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "review_fields": {
+      "type": "object",
+      "properties": {
+        "verification_status": { "$ref": "#/$defs/verification_status" },
+        "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+        "verified_at": { "$ref": "#/$defs/iso_datetime" },
+        "open_verification": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Offene Quellen- oder Rechtsfragen. Fehlende Tatsache ist keine verneinte Voraussetzung."
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "validity": {
+      "type": "object",
+      "properties": {
+        "valid_from": {
+          "$ref": "#/$defs/iso_date",
+          "description": "Beginn der zeitlichen Geltung der Fassung."
+        },
+        "valid_to": {
+          "$ref": "#/$defs/iso_date",
+          "description": "Ende der zeitlichen Geltung, soweit bekannt. Weglassen bedeutet offen."
+        },
+        "published_at": {
+          "$ref": "#/$defs/iso_date",
+          "description": "Veroeffentlichung, getrennt von der Geltung."
+        }
+      }
+    },
+    "norm": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "jurisdiction", "title", "citation", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "jurisdiction": { "$ref": "#/$defs/jurisdiction" },
+            "legal_system_type": { "$ref": "#/$defs/legal_system_type" },
+            "legal_level": { "$ref": "#/$defs/legal_level" },
+            "instrument_type": { "$ref": "#/$defs/instrument_type" },
+            "issuer": { "$ref": "#/$defs/issuer" },
+            "territory": { "$ref": "#/$defs/territory" },
+            "topic": { "type": "string" },
+            "title": { "type": "string", "minLength": 1 },
+            "citation": { "type": "string", "minLength": 1, "description": "Normbezeichnung und Fundstelle, z. B. § 171 AO." },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "norm_version": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        { "$ref": "#/$defs/validity" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "norm_id", "jurisdiction", "title", "citation", "valid_from", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "norm_id": { "$ref": "#/$defs/object_id" },
+            "jurisdiction": { "$ref": "#/$defs/jurisdiction" },
+            "title": { "type": "string", "minLength": 1 },
+            "citation": { "type": "string", "minLength": 1 },
+            "valid_from": { "$ref": "#/$defs/iso_date" },
+            "valid_to": { "$ref": "#/$defs/iso_date" },
+            "published_at": { "$ref": "#/$defs/iso_date" },
+            "source_ids": { "$ref": "#/$defs/id_list" },
+            "publication_evidence": { "type": "string" },
+            "amendment_evidence": { "type": "string" },
+            "procedure_ids": { "$ref": "#/$defs/id_list" },
+            "deadline_ids": { "$ref": "#/$defs/id_list" },
+            "limitation_ids": { "$ref": "#/$defs/id_list" },
+            "obligation_ids": { "$ref": "#/$defs/id_list" },
+            "rule_ids": { "$ref": "#/$defs/id_list" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "source": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "kind", "title", "locator", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "kind": {
+              "type": "string",
+              "enum": [
+                "statute_text",
+                "case_law",
+                "administrative",
+                "literature",
+                "legislative_material",
+                "wiki_note",
+                "register",
+                "connector",
+                "other"
+              ]
+            },
+            "title": { "type": "string", "minLength": 1 },
+            "locator": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Repo-Pfad, SharePoint-Pfad oder URI. Keine erfundenen Fundstellen."
+            },
+            "retrieved_at": { "$ref": "#/$defs/iso_date" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "relation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "from_type", "from_id", "to_type", "to_id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_TO_NORM_VERSION",
+            "SOURCE_TO_WIKI_NOTE",
+            "NORM_TO_NORM_VERSION",
+            "NORM_VERSION_TO_PROCEDURE",
+            "PROCEDURE_TO_PROCEDURE_STEP",
+            "EVENT_TO_DEADLINE",
+            "EVENT_TO_STATE",
+            "EVENT_TO_LIMITATION",
+            "DECISION_TO_TRANSITION",
+            "TRANSITION_TO_STATE",
+            "NORM_VERSION_TO_OBLIGATION",
+            "OBLIGATION_TO_EVIDENCE",
+            "NORM_VERSION_TO_LIMITATION",
+            "NORM_VERSION_TO_DEADLINE",
+            "NORM_VERSION_TO_RULE",
+            "FINDING_TO_ACTION",
+            "FINDING_TO_OBLIGATION"
+          ]
+        },
+        "from_type": { "$ref": "#/$defs/object_type" },
+        "from_id": { "$ref": "#/$defs/object_id" },
+        "to_type": { "$ref": "#/$defs/object_type" },
+        "to_id": { "$ref": "#/$defs/object_id" },
+        "valid_from": { "$ref": "#/$defs/iso_date" },
+        "valid_to": { "$ref": "#/$defs/iso_date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "procedure": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "jurisdiction", "title", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "jurisdiction": { "$ref": "#/$defs/jurisdiction" },
+            "title": { "type": "string", "minLength": 1 },
+            "norm_version_ids": { "$ref": "#/$defs/id_list" },
+            "triggering_event_id": { "$ref": "#/$defs/object_id" },
+            "authority": { "type": "string" },
+            "parties": { "type": "array", "items": { "type": "string" } },
+            "step_ids": { "$ref": "#/$defs/id_list" },
+            "outcome_ids": { "$ref": "#/$defs/id_list" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "procedure_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "procedure_id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "procedure_id": { "$ref": "#/$defs/object_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "state_id": { "$ref": "#/$defs/object_id" },
+        "event_id": { "$ref": "#/$defs/object_id" },
+        "deadline_ids": { "$ref": "#/$defs/id_list" },
+        "limitation_ids": { "$ref": "#/$defs/id_list" },
+        "notes": { "type": "string" }
+      }
+    },
+    "event": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "title", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "title": { "type": "string", "minLength": 1 },
+            "jurisdiction": { "$ref": "#/$defs/jurisdiction" },
+            "deadline_ids": { "$ref": "#/$defs/id_list" },
+            "state_ids": { "$ref": "#/$defs/id_list" },
+            "limitation_ids": { "$ref": "#/$defs/id_list" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "procedure_id": { "$ref": "#/$defs/object_id" },
+        "notes": { "type": "string" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "transition_ids": { "$ref": "#/$defs/id_list" },
+        "notes": { "type": "string" }
+      }
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from_state_id", "to_state_id"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "from_state_id": { "$ref": "#/$defs/object_id" },
+        "to_state_id": { "$ref": "#/$defs/object_id" },
+        "decision_id": { "$ref": "#/$defs/object_id" },
+        "notes": { "type": "string" }
+      }
+    },
+    "deadline": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "title", "norm_version_id", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "title": { "type": "string", "minLength": 1 },
+            "norm_version_id": { "$ref": "#/$defs/object_id" },
+            "triggering_event_id": { "$ref": "#/$defs/object_id" },
+            "duration": { "type": "integer", "minimum": 0 },
+            "unit": { "type": "string", "enum": ["day", "week", "month", "year"] },
+            "calendar": { "type": "string" },
+            "weekend_holiday_rule": { "type": "string" },
+            "legal_effect_on_expiry": { "type": "string" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "limitation": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "title", "kind", "norm_version_id", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "title": { "type": "string", "minLength": 1 },
+            "kind": {
+              "type": "string",
+              "enum": ["assessment", "payment", "suspension", "interruption", "forfeiture", "other"]
+            },
+            "norm_version_id": { "$ref": "#/$defs/object_id" },
+            "triggering_event_id": { "$ref": "#/$defs/object_id" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "obligation": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "title", "jurisdiction", "norm_version_id", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "title": { "type": "string", "minLength": 1 },
+            "jurisdiction": { "$ref": "#/$defs/jurisdiction" },
+            "norm_version_id": { "$ref": "#/$defs/object_id" },
+            "addressee": { "type": "string" },
+            "trigger": { "type": "string" },
+            "required_action": { "type": "string" },
+            "deadline_id": { "$ref": "#/$defs/object_id" },
+            "evidence_ids": { "$ref": "#/$defs/id_list" },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "evidence_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "obligation_id": { "$ref": "#/$defs/object_id" },
+        "notes": { "type": "string" }
+      }
+    },
+    "finding": {
+      "allOf": [
+        { "$ref": "#/$defs/review_fields" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "title", "verification_status"],
+          "properties": {
+            "id": { "$ref": "#/$defs/object_id" },
+            "title": { "type": "string", "minLength": 1 },
+            "obligation_id": { "$ref": "#/$defs/object_id" },
+            "action_ids": { "$ref": "#/$defs/id_list" },
+            "missing_fact": {
+              "type": "boolean",
+              "description": "true: Tatsache fehlt. Darf nicht als verneinte Voraussetzung gelesen werden."
+            },
+            "verification_status": { "$ref": "#/$defs/verification_status" },
+            "ingested_at": { "$ref": "#/$defs/iso_datetime" },
+            "verified_at": { "$ref": "#/$defs/iso_datetime" },
+            "open_verification": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "$ref": "#/$defs/object_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "finding_id": { "$ref": "#/$defs/object_id" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

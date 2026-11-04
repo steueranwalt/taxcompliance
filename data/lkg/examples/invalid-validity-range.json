@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-11-04",
+  "hinweis_rechtsverbindlichkeit": "Negativbeispiel: valid_from nach valid_to.",
+  "norms": [
+    {
+      "id": "DE-AO-0171",
+      "jurisdiction": "DE",
+      "title": "Ablaufhemmung",
+      "citation": "§ 171 AO",
+      "verification_status": "DRAFT"
+    }
+  ],
+  "norm_versions": [
+    {
+      "id": "DE-AO-0171-BACKWARDS",
+      "norm_id": "DE-AO-0171",
+      "jurisdiction": "DE",
+      "title": "unmoegliche Geltung",
+      "citation": "§ 171 AO",
+      "valid_from": "2026-12-31",
+      "valid_to": "2020-01-01",
+      "verification_status": "DRAFT"
+    }
+  ]
+}
