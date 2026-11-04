@@ -18,4 +18,6 @@ Jedes Verzeichnis enthält ein eigenes `README.md` mit Übersicht der enthaltene
 
 ## Stand
 
-Letzter Bearbeitungsstand: 2026-07-14
+Letzter Bearbeitungsstand: 2026-11-04
+
+Die Steuerungsdokumentation zum Tax Legal Knowledge System liegt unter [`docs/implementation/`](docs/implementation/STATUS.md).
