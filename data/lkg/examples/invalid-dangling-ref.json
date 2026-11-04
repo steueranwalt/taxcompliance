@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-11-04",
+  "hinweis_rechtsverbindlichkeit": "Negativbeispiel: haengende Referenz.",
+  "norms": [
+    {
+      "id": "DE-AO-0171",
+      "jurisdiction": "DE",
+      "title": "Ablaufhemmung",
+      "citation": "§ 171 AO",
+      "verification_status": "DRAFT"
+    }
+  ],
+  "norm_versions": [
+    {
+      "id": "DE-AO-0171-MISSING-NORM",
+      "norm_id": "DE-AO-9999",
+      "jurisdiction": "DE",
+      "title": "fehlende Norm",
+      "citation": "§ 9999 AO",
+      "valid_from": "2026-01-01",
+      "verification_status": "DRAFT"
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-DANGLING",
+      "type": "SOURCE_TO_NORM_VERSION",
+      "from_type": "SOURCE",
+      "from_id": "SRC-DOES-NOT-EXIST",
+      "to_type": "NORM_VERSION",
+      "to_id": "DE-AO-0171-MISSING-NORM"
+    }
+  ]
+}

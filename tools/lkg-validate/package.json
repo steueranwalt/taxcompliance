@@ -1,0 +1,17 @@
+{
+  "name": "lkg-validate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Validator fuer den Legal Knowledge Graph in steueranwalt/taxcompliance",
+  "scripts": {
+    "validate": "node src/cli.js",
+    "test": "node --test test/validate.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}
