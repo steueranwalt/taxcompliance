@@ -1,0 +1,160 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "4_Beteiligte_und_Quoten",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "4_Beteiligte_und_Quoten",
+      "additionalProperties": false,
+      "properties": {
+        "sequence_number": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Laufende Nummer / Zeichnernummer"
+        },
+        "participant_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Art des Beteiligten Zulaessige Werte: natürlich, nicht natürlich.",
+          "enum": [
+            "natürlich",
+            "nicht natürlich",
+            null
+          ]
+        },
+        "last_name_or_company": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name / Firma"
+        },
+        "date_of_birth": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Geburtsdatum Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Adresse"
+        },
+        "tax_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Steuerliche Kennzeichen"
+        },
+        "participation_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Art der Beteiligung Zulaessige Werte: direkt, mittelbar.",
+          "enum": [
+            "direkt",
+            "mittelbar",
+            null
+          ]
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rolle Zulaessige Werte: Anteilseigner, Gesellschafter, Treuhänder.",
+          "enum": [
+            "Anteilseigner",
+            "Gesellschafter",
+            "Treuhänder",
+            null
+          ]
+        },
+        "nominal_share": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Beteiligung nominell"
+        },
+        "share_percentage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Beteiligung in Prozent"
+        },
+        "fraction_numerator_denominator": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Zaehler / Nenner"
+        },
+        "trust_relationship": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Treuhandverhaeltnis"
+        },
+        "profit_share_opening_year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Voraussichtlicher Gewinnanteil Eroeffnungsjahr"
+        },
+        "profit_share_following_year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Voraussichtlicher Gewinnanteil Folgejahr"
+        },
+        "participation_since": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Beteiligt seit dem Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "voting_rights_percentage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Stimmrechte in Prozent"
+        }
+      },
+      "required": [
+        "sequence_number",
+        "participant_type",
+        "last_name_or_company",
+        "date_of_birth",
+        "address",
+        "tax_reference",
+        "participation_type",
+        "role",
+        "nominal_share",
+        "share_percentage",
+        "fraction_numerator_denominator",
+        "trust_relationship",
+        "profit_share_opening_year",
+        "profit_share_following_year",
+        "participation_since",
+        "voting_rights_percentage"
+      ]
+    }
+  }
+}

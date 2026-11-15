@@ -1,0 +1,12 @@
+{
+  "1_Allgemeiner_Stammblock": [
+    "tax_office"
+  ],
+  "2_Unternehmens_Gruendungsmodul": [
+    "formation_type",
+    "profit_determination_method"
+  ],
+  "5_Betriebsstaetten": [
+    "site_type"
+  ]
+}

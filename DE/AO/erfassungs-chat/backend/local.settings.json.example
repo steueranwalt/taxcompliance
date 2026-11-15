@@ -1,0 +1,26 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+
+    "ERFASSUNGSCHAT_MOCK_MODE": "true",
+
+    "AOAI_ENDPOINT": "https://accompli-azureai.openai.azure.com/",
+    "AOAI_DEPLOYMENT": "gpt-5.6-sol-dz",
+    "AOAI_API_VERSION": "2024-08-01-preview",
+
+    "GRAPH_SITE_HOSTNAME": "transferpricingdocs.sharepoint.com",
+    "GRAPH_SITE_PATH": "/sites/steuerdaten",
+
+    "AZURE_CLIENT_ID": "<user-assigned-managed-identity-client-id>",
+
+    "ERFASSUNGSCHAT_LINK_VALIDITY_HOURS": "336",
+    "ERFASSUNGSCHAT_MAX_ATTEMPTS": "5",
+    "ERFASSUNGSCHAT_LOCKOUT_WINDOW_MINUTES": "15",
+    "ERFASSUNGSCHAT_LOCKOUT_DURATION_MINUTES": "60",
+    "ERFASSUNGSCHAT_RATE_LIMIT_PER_MINUTE": "20",
+    "ERFASSUNGSCHAT_SESSION_TTL_MINUTES": "45",
+    "ERFASSUNGSCHAT_UPLOAD_MAX_BYTES": "15728640"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "list": "4_Beteiligte_und_Quoten",
+  "fields": [
+    {
+      "internal_name": "sequence_number",
+      "display_name": "Laufende Nummer / Zeichnernummer",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "participant_type",
+      "display_name": "Art des Beteiligten",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "natürlich",
+        "nicht natürlich"
+      ],
+      "note": "Zweig-Schluessel: natuerliche Person vs. nicht natuerliche Person fuer diesen Beteiligten."
+    },
+    {
+      "internal_name": "last_name_or_company",
+      "display_name": "Name / Firma",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "address",
+      "display_name": "Adresse",
+      "sharepoint_type": "Note",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Deckt die von Nils Obenhaus genannte Tatsache 'Beteiligte und deren Wohnsitz' ab."
+    },
+    {
+      "internal_name": "tax_reference",
+      "display_name": "Steuerliche Kennzeichen",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "participation_type",
+      "display_name": "Art der Beteiligung",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "direkt",
+        "mittelbar"
+      ],
+      "note": "Direkt/mittelbar ist eine dokumentierte Struktur, keine Wuerdigung."
+    },
+    {
+      "internal_name": "role",
+      "display_name": "Rolle",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "Anteilseigner",
+        "Gesellschafter",
+        "Treuhänder"
+      ],
+      "note": null
+    },
+    {
+      "internal_name": "nominal_share",
+      "display_name": "Beteiligung nominell",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "share_percentage",
+      "display_name": "Beteiligung in Prozent",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "fraction_numerator_denominator",
+      "display_name": "Zaehler / Nenner",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "trust_relationship",
+      "display_name": "Treuhandverhaeltnis",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Dokumentiertes Treuhandverhaeltnis ist eine Tatsache, kein Wuerdigungsspielraum."
+    },
+    {
+      "internal_name": "profit_share_opening_year",
+      "display_name": "Voraussichtlicher Gewinnanteil Eroeffnungsjahr",
+      "sharepoint_type": "Number",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "profit_share_following_year",
+      "display_name": "Voraussichtlicher Gewinnanteil Folgejahr",
+      "sharepoint_type": "Number",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "participation_since",
+      "display_name": "Beteiligt seit dem",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "voting_rights_percentage",
+      "display_name": "Stimmrechte in Prozent",
+      "sharepoint_type": "Number",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    }
+  ]
+}

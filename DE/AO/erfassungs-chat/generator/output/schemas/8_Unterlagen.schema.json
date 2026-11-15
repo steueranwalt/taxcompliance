@@ -1,0 +1,43 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "8_Unterlagen",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "8_Unterlagen",
+      "additionalProperties": false,
+      "properties": {
+        "document_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Dokumenttyp Zulaessige Werte: Gesellschaftsvertrag, Vollmacht Steuerberatung, Empfangsvollmacht, SEPA-Mandat, Handelsregisterauszug, Sachgründungsbericht, Ansässigkeitsbescheinigung, Sonstiges.",
+          "enum": [
+            "Gesellschaftsvertrag",
+            "Vollmacht Steuerberatung",
+            "Empfangsvollmacht",
+            "SEPA-Mandat",
+            "Handelsregisterauszug",
+            "Sachgründungsbericht",
+            "Ansässigkeitsbescheinigung",
+            "Sonstiges",
+            null
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Hinweis"
+        }
+      },
+      "required": [
+        "document_type",
+        "note"
+      ]
+    }
+  }
+}

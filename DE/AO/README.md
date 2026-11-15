@@ -12,6 +12,8 @@ Rechtstexte, Verwaltungsanweisungen und Arbeitshilfen zur Abgabenordnung — Sch
 | [Pflichtfelder fsekapgaus-202401](formulardaten-pflichtfelder-fsekapgaus-202401.md) | unbedingte + bedingte Pflichtfelder Körperschaft nach ausländischem Recht (ELSTER-Prüfläufe 26.10.2026) |
 | [W-IdNr.: erneute Mitteilung](formulardaten-widnr-erneute-mitteilung.md) | separates FMS-Formular; Overlap nur Identifikation |
 | [`quellen/`](quellen/) | FMS-XML-Rohinstanzen (BZSt2, W-IdNr.) |
+| [`sharepoint-forms/`](sharepoint-forms/README.md) | PnP-Skript + Forms-Spezifikation für die 11 SharePoint-Listen |
+| [`erfassungs-chat/`](erfassungs-chat/README.md) | Prototyp: geführter Mandanten-Chat (Azure OpenAI + Functions), leitet Schema automatisch aus `sharepoint-forms/` ab, ersetzt/ergänzt Microsoft Forms. **Nur Testdaten, nicht deployt.** |
 
 Verwandt, aber **nicht** unter AO zu führen: [ASt-Mitteilung § 6 AStG](../AStG/formulardaten-mitteilung-6-astg.md) (Wegzugsbesteuerung).
 

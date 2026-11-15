@@ -1,0 +1,113 @@
+{
+  "list": "6_Steuer_und_Umsatzsteuerprofil",
+  "fields": [
+    {
+      "internal_name": "estimated_revenue_opening_year",
+      "display_name": "Geschaetzter Umsatz Eroeffnungsjahr",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Deckt 'Umsaetze Vorjahr bzw. erwartet' ab (Vorgabe Nils Obenhaus)."
+    },
+    {
+      "internal_name": "estimated_revenue_following_year",
+      "display_name": "Geschaetzter Umsatz Folgejahr",
+      "sharepoint_type": "Number",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "request_vat_id",
+      "display_name": "USt-IdNr. beantragen",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Mandantenwunsch, keine Wuerdigung."
+    },
+    {
+      "internal_name": "previous_vat_id",
+      "display_name": "Fruehere USt-IdNr.",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "oss_procedure",
+      "display_name": "OSS-Verfahren",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Beschreibt tatsaechliche Vertriebspraxis (nutzt der Mandant das OSS-Verfahren bereits)."
+    },
+    {
+      "internal_name": "own_webshop",
+      "display_name": "Eigener Webshop",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "electronic_interface",
+      "display_name": "Elektronische Schnittstelle",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "employees_total",
+      "display_name": "Anzahl Arbeitnehmer insgesamt",
+      "sharepoint_type": "Number",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "payroll_start_date",
+      "display_name": "Beginn Lohnzahlungen",
+      "sharepoint_type": "DateOnly",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "exemption_cert_48b_construction",
+      "display_name": "Freistellungsbescheinigung Paragraf 48b EStG",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Besitz einer Freistellungsbescheinigung ist eine nachpruefbare Tatsache."
+    },
+    {
+      "internal_name": "webshop_url",
+      "display_name": "Internetadresse (URL) des Webshops",
+      "sharepoint_type": "URL",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "electronic_interface_identifier",
+      "display_name": "Identifikationsmerkmal der elektronischen Schnittstelle",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# Python-Laufzeit fuer Azure Functions Flex Consumption (siehe
+# ../../infra/main.bicep). Fuer den lokalen Mock-Betrieb (ERFASSUNGSCHAT_MOCK_MODE=true)
+# werden NUR die Standardbibliothek + azure-functions benoetigt - die
+# folgenden Pakete sind lazy importiert (siehe app/llm_client.py,
+# app/sharepoint_client.py) und muessen erst fuer den echten Azure-Betrieb
+# installiert sein.
+
+azure-functions>=1.21.0
+
+# Azure OpenAI / Entra ID (Managed Identity, keine API-Keys)
+openai>=1.40.0
+azure-identity>=1.17.0
+
+# Microsoft Graph (SharePoint Sites.Selected)
+requests>=2.31.0

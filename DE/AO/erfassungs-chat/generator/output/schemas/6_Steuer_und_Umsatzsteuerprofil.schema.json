@@ -1,0 +1,112 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "6_Steuer_und_Umsatzsteuerprofil",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "6_Steuer_und_Umsatzsteuerprofil",
+      "additionalProperties": false,
+      "properties": {
+        "estimated_revenue_opening_year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Geschaetzter Umsatz Eroeffnungsjahr"
+        },
+        "estimated_revenue_following_year": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Geschaetzter Umsatz Folgejahr"
+        },
+        "request_vat_id": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "USt-IdNr. beantragen"
+        },
+        "previous_vat_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Fruehere USt-IdNr."
+        },
+        "oss_procedure": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "OSS-Verfahren"
+        },
+        "own_webshop": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Eigener Webshop"
+        },
+        "electronic_interface": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Elektronische Schnittstelle"
+        },
+        "employees_total": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Anzahl Arbeitnehmer insgesamt"
+        },
+        "payroll_start_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Beginn Lohnzahlungen Format JJJJ-MM-TT, kein Textformat erzwungen."
+        },
+        "exemption_cert_48b_construction": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Freistellungsbescheinigung Paragraf 48b EStG"
+        },
+        "webshop_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Internetadresse (URL) des Webshops"
+        },
+        "electronic_interface_identifier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identifikationsmerkmal der elektronischen Schnittstelle"
+        }
+      },
+      "required": [
+        "estimated_revenue_opening_year",
+        "estimated_revenue_following_year",
+        "request_vat_id",
+        "previous_vat_id",
+        "oss_procedure",
+        "own_webshop",
+        "electronic_interface",
+        "employees_total",
+        "payroll_start_date",
+        "exemption_cert_48b_construction",
+        "webshop_url",
+        "electronic_interface_identifier"
+      ]
+    }
+  }
+}

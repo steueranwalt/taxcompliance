@@ -1,0 +1,93 @@
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "3_Personen_und_Vertretung__gesellschaft",
+    "strict": true,
+    "schema": {
+      "type": "object",
+      "title": "3_Personen_und_Vertretung",
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Rolle Zulaessige Werte: Gesetzlicher Vertreter, Ständiger Vertreter, Empfangsbevollmächtigter, Steuerliche Beratung, Ehegatte/Lebenspartner.",
+          "enum": [
+            "Gesetzlicher Vertreter",
+            "Ständiger Vertreter",
+            "Empfangsbevollmächtigter",
+            "Steuerliche Beratung",
+            "Ehegatte/Lebenspartner",
+            null
+          ]
+        },
+        "person_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Art der Person Zulaessige Werte: natürlich, nicht natürlich.",
+          "enum": [
+            "natürlich",
+            "nicht natürlich",
+            null
+          ]
+        },
+        "last_name_or_company": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Name / Firma"
+        },
+        "id_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Identifikationsnummer"
+        },
+        "address": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Adresse"
+        },
+        "tax_reference": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Steuerliche Kennzeichen"
+        },
+        "power_to_conclude_contracts": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Abschlussvollmacht"
+        },
+        "is_authorized_recipient": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Empfangsbevollmaechtigt"
+        }
+      },
+      "required": [
+        "role",
+        "person_type",
+        "last_name_or_company",
+        "id_number",
+        "address",
+        "tax_reference",
+        "power_to_conclude_contracts",
+        "is_authorized_recipient"
+      ]
+    }
+  }
+}

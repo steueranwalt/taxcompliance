@@ -1,0 +1,179 @@
+/* Schlicht, barrierearm, mobil-tauglich: grosse Schrift, hoher Kontrast,
+   keine Abhaengigkeit von Farbe allein, grosse Klickflaechen (min. 44px). */
+
+:root {
+  --farbe-text: #1a1a1a;
+  --farbe-hintergrund: #ffffff;
+  --farbe-akzent: #0b3d66;
+  --farbe-fehler: #8a1c1c;
+  --farbe-rahmen: #6b6b6b;
+  --abstand: 1rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--farbe-text);
+  background: var(--farbe-hintergrund);
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: var(--abstand);
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+}
+.skip-link:focus {
+  left: 0;
+  background: var(--farbe-akzent);
+  color: white;
+  padding: 0.5rem 1rem;
+  z-index: 10;
+}
+
+header.kopf {
+  border-bottom: 3px solid var(--farbe-akzent);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.unterzeile {
+  color: #444;
+  margin: 0.25rem 0 0;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+input[type="text"],
+textarea,
+select,
+input[type="file"] {
+  width: 100%;
+  font-size: 1.125rem;
+  padding: 0.6rem;
+  border: 2px solid var(--farbe-rahmen);
+  border-radius: 4px;
+  margin-top: 0.25rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: 3px solid var(--farbe-akzent);
+  outline-offset: 2px;
+}
+
+button {
+  font-size: 1.125rem;
+  padding: 0.75rem 1.25rem;
+  min-height: 44px;
+  margin-top: 1rem;
+  border: 2px solid var(--farbe-akzent);
+  border-radius: 4px;
+  background: var(--farbe-akzent);
+  color: white;
+  cursor: pointer;
+}
+
+button.sekundaer,
+#erklaerung-button {
+  background: white;
+  color: var(--farbe-akzent);
+}
+
+.hinweis {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.fehler {
+  color: var(--farbe-fehler);
+  font-weight: 600;
+  border: 2px solid var(--farbe-fehler);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.formular-aktionen {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+#chat-verlauf {
+  border: 2px solid var(--farbe-rahmen);
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 12rem;
+  max-height: 24rem;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.nachricht {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+.nachricht.chat {
+  background: #eef3f8;
+}
+
+.nachricht.mandant {
+  background: #f3f3f3;
+  text-align: right;
+}
+
+.nachricht .absender {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+#vertraulichkeit {
+  border-top: 2px solid var(--farbe-rahmen);
+  padding-top: 1rem;
+  font-size: 0.95rem;
+}
+
+.platzhalter-rechtstext {
+  font-style: italic;
+  color: #555;
+}
+
+footer {
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+@media (max-width: 30rem) {
+  body {
+    font-size: 1.05rem;
+  }
+}

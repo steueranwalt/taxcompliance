@@ -1,0 +1,86 @@
+{
+  "list": "3_Personen_und_Vertretung",
+  "fields": [
+    {
+      "internal_name": "role",
+      "display_name": "Rolle",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "Gesetzlicher Vertreter",
+        "Ständiger Vertreter",
+        "Empfangsbevollmächtigter",
+        "Steuerliche Beratung",
+        "Ehegatte/Lebenspartner"
+      ],
+      "note": "Vom Mandanten benannte Rolle (z. B. gesetzlicher Vertreter), keine steuerliche Wuerdigung."
+    },
+    {
+      "internal_name": "person_type",
+      "display_name": "Art der Person",
+      "sharepoint_type": "Choice",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [
+        "natürlich",
+        "nicht natürlich"
+      ],
+      "note": "Zweig-Schluessel: natuerliche Person vs. nicht natuerliche Person fuer diesen Datensatz."
+    },
+    {
+      "internal_name": "last_name_or_company",
+      "display_name": "Name / Firma",
+      "sharepoint_type": "Text",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "id_number",
+      "display_name": "Identifikationsnummer",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "address",
+      "display_name": "Adresse",
+      "sharepoint_type": "Note",
+      "required_unbedingt": true,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "tax_reference",
+      "display_name": "Steuerliche Kennzeichen",
+      "sharepoint_type": "Text",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": null
+    },
+    {
+      "internal_name": "power_to_conclude_contracts",
+      "display_name": "Abschlussvollmacht",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Dokumentierte Abschlussvollmacht ist eine Tatsache, keine Wuerdigung."
+    },
+    {
+      "internal_name": "is_authorized_recipient",
+      "display_name": "Empfangsbevollmaechtigt",
+      "sharepoint_type": "Boolean",
+      "required_unbedingt": false,
+      "applies_to": "alle",
+      "choices": [],
+      "note": "Dokumentierter Status, keine Wuerdigung."
+    }
+  ]
+}

@@ -1,0 +1,477 @@
+{
+  "1_Allgemeiner_Stammblock": {
+    "enthalten": [
+      "party_type",
+      "salutation_title",
+      "last_name_or_company",
+      "first_name",
+      "name_addition",
+      "date_of_birth",
+      "religion",
+      "id_number",
+      "legal_form",
+      "address_type",
+      "street",
+      "address_supplement",
+      "postal_code_city",
+      "country",
+      "po_box",
+      "website",
+      "business_activity",
+      "management_address",
+      "tax_id_type",
+      "tax_number",
+      "tax_advisor_name",
+      "tax_advisor_address",
+      "advisor_is_authorized_recipient",
+      "bank_iban",
+      "bank_bic",
+      "bank_account_holder",
+      "sepa_desired",
+      "par27_ao_agreement"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": "Technischer Lookup auf 0_Fallsteuerung, wird vom Backend aus case_id der Sitzung gesetzt, keine Chat-Frage."
+      },
+      {
+        "internal_name": "phone",
+        "role": "system",
+        "note": "Kontaktdaten (Telefon) liegen im CRM der Kanzlei, nicht im Chat erfragen (Vorgabe Nils Obenhaus)."
+      },
+      {
+        "internal_name": "asset_management_only",
+        "role": "ergebnis",
+        "note": "Geschlossene Frage wuerde die steuerliche Einordnung vorwegnehmen (Vorgabe Nils Obenhaus). Tatsachen stattdessen ueber business_activity + Anteil Umsatz/Gewinn."
+      },
+      {
+        "internal_name": "deviating_management_place",
+        "role": "ergebnis",
+        "note": "Direkte Frage nach 'abweichendem Ort der Geschaeftsleitung' ist die gesuchte Rechtsfolge selbst. Tatsachen stattdessen ueber die Arbeitsort-Fragen an die Geschaeftsfuehrer in 3_Personen_und_Vertretung, siehe flow_config.geschaeftsleitung_arbeitsort."
+      },
+      {
+        "internal_name": "tax_office",
+        "role": "ergebnis",
+        "note": "Das zustaendige Finanzamt bestimmt die Kanzlei (Vorgabe Nils Obenhaus, explizit genannt)."
+      },
+      {
+        "internal_name": "callback_email",
+        "role": "system",
+        "note": "Kontaktdaten (E-Mail) liegen im CRM der Kanzlei, nicht im Chat erfragen (Vorgabe Nils Obenhaus)."
+      }
+    ]
+  },
+  "2_Unternehmens_Gruendungsmodul": {
+    "enthalten": [
+      "company_name",
+      "legal_form",
+      "formation_date",
+      "activity_start_date",
+      "notarial_deed_date",
+      "share_capital_amount",
+      "share_capital_currency",
+      "paid_in_capital",
+      "register_status",
+      "registry_court",
+      "register_number",
+      "predecessor",
+      "deviating_fiscal_year",
+      "fiscal_year_start",
+      "expected_profit_opening_year",
+      "expected_profit_following_year",
+      "part_of_group",
+      "controlling_company_name",
+      "profit_distribution_key",
+      "notary_name",
+      "notary_address",
+      "is_general_partner_of_kg",
+      "general_partner_kg_name",
+      "register_date"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "formation_type",
+        "role": "ergebnis",
+        "note": "Gruendungsart (insb. Bar-/Sachgruendung, Umwandlung) ist eine rechtliche Einordnung. Tatsachen stattdessen ueber predecessor-Frage und Upload der Gruendungsurkunde."
+      },
+      {
+        "internal_name": "profit_determination_method",
+        "role": "ergebnis",
+        "note": "Gewinnermittlungsart wird laut Vorgabe Nils Obenhaus nicht erfragt. Tatsachen stattdessen: Umsatz/Gewinn-Erwartung, Buchfuehrungs-/Bilanzierungspflicht, bereits bilanziert, Handelsregistereintragung."
+      },
+      {
+        "internal_name": "is_tax_group_parent",
+        "role": "ergebnis",
+        "note": "Organtraegerschaft ist eine koerperschaftsteuerliche Wuerdigung (Vorgabe Nils Obenhaus, Organschaft explizit genannt)."
+      },
+      {
+        "internal_name": "legal_capacity",
+        "role": "ergebnis",
+        "note": "Rechtsfaehigkeit ist eine rechtliche Einordnung, keine Tatsache."
+      },
+      {
+        "internal_name": "split_ownership_structure",
+        "role": "ergebnis",
+        "note": "Betriebsaufspaltung ist eine steuerliche Doktrin/Einordnung (analog zur Betriebsstaetten-Beispiel-Vorgabe); die Selbsteinschaetzung des Mandanten wird nicht erfragt."
+      },
+      {
+        "internal_name": "split_ownership_company_name",
+        "role": "ergebnis",
+        "note": "Nur relevant, wenn die ausgeschlossene Betriebsaufspaltungs-Einordnung zutrifft; Kanzlei ermittelt das direkt."
+      },
+      {
+        "internal_name": "split_owner_asset_description",
+        "role": "ergebnis",
+        "note": "Siehe split_ownership_structure."
+      },
+      {
+        "internal_name": "split_ownership_usage_start",
+        "role": "ergebnis",
+        "note": "Siehe split_ownership_structure."
+      },
+      {
+        "internal_name": "split_owner_address_or_taxno",
+        "role": "ergebnis",
+        "note": "Siehe split_ownership_structure."
+      },
+      {
+        "internal_name": "kst_exemption",
+        "role": "ergebnis",
+        "note": "Koerperschaftsteuerbefreiung nach Paragraf 5 KStG ist eine rechtliche Wuerdigung."
+      },
+      {
+        "internal_name": "kst_exemption_number",
+        "role": "ergebnis",
+        "note": "Siehe kst_exemption."
+      },
+      {
+        "internal_name": "par60a_ao_determination",
+        "role": "ergebnis",
+        "note": "Feststellung nach Paragraf 60a AO ist eine rechtliche Wuerdigung; betrifft ohnehin nur gemeinnuetzige Koerperschaften (Vereine/Stiftungen sind per Kanzleientscheid ausgeschlossen)."
+      },
+      {
+        "internal_name": "par60a_ao_purpose",
+        "role": "ergebnis",
+        "note": "Siehe par60a_ao_determination."
+      },
+      {
+        "internal_name": "is_tax_group_subsidiary",
+        "role": "ergebnis",
+        "note": "Koerperschaftsteuerliche Organschaft ist eine Wuerdigung (Vorgabe Nils Obenhaus, Organschaft explizit genannt)."
+      },
+      {
+        "internal_name": "tax_group_parent_name",
+        "role": "ergebnis",
+        "note": "An den ausgeschlossenen Organschafts-Trigger gekoppelt und inhaltlich redundant zu controlling_company_name (Konzernmutter) - wird nicht zusaetzlich erfragt."
+      },
+      {
+        "internal_name": "is_vat_group_member",
+        "role": "ergebnis",
+        "note": "Umsatzsteuerliche Organschaft ist eine Wuerdigung (Vorgabe Nils Obenhaus, Organschaft explizit genannt)."
+      },
+      {
+        "internal_name": "vat_group_start_date",
+        "role": "ergebnis",
+        "note": "Siehe is_vat_group_member."
+      }
+    ]
+  },
+  "3_Personen_und_Vertretung": {
+    "enthalten": [
+      "role",
+      "person_type",
+      "salutation_title",
+      "last_name_or_company",
+      "first_name",
+      "date_of_birth",
+      "id_number",
+      "profession",
+      "address",
+      "tax_reference",
+      "power_to_conclude_contracts",
+      "is_authorized_recipient"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "phone",
+        "role": "system",
+        "note": "Kontaktdaten (Telefon) liegen im CRM der Kanzlei, nicht im Chat erfragen (Vorgabe Nils Obenhaus)."
+      },
+      {
+        "internal_name": "dependency_status",
+        "role": "ergebnis",
+        "note": "Abhaengigkeit des staendigen Vertreters (Paragraf 13 AO) ist eine rechtliche Einordnung, keine Tatsache, die der Mandant selbst feststellen kann."
+      },
+      {
+        "internal_name": "display_label",
+        "role": "system",
+        "note": "Technisches Lookup-Anzeigefeld, wird vom Backend gesetzt."
+      }
+    ]
+  },
+  "4_Beteiligte_und_Quoten": {
+    "enthalten": [
+      "sequence_number",
+      "participant_type",
+      "last_name_or_company",
+      "date_of_birth",
+      "address",
+      "tax_reference",
+      "participation_type",
+      "role",
+      "nominal_share",
+      "share_percentage",
+      "fraction_numerator_denominator",
+      "trust_relationship",
+      "profit_share_opening_year",
+      "profit_share_following_year",
+      "participation_since",
+      "voting_rights_percentage"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "limited_tax_liability",
+        "role": "ergebnis",
+        "note": "Beschraenkte Steuerpflicht ist eine Kanzlei-Wuerdigung, keine Tatsache."
+      },
+      {
+        "internal_name": "display_label",
+        "role": "system",
+        "note": null
+      }
+    ]
+  },
+  "5_Betriebsstaetten": {
+    "enthalten": [
+      "site_name",
+      "country",
+      "address",
+      "ownership_status",
+      "usage_type",
+      "activity_period_from",
+      "activity_period_to",
+      "activity_period_to_unknown",
+      "contact"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "site_type",
+        "role": "ergebnis",
+        "note": "'Feste/nicht feste Einrichtung' ist der Betriebsstaetten-Begriff selbst (Vorgabe Nils Obenhaus, Betriebsstaette ja/nein explizit als Beispiel genannt). Tatsachen stattdessen ueber usage_type/ownership_status/activity_period."
+      },
+      {
+        "internal_name": "vat_relevant_site",
+        "role": "ergebnis",
+        "note": "'Umsatzsteuerliche Betriebsstaette' ist die Rechtsfolge, keine Tatsache."
+      },
+      {
+        "internal_name": "payroll_tax_site",
+        "role": "ergebnis",
+        "note": "'Lohnsteuerliche Betriebsstaette' ist die Rechtsfolge, keine Tatsache."
+      },
+      {
+        "internal_name": "display_label",
+        "role": "system",
+        "note": null
+      }
+    ]
+  },
+  "6_Steuer_und_Umsatzsteuerprofil": {
+    "enthalten": [
+      "estimated_revenue_opening_year",
+      "estimated_revenue_following_year",
+      "request_vat_id",
+      "previous_vat_id",
+      "oss_procedure",
+      "own_webshop",
+      "electronic_interface",
+      "employees_total",
+      "payroll_start_date",
+      "exemption_cert_48b_construction",
+      "webshop_url",
+      "electronic_interface_identifier"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "small_business_rule",
+        "role": "ergebnis",
+        "note": "Kleinunternehmerregelung ist eine steuerliche Wuerdigung (Vorgabe Nils Obenhaus, explizit genannt)."
+      },
+      {
+        "internal_name": "small_business_rule_waiver",
+        "role": "ergebnis",
+        "note": "Siehe small_business_rule; Verzicht ist eine beratene Entscheidung, keine blosse Tatsache."
+      },
+      {
+        "internal_name": "expected_vat_amount",
+        "role": "ergebnis",
+        "note": "Prognose/Berechnung der Kanzlei aus den Umsatzzahlen, keine vom Mandanten feststellbare Tatsache."
+      },
+      {
+        "internal_name": "vat_filing_period",
+        "role": "ergebnis",
+        "note": "Voranmeldungszeitraum wird vom Finanzamt anhand der Zahllast bestimmt, keine Mandanten-Tatsache."
+      },
+      {
+        "internal_name": "vat_taxation_method",
+        "role": "ergebnis",
+        "note": "Soll-/Ist-Besteuerung ist eine steuerliche Wuerdigung (Vorgabe Nils Obenhaus, explizit genannt)."
+      },
+      {
+        "internal_name": "construction_services_over_10pct",
+        "role": "ergebnis",
+        "note": "Schwellenwert-Pruefung (10% Weltumsatz) ist keine reine Tatsache, sondern eine Einordnung gegen eine rechtliche Grenze."
+      },
+      {
+        "internal_name": "expected_payroll_tax",
+        "role": "ergebnis",
+        "note": "Prognose der Kanzlei, keine Mandanten-Tatsache."
+      },
+      {
+        "internal_name": "vat_tax_free_sales",
+        "role": "ergebnis",
+        "note": "Steuerfreiheit nach Paragraf 4 UStG ist eine rechtliche Einordnung."
+      },
+      {
+        "internal_name": "vat_tax_free_sales_type",
+        "role": "ergebnis",
+        "note": "An den ausgeschlossenen Trigger vat_tax_free_sales gekoppelt."
+      },
+      {
+        "internal_name": "vat_reduced_rate_sales",
+        "role": "ergebnis",
+        "note": "Ermaessigter Steuersatz ist eine rechtliche Einordnung."
+      },
+      {
+        "internal_name": "vat_reduced_rate_sales_type",
+        "role": "ergebnis",
+        "note": "An vat_reduced_rate_sales gekoppelt."
+      },
+      {
+        "internal_name": "vat_zero_rate_sales",
+        "role": "ergebnis",
+        "note": "Nullsteuersatz ist eine rechtliche Einordnung."
+      },
+      {
+        "internal_name": "vat_zero_rate_sales_type",
+        "role": "ergebnis",
+        "note": "An vat_zero_rate_sales gekoppelt."
+      },
+      {
+        "internal_name": "vat_zero_rate_legal_basis",
+        "role": "ergebnis",
+        "note": "An vat_zero_rate_sales gekoppelt."
+      },
+      {
+        "internal_name": "vat_flat_rate_agriculture",
+        "role": "ergebnis",
+        "note": "Durchschnittssatzbesteuerung Paragraf 24 UStG ist eine rechtliche Einordnung."
+      },
+      {
+        "internal_name": "vat_flat_rate_agriculture_type",
+        "role": "ergebnis",
+        "note": "An vat_flat_rate_agriculture gekoppelt."
+      },
+      {
+        "internal_name": "vat_flat_rate_agriculture_choice",
+        "role": "ergebnis",
+        "note": "Beratene Wahl, keine Tatsache."
+      },
+      {
+        "internal_name": "input_tax_refund_requested",
+        "role": "ergebnis",
+        "note": "Antragstellung erfolgt durch die Kanzlei, keine Mandanten-Tatsache."
+      },
+      {
+        "internal_name": "input_tax_refund_date",
+        "role": "ergebnis",
+        "note": "An input_tax_refund_requested gekoppelt."
+      },
+      {
+        "internal_name": "input_tax_refund_reference",
+        "role": "ergebnis",
+        "note": "An input_tax_refund_requested gekoppelt."
+      }
+    ]
+  },
+  "8_Unterlagen": {
+    "enthalten": [
+      "document_type",
+      "note"
+    ],
+    "ausgeschlossen": [
+      {
+        "internal_name": "case_id",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "related_object_text",
+        "role": "system",
+        "note": "Wird vom Backend aus dem Chat-Kontext (case_id/Abschnitt) gesetzt, keine eigene Chat-Frage."
+      },
+      {
+        "internal_name": "required",
+        "role": "system",
+        "note": "Internes Kanzlei-Flag."
+      },
+      {
+        "internal_name": "uploaded",
+        "role": "system",
+        "note": "Wird vom Backend beim Upload automatisch gesetzt."
+      },
+      {
+        "internal_name": "file_link",
+        "role": "system",
+        "note": "Wird vom Backend beim Upload automatisch gesetzt, kein Chat-Feld."
+      },
+      {
+        "internal_name": "related_case",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "related_person",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "related_participation",
+        "role": "system",
+        "note": null
+      },
+      {
+        "internal_name": "related_site",
+        "role": "system",
+        "note": null
+      }
+    ]
+  }
+}

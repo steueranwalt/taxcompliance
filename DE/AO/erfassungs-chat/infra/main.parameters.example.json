@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "projectName": { "value": "erfassungschat" },
+    "environmentName": { "value": "dev" },
+    "location": { "value": "germanywestcentral" },
+    "accompliAzureAiResourceGroup": { "value": "<resource-group-von-accompli-azureai>" },
+    "accompliAzureAiAccountName": { "value": "accompli-azureai" },
+    "graphSiteHostname": { "value": "transferpricingdocs.sharepoint.com" },
+    "graphSitePath": { "value": "/sites/steuerdaten" }
+  }
+}

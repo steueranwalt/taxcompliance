@@ -1,0 +1,17 @@
+[
+  {
+    "Id": "1",
+    "case_id": "2026-0042",
+    "access_code": "TESTCODE42",
+    "direction": "Inbound",
+    "form_type": "Körperschaft nach ausländischem Recht",
+    "already_registered": false,
+    "existing_tax_number": "",
+    "tax_office_country": "",
+    "tax_office": "",
+    "target_notification": "",
+    "processing_note": "",
+    "case_status": "offen",
+    "Created": "2026-10-20T08:00:00+00:00"
+  }
+]
