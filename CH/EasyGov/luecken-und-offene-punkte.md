@@ -40,15 +40,15 @@ Bereich: `hr`. Notarsuche Kanton ZH ohne Treffer für elektronische Gründung (S
 
 ## Von EasyGov nicht abgefragt (beim Notar bzw. der Kanzlei zu erheben)
 
-- **Statuten / Gesellschaftsvertrag** — EasyGov fragt Statuten nicht ab; beim Notar zu erheben.
-- **Revisionsstelle / Opting-out** — Weder GmbH- noch AG-HR-Strecke fragt Revisionsstelle oder Opting-out ab.
-- **Vinkulierung, Nachschuss, Nebenleistung, Publikationsorgan** — Nicht in EasyGov; beim Notar zu erheben.
-- **Bank / Kapitaleinzahlung** — Keine Uploads, keine Bankbestätigung in EasyGov.
-- **Juristische Person als GmbH/AG-Gesellschafter** — HR-Strecke erlaubt nur natürliche Personen als Gründer.
-- **Separates Nennwertfeld** — Kein Nennwertfeld; implizit Kapital/Anzahl. Keine Stimmrechtsaktien, keine Partizipationsscheine.
-- **Sachübernahme-Option** — In der Liberierungsart nicht sichtbar.
-- **IBAN in der MWST-Anmeldung** — ESTV-Strecke ohne IBAN und ohne AHV im Kontakt-Schritt.
-- **Suva-pflichtige Branche** — Suva-Zweig im UVG-Inventar nicht gesehen.
+- **Statuten / Gesellschaftsvertrag** — EasyGov fragt Statuten nicht ab; beim Notar zu erheben. Kanzlei-Spalte, keine Rechtswürdigung. Spalten: `4_HR_Diverses.statutes_note`.
+- **Revisionsstelle / Opting-out** — Weder GmbH- noch AG-HR-Strecke fragt Revisionsstelle oder Opting-out ab. Kanzlei-Spalten, keine Rechtswürdigung. Spalten: `4_HR_Diverses.auditor_name`, `4_HR_Diverses.opting_out`.
+- **Vinkulierung, Nachschuss, Nebenleistung, Publikationsorgan** — Nicht in EasyGov; beim Notar zu erheben. Kanzlei-Spalten, keine Rechtswürdigung. Spalten: `4_HR_Diverses.transfer_restriction`, `4_HR_Diverses.capital_call_duty`, `4_HR_Diverses.accessory_duty`, `4_HR_Diverses.publication_organ`.
+- **Bank / Kapitaleinzahlung** — Keine Uploads, keine Bankbestätigung in EasyGov. Kanzlei-Spalten für Bank, Konto/IBAN und Datum. Spalten: `3_Kapital.capital_bank`, `3_Kapital.capital_account`, `3_Kapital.capital_paid_date`.
+- **Juristische Person als GmbH/AG-Gesellschafter** — HR-Strecke erlaubt nur natürliche Personen als Gründer. Dieselbe Spalte person_type gilt auch für GmbH/AG. Spalten: `2_Personen.person_type`.
+- **Separates Nennwertfeld** — Kein Nennwertfeld im Portal; implizit Kapital/Anzahl. Keine Stimmrechtsaktien, keine Partizipationsscheine. Kanzlei-Spalte par_value. Spalten: `3_Kapital.par_value`.
+- **Sachübernahme-Option** — In der Liberierungsart im Portal nicht sichtbar. Werteliste um Sachübernahme ergänzt, keine Rechtswürdigung. Spalten: `3_Kapital.liberation_types`.
+- **IBAN in der MWST-Anmeldung** — ESTV-Strecke ohne IBAN und ohne AHV im Kontakt-Schritt. Kanzlei-Spalte mwst_iban. Spalten: `5_MWST.mwst_iban`.
+- **Suva-pflichtige Branche** — Suva-Zweig im UVG-Inventar nicht gesehen. Kanzlei-Spalte suva_branch (Freitext). Spalten: `7_UVG.suva_branch`.
 
 ## Offene Erhebungspunkte
 

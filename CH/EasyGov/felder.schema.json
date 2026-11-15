@@ -46,7 +46,7 @@
         },
         "datentyp": {
           "type": "string",
-          "enum": ["text", "note", "number", "date", "choice", "multichoice", "boolean", "lookup", "checkbox_group", "aktion", "anzeige", "datei"]
+          "enum": ["text", "note", "number", "date", "choice", "multichoice", "boolean", "lookup", "checkbox_group", "aktion", "anzeige", "datei", "url"]
         },
         "pflichtstatus": {
           "type": "string",

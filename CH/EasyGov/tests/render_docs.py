@@ -181,7 +181,12 @@ def write_luecken() -> None:
         lines += [f"### {b['titel']}", "", f"Bereich: `{b['bereich']}`. {b['beschreibung']}", ""]
     lines += ["## Von EasyGov nicht abgefragt (beim Notar bzw. der Kanzlei zu erheben)", ""]
     for g in d["nicht_abgefragt"]:
-        lines += [f"- **{g['titel']}** — {g['beschreibung']}"]
+        extra = ""
+        if g.get("spalten"):
+            extra = " Spalten: " + ", ".join(
+                f"`{c['liste']}.{c['internal_name']}`" for c in g["spalten"]
+            ) + "."
+        lines += [f"- **{g['titel']}** — {g['beschreibung']}{extra}"]
     lines += ["", "## Offene Erhebungspunkte", ""]
     for g in d["offen"]:
         lines += [f"- **{g['titel']}** — {g['beschreibung']}"]

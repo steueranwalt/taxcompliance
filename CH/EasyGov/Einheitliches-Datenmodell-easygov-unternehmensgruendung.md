@@ -103,7 +103,7 @@ Dieser Kern wird einmalig erhoben und in HR/MWST/AHV/UVG vorbefüllt. Formularsp
 | Unternehmen | Bezeichnung, Zweck, Branche, Domizil, Geschäftsaufnahme, Jahresende, MWST-ID | Basisdaten, HR Diverses |
 | Person | Name, AHV, Wohnsitz, Ausweis, Funktion, Zeichnung | Basisdaten, HR Gründer/Vertreter, MWST Inhaber |
 | Adresse | Strasse, Nummer, Zusatz, Postfach, PLZ, Ort, Gemeinde, Land, Telefon, E-Mail | Wohnsitz, Domizil, Korrespondenz |
-| Kapital | Betrag, Währung, Liberierung, Anteile | HR GmbH/AG |
+| Kapital | Betrag, Währung, Liberierung, Anteile, Nennwert, Bank/Konto/Datum der Einzahlung | HR GmbH/AG; Bankfelder Kanzlei |
 | Meldepflicht-Resultat | HR, MWST, AHV, UVG | Ergebnisfelder, nicht Mandantenwürdigung |
 
 ## 4. Wiederholbare Datenobjekte
@@ -112,7 +112,7 @@ Nicht in Freitextfeldern sammeln. Jeder Datensatz: Fall-ID, Objekt-ID, laufende 
 
 | Objekt | Kernfelder |
 |---|---|
-| Person | Rolle, Personentyp, Personalien, Adresse, Funktion, Zeichnung, Haftung (KmG) |
+| Person | Rolle, Personentyp (auch GmbH/AG-Gesellschafter juristische Person), Personalien, Adresse, Funktion, Zeichnung, Haftung (KmG) |
 | Beteiligung / Anteil | Person, Anzahl Stammanteile bzw. Namens-/Inhaberaktien |
 | Standort | weitere Geschäftslokale (Portal optional; hier vorerst Freitext, Ausbau offen) |
 | Dokument | Dokumenttyp, Hinweis, Bezug |
@@ -123,21 +123,23 @@ Ein einzelnes MS Forms-Formular kann wiederholbare Tabellen nicht belastbar abbi
 
 | Form | Liste | Zweck | Auslöser |
 |---|---|---|---|
-| 0. Fallsteuerung | `0_Fallsteuerung` | Rechtsform, Umsatz, Personal, Extern Erledigtes, Resultat (Kanzlei) | immer |
-| 1. Unternehmen | `1_Unternehmen` | Firma, Zweck, Branche, Domizil | immer |
-| 2. Personen | `2_Personen` | Inhaber, Gesellschafter, Vertreter | immer; Anzahl nach Rechtsform |
-| 3. Kapital | `3_Kapital`, `3_Anteile` | Stamm-/Aktienkapital, Liberierung, Anteile | GmbH, AG, KmG-Kommandite |
-| 4. HR Diverses | `4_HR_Diverses` | Auszüge, Notar, Anmeldungsart, Bemerkungen | wenn HR |
-| 5. MWST | `5_MWST` | ESTV-spezifische Umsatz- und Modalitätenfelder | wenn MWST |
-| 6. AHV | `6_AHV` | Ausgleichskasse, Selbständigkeit, Personal | wenn AHV |
-| 7. UVG | `7_UVG` | Lohnsummen, Versicherer | wenn UVG |
-| 8. Unterlagen | `8_Unterlagen` | Belege (EasyGov hat in der Gründung keine Uploads) | immer, bedingt |
+| 0. Fallsteuerung | `CH_0_Fallsteuerung` | Rechtsform, Umsatz, Personal, Extern Erledigtes, Resultat (Kanzlei) | immer |
+| 1. Unternehmen | `CH_1_Unternehmen` | Firma, Zweck, Branche, Domizil | immer |
+| 2. Personen | `CH_2_Personen` | Inhaber, Gesellschafter, Vertreter | immer; Anzahl nach Rechtsform |
+| 3. Kapital | `CH_3_Kapital`, `CH_3_Anteile` | Stamm-/Aktienkapital, Liberierung, Anteile | GmbH, AG, KmG-Kommandite |
+| 4. HR Diverses | `CH_4_HR_Diverses` | Auszüge, Notar, Anmeldungsart, Bemerkungen, Statutenangaben | wenn HR |
+| 5. MWST | `CH_5_MWST` | ESTV-spezifische Umsatz- und Modalitätenfelder | wenn MWST |
+| 6. AHV | `CH_6_AHV` | Ausgleichskasse, Selbständigkeit, Personal | wenn AHV |
+| 7. UVG | `CH_7_UVG` | Lohnsummen, Versicherer | wenn UVG |
+| 8. Unterlagen | `CH_8_Unterlagen` | Belege (EasyGov hat in der Gründung keine Uploads) | immer, bedingt |
+
+In `felder.json` stehen die logischen Namen ohne Präfix (`0_Fallsteuerung`, …). Das SharePoint-Skript hängt den Parameter `-ListPrefix` an (Standard `CH_`), damit dieselben Titel wie die DE/AO-Listen auf `sites/steueranwaltskanzlei` nicht überschrieben werden.
 
 ### Technische Mindestfelder in jeder Antwort
 
 `case_id | form_type | object_type | object_id | field_key | field_label | value | data_type | required_status | condition | source | verification_date`
 
-Zulässige Pflichtstatus: `unbedingt`, `bedingt`, `optional`, `ergebnis`, `system`. Umsetzung: Liste `Technische_Mindestfelder`.
+Zulässige Pflichtstatus: `unbedingt`, `bedingt`, `optional`, `ergebnis`, `system`. Umsetzung: Liste `CH_Technische_Mindestfelder`.
 
 SharePoint kennt keine bedingten Pflichtfelder. `-Required` nur bei unbedingter Pflicht für jeden Datensatz der Liste. Ja/Nein-Pflichtfelder als Choice «Ja»/«Nein», nicht als Boolean (Befund DE/AO 28.10.2026).
 
@@ -156,4 +158,6 @@ Der Mandant liefert Tatsachen. Die Meldepflichten-Resultate (HR/MWST/AHV/UVG zwi
 
 ## 8. Offene Validierungspunkte
 
-Siehe [`luecken-und-offene-punkte.md`](luecken-und-offene-punkte.md). Insbesondere Saldosteuersatz-Anteilsfeld, Suva-Zweig, Schweizer/in mit Wohnsitz Ausland, juristische Personen als GmbH-Gesellschafter (Portal kann sie nicht erfassen), Statuten/Revisionsstelle/Opting-out (nicht in EasyGov).
+Siehe [`luecken-und-offene-punkte.md`](luecken-und-offene-punkte.md). Portalfehler und ungespielte Pfade bleiben offen. Die Blöcke unter `nicht_abgefragt` haben Kanzlei-Spalten (Statuten, Revisionsstelle, Opting-out, Vinkulierung, Nachschuss, Nebenleistung, Publikationsorgan, Bank/Kapitaleinzahlung, Nennwert, Sachübernahme als Liberierungswert, MWST-IBAN, Suva-Zweig, `person_type` auch für GmbH/AG). Keine Rechtswürdigung in den Listen.
+
+Anzeige-Felder mit `sharepoint_*`-Mapping werden als Spalten geführt, weil das Datenmodell Adresse (inkl. Gemeinde) und fachlich normalisierte Werte speichert, nicht nur das, was das Portal als editierbares Eingabefeld zeigt. Mappinglose Anzeigen bleiben ohne Spalte.

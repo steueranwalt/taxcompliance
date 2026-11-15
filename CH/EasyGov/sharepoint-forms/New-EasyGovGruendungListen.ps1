@@ -1,4 +1,3 @@
-#Requires -Modules PnP.PowerShell
 <#
     .SYNOPSIS
     Legt die SharePoint-Listenfamilie "EasyGov Unternehmensgruendung CH" an
@@ -18,28 +17,59 @@
         fehlende Auswahlwerte ergaenzt, nie entfernt).
       - Es werden nie Listen, Spalten oder Auswahlwerte geloescht.
 
-    Dieses Skript wird in dieser Session NICHT gegen einen Tenant ausgefuehrt.
+    Alle Listen erhalten das Praefix CH_ (Parameter -ListPrefix, Standard CH_),
+    damit die produktiven DE/AO-Listen auf derselben Site
+    (https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei) unangetastet
+    bleiben. Vor jeder Aenderung: hartes ABBRUCH, falls eine Liste ohne
+    CH_-Praefix geaendert wuerde. -WhatIf verbindet nicht und listet nur.
+
+    Dieses Skript wird in der Agent-Session NICHT gegen einen Tenant ausgefuehrt.
 
     .PARAMETER SiteUrl
-    Zielsite, analog DE/AO (steueranwaltskanzlei oder service).
+    Zielsite. Standard der Kanzlei: https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei
+    Bei -WhatIf nicht noetig.
 
     .PARAMETER ClientId
     Tenant-eigene Entra-App mit delegierter Berechtigung AllSites.FullControl.
-    Siehe DE/AO/sharepoint-forms/README.md Abschnitt C1.
+    Siehe DE/AO/sharepoint-forms/README.md Abschnitt C1. Bei -WhatIf nicht noetig.
+
+    .PARAMETER ListPrefix
+    Praefix aller CH-Listen. Standard CH_. Lookups zielen auf die so
+    aufgeloesten Listen. Ein Lauf, der eine Liste ohne CH_-Praefix aendern
+    wuerde, bricht vorher ab.
+
+    .EXAMPLE
+    .\New-EasyGovGruendungListen.ps1 -WhatIf
 
     .EXAMPLE
     .\New-EasyGovGruendungListen.ps1 -SiteUrl "https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei" -ClientId "<Entra-App-ClientId>"
 #>
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = "Medium")]
 param(
-    [Parameter(Mandatory = $true)]
     [string]$SiteUrl,
 
-    [Parameter(Mandatory = $true, HelpMessage = "ClientId einer tenant-eigenen Entra-App-Registrierung mit delegierter Berechtigung 'AllSites.FullControl' (siehe DE/AO/sharepoint-forms/README.md Abschnitt C1).")]
-    [string]$ClientId
+    [string]$ClientId,
+
+    [string]$ListPrefix = "CH_"
 )
 
 $ErrorActionPreference = "Stop"
+
+$script:ListPrefix = $ListPrefix
+# pwsh 7 setzt WhatIfPreference unter -WhatIf auf True, nicht auf Continue.
+$script:WhatIfMode = $false
+if ($PSBoundParameters.ContainsKey("WhatIf") -and $PSBoundParameters["WhatIf"]) {
+    $script:WhatIfMode = $true
+}
+elseif ($WhatIfPreference -and "$WhatIfPreference" -ne "SilentlyContinue") {
+    $script:WhatIfMode = $true
+}
+
+if (-not $script:WhatIfMode) {
+    if ([string]::IsNullOrWhiteSpace($SiteUrl) -or [string]::IsNullOrWhiteSpace($ClientId)) {
+        throw "SiteUrl und ClientId sind Pflicht, sobald nicht -WhatIf. Zielsite laut Entscheid: https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei"
+    }
+}
 
 $katalogRoot = Split-Path -Parent $PSScriptRoot
 $felderPath = Join-Path $katalogRoot "felder.json"
@@ -47,6 +77,29 @@ $wertelistenDir = Join-Path $katalogRoot "wertelisten"
 
 if (-not (Test-Path -LiteralPath $felderPath)) {
     throw "Feldkatalog nicht gefunden: $felderPath"
+}
+
+function Get-ChListName {
+    param([Parameter(Mandatory = $true)][string]$LogicalName)
+    if ([string]::IsNullOrWhiteSpace($LogicalName)) {
+        throw "Leerer logischer Listenname."
+    }
+    if ($LogicalName.StartsWith($script:ListPrefix)) {
+        return $LogicalName
+    }
+    return "$($script:ListPrefix)$LogicalName"
+}
+
+function Test-ChListPrefix {
+    <#
+      Harte Kollisionsbremse: dieses Skript darf keine Liste aendern, deren
+      Titel nicht mit CH_ beginnt. Die DE/AO-Listen 0_Fallsteuerung … 9_Grundbesitz
+      auf derselben Site bleiben damit unangetastet.
+    #>
+    param([Parameter(Mandatory = $true)][string]$ListName)
+    if ($ListName -cnotlike "CH_*") {
+        throw "ABBRUCH vor jeder Aenderung: Liste '$ListName' hat kein CH_-Praefix. Dieses Skript aendert keine DE/AO-Listen."
+    }
 }
 
 function Get-WertelisteChoices {
@@ -61,7 +114,7 @@ function Get-WertelisteChoices {
 }
 
 function ConvertTo-SpType {
-    param([string]$Datentyp, [string]$Pflichtstatus, [bool]$Required)
+    param([string]$Datentyp, [bool]$Required, [string]$InternalName = "")
     switch ($Datentyp) {
         "text" { return "Text" }
         "note" { return "Note" }
@@ -76,8 +129,15 @@ function ConvertTo-SpType {
             if ($Required) { return "Choice" }
             return "Boolean"
         }
-        "lookup" { return "Text" }  # Portal-Autocomplete; SharePoint-Lookup nur fuer case_id
+        "lookup" { return "Text" }  # Portal-Autocomplete. SharePoint-Lookup nur case_id / person_label.
         "datei" { return "Note" }
+        "url" { return "URL" }
+        "anzeige" {
+            # Portal zeigt den Wert; Datenmodell speichert ihn, wenn ein Mapping
+            # gesetzt ist (Adresse.Gemeinde, HR-Amt, MWST-Summen, UVG-Schaetzung).
+            if ($InternalName -in @("rev3m_total", "rev3m_relevant")) { return "Number" }
+            return "Text"
+        }
         default { return "Text" }
     }
 }
@@ -86,11 +146,14 @@ $katalog = Get-Content -LiteralPath $felderPath -Raw -Encoding UTF8 | ConvertFro
 $spFields = @{}
 foreach ($f in $katalog.felder) {
     if (-not $f.sharepoint_liste -or -not $f.sharepoint_internal_name) { continue }
-    if ($f.datentyp -in @("aktion", "anzeige")) { continue }
+    if ($f.datentyp -eq "aktion") { continue }
     $key = "$($f.sharepoint_liste)|$($f.sharepoint_internal_name)"
     if (-not $spFields.ContainsKey($key)) {
         $required = [bool]$f.sharepoint_required
-        $type = ConvertTo-SpType -Datentyp $f.datentyp -Pflichtstatus $f.pflichtstatus -Required $required
+        $internal = [string]$f.sharepoint_internal_name
+        $type = ConvertTo-SpType -Datentyp $f.datentyp -Required $required -InternalName $internal
+        if ($internal -eq "person_label") { $type = "Lookup" }
+        if ($internal -eq "case_id" -and [string]$f.sharepoint_liste -ne "0_Fallsteuerung") { $type = "Lookup" }
         $choices = @()
         if ($f.werteliste -and $type -in @("Choice", "MultiChoice")) {
             $choices = Get-WertelisteChoices -Name $f.werteliste
@@ -129,48 +192,6 @@ foreach ($def in $spFields.Values) {
 }
 
 Write-Host "Namensregel-Pruefung bestanden: $($spFields.Count) SharePoint-Felder aus felder.json."
-function Test-InternalFieldNamingRules {
-    param([Parameter(Mandatory = $true)][string]$ScriptPath)
-
-    $tokens = $null
-    $parseErrors = $null
-    $ast = [System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$parseErrors)
-    if ($parseErrors.Count -gt 0) {
-        throw "Konnte '$ScriptPath' nicht auf gueltige interne Feldnamen pruefen (Parse-Fehler im Skript selbst): $($parseErrors -join '; ')"
-    }
-
-    $commandAsts = $ast.FindAll(
-        { param($node) $node -is [System.Management.Automation.Language.CommandAst] -and $node.GetCommandName() -eq 'Add-Field' },
-        $true)
-
-    $violations = [System.Collections.Generic.List[string]]::new()
-    foreach ($cmd in $commandAsts) {
-        $elements = $cmd.CommandElements
-        $listValue = $null
-        $internalNameValue = $null
-        for ($i = 1; $i -lt $elements.Count; $i++) {
-            $el = $elements[$i]
-            if ($el -is [System.Management.Automation.Language.CommandParameterAst] -and ($i + 1) -lt $elements.Count) {
-                if ($el.ParameterName -eq 'List') { $listValue = $elements[$i + 1].SafeGetValue() }
-                elseif ($el.ParameterName -eq 'InternalName') { $internalNameValue = $elements[$i + 1].SafeGetValue() }
-            }
-        }
-        if ($internalNameValue) {
-            if ($internalNameValue.Length -gt 32) {
-                $violations.Add("$listValue / $internalNameValue : $($internalNameValue.Length) Zeichen (Grenze: 32 - SharePoint kuerzt sonst stillschweigend)")
-            }
-            if ($internalNameValue -notmatch '^[A-Za-z0-9_]+$') {
-                $violations.Add("$listValue / $internalNameValue : enthaelt Zeichen ausserhalb [A-Za-z0-9_]")
-            }
-        }
-    }
-
-    if ($violations.Count -gt 0) {
-        throw "Ungueltige interne Feldnamen gefunden - Abbruch VOR jeder Verbindung/Aenderung:`n  $($violations -join "`n  ")"
-    }
-    Write-Host "Namensregel-Pruefung bestanden: alle internen Feldnamen <= 32 Zeichen und nur [A-Za-z0-9_]."
-}
-
 function Get-NormalizedChoiceKey {
     <#
       Review Nils 28.10.2026 (2_Unternehmens_Gruendungsmodul, Rechtsform-Choices):
@@ -185,77 +206,9 @@ function Get-NormalizedChoiceKey {
     #>
     param([Parameter(Mandatory = $true)][string]$Value)
     $normalized = $Value.Trim().ToLowerInvariant()
-    $normalized = $normalized.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace([char]0x00DF, "ss")
+    $normalized = $normalized.Replace("ä", "ae").Replace("ö", "oe").Replace("ü", "ue").Replace(([char]0x00DF).ToString(), "ss")
     $normalized = $normalized -replace '\s+', ' '
     return $normalized
-}
-
-function Test-ChoiceValueDuplicates {
-    <#
-      Statischer Selbsttest (Review Nils 28.10.2026): prueft JEDE einzelne
-      -Choices-Liste eines Add-Field-Aufrufs in diesem Skript auf
-      Schreibvarianten-Dubletten (z. B. gleicher Wert einmal mit Umlaut, einmal
-      ohne). Die auf der Zielsite tatsaechlich gefundenen Dubletten stammen
-      nach Befund aus mehreren, nacheinander gegen dieselbe Site gelaufenen
-      HISTORISCHEN Skriptversionen (die nicht-destruktive Angleichung ergaenzt
-      Auswahlwerte nur, entfernt nie) - nicht aus der aktuellen Fassung dieses
-      Skripts selbst. Dieser Selbsttest kann solche historisch akkumulierten
-      Dubletten auf einer bereits produktiven Site deshalb NICHT erkennen (er
-      liest nie von SharePoint); das uebernimmt Test-SteuerlicheErfassungListen.ps1
-      (liest die tatsaechlichen Ist-Choices). Dieser Selbsttest ist ein
-      zusaetzliches Sicherheitsnetz gegen kuenftige Kopier-/Tippfehler
-      INNERHALB eines einzelnen Add-Field-Aufrufs, bevor ueberhaupt eine
-      Verbindung aufgebaut wird.
-    #>
-    param([Parameter(Mandatory = $true)][string]$ScriptPath)
-
-    $tokens = $null
-    $parseErrors = $null
-    $ast = [System.Management.Automation.Language.Parser]::ParseFile($ScriptPath, [ref]$tokens, [ref]$parseErrors)
-    if ($parseErrors.Count -gt 0) {
-        throw "Konnte '$ScriptPath' nicht auf Auswahlwert-Dubletten pruefen (Parse-Fehler im Skript selbst): $($parseErrors -join '; ')"
-    }
-
-    $commandAsts = $ast.FindAll(
-        { param($node) $node -is [System.Management.Automation.Language.CommandAst] -and $node.GetCommandName() -eq 'Add-Field' },
-        $true)
-
-    $violations = [System.Collections.Generic.List[string]]::new()
-    foreach ($cmd in $commandAsts) {
-        $elements = $cmd.CommandElements
-        $listValue = $null
-        $internalNameValue = $null
-        $choicesValue = $null
-        for ($i = 1; $i -lt $elements.Count; $i++) {
-            $el = $elements[$i]
-            if ($el -is [System.Management.Automation.Language.CommandParameterAst] -and ($i + 1) -lt $elements.Count) {
-                if ($el.ParameterName -eq 'List') { $listValue = $elements[$i + 1].SafeGetValue() }
-                elseif ($el.ParameterName -eq 'InternalName') { $internalNameValue = $elements[$i + 1].SafeGetValue() }
-                elseif ($el.ParameterName -eq 'Choices') { $choicesValue = @($elements[$i + 1].SafeGetValue()) }
-            }
-        }
-        if ($choicesValue) {
-            $seen = @{}
-            foreach ($choice in $choicesValue) {
-                $key = Get-NormalizedChoiceKey -Value $choice
-                # -cne (fallunterscheidend!) statt -ne: PowerShell vergleicht
-                # Strings mit -ne standardmaessig GROSS-/KLEINSCHREIBUNGS-
-                # UNABHAENGIG, wodurch z. B. "Unbekannt" vs. "unbekannt" sonst
-                # faelschlich als identisch durchgehen wuerde (im End-to-End-
-                # Selbsttest 28.10.2026 mit absichtlich eingefuegter Dublette
-                # reproduziert und mit -cne behoben).
-                if ($seen.ContainsKey($key) -and $seen[$key] -cne $choice) {
-                    $violations.Add("$listValue / $internalNameValue : '$($seen[$key])' vs. '$choice' (normalisiert identisch: '$key')")
-                }
-                $seen[$key] = $choice
-            }
-        }
-    }
-
-    if ($violations.Count -gt 0) {
-        throw "Schreibvarianten-Dubletten in Auswahlwerten gefunden - Abbruch VOR jeder Verbindung/Aenderung:`n  $($violations -join "`n  ")"
-    }
-    Write-Host "Auswahlwert-Dubletten-Pruefung bestanden: keine Schreibvarianten innerhalb einer Choices-Liste."
 }
 
 # ---------------------------------------------------------------------------
@@ -264,6 +217,11 @@ function Test-ChoiceValueDuplicates {
 
 function New-ListIfMissing {
     param([string]$Title, [string]$Template = "GenericList")
+    Test-ChListPrefix -ListName $Title
+    if ($script:WhatIfMode) {
+        Write-Host "[WhatIf] Liste sicherstellen (anlegen falls fehlend, nie loeschen): $Title"
+        return
+    }
     $existing = Get-PnPList -Identity $Title -ErrorAction SilentlyContinue
     if (-not $existing) {
         Write-Host "Lege Liste an: $Title"
@@ -568,11 +526,8 @@ function Add-Field {
         die ersten beiden waren zu diesem Zeitpunkt bereits durch die
         Grundregel-Arbeit in diesem Skript behoben).
 
-      Defensive Namensregel-Pruefung (zusaetzlich zur Pruefung am Skriptanfang,
-      siehe Test-InternalFieldNamingRules): da $InternalName hier immer ein
-      literaler String aus dem Skript ist, sollte die Pruefung am Skriptanfang
-      jeden Verstoss bereits vor der ersten Verbindung abfangen. Diese zweite,
-      lokale Pruefung ist nur ein zusaetzliches Sicherheitsnetz.
+      Defensive Namensregel-Pruefung zusaetzlich zur Pruefung der aus
+      felder.json abgeleiteten internen Namen am Skriptanfang.
     #>
     param(
         [Parameter(Mandatory = $true)][string]$List,
@@ -599,8 +554,13 @@ function Add-Field {
         [ValidateSet("Alle", "Gesellschaft", "NatuerlichePerson")][string[]]$AppliesTo = @("Alle")
     )
 
+    Test-ChListPrefix -ListName $List
+    if ($Type -eq "Lookup") {
+        if (-not $LookupList) { throw "Lookup '$InternalName' ($List) ohne -LookupList." }
+        Test-ChListPrefix -ListName $LookupList
+    }
     if ($InternalName.Length -gt 32 -or $InternalName -notmatch '^[A-Za-z0-9_]+$') {
-        throw "Ungueltiger interner Feldname '$InternalName' ($List): > 32 Zeichen oder Zeichen ausserhalb [A-Za-z0-9_]. Siehe Test-InternalFieldNamingRules."
+        throw "Ungueltiger interner Feldname '$InternalName' ($List): > 32 Zeichen oder Zeichen ausserhalb [A-Za-z0-9_]."
     }
     if ($Required -and $FieldRole -ne "Tatsache" -and $Type -ne "Lookup") {
         # Lookup ausgenommen: case_id ist in jeder Folgeliste -Required UND
@@ -609,6 +569,13 @@ function Add-Field {
         # Required-Boolean-Falle betrifft nur Felder, die ein Mensch ueber
         # ein Pflicht-UI-Element ausfuellen muesste).
         throw "Feld '$InternalName' ($List) ist -Required, aber -FieldRole '$FieldRole' - widerspricht der Grundregel: Ergebnis-/Systemfelder duerfen nie vom Mandanten zwingend erfragt werden. Siehe README.md Abschnitt C3."
+    }
+
+    if ($script:WhatIfMode) {
+        $reqLabel = if ($Required) { " Required" } else { "" }
+        $lookupLabel = if ($Type -eq "Lookup") { " -> $LookupList.$LookupField" } else { "" }
+        Write-Host "[WhatIf] Spalte sicherstellen (anlegen oder angleichen, nie loeschen): $List / $InternalName ($Type$reqLabel$lookupLabel)"
+        return
     }
 
     $existing = Get-PnPField -List $List -Identity $InternalName -ErrorAction SilentlyContinue
@@ -824,9 +791,7 @@ foreach ($def in $spFields.Values) {
 }
 Write-Host "Auswahlwert-Dubletten-Pruefung bestanden (Wertelisten aus JSON)."
 
-Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
-
-$listOrder = @(
+$logicalLists = @(
     "0_Fallsteuerung",
     "1_Unternehmen",
     "2_Personen",
@@ -840,16 +805,41 @@ $listOrder = @(
     "Technische_Mindestfelder",
     "Eingang_Fehler"
 )
+$listOrder = @($logicalLists | ForEach-Object { Get-ChListName $_ })
+foreach ($listName in $listOrder) {
+    Test-ChListPrefix -ListName $listName
+}
+
+$fallsteuerung = Get-ChListName "0_Fallsteuerung"
+$eingangFehler = Get-ChListName "Eingang_Fehler"
+$personen = Get-ChListName "2_Personen"
+$anteile = Get-ChListName "3_Anteile"
+
+if ($script:WhatIfMode) {
+    Write-Host "Trockenlauf (-WhatIf): keine Verbindung, keine Aenderung. Zielsite waere: $(if ($SiteUrl) { $SiteUrl } else { 'https://obenhaus.sharepoint.com/sites/steueranwaltskanzlei' })"
+}
+else {
+    if (-not (Get-Module -ListAvailable -Name PnP.PowerShell)) {
+        throw "PnP.PowerShell ist fuer den Live-Lauf noetig. Trockenlauf ohne Tenant: -WhatIf"
+    }
+    Import-Module PnP.PowerShell -ErrorAction Stop
+    if ($PSCmdlet.ShouldProcess($SiteUrl, "Listenfamilie EasyGov CH anlegen oder angleichen")) {
+        Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId
+    }
+    else {
+        return
+    }
+}
 
 foreach ($listName in $listOrder) {
     New-ListIfMissing -Title $listName
 }
 
-# case_id in Folgelisten als Lookup auf 0_Fallsteuerung (nicht im Portal, analog DE/AO)
-$followLists = $listOrder | Where-Object { $_ -ne "0_Fallsteuerung" -and $_ -ne "Eingang_Fehler" }
+# case_id in Folgelisten als Lookup auf CH_0_Fallsteuerung (nicht im Portal, analog DE/AO)
+$followLists = $listOrder | Where-Object { $_ -ne $fallsteuerung -and $_ -ne $eingangFehler }
 foreach ($listName in $followLists) {
     Add-Field -List $listName -InternalName "case_id" -DisplayName "Fall-ID" -Type Lookup -Required -FieldRole "System" `
-        -LookupList "0_Fallsteuerung" -LookupField "case_id" -DeleteBehavior Restrict
+        -LookupList $fallsteuerung -LookupField "case_id" -DeleteBehavior Restrict
 }
 
 foreach ($def in ($spFields.Values | Sort-Object List, InternalName)) {
@@ -857,7 +847,7 @@ foreach ($def in ($spFields.Values | Sort-Object List, InternalName)) {
     if ($def.List -eq "3_Anteile" -and $def.InternalName -eq "person_label") { continue }
 
     $addParams = @{
-        List         = $def.List
+        List         = Get-ChListName $def.List
         InternalName = $def.InternalName
         DisplayName  = $def.DisplayName
         Type         = $def.Type
@@ -874,8 +864,13 @@ foreach ($def in ($spFields.Values | Sort-Object List, InternalName)) {
 }
 
 if ($spFields.ContainsKey("3_Anteile|person_label")) {
-    Add-Field -List "3_Anteile" -InternalName "person_label" -DisplayName "Gesellschafter Anzeigelabel" -Type Lookup -Required -FieldRole "System" `
-        -LookupList "2_Personen" -LookupField "display_label" -DeleteBehavior None
+    Add-Field -List $anteile -InternalName "person_label" -DisplayName "Gesellschafter Anzeigelabel" -Type Lookup -Required -FieldRole "System" `
+        -LookupList $personen -LookupField "display_label" -DeleteBehavior None
 }
 
-Write-Host "Fertig. Listenfamilie EasyGov Unternehmensgruendung angelegt bzw. angeglichen."
+if ($script:WhatIfMode) {
+    Write-Host "Trockenlauf fertig. Es wurde nichts angelegt oder geaendert."
+}
+else {
+    Write-Host "Fertig. Listenfamilie EasyGov Unternehmensgruendung (Praefix $script:ListPrefix) angelegt bzw. angeglichen."
+}

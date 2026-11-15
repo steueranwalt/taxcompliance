@@ -19,7 +19,7 @@ Listen mit `"unvollstaendig": true` sind bewusst lückenhaft (Portal-Autocomplet
 | `ausgleichskassen.json` | Ausgleichskassen (Einzelmitgliedschaft) |
 | `uvg_versicherer.json` | Privatversicherer (Suva-Zweig nicht gesehen) |
 | `sprachen.json` | Firma / Übersetzung |
-| `liberierungsart.json` | Bar / Sacheinlage / Verrechnung |
+| `liberierungsart.json` | Bar / Sacheinlage / Verrechnung / Sachübernahme (letzteres Kanzlei, nicht in EasyGov) |
 | `waehrungen.json` | CHF, EUR, GBP, JPY, USD |
 | `mwst_taetigkeitscodes_beispiele.json` | vier ESTV-Beispiele, nicht vollständig |
 | `rechtsformen_juristische_person.json` | KmG-Kommanditär, Beispiele |
