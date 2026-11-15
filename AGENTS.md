@@ -4,21 +4,32 @@
 
 ### Nature of this repository
 
-This repo is a **content-only knowledge base** — a German/Swiss tax-law
-documentation tree ("Tax Compliance – Wissensbasis"). It contains only
-Markdown files (`README.md`, `INDEX.md`, per-topic `README.md`s, and
-`_migration/*.md`) plus `.gitkeep` placeholders for empty topic folders.
+This repo is a German/Swiss tax-law documentation tree
+("Tax Compliance – Wissensbasis"). The primary content is Markdown
+(`README.md`, `INDEX.md`, per-topic `README.md`s, `_migration/*.md`)
+plus `.gitkeep` placeholders.
 
-There is **no application, service, build system, package manifest, database,
-or automated test suite**. Do not look for `package.json`, a dev server, or
-CI — none exist. "Development" means authoring/editing Markdown and reviewing
-how it renders.
+Phase 1 adds a small machine-readable layer that must not replace the
+knowledge tree:
+
+- `schema/lkg/graph.schema.json` — Legal Knowledge Graph
+- `data/lkg/examples/` — fixtures (no mandate/personal data)
+- `tools/lkg-validate/` — local Node validator (`npm test`)
+
+That tool folder is the only committed `package.json`. Do not turn the repo
+into an application. Do not invent legal sources. `LEGAL_APPROVED` is never
+set by an agent.
 
 ### Dependencies / update script
 
-There are **no project dependencies to install**. The update script is
-intentionally a no-op. Node.js and Python are preinstalled on the VM if you
-need ad-hoc tooling.
+There are **no root project dependencies**. The update script is
+intentionally a no-op. The only install is optional and local:
+
+```
+cd tools/lkg-validate && npm install && npm test
+```
+
+Node.js and Python are preinstalled on the VM if you need ad-hoc tooling.
 
 ### Linting the docs
 

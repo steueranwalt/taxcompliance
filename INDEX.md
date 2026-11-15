@@ -105,3 +105,19 @@ Export des SharePoint-Notizbuchs **Notizbuch für Wissen** (Site `Wissen`). Pro 
 | Steuern CH, Steuern DE | ausstehend (Graph-Throttling) |
 
 Details: [`Notizbuch-fuer-Wissen/README.md`](Notizbuch-fuer-Wissen/README.md) — bislang ~1300 Markdown-Seiten.
+
+---
+
+## Implementierung Tax Legal Knowledge System (`docs/implementation/`)
+
+Steuerung der maschinenlesbaren Schicht (Phase 0 ff.). Keine zweite juristische Bibliothek.
+
+| Datei | Inhalt |
+|---|---|
+| [`INVENTORY.md`](docs/implementation/INVENTORY.md) | Bestandsregister |
+| [`GAP_ANALYSIS.md`](docs/implementation/GAP_ANALYSIS.md) | Lücken gegen die neun Zielgebiete |
+| [`IMPLEMENTATION_PLAN.md`](docs/implementation/IMPLEMENTATION_PLAN.md) | PR-Reihenfolge |
+| [`DECISIONS.md`](docs/implementation/DECISIONS.md) | Entscheidungen Nils und offene Fragen |
+| [`STATUS.md`](docs/implementation/STATUS.md) | Fortschritt |
+
+Maschinenlesbare Schicht (Phase 1): [`schema/lkg/`](schema/lkg/README.md), Instanzen unter [`data/lkg/examples/`](data/lkg/examples/valid-ao-171.json), Validator [`tools/lkg-validate/`](tools/lkg-validate/package.json).

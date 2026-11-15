@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-11-04",
+  "hinweis_rechtsverbindlichkeit": "Technisch gueltiger Beispieldatensatz. Keine juristische Freigabe. LEGAL_APPROVED ist nicht gesetzt. § 171 AO ist nur insoweit abgebildet, als DE/Verfahrensrecht/Fristenregister-AO-FGO.md Abschnitt 14 ihn als Ablaufhemmung nennt. Einzelne Hemmungstatbestaende sind nicht erfunden.",
+  "norms": [
+    {
+      "id": "DE-AO-0171",
+      "jurisdiction": "DE",
+      "legal_system_type": "domestic",
+      "legal_level": "federal",
+      "instrument_type": "statute",
+      "issuer": { "type": "state", "states": ["DE"] },
+      "territory": { "countries": ["DE"] },
+      "topic": "Steuerverfahrensrecht",
+      "title": "Ablaufhemmung",
+      "citation": "§ 171 AO",
+      "verification_status": "LEGAL_REVIEW_REQUIRED",
+      "ingested_at": "2026-11-04T16:00:00Z",
+      "open_verification": [
+        "Wortlaut und geltende Absatzgliederung von § 171 AO sind im Repo nicht als Primärtext vorhanden."
+      ]
+    }
+  ],
+  "norm_versions": [
+    {
+      "id": "DE-AO-0171-REG-2026-09-29",
+      "norm_id": "DE-AO-0171",
+      "jurisdiction": "DE",
+      "title": "§ 171 AO, Stand Fristenregister 29.09.2026",
+      "citation": "§ 171 AO",
+      "valid_from": "2026-09-29",
+      "source_ids": ["SRC-DE-FRISTENREGISTER-AO-FGO-2026-09-29", "SRC-DE-CONNECTOR-NEURIS-2026-09-29"],
+      "limitation_ids": ["LIM-DE-AO-0171-ABLAUFHEMMUNG"],
+      "publication_evidence": "Nicht aus Primaerverkundung belegt.",
+      "verification_status": "LEGAL_REVIEW_REQUIRED",
+      "ingested_at": "2026-11-04T16:00:00Z",
+      "open_verification": [
+        "valid_from 2026-09-29 ist der Pruefstand des Fristenregisters, nicht der gesetzliche Geltungsbeginn einer bestimmten Fassung.",
+        "Historie darf nachgezogen, aber nicht ueberschrieben werden."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "SRC-DE-FRISTENREGISTER-AO-FGO-2026-09-29",
+      "kind": "register",
+      "title": "Fristenregister AO/FGO, Abschnitt 14 Festsetzungs- und Zahlungsverjaehrung",
+      "locator": "DE/Verfahrensrecht/Fristenregister-AO-FGO.md",
+      "retrieved_at": "2026-11-04",
+      "verification_status": "SOURCE_VERIFIED",
+      "ingested_at": "2026-11-04T16:00:00Z",
+      "notes": "Repo-interne Kuratierung. Keine Primaernorm."
+    },
+    {
+      "id": "SRC-DE-CONNECTOR-NEURIS-2026-09-29",
+      "kind": "connector",
+      "title": "Connector Deutsches Recht / NeuRIS, genannt im Fristenregister",
+      "locator": "DE/Verfahrensrecht/Fristenregister-AO-FGO.md#quellen--und-rechtsstandshinweis",
+      "retrieved_at": "2026-09-29",
+      "verification_status": "LEGAL_REVIEW_REQUIRED",
+      "ingested_at": "2026-11-04T16:00:00Z",
+      "open_verification": [
+        "Der Connector war in dieser Phase nicht angebunden. Der Datensatz des Rechtsinformationsportals gilt laut Registerhinweis als nicht vollstaendig."
+      ]
+    }
+  ],
+  "events": [
+    {
+      "id": "EVT-DE-AO-FESTSETZUNGSFRIST-LAUF",
+      "title": "Lauf der Festsetzungsfrist (Register: Beginn nach § 170 AO, Hemmung nach § 171 AO)",
+      "jurisdiction": "DE",
+      "limitation_ids": ["LIM-DE-AO-0171-ABLAUFHEMMUNG"],
+      "verification_status": "LEGAL_REVIEW_REQUIRED",
+      "ingested_at": "2026-11-04T16:00:00Z",
+      "open_verification": [
+        "Konkreter Ausloeser eines einzelnen §-171-Absatzes ist nicht aus dem Register ableitbar."
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "LIM-DE-AO-0171-ABLAUFHEMMUNG",
+      "title": "Ablaufhemmung der Festsetzungsfrist",
+      "kind": "suspension",
+      "norm_version_id": "DE-AO-0171-REG-2026-09-29",
+      "triggering_event_id": "EVT-DE-AO-FESTSETZUNGSFRIST-LAUF",
+      "verification_status": "LEGAL_REVIEW_REQUIRED",
+      "ingested_at": "2026-11-04T16:00:00Z",
+      "open_verification": [
+        "Fristenregister Abschnitt 14: 'zahlreiche tatbestandsbezogene Hemmungen'. Keine Einzeltatbestaende in diesen Datensatz aufgenommen."
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "id": "REL-NORM-DE-AO-0171-VERSION",
+      "type": "NORM_TO_NORM_VERSION",
+      "from_type": "NORM",
+      "from_id": "DE-AO-0171",
+      "to_type": "NORM_VERSION",
+      "to_id": "DE-AO-0171-REG-2026-09-29"
+    },
+    {
+      "id": "REL-SRC-REGISTER-TO-VERSION",
+      "type": "SOURCE_TO_NORM_VERSION",
+      "from_type": "SOURCE",
+      "from_id": "SRC-DE-FRISTENREGISTER-AO-FGO-2026-09-29",
+      "to_type": "NORM_VERSION",
+      "to_id": "DE-AO-0171-REG-2026-09-29"
+    },
+    {
+      "id": "REL-SRC-CONNECTOR-TO-VERSION",
+      "type": "SOURCE_TO_NORM_VERSION",
+      "from_type": "SOURCE",
+      "from_id": "SRC-DE-CONNECTOR-NEURIS-2026-09-29",
+      "to_type": "NORM_VERSION",
+      "to_id": "DE-AO-0171-REG-2026-09-29"
+    },
+    {
+      "id": "REL-VERSION-TO-LIMITATION",
+      "type": "NORM_VERSION_TO_LIMITATION",
+      "from_type": "NORM_VERSION",
+      "from_id": "DE-AO-0171-REG-2026-09-29",
+      "to_type": "LIMITATION",
+      "to_id": "LIM-DE-AO-0171-ABLAUFHEMMUNG"
+    },
+    {
+      "id": "REL-EVENT-TO-LIMITATION",
+      "type": "EVENT_TO_LIMITATION",
+      "from_type": "EVENT",
+      "from_id": "EVT-DE-AO-FESTSETZUNGSFRIST-LAUF",
+      "to_type": "LIMITATION",
+      "to_id": "LIM-DE-AO-0171-ABLAUFHEMMUNG"
+    }
+  ]
+}
