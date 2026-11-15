@@ -1,0 +1,23 @@
+{
+  "id": "rechtsformen",
+  "titel": "Rechtsform",
+  "werte": [
+    {
+      "wert": "Einzelunternehmen"
+    },
+    {
+      "wert": "Kollektivgesellschaft (KlG)"
+    },
+    {
+      "wert": "Kommanditgesellschaft (KmG)"
+    },
+    {
+      "wert": "Aktiengesellschaft (AG)"
+    },
+    {
+      "wert": "Gesellschaft mit beschränkter Haftung (GmbH)"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

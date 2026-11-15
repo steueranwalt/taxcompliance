@@ -1,0 +1,14 @@
+{
+  "id": "adressvorlage",
+  "titel": "Adressvorlage Geschaeftsdomizil",
+  "werte": [
+    {
+      "wert": "Neue Adresse"
+    },
+    {
+      "wert": "bestehende Adresse"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

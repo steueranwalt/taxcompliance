@@ -1,0 +1,31 @@
+{
+  "id": "rechtsformen_juristische_person",
+  "titel": "Rechtsform juristische Person (Kommanditär)",
+  "unvollstaendig": true,
+  "hinweis": "Lange Portal-Liste; im Inventar nur Beispiele. Vollkatalog offen.",
+  "werte": [
+    {
+      "wert": "Aktiengesellschaft (AG)"
+    },
+    {
+      "wert": "Gesellschaft mit beschränkter Haftung (GmbH)"
+    },
+    {
+      "wert": "Kommanditaktiengesellschaft (KmAG)"
+    },
+    {
+      "wert": "Zweigniederlassung ausländisches Unternehmen"
+    },
+    {
+      "wert": "SICAV"
+    },
+    {
+      "wert": "Trust"
+    },
+    {
+      "wert": "Ausländisches Unternehmen"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

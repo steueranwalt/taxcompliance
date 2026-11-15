@@ -1,0 +1,147 @@
+{
+  "stand": "2026-11-15",
+  "bugs": [
+    {
+      "id": "bug-sss-anteil",
+      "titel": "Saldosteuersatz-Anteilsfeld nicht gefunden",
+      "bereich": "mwst",
+      "beschreibung": "Bei Methode Saldosteuersatz erscheint der Fehler, Anteile aller Tätigkeiten müssten in der Summe 100 % ergeben. Anteilsfeld und SSS-Auswahl waren im Inventar nicht auffindbar."
+    },
+    {
+      "id": "bug-klg-titel-eu",
+      "titel": "KlG-PDF Titel Einzelunternehmen",
+      "bereich": "hr",
+      "beschreibung": "Strukturiertes KlG-Anmelde-PDF trägt auf Seite 2 den Titel «Anmeldung eines Einzelunternehmens»."
+    },
+    {
+      "id": "bug-kmg-einlageart",
+      "titel": "KmG-PDF Einlageart falsch ausgegeben",
+      "bereich": "hr",
+      "beschreibung": "PDF-Text zur Kommandite gibt die Einlageart nicht korrekt wieder."
+    },
+    {
+      "id": "bug-kmg-haftung",
+      "titel": "KmG-PDF Kommanditär als unbeschränkt haftend",
+      "bereich": "hr",
+      "beschreibung": "Kommanditär auf Seite 5 fälschlich als unbeschränkt haftend bezeichnet."
+    },
+    {
+      "id": "bug-kmg-titel-eu",
+      "titel": "KmG-PDF Titel Einzelunternehmen",
+      "bereich": "hr",
+      "beschreibung": "Wie KlG: PDF-Titel «Anmeldung eines Einzelunternehmens»."
+    },
+    {
+      "id": "bug-klg-cockpit-vollstaendig",
+      "titel": "KlG Cockpit «Vollständig» ohne Einreichung",
+      "bereich": "hr",
+      "beschreibung": "Nach «Später fertigstellen» zeigt das Cockpit den HR-Prozess als vollständig, obwohl die Abschluss-Checkbox nicht gesetzt und nichts eingereicht wurde (Papierweg)."
+    },
+    {
+      "id": "bug-hr-branche-lade",
+      "titel": "Branchenkatalog HR-Seite Ladefehler",
+      "bereich": "hr",
+      "beschreibung": "Branche-Seite in der HR-Anmeldung EU lud nicht; Liste aus dem Gründungsablauf übernommen."
+    },
+    {
+      "id": "bug-zh-keine-e-notare",
+      "titel": "ZH keine Treffer elektronische Gründung",
+      "bereich": "hr",
+      "beschreibung": "Notarsuche Kanton ZH ohne Treffer für elektronische Gründung (Stand 15.11.2026). Fallback-Checkbox auf Papierweg."
+    }
+  ],
+  "nicht_abgefragt": [
+    {
+      "id": "gap-statuten",
+      "titel": "Statuten / Gesellschaftsvertrag",
+      "beschreibung": "EasyGov fragt Statuten nicht ab; beim Notar zu erheben."
+    },
+    {
+      "id": "gap-revision",
+      "titel": "Revisionsstelle / Opting-out",
+      "beschreibung": "Weder GmbH- noch AG-HR-Strecke fragt Revisionsstelle oder Opting-out ab."
+    },
+    {
+      "id": "gap-vinkulierung",
+      "titel": "Vinkulierung, Nachschuss, Nebenleistung, Publikationsorgan",
+      "beschreibung": "Nicht in EasyGov; beim Notar zu erheben."
+    },
+    {
+      "id": "gap-bank-liberierung",
+      "titel": "Bank / Kapitaleinzahlung",
+      "beschreibung": "Keine Uploads, keine Bankbestätigung in EasyGov."
+    },
+    {
+      "id": "gap-jp-gesellschafter-gmbh",
+      "titel": "Juristische Person als GmbH/AG-Gesellschafter",
+      "beschreibung": "HR-Strecke erlaubt nur natürliche Personen als Gründer."
+    },
+    {
+      "id": "gap-nennwert",
+      "titel": "Separates Nennwertfeld",
+      "beschreibung": "Kein Nennwertfeld; implizit Kapital/Anzahl. Keine Stimmrechtsaktien, keine Partizipationsscheine."
+    },
+    {
+      "id": "gap-sachuebernahme",
+      "titel": "Sachübernahme-Option",
+      "beschreibung": "In der Liberierungsart nicht sichtbar."
+    },
+    {
+      "id": "gap-iban-mwst",
+      "titel": "IBAN in der MWST-Anmeldung",
+      "beschreibung": "ESTV-Strecke ohne IBAN und ohne AHV im Kontakt-Schritt."
+    },
+    {
+      "id": "gap-suva-zweig",
+      "titel": "Suva-pflichtige Branche",
+      "beschreibung": "Suva-Zweig im UVG-Inventar nicht gesehen."
+    }
+  ],
+  "offen": [
+    {
+      "id": "open-wohn-ausland-hr-eu",
+      "titel": "Wohnsitz Ausland im HR-EU-Detail",
+      "beschreibung": "In der HR-Anmeldung EU nicht im Detail aufgenommen; in den Gründungs-Basisdaten (Varianten) dokumentiert."
+    },
+    {
+      "id": "open-schweizer-ausland",
+      "titel": "Schweizer/in mit Wohnsitz Ausland",
+      "beschreibung": "Pfad in den Varianten offen."
+    },
+    {
+      "id": "open-uvg-anmeldung-statt-offerte",
+      "titel": "UVG Anmeldung statt Offerte",
+      "beschreibung": "Pfad «Anmeldung an Ihren UVG-Versicherer senden» nicht durchgespielt."
+    },
+    {
+      "id": "open-mwst-anderes-datum",
+      "titel": "MWST Datumsfeld Anderes Datum",
+      "beschreibung": "Feld bei «Anderes Datum» nicht im Detail erfasst."
+    },
+    {
+      "id": "open-jp-rechtsformen",
+      "titel": "Vollständige Rechtsformliste juristische Personen",
+      "beschreibung": "KmG-Kommanditär: Portal-Liste nur beispielhaft erhoben."
+    },
+    {
+      "id": "open-kmg-auszuege-adressen",
+      "titel": "Kontakt-/Rechnungsadresse bei 0 Auszügen",
+      "beschreibung": "Felder bei 0 Auszügen nicht eingeblendet; Typ offen."
+    },
+    {
+      "id": "open-weitere-lokale-struktur",
+      "titel": "Weitere Geschäftslokale als wiederholbares Objekt",
+      "beschreibung": "Im Portal optional; hier vorerst Freitext, analog DE Standortliste noch nicht ausgebaut."
+    },
+    {
+      "id": "open-klg-kmg-variantenmatrix",
+      "titel": "KlG/KmG unter CHF 100'000",
+      "beschreibung": "Meldepflichten-Kombinationen unter der Schwelle nicht separat durchgespielt."
+    },
+    {
+      "id": "open-transparenzregister",
+      "titel": "Transparenzregister",
+      "beschreibung": "EasyGov erwähnt es für GmbH/AG nach HR-Eintrag; Felder nicht erhoben."
+    }
+  ]
+}

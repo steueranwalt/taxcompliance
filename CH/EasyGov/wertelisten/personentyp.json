@@ -1,0 +1,14 @@
+{
+  "id": "personentyp",
+  "titel": "Art der Person",
+  "werte": [
+    {
+      "wert": "Natürliche Person"
+    },
+    {
+      "wert": "Juristische Person"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

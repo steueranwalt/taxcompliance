@@ -1,0 +1,69 @@
+{
+  "id": "dokumenttypen",
+  "titel": "Belege / Dokumenttypen",
+  "hinweis": "EasyGov hat in den Gruendungsschritten keine Uploads. HR Papier: Original per Post. AHV: Beilagen «nach Moeglichkeit», kein Upload. Hier Kanzlei-Erhebung.",
+  "werte": [
+    {
+      "wert": "Anmeldeformular mit Unterschriftsbeglaubigung"
+    },
+    {
+      "wert": "Ausweis Pass oder Identitätskarte (kein Führerausweis)"
+    },
+    {
+      "wert": "Domizilhaltererklärung (c/o)"
+    },
+    {
+      "wert": "Auftrag an die Notarin / den Notar"
+    },
+    {
+      "wert": "Öffentliche Beurkundung / Errichtungsakt"
+    },
+    {
+      "wert": "Statuten / Gesellschaftsvertrag (nicht in EasyGov, beim Notar)"
+    },
+    {
+      "wert": "Revisionsstelle oder Opting-out (nicht in EasyGov, beim Notar)"
+    },
+    {
+      "wert": "Bankbestätigung Kapitaleinzahlung (nicht in EasyGov, beim Notar)"
+    },
+    {
+      "wert": "Offerten/Rechnungen an Kunden"
+    },
+    {
+      "wert": "unterzeichnete Kundenvertraege/Auftraege"
+    },
+    {
+      "wert": "Mietverträge Geschaeftsraeume"
+    },
+    {
+      "wert": "Leasing-/Kaufvertraege Investitionen"
+    },
+    {
+      "wert": "Nachweis Eigenkapital"
+    },
+    {
+      "wert": "Auszug Buchhaltung/Kassabuch"
+    },
+    {
+      "wert": "BVG-Anschlussvertrag"
+    },
+    {
+      "wert": "weitere Nachweise der Selbstständigkeit"
+    },
+    {
+      "wert": "Arbeitsvertraege oder Schätzungen/Offerten"
+    },
+    {
+      "wert": "Policen Krankenversicherung/AHV"
+    },
+    {
+      "wert": "Übersetzte Unternehmensbezeichnung Nachweis"
+    },
+    {
+      "wert": "Nachweis akademischer Titel"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

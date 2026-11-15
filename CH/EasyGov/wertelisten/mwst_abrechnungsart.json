@@ -1,0 +1,15 @@
+{
+  "id": "mwst_abrechnungsart",
+  "titel": "Art der Abrechnung",
+  "hinweis": "Art. 39, 40 MWSTG; vereinnahmte Entgelte mindestens eine Steuerperiode.",
+  "werte": [
+    {
+      "wert": "vereinbarte Entgelte (Standard)"
+    },
+    {
+      "wert": "vereinnahmte Entgelte"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

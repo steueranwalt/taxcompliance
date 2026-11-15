@@ -1,0 +1,15 @@
+{
+  "id": "anmeldungsart_hr",
+  "titel": "Anmeldungsart Handelsregister",
+  "hinweis": "EU: elektronisch (QES, Upload) oder Papier. KlG/KmG: Papierformular an HR-Amt, kein Notar.",
+  "werte": [
+    {
+      "wert": "Elektronisch (QES, Upload, Ausweis- und Unterschriftsscan)"
+    },
+    {
+      "wert": "Papier (Unterschriften beglaubigen, per Post/Schalter)"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

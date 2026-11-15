@@ -1,0 +1,21 @@
+{
+  "id": "extern_erledigtes_arten",
+  "titel": "Bereits erledigte Anmeldungen",
+  "hinweis": "Checkboxen, sichtbar wenn Status = Ja, und zwar.",
+  "werte": [
+    {
+      "wert": "HR"
+    },
+    {
+      "wert": "MWST"
+    },
+    {
+      "wert": "Ausgleichskasse"
+    },
+    {
+      "wert": "UVG"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

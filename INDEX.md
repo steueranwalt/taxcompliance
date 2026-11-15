@@ -53,6 +53,11 @@ _noch keine Dokumente_
 ### Steuerharmonisierungsgesetz (StHG)
 _noch keine Dokumente_
 
+### EasyGov / Unternehmensgründung
+
+- [Feldinventar EasyGov-Unternehmensgründung](CH/EasyGov/README.md) — Portal-Feldkatalog, Meldepflichten-Matrix, Wertelisten, SharePoint-Listen (Stand 15.11.2026)
+- [Handelsregisteranmeldung Einzelunternehmen](CH/Handelsregister/handelsregister_einzelunternehmen_formularfelder_lp_beratung.md) — anonymisierte Felderanalyse eines EasyGov-Ausdrucks (Formularstand 11.8.2025)
+
 ### Mehrwertsteuer (MWSTG)
 _noch keine Dokumente_
 

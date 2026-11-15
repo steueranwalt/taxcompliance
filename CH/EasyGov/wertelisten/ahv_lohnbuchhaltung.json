@@ -1,0 +1,20 @@
+{
+  "id": "ahv_lohnbuchhaltung",
+  "titel": "Lohnbuchhaltung",
+  "werte": [
+    {
+      "wert": "Papier"
+    },
+    {
+      "wert": "Computergestützt"
+    },
+    {
+      "wert": "Suva Lohnbuchhaltung"
+    },
+    {
+      "wert": "Treuhänder"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

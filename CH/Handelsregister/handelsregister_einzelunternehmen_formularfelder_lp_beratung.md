@@ -79,3 +79,6 @@ Quelle: anonymisiert ausgewerteter EasyGov-Ausdruck «Anmeldung eines Einzelunte
 
 ## I. Fortsetzung
 Offen: Bei Verwendung als verbindliche Kanzlei-Checkliste Formularstand und aktuelle kantonale Einreichungsanforderungen gesondert verifizieren. Kein Mandatsfall, keine personenbezogenen Werte, keine öffentliche Weitergabe des ausgefüllten Originals.
+
+## J. Bezug zum Live-Inventar EasyGov 15.11.2026
+Diese Seite bleibt die Analyse des **Papierausdrucks** (Kanton Zürich, Formularstand 11.8.2025). Das portalweite Feldinventar (alle Rechtsformen, Meldepflichten, HR elektronisch/Papier, MWST, AHV, UVG, Wertelisten) steht unter [`../EasyGov/README.md`](../EasyGov/README.md). Die dortige HR-EU-Strecke bestätigt die Feldgruppen dieser Analyse (Firma, Inhaber, Vertretung, Auszüge, nicht publizierte Zusatzangaben, Beglaubigung Pass/ID) und ergänzt Portalpflichten, Ausweiskategorien und Anmeldungsart elektronisch/Papier. Bei Widerspruch gilt für aktuelle Erfassung das Live-Inventar; dieser Beleg dokumentiert den Ausdruck 11.8.2025.

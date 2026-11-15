@@ -1,0 +1,150 @@
+{
+  "id": "berufsbezeichnungen",
+  "titel": "Berufsbezeichnung (nur Einzelunternehmen)",
+  "gruppiert": true,
+  "hinweis": "Akkordeon ohne Suche. Hinweis Bewilligungspflicht nur Info. Gruppe 8 oeffnet Freitext «Mein Beruf».",
+  "werte": [
+    {
+      "wert": "Anwalt/Anwältin",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Notar/in",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Anwalt und Notar",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Treuhand, Sachwaltung (allg.)",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Vermögensverwaltung, Liegenschaftsverwaltung",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Wirtschaftsprüfung, Steuerberatung, Buchführung",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Unternehmensberater/in (allg.)",
+      "gruppe": "Recht/Steuer/Beratung"
+    },
+    {
+      "wert": "Arzt/Ärztin",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Zahnarzt/ärztin",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Tierarzt/ärztin",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Psychiater/Psychologe",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Naturarzt/ärztin",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Chiropraktor/in",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Physiotherapeut/in",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Podologe/in",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "andere medizinische Tätigkeit",
+      "gruppe": "Medizin"
+    },
+    {
+      "wert": "Coiffeur/se",
+      "gruppe": "Körperpflege"
+    },
+    {
+      "wert": "Kosmetiker/in",
+      "gruppe": "Körperpflege"
+    },
+    {
+      "wert": "Fitness/Wellness-Berater/in oder Trainer/in",
+      "gruppe": "Körperpflege"
+    },
+    {
+      "wert": "Ingenieur/in",
+      "gruppe": "Architektur/Ingenieur/IT"
+    },
+    {
+      "wert": "Architekt/in",
+      "gruppe": "Architektur/Ingenieur/IT"
+    },
+    {
+      "wert": "Geometer/in",
+      "gruppe": "Architektur/Ingenieur/IT"
+    },
+    {
+      "wert": "Projektleitung, Bauleitung",
+      "gruppe": "Architektur/Ingenieur/IT"
+    },
+    {
+      "wert": "Informatikingenieur/in, Informatikberater/in",
+      "gruppe": "Architektur/Ingenieur/IT"
+    },
+    {
+      "wert": "Wirt/in",
+      "gruppe": "Gastgewerbe"
+    },
+    {
+      "wert": "Hotelier/e",
+      "gruppe": "Gastgewerbe"
+    },
+    {
+      "wert": "Wirt und Hotelier",
+      "gruppe": "Gastgewerbe"
+    },
+    {
+      "wert": "Imbiss-Stand, Take-away",
+      "gruppe": "Gastgewerbe"
+    },
+    {
+      "wert": "Landwirt/in Acker-/Pflanzenbau",
+      "gruppe": "Landwirtschaft"
+    },
+    {
+      "wert": "Landwirt/in Tierhaltung/Milchwirtschaft",
+      "gruppe": "Landwirtschaft"
+    },
+    {
+      "wert": "Jagd/Fischerei/Fischzucht",
+      "gruppe": "Landwirtschaft"
+    },
+    {
+      "wert": "freischaffende/r Künstler/in",
+      "gruppe": "Kunst/Medien/Sport"
+    },
+    {
+      "wert": "Journalist/in",
+      "gruppe": "Kunst/Medien/Sport"
+    },
+    {
+      "wert": "Sportler/in",
+      "gruppe": "Kunst/Medien/Sport"
+    },
+    {
+      "wert": "Mein Beruf (Freitext)",
+      "gruppe": "Keine der obigen Bezeichnungen trifft zu"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

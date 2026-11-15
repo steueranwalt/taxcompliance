@@ -1,0 +1,17 @@
+{
+  "id": "mwst_zustelladresse",
+  "titel": "Zustelladresse",
+  "werte": [
+    {
+      "wert": "Sitzadresse"
+    },
+    {
+      "wert": "Privatadresse"
+    },
+    {
+      "wert": "Andere Zustelladresse"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

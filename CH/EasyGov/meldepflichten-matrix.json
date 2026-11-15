@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "stand": "2026-11-15",
+  "schwelle_umsatz_chf": 100000,
+  "hinweis": "Ohne Gewähr, Momentaufnahme EasyGov 15.11.2026, evtl. unvollständig (kantonale Bewilligungen). UVG: EasyGov nennt Suva oder Privatversicherer nach Tätigkeit. GmbH/AG: MWST, AHV, UVG, Transparenzregister erst nach HR-Eintrag. KlG/KmG mit Umsatz ab CHF 100'000 und Personal im Inventar analog KapG-Cockpit (HR, AHV, MWST, UVG zwingend) – nicht für alle Umsatz/Personal-Kombinationen separat durchgespielt.",
+  "zeilen": [
+    {
+      "id": "eu_u100_allein",
+      "rechtsform": "EU",
+      "umsatz": "unter_100k",
+      "personal": "nur_inhaber",
+      "hr": "freiwillig",
+      "mwst": "freiwillig",
+      "ahv": "zwingend",
+      "uvg": "freiwillig",
+      "hinweis": "UVG freiwillig für Inhaber."
+    },
+    {
+      "id": "eu_u100_personal",
+      "rechtsform": "EU",
+      "umsatz": "unter_100k",
+      "personal": "mit_angestellten",
+      "hr": "freiwillig",
+      "mwst": "freiwillig",
+      "ahv": "zwingend",
+      "uvg": "zwingend"
+    },
+    {
+      "id": "eu_ab100_allein",
+      "rechtsform": "EU",
+      "umsatz": "ab_100k",
+      "personal": "nur_inhaber",
+      "hr": "zwingend",
+      "mwst": "zwingend",
+      "ahv": "zwingend",
+      "uvg": "freiwillig"
+    },
+    {
+      "id": "eu_ab100_personal",
+      "rechtsform": "EU",
+      "umsatz": "ab_100k",
+      "personal": "mit_angestellten",
+      "hr": "zwingend",
+      "mwst": "zwingend",
+      "ahv": "zwingend",
+      "uvg": "zwingend"
+    },
+    {
+      "id": "gmbh_u100_allein",
+      "rechtsform": "GmbH",
+      "umsatz": "unter_100k",
+      "personal": "nur_inhaber",
+      "hr": "zwingend",
+      "mwst": "freiwillig",
+      "ahv": "zwingend",
+      "uvg": "zwingend",
+      "hinweis": "HR zwingend wegen Rechtsform. MWST/AHV/UVG laut EasyGov erst nach HR-Eintrag im Cockpit."
+    },
+    {
+      "id": "gmbh_ab100_personal",
+      "rechtsform": "GmbH",
+      "umsatz": "ab_100k",
+      "personal": "mit_angestellten",
+      "hr": "zwingend",
+      "mwst": "zwingend",
+      "ahv": "zwingend",
+      "uvg": "zwingend",
+      "hinweis": "MWST/AHV/UVG im Cockpit erst nach HR-Eintrag freigeschaltet."
+    },
+    {
+      "id": "ag_u100_allein",
+      "rechtsform": "AG",
+      "umsatz": "unter_100k",
+      "personal": "nur_inhaber",
+      "hr": "zwingend",
+      "mwst": "freiwillig",
+      "ahv": "zwingend",
+      "uvg": "zwingend",
+      "hinweis": "Analog GmbH, nicht als eigener Variantenpfad durchgespielt."
+    },
+    {
+      "id": "ag_ab100_personal",
+      "rechtsform": "AG",
+      "umsatz": "ab_100k",
+      "personal": "mit_angestellten",
+      "hr": "zwingend",
+      "mwst": "zwingend",
+      "ahv": "zwingend",
+      "uvg": "zwingend",
+      "hinweis": "Analog GmbH."
+    },
+    {
+      "id": "klg_ab100_personal",
+      "rechtsform": "KlG",
+      "umsatz": "ab_100k",
+      "personal": "mit_angestellten",
+      "hr": "zwingend",
+      "mwst": "zwingend",
+      "ahv": "zwingend",
+      "uvg": "zwingend",
+      "hinweis": "Cockpit-Momentaufnahme; KlG-PDF-Weg. Kombinationen unter CHF 100'000 nicht separat erhoben."
+    },
+    {
+      "id": "kmg_ab100_personal",
+      "rechtsform": "KmG",
+      "umsatz": "ab_100k",
+      "personal": "mit_angestellten",
+      "hr": "zwingend",
+      "mwst": "zwingend",
+      "ahv": "zwingend",
+      "uvg": "zwingend",
+      "hinweis": "Cockpit sofort zwingend HR/AHV/MWST/UVG."
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/steueranwalt/taxcompliance/CH/EasyGov/felder.schema.json",
+  "title": "EasyGov-Feldkatalog Unternehmensgruendung Schweiz",
+  "description": "Maschinenlesbares Feldinventar der bei EasyGov.swiss und mwstanmelden.estv.admin.ch abgefragten Felder. Keine Mandats- oder Personendaten. Analog DE/AO/ableitungsregeln.schema.json und DE/AO/formulardaten-roherfassung.md.",
+  "type": "object",
+  "required": ["schema_version", "stand", "quelle", "hinweis_rechtsverbindlichkeit", "felder"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "type": "string", "description": "Semantische Version dieser Datenstruktur, nicht der Portalinhalte." },
+    "stand": { "type": "string", "format": "date" },
+    "quelle": { "type": "string" },
+    "hinweis_rechtsverbindlichkeit": { "type": "string" },
+    "felder": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/feld" }
+    }
+  },
+  "$defs": {
+    "feld": {
+      "type": "object",
+      "required": ["id", "bereich", "anmeldung", "schritt", "label", "datentyp", "pflichtstatus", "rechtsformen"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(\\.[a-z0-9_]+)+$",
+          "description": "Stabile technische Feld-ID, formular-/schrittbezogen."
+        },
+        "bereich": {
+          "type": "string",
+          "enum": ["gruendung", "hr", "mwst", "ahv", "uvg"]
+        },
+        "anmeldung": {
+          "type": "string",
+          "description": "Konkrete Anmeldung oder Portalstrecke (z. B. basisdaten, hr-gmbh, estv-mwst)."
+        },
+        "schritt": {
+          "type": "string",
+          "description": "Schritt- oder Seitenbezeichnung im Portal, so nah wie moeglich am sichtbaren Wortlaut."
+        },
+        "label": {
+          "type": "string",
+          "description": "Label exakt bzw. so nah wie im Live-Inventar dokumentiert."
+        },
+        "datentyp": {
+          "type": "string",
+          "enum": ["text", "note", "number", "date", "choice", "multichoice", "boolean", "lookup", "checkbox_group", "aktion", "anzeige", "datei"]
+        },
+        "pflichtstatus": {
+          "type": "string",
+          "enum": ["unbedingt", "bedingt", "optional", "ergebnis", "system", "nicht_erfasst"],
+          "description": "unbedingt = Portalpflicht ohne weitere Auswahl; bedingt = erscheint/pflichtig nach Ausloeser; optional = sichtbar ohne Pflicht; ergebnis = von der Kanzlei abgeleitet, nicht als Mandantenwuerdigung; system = technisch; nicht_erfasst = EasyGov fragt das Feld nicht (nur in Lueckenliste)."
+        },
+        "bedingung": {
+          "type": "string",
+          "description": "Ausloeser, falls pflichtstatus=bedingt. Leer bzw. weggelassen, wenn unbedingt oder optional."
+        },
+        "werteliste": {
+          "type": ["string", "null"],
+          "description": "Dateiname ohne .json unter wertelisten/, oder null."
+        },
+        "rechtsformen": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "enum": ["EU", "GmbH", "AG", "KlG", "KmG"] }
+        },
+        "belege": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Vom Portal oder der Kanzlei erwartete Belege, keine Dateinamen von Test-PDFs."
+        },
+        "hinweise": { "type": "string" },
+        "objekt": {
+          "type": "string",
+          "description": "Normalisiertes Datenobjekt im einheitlichen Datenmodell (Person, Unternehmen, Adresse, ...)."
+        },
+        "sharepoint_liste": {
+          "type": ["string", "null"],
+          "description": "Ziel-SharePoint-Liste; null = bewusst kein Listenfeld (Aktion, reine Anzeige, Prozess-Checkbox)."
+        },
+        "sharepoint_internal_name": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Za-z][A-Za-z0-9_]{0,31}$"
+        },
+        "sharepoint_required": {
+          "type": "boolean",
+          "description": "Nur true, wenn die SharePoint-Spalte unbedingte Pflicht fuer jeden Datensatz der Liste ist. Bedingte Portalpflichten bleiben false (Forms-Branching)."
+        },
+        "field_role": {
+          "type": "string",
+          "enum": ["Tatsache", "Ergebnis", "System"]
+        },
+        "wiederholbar": { "type": "boolean" },
+        "quellen_notiz": {
+          "type": "string",
+          "description": "Verweis auf Inventarnotiz 01-10, ohne Entwurfs-IDs."
+        }
+      }
+    }
+  }
+}

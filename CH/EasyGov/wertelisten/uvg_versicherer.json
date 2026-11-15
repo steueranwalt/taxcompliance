@@ -1,0 +1,75 @@
+{
+  "id": "uvg_versicherer",
+  "titel": "UVG-Versicherer",
+  "hinweis": "Mehrfachauswahl. Suva-Zweig im Inventar nicht gesehen; EasyGov schaetzt Suva/Privat aus der Branche.",
+  "werte": [
+    {
+      "wert": "Agrisano"
+    },
+    {
+      "wert": "Allianz Suisse"
+    },
+    {
+      "wert": "Axa"
+    },
+    {
+      "wert": "Basler"
+    },
+    {
+      "wert": "CSS"
+    },
+    {
+      "wert": "Elips"
+    },
+    {
+      "wert": "Generali"
+    },
+    {
+      "wert": "Groupe Mutuel"
+    },
+    {
+      "wert": "HDI Global"
+    },
+    {
+      "wert": "Helsana Unfall"
+    },
+    {
+      "wert": "Helvetia"
+    },
+    {
+      "wert": "Hotela"
+    },
+    {
+      "wert": "Metzger-Versicherungen"
+    },
+    {
+      "wert": "Mobiliar"
+    },
+    {
+      "wert": "FRV"
+    },
+    {
+      "wert": "Solida"
+    },
+    {
+      "wert": "Swica"
+    },
+    {
+      "wert": "Sympany"
+    },
+    {
+      "wert": "Vaudoise"
+    },
+    {
+      "wert": "Visana"
+    },
+    {
+      "wert": "Zürich"
+    },
+    {
+      "wert": "ÖKK"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

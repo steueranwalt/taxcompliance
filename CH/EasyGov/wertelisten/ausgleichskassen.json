@@ -1,0 +1,158 @@
+{
+  "id": "ausgleichskassen",
+  "titel": "Ausgleichskassen (Einzelmitgliedschaft)",
+  "werte": [
+    {
+      "wert": "medisuisse"
+    },
+    {
+      "wert": "Simulac"
+    },
+    {
+      "wert": "Coop"
+    },
+    {
+      "wert": "Ostschweizerische AK Handel und Industrie"
+    },
+    {
+      "wert": "MOBIL"
+    },
+    {
+      "wert": "Metzger"
+    },
+    {
+      "wert": "scienceindustries"
+    },
+    {
+      "wert": "Schweiz. Elektrizitätswerke"
+    },
+    {
+      "wert": "PANVICA"
+    },
+    {
+      "wert": "Arbeitgeber Basel"
+    },
+    {
+      "wert": "HOTELA"
+    },
+    {
+      "wert": "GastroSocial"
+    },
+    {
+      "wert": "Aargauische Arbeitgeber"
+    },
+    {
+      "wert": "Uhrenindustrie"
+    },
+    {
+      "wert": "Gewerbe Thurgau-Schaffhausen"
+    },
+    {
+      "wert": "CICICAM"
+    },
+    {
+      "wert": "Swissmem"
+    },
+    {
+      "wert": "NODE AVS"
+    },
+    {
+      "wert": "Berner Arbeitgeber"
+    },
+    {
+      "wert": "Zürcher Arbeitgeber"
+    },
+    {
+      "wert": "Schweiz. Baumeisterverband"
+    },
+    {
+      "wert": "Transport"
+    },
+    {
+      "wert": "Migros"
+    },
+    {
+      "wert": "Handel Schweiz"
+    },
+    {
+      "wert": "Albicolac"
+    },
+    {
+      "wert": "Milchwirtschaft"
+    },
+    {
+      "wert": "SPIDA"
+    },
+    {
+      "wert": "Versicherung"
+    },
+    {
+      "wert": "Wirtschaft Graubünden/Glarus"
+    },
+    {
+      "wert": "Banken"
+    },
+    {
+      "wert": "EXFOUR"
+    },
+    {
+      "wert": "PROMEA"
+    },
+    {
+      "wert": "AGRAPI"
+    },
+    {
+      "wert": "Schweiz. Gewerbe"
+    },
+    {
+      "wert": "FER CIAM"
+    },
+    {
+      "wert": "Geschäftsinhaber Bern"
+    },
+    {
+      "wert": "Caisses sociales de la CVCI"
+    },
+    {
+      "wert": "Fédération patronale vaudoise"
+    },
+    {
+      "wert": "Meroba"
+    },
+    {
+      "wert": "Gewerbe St. Gallen"
+    },
+    {
+      "wert": "Coiffure & Esthétique"
+    },
+    {
+      "wert": "Wirtschaftskammer Baselland"
+    },
+    {
+      "wert": "Privatkliniken"
+    },
+    {
+      "wert": "AGRIVIT"
+    },
+    {
+      "wert": "swisstempcomp"
+    },
+    {
+      "wert": "Forte"
+    },
+    {
+      "wert": "FER Valais 106.7"
+    },
+    {
+      "wert": "Caisses de Compensation du Bâtiment"
+    },
+    {
+      "wert": "EAK"
+    },
+    {
+      "wert": "Aargauische Industrie- und Handelskammer"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

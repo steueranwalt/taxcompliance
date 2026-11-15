@@ -1,0 +1,23 @@
+{
+  "id": "uvg_mitarbeitende_gruppen",
+  "titel": "Unter den Mitarbeitenden",
+  "werte": [
+    {
+      "wert": "Ehepartner/in"
+    },
+    {
+      "wert": "uebrige Familienangehoerige"
+    },
+    {
+      "wert": "Lehrlinge, Rentner, Heimarbeiter/innen"
+    },
+    {
+      "wert": "Personen ohne Lohn"
+    },
+    {
+      "wert": "Aushilfen/Teilzeitangestellte"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

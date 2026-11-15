@@ -1,0 +1,14 @@
+{
+  "id": "ahv_in_wessen_namen",
+  "titel": "In wessen Namen tätig?",
+  "werte": [
+    {
+      "wert": "eigener Name"
+    },
+    {
+      "wert": "Name eines Auftraggebers"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "zeichnungsberechtigung",
+  "titel": "Zeichnungsberechtigung",
+  "hinweis": "Zehn Werte, in Basisdaten GmbH/AG und in HR-Vertretungen gleichlautend. OR 459 = Prokura.",
+  "werte": [
+    {
+      "wert": "ohne Unterschrift"
+    },
+    {
+      "wert": "Einzelunterschrift"
+    },
+    {
+      "wert": "Kollektivunterschrift zu zweien"
+    },
+    {
+      "wert": "Kollektivunterschrift zu dreien"
+    },
+    {
+      "wert": "Einzelprokura"
+    },
+    {
+      "wert": "Prokura zu zweien"
+    },
+    {
+      "wert": "Prokura zu dreien"
+    },
+    {
+      "wert": "Einzelprokura gemäss OR 459"
+    },
+    {
+      "wert": "Prokura gemäss OR 459 zu zweien"
+    },
+    {
+      "wert": "Prokura gemäss OR 459 zu dreien"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

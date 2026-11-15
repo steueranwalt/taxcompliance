@@ -1,0 +1,18 @@
+{
+  "id": "mwst_steuerpflicht_beginn",
+  "titel": "Obligatorische Steuerpflicht per",
+  "hinweis": "MWST-Info 02 Ziff. 5.2.1.1. Anderes Datum maximal Beginn des 4. Monats.",
+  "werte": [
+    {
+      "wert": "Beginn der unternehmerischen Tätigkeit"
+    },
+    {
+      "wert": "Beginn des 4. Monats"
+    },
+    {
+      "wert": "Anderes Datum"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

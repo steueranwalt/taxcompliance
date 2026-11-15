@@ -1,0 +1,18 @@
+{
+  "id": "liberierungsart",
+  "titel": "Liberierungsart",
+  "hinweis": "Checkboxen, kombinierbar. Keine Sachuebernahme-Option im Inventar sichtbar.",
+  "werte": [
+    {
+      "wert": "Bargründung durch Geldzahlung"
+    },
+    {
+      "wert": "durch Sacheinlagen"
+    },
+    {
+      "wert": "mittels Verrechnung"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}
