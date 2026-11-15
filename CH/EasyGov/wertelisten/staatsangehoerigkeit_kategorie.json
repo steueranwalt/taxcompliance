@@ -1,0 +1,17 @@
+{
+  "id": "staatsangehoerigkeit_kategorie",
+  "titel": "Staatsangehoerigkeit(en)",
+  "werte": [
+    {
+      "wert": "Schweizer/in"
+    },
+    {
+      "wert": "Schweizer/in mit Doppelbürgerschaft(en)"
+    },
+    {
+      "wert": "Ausländer/in"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

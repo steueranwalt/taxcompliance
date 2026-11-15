@@ -1,0 +1,35 @@
+{
+  "id": "ahv_risiko_checkboxen",
+  "titel": "Finanzielles und unternehmerisches Risiko (Checkboxen)",
+  "werte": [
+    {
+      "wert": "stellt Rechnungen"
+    },
+    {
+      "wert": "Verdienst ist Lohn"
+    },
+    {
+      "wert": "trägt Unkosten"
+    },
+    {
+      "wert": "trägt Unterhaltskosten"
+    },
+    {
+      "wert": "Garantiearbeiten auf eigene Kosten"
+    },
+    {
+      "wert": "kauft Material selber"
+    },
+    {
+      "wert": "trägt Inkassorisiko"
+    },
+    {
+      "wert": "Verluste zu eigenen Lasten"
+    },
+    {
+      "wert": "Lohnanspruch in Ausfallzeiten"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

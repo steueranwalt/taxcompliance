@@ -1,0 +1,52 @@
+{
+  "id": "ausweiskategorien",
+  "titel": "Ausweiskategorie",
+  "hinweis": "Ausländer/in mit Wohnsitz Schweiz. Hinweis Arbeitsbewilligung/Meldepflicht in EasyGov nur fuer B/S/F.",
+  "werte": [
+    {
+      "code": "B",
+      "wert": "B",
+      "hinweis": "Hinweis Arbeitsbewilligung/Meldepflicht"
+    },
+    {
+      "code": "C",
+      "wert": "C"
+    },
+    {
+      "code": "Ci",
+      "wert": "Ci"
+    },
+    {
+      "code": "D",
+      "wert": "D"
+    },
+    {
+      "code": "E",
+      "wert": "E"
+    },
+    {
+      "code": "F",
+      "wert": "F",
+      "hinweis": "Hinweis Arbeitsbewilligung/Meldepflicht"
+    },
+    {
+      "code": "G",
+      "wert": "G"
+    },
+    {
+      "code": "L",
+      "wert": "L"
+    },
+    {
+      "code": "N",
+      "wert": "N"
+    },
+    {
+      "code": "S",
+      "wert": "S",
+      "hinweis": "Hinweis Arbeitsbewilligung/Meldepflicht"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "mwst_taetigkeitscodes_beispiele",
+  "titel": "MWST-Taetigkeitscodes (Beispiele, nicht vollstaendig)",
+  "unvollstaendig": true,
+  "hinweis": "ESTV-Autocomplete. Vollkatalog nicht erhoben. Anteilsfeld fuer Saldosteuersatz im Inventar nicht gefunden.",
+  "werte": [
+    {
+      "code": "81010",
+      "wert": "Unternehmensberatung"
+    },
+    {
+      "code": "77410",
+      "wert": "Steuerberatung"
+    },
+    {
+      "code": "77260",
+      "wert": "Treuhandbuero und Steuerberatung"
+    },
+    {
+      "code": "75520",
+      "wert": "Rechts- und Steuerberatung"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

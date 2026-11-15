@@ -1,0 +1,143 @@
+{
+  "id": "funktionen",
+  "titel": "Funktion je Rechtsform und Kontext",
+  "gruppiert": true,
+  "werte": [
+    {
+      "wert": "Inhaber/in mit Einzelunterschrift",
+      "gruppe": "EU Inhaber",
+      "rechtsformen": [
+        "EU"
+      ]
+    },
+    {
+      "wert": "Geschäftsführer/in",
+      "gruppe": "EU weitere Vertreter",
+      "rechtsformen": [
+        "EU"
+      ]
+    },
+    {
+      "wert": "Zeichnungsberechtigte/r",
+      "gruppe": "EU weitere Vertreter",
+      "rechtsformen": [
+        "EU"
+      ]
+    },
+    {
+      "wert": "Gesellschafter(in) und Direktor(in)",
+      "gruppe": "GmbH Basisdaten Gruender",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Gesellschafter(in) und Geschäftsführer(in)",
+      "gruppe": "GmbH Basisdaten Gruender",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Gesellschafter(in) und Vorsitzende/r der Geschäftsleitung",
+      "gruppe": "GmbH Basisdaten Gruender",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Gesellschafter/in",
+      "gruppe": "GmbH Basisdaten Gruender",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Direktor/in",
+      "gruppe": "GmbH sonstige Vertretungen",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Geschäftsführer/in",
+      "gruppe": "GmbH sonstige Vertretungen",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Vorsitzende/r der Geschäftsführung",
+      "gruppe": "GmbH sonstige Vertretungen",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Zeichnungsberechtigte/r",
+      "gruppe": "GmbH sonstige Vertretungen",
+      "rechtsformen": [
+        "GmbH"
+      ]
+    },
+    {
+      "wert": "Direktor/in",
+      "gruppe": "AG Basisdaten / Vertretung",
+      "rechtsformen": [
+        "AG"
+      ]
+    },
+    {
+      "wert": "Gesellschafter/in",
+      "gruppe": "AG Basisdaten / Vertretung",
+      "rechtsformen": [
+        "AG"
+      ]
+    },
+    {
+      "wert": "Mitglied des Verwaltungsrats",
+      "gruppe": "AG Basisdaten / Vertretung",
+      "rechtsformen": [
+        "AG"
+      ]
+    },
+    {
+      "wert": "Präsident/in des Verwaltungsrats",
+      "gruppe": "AG Basisdaten / Vertretung",
+      "rechtsformen": [
+        "AG"
+      ]
+    },
+    {
+      "wert": "Vorsitzende/r der Geschäftsleitung",
+      "gruppe": "AG Basisdaten / Vertretung",
+      "rechtsformen": [
+        "AG"
+      ]
+    },
+    {
+      "wert": "Zeichnungsberechtigte/r",
+      "gruppe": "AG Basisdaten / Vertretung",
+      "rechtsformen": [
+        "AG"
+      ]
+    },
+    {
+      "wert": "Unbeschränkt haftende/r Gesellschafter/in",
+      "gruppe": "KlG/KmG",
+      "rechtsformen": [
+        "KlG",
+        "KmG"
+      ]
+    },
+    {
+      "wert": "Beschränkt haftende/r Gesellschafter/in",
+      "gruppe": "KmG",
+      "rechtsformen": [
+        "KmG"
+      ]
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

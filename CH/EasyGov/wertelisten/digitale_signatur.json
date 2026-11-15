@@ -1,0 +1,15 @@
+{
+  "id": "digitale_signatur",
+  "titel": "Digitale Signatur und Bereitschaft zur Vertretung beim Errichtungsakt",
+  "hinweis": "Nur GmbH/AG. Elektronisch: alle mit QES, Vertretung durch Notar. Papier: mindestens eine Person ohne QES bzw. persönliche Teilnahme.",
+  "werte": [
+    {
+      "wert": "elektronische Gründung (alle QES, Vertretung durch Notar)"
+    },
+    {
+      "wert": "Papierweg (mind. 1 ohne QES / persönliche Teilnahme)"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

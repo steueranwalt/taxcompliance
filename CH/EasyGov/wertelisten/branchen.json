@@ -1,0 +1,186 @@
+{
+  "id": "branchen",
+  "titel": "Branche",
+  "gruppiert": true,
+  "hinweis": "Mehrfachauswahl. HR-Seite lud den Katalog im Inventar nicht; Liste aus dem Gruendungsablauf.",
+  "werte": [
+    {
+      "wert": "Fahrzeuge (Pflege und Reparatur)",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Transportgewerbe",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Gastgewerbe",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Grafik, Foto, Werbung",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Informatik (Dienstleistung)",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Ingenieurbüros",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Rechts-, Steuer- und Unternehmensberatung",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Banken und Versicherungen, Sicherheit",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Körperpflege",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Andere (Reparatur von Gebrauchsgütern)",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Andere Dienstleistung (an Private)",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Andere Dienstleistung (an Unternehmen)",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Andere Dienstleistungen",
+      "gruppe": "Dienstleistung"
+    },
+    {
+      "wert": "Immobilien, Grundstücke, Wohnungen",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Fahrzeuge und Zubehoer (Handel)",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Nahrungs- und Genussmittel (Detailhandel)",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Informatik (Detailhandel)",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Andere (Detailhandel)",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Andere (Grosshandel)",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Vermietung beweglicher Sachen",
+      "gruppe": "Handel und Vermietung"
+    },
+    {
+      "wert": "Gesundheits- und Sozialwesen",
+      "gruppe": "Kultur und Soziales"
+    },
+    {
+      "wert": "Kultur und Unterhaltung",
+      "gruppe": "Kultur und Soziales"
+    },
+    {
+      "wert": "Sport",
+      "gruppe": "Kultur und Soziales"
+    },
+    {
+      "wert": "Erziehung und Unterricht",
+      "gruppe": "Kultur und Soziales"
+    },
+    {
+      "wert": "Kirchen und Vereinigungen",
+      "gruppe": "Kultur und Soziales"
+    },
+    {
+      "wert": "Chemische und mineralische Erzeugnisse",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Sägerei, Holz",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Glaswaren und Keramik",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Nahrungs- und Genussmittel",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Papier, Verlags- und Druckerzeugnisse",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Textilien und Lederwaren",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Fahrzeug- und Schiffsbau",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Maschinen- und Gerätebau",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Mech. Werkstätten, Metall",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Andere (Herstellung)",
+      "gruppe": "Herstellung"
+    },
+    {
+      "wert": "Bergbau und Rohstoffgewinnung",
+      "gruppe": "Baugewerbe und Infrastruktur"
+    },
+    {
+      "wert": "Baugewerbe (Architekten)",
+      "gruppe": "Baugewerbe und Infrastruktur"
+    },
+    {
+      "wert": "Entsorgung und Abfallbeseitigung",
+      "gruppe": "Baugewerbe und Infrastruktur"
+    },
+    {
+      "wert": "Baugewerbe (Handwerk)",
+      "gruppe": "Baugewerbe und Infrastruktur"
+    },
+    {
+      "wert": "Energie- und Wasserversorgung",
+      "gruppe": "Baugewerbe und Infrastruktur"
+    },
+    {
+      "wert": "Landwirtschaft - Pflanzenbau",
+      "gruppe": "Natur und Landwirtschaft"
+    },
+    {
+      "wert": "Landwirtschaft - Tierhaltung",
+      "gruppe": "Natur und Landwirtschaft"
+    },
+    {
+      "wert": "Forstwirtschaft und Gartenbau",
+      "gruppe": "Natur und Landwirtschaft"
+    },
+    {
+      "wert": "Jagd und Fischerei",
+      "gruppe": "Natur und Landwirtschaft"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

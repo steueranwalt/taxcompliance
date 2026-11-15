@@ -1,0 +1,20 @@
+{
+  "id": "ahv_taetigkeitsort",
+  "titel": "Ort der Tätigkeit",
+  "werte": [
+    {
+      "wert": "eigene Geschäftsräume"
+    },
+    {
+      "wert": "(teilweise) eigene Wohnung"
+    },
+    {
+      "wert": "beim Kunden"
+    },
+    {
+      "wert": "keine Raeume"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

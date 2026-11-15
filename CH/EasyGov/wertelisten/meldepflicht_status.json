@@ -1,0 +1,17 @@
+{
+  "id": "meldepflicht_status",
+  "titel": "Resultat Meldepflicht",
+  "werte": [
+    {
+      "wert": "zwingend"
+    },
+    {
+      "wert": "freiwillig"
+    },
+    {
+      "wert": "nach HR-Eintrag"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

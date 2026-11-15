@@ -13,6 +13,8 @@ Rechtstexte, Kreisschreiben und Arbeitsmaterialien zum Schweizer Steuerrecht (Bu
 | [`StG/`](StG/) | Bundesgesetz über die Stempelabgaben |
 | [`Kantone/`](Kantone/) | Kantonale Steuergesetze (nach Kanton) |
 | [`Sonstiges/`](Sonstiges/) | ESTV-Kreisschreiben, Bundesgerichtsentscheide, weitere |
+| [`EasyGov/`](EasyGov/) | Feldinventar Unternehmensgründung EasyGov.swiss (HR, MWST, AHV, UVG), Stand 15.11.2026 |
+| [`Handelsregister/`](Handelsregister/) | Formularanalyse HR-Anmeldung Einzelunternehmen (EasyGov-Ausdruck) |
 
 ## Dokumenttypen
 

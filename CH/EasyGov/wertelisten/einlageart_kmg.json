@@ -1,0 +1,14 @@
+{
+  "id": "einlageart_kmg",
+  "titel": "Wie erfolgt die Einlage (Kommanditär)",
+  "werte": [
+    {
+      "wert": "als Bareinlage"
+    },
+    {
+      "wert": "als Sacheinlage"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

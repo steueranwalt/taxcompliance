@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/steueranwalt/taxcompliance/CH/EasyGov/wertelisten/wertelisten.schema.json",
+  "title": "EasyGov-Werteliste",
+  "type": "object",
+  "required": ["id", "stand", "titel", "werte"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+    "stand": { "type": "string", "format": "date" },
+    "titel": { "type": "string" },
+    "quelle": { "type": "string" },
+    "hinweis": { "type": "string" },
+    "gruppiert": { "type": "boolean" },
+    "unvollstaendig": { "type": "boolean" },
+    "werte": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["wert"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string" },
+          "wert": { "type": "string" },
+          "gruppe": { "type": "string" },
+          "rechtsformen": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["EU", "GmbH", "AG", "KlG", "KmG"] }
+          },
+          "hinweis": { "type": "string" }
+        }
+      }
+    }
+  }
+}

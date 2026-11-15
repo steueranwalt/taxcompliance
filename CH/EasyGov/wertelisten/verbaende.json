@@ -1,0 +1,483 @@
+{
+  "id": "verbaende",
+  "titel": "Verbaende mit eigener Ausgleichskasse (bestehende Mitgliedschaft)",
+  "hinweis": "Portal-Suchliste, nur Verbaende mit eigener AK. Aargauische Industrie- und Handelskammer erschien im Rohbericht doppelt; hier einmal gefuehrt. Schreibweise an Schweizer Orthographie angepasst, Wortlaut sonst wie Inventar.",
+  "werte": [
+    {
+      "wert": "2rad Schweiz"
+    },
+    {
+      "wert": "Aargauische Industrie- und Handelskammer"
+    },
+    {
+      "wert": "AKUSTIKA Schweiz"
+    },
+    {
+      "wert": "AM Suisse"
+    },
+    {
+      "wert": "Arbeitgeber Banken"
+    },
+    {
+      "wert": "Arbeitgeberverband Region Basel"
+    },
+    {
+      "wert": "Arbeitgeberverband Schweiz. Bindemittel-Produzenten"
+    },
+    {
+      "wert": "Arbeitgeberverband Transportunternehmungen"
+    },
+    {
+      "wert": "ASMAS"
+    },
+    {
+      "wert": "Association de la presse suisse romande"
+    },
+    {
+      "wert": "ASEPIB"
+    },
+    {
+      "wert": "ASTAG"
+    },
+    {
+      "wert": "Bernischer Geschäftsinhaberverband"
+    },
+    {
+      "wert": "BiscoSuisse"
+    },
+    {
+      "wert": "BodenSchweiz"
+    },
+    {
+      "wert": "Bündner Gewerbeverband"
+    },
+    {
+      "wert": "Bündner Handelskammer und Arbeitgeberverband Graubünden"
+    },
+    {
+      "wert": "CafetierSuisse"
+    },
+    {
+      "wert": "carrosserie suisse"
+    },
+    {
+      "wert": "Cemsuisse"
+    },
+    {
+      "wert": "Chambre neuchâteloise du commerce & de l'industrie"
+    },
+    {
+      "wert": "Chambre vaudoise du commerce et de l'industrie"
+    },
+    {
+      "wert": "ChiroSuisse"
+    },
+    {
+      "wert": "Chocosuisse"
+    },
+    {
+      "wert": "Coiffure Suisse"
+    },
+    {
+      "wert": "Confrérie des Chevaliers du bon pain"
+    },
+    {
+      "wert": "Convention patronale de l'industrie horlogère"
+    },
+    {
+      "wert": "dpsuisse"
+    },
+    {
+      "wert": "DSM"
+    },
+    {
+      "wert": "EIT.swiss"
+    },
+    {
+      "wert": "feusuisse"
+    },
+    {
+      "wert": "FROMARTE"
+    },
+    {
+      "wert": "FAC"
+    },
+    {
+      "wert": "FER"
+    },
+    {
+      "wert": "Fédération patronale vaudoise"
+    },
+    {
+      "wert": "FRMB"
+    },
+    {
+      "wert": "GAB"
+    },
+    {
+      "wert": "Gebäudehülle Schweiz"
+    },
+    {
+      "wert": "GST"
+    },
+    {
+      "wert": "Glarner Wirtschaftskammer"
+    },
+    {
+      "wert": "Berner Handelskammer"
+    },
+    {
+      "wert": "HANDELSVERBAND.swiss"
+    },
+    {
+      "wert": "Holzbau Schweiz"
+    },
+    {
+      "wert": "HotellerieSuisse"
+    },
+    {
+      "wert": "Imaging Suisse"
+    },
+    {
+      "wert": "IHK St. Gallen-Appenzell"
+    },
+    {
+      "wert": "IHK Thurgau"
+    },
+    {
+      "wert": "IGK"
+    },
+    {
+      "wert": "IPK"
+    },
+    {
+      "wert": "Kantonal St. Gallische Gruppe Handel"
+    },
+    {
+      "wert": "Kantonal St. Gallischer Gewerbeverband"
+    },
+    {
+      "wert": "KVS"
+    },
+    {
+      "wert": "MMTS"
+    },
+    {
+      "wert": "NODE"
+    },
+    {
+      "wert": "NVS"
+    },
+    {
+      "wert": "Optik Schweiz"
+    },
+    {
+      "wert": "ospita"
+    },
+    {
+      "wert": "pharmaSuisse"
+    },
+    {
+      "wert": "PROCINEMA"
+    },
+    {
+      "wert": "Prométerre"
+    },
+    {
+      "wert": "SBVJ"
+    },
+    {
+      "wert": "SGVSB"
+    },
+    {
+      "wert": "VSRLF (Schuhmacher)"
+    },
+    {
+      "wert": "SFK"
+    },
+    {
+      "wert": "SFF"
+    },
+    {
+      "wert": "Schweizer Medien"
+    },
+    {
+      "wert": "SMP"
+    },
+    {
+      "wert": "Schweizer Reise-Verband"
+    },
+    {
+      "wert": "Schweizer Reiseverband"
+    },
+    {
+      "wert": "suissetec"
+    },
+    {
+      "wert": "Schweizerische Bankiervereinigung"
+    },
+    {
+      "wert": "SBC"
+    },
+    {
+      "wert": "Schweiz. IG fuer Musik und Radio"
+    },
+    {
+      "wert": "ASFL SVBL"
+    },
+    {
+      "wert": "SSO"
+    },
+    {
+      "wert": "Schweizerischer Baumeisterverband"
+    },
+    {
+      "wert": "Schweizerischer Bierbrauerverein"
+    },
+    {
+      "wert": "Schweizerischer Floristenverband"
+    },
+    {
+      "wert": "Schweizerischer Gewerbeverband"
+    },
+    {
+      "wert": "Kupferschmiedemeisterverband"
+    },
+    {
+      "wert": "Küfermeisterverband"
+    },
+    {
+      "wert": "SLV"
+    },
+    {
+      "wert": "Schweizerischer Musikpädagogischer Verband"
+    },
+    {
+      "wert": "SMFV"
+    },
+    {
+      "wert": "Schweizerischer Obstverband"
+    },
+    {
+      "wert": "SuisseFur"
+    },
+    {
+      "wert": "SSV"
+    },
+    {
+      "wert": "VDF"
+    },
+    {
+      "wert": "interieursuisse"
+    },
+    {
+      "wert": "Schweiz. Verband der Internationalen Handelsfirmen"
+    },
+    {
+      "wert": "Schweizerischer Versicherungsverband"
+    },
+    {
+      "wert": "SWHV"
+    },
+    {
+      "wert": "Zentralverband des Musikhandels"
+    },
+    {
+      "wert": "Scienceindustries"
+    },
+    {
+      "wert": "SDV"
+    },
+    {
+      "wert": "Senesuisse"
+    },
+    {
+      "wert": "SIYU"
+    },
+    {
+      "wert": "SKMV"
+    },
+    {
+      "wert": "SKW"
+    },
+    {
+      "wert": "SMBK"
+    },
+    {
+      "wert": "SMGV"
+    },
+    {
+      "wert": "SpiritSuisse"
+    },
+    {
+      "wert": "SPV"
+    },
+    {
+      "wert": "SRV"
+    },
+    {
+      "wert": "SVIT"
+    },
+    {
+      "wert": "Swiss Medtech"
+    },
+    {
+      "wert": "Swiss Pasta"
+    },
+    {
+      "wert": "Swiss-Form"
+    },
+    {
+      "wert": "Swissavant"
+    },
+    {
+      "wert": "SWISSCOFEL"
+    },
+    {
+      "wert": "Swissinterpro"
+    },
+    {
+      "wert": "SWISSMECHANIC"
+    },
+    {
+      "wert": "Swissmem"
+    },
+    {
+      "wert": "swissstaffing"
+    },
+    {
+      "wert": "Thurgauer Gewerbeverband"
+    },
+    {
+      "wert": "USAE"
+    },
+    {
+      "wert": "Unternehmerverband Gärtner Schweiz"
+    },
+    {
+      "wert": "VELEDES"
+    },
+    {
+      "wert": "Verband Bernischer Arbeitgeber Organisationen"
+    },
+    {
+      "wert": "Verband der Buchbindereien"
+    },
+    {
+      "wert": "Verband der Migros-Betriebe"
+    },
+    {
+      "wert": "ASPS"
+    },
+    {
+      "wert": "VSE (Edelstein)"
+    },
+    {
+      "wert": "SEM"
+    },
+    {
+      "wert": "VSD"
+    },
+    {
+      "wert": "Verband der Schweizerischen Uhrenindustrie"
+    },
+    {
+      "wert": "Verband der Versicherungs-Generalagenten"
+    },
+    {
+      "wert": "VSBH"
+    },
+    {
+      "wert": "Verband Drechsler Schweiz"
+    },
+    {
+      "wert": "GASTROSUISSE"
+    },
+    {
+      "wert": "Verband Holding- und Finanzgesellschaften"
+    },
+    {
+      "wert": "Verband Holzwerkstoffe Schweiz"
+    },
+    {
+      "wert": "VLTS"
+    },
+    {
+      "wert": "VSRLD"
+    },
+    {
+      "wert": "VSSEL"
+    },
+    {
+      "wert": "Verband Schweiz. Schreinermeister & Möbelfabrikanten"
+    },
+    {
+      "wert": "VSE (Elektrizitätswerke)"
+    },
+    {
+      "wert": "VSGU"
+    },
+    {
+      "wert": "VSLF"
+    },
+    {
+      "wert": "VSP (Privatschulen)"
+    },
+    {
+      "wert": "Verband Schweizerischer Schirmfabrikanten"
+    },
+    {
+      "wert": "VTS"
+    },
+    {
+      "wert": "FMH"
+    },
+    {
+      "wert": "Vereinigung der Coop-Unternehmungen"
+    },
+    {
+      "wert": "Vereinigung Landwirtschaftlicher Genossenschaften"
+    },
+    {
+      "wert": "Vereinigung Mineralia"
+    },
+    {
+      "wert": "Vereinigung Schweizerischer Glasfabriken"
+    },
+    {
+      "wert": "Vereinigung Zürcherischer Arbeitgeberorganisationen"
+    },
+    {
+      "wert": "VGS"
+    },
+    {
+      "wert": "VSB"
+    },
+    {
+      "wert": "VSBS"
+    },
+    {
+      "wert": "VSF"
+    },
+    {
+      "wert": "VSIG Handel Schweiz"
+    },
+    {
+      "wert": "VSP (Papeteristen)"
+    },
+    {
+      "wert": "VZLS"
+    },
+    {
+      "wert": "Wirtschaftskammer Baselland"
+    },
+    {
+      "wert": "Ziegelindustrie Schweiz"
+    },
+    {
+      "wert": "Zürcher Bankenverband"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

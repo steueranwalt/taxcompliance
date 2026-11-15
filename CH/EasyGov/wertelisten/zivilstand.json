@@ -1,0 +1,29 @@
+{
+  "id": "zivilstand",
+  "titel": "Zivilstand",
+  "werte": [
+    {
+      "wert": "Ledig"
+    },
+    {
+      "wert": "Verheiratet"
+    },
+    {
+      "wert": "Verwitwet"
+    },
+    {
+      "wert": "Geschieden"
+    },
+    {
+      "wert": "Unverheiratet"
+    },
+    {
+      "wert": "In eingetragener Partnerschaft"
+    },
+    {
+      "wert": "Aufgelöste Partnerschaft"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

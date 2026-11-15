@@ -1,0 +1,15 @@
+{
+  "id": "umsatzangaben",
+  "titel": "Umsatzangaben",
+  "hinweis": "Schwelle HR und MWST gemeinsam seit 1.1.2010; Selbstueberwachung.",
+  "werte": [
+    {
+      "wert": "weniger als CHF 100'000"
+    },
+    {
+      "wert": "CHF 100'000 oder mehr"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

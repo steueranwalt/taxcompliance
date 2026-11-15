@@ -1,0 +1,14 @@
+{
+  "id": "uvg_weiterfahren",
+  "titel": "Wie weiterfahren?",
+  "werte": [
+    {
+      "wert": "Offerte von einem oder mehreren UVG-Versicherern verlangen"
+    },
+    {
+      "wert": "Anmeldung an Ihren UVG-Versicherer senden"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

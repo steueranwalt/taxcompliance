@@ -1,0 +1,90 @@
+{
+  "id": "kantone",
+  "titel": "Kantone (Notarsuche)",
+  "hinweis": "Notarsuche zusaetzlich mit CH. ZH: im Inventar keine Treffer fuer elektronische Gründung. ZH und SH nur Amtsnotariate (Papierweg-Hinweis).",
+  "werte": [
+    {
+      "wert": "AG"
+    },
+    {
+      "wert": "AI"
+    },
+    {
+      "wert": "AR"
+    },
+    {
+      "wert": "BE"
+    },
+    {
+      "wert": "BL"
+    },
+    {
+      "wert": "BS"
+    },
+    {
+      "wert": "FR"
+    },
+    {
+      "wert": "GE"
+    },
+    {
+      "wert": "GL"
+    },
+    {
+      "wert": "GR"
+    },
+    {
+      "wert": "JU"
+    },
+    {
+      "wert": "LU"
+    },
+    {
+      "wert": "NE"
+    },
+    {
+      "wert": "NW"
+    },
+    {
+      "wert": "OW"
+    },
+    {
+      "wert": "SG"
+    },
+    {
+      "wert": "SH"
+    },
+    {
+      "wert": "SO"
+    },
+    {
+      "wert": "SZ"
+    },
+    {
+      "wert": "TG"
+    },
+    {
+      "wert": "TI"
+    },
+    {
+      "wert": "UR"
+    },
+    {
+      "wert": "VD"
+    },
+    {
+      "wert": "VS"
+    },
+    {
+      "wert": "ZG"
+    },
+    {
+      "wert": "ZH"
+    },
+    {
+      "wert": "CH"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

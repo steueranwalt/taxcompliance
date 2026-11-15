@@ -1,0 +1,32 @@
+{
+  "id": "ahv_beitraege_zuletzt",
+  "titel": "Zuletzt AHV-Beitraege bezahlt als",
+  "werte": [
+    {
+      "wert": "Arbeitnehmer"
+    },
+    {
+      "wert": "Arbeitgeber"
+    },
+    {
+      "wert": "Teilhaber"
+    },
+    {
+      "wert": "Selbstständigerwerbender"
+    },
+    {
+      "wert": "Nicht-Erwerbstätiger"
+    },
+    {
+      "wert": "Bezüger von Ersatzeinkommen (ALV, EO, IV)"
+    },
+    {
+      "wert": "Auslandaufenthalter"
+    },
+    {
+      "wert": "Keine Beitraege"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}

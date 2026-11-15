@@ -1,0 +1,15 @@
+{
+  "id": "mwst_methode",
+  "titel": "Abrechnungsmethode",
+  "hinweis": "Saldosteuersatz Art. 37 Abs. 1 MWSTG: Umsatz <= CHF 5'024'000, Steuer <= CHF 108'000.",
+  "werte": [
+    {
+      "wert": "Effektiv (Standard)"
+    },
+    {
+      "wert": "Saldosteuersatz"
+    }
+  ],
+  "stand": "2026-11-15",
+  "quelle": "EasyGov.swiss und mwstanmelden.estv.admin.ch, Live-Inventar 15.11.2026"
+}
