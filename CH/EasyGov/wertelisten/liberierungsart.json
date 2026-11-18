@@ -1,7 +1,7 @@
 {
   "id": "liberierungsart",
   "titel": "Liberierungsart",
-  "hinweis": "Checkboxen, kombinierbar. Keine Sachuebernahme-Option im Inventar sichtbar.",
+  "hinweis": "Checkboxen, kombinierbar. Sachuebernahme im EasyGov-Inventar nicht sichtbar; Wert fuer die Kanzlei-Erhebung ergaenzt, keine Rechtswuerdigung.",
   "werte": [
     {
       "wert": "Bargründung durch Geldzahlung"
@@ -11,6 +11,9 @@
     },
     {
       "wert": "mittels Verrechnung"
+    },
+    {
+      "wert": "durch Sachübernahme"
     }
   ],
   "stand": "2026-11-15",

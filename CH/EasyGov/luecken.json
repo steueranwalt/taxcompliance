@@ -54,47 +54,125 @@
     {
       "id": "gap-statuten",
       "titel": "Statuten / Gesellschaftsvertrag",
-      "beschreibung": "EasyGov fragt Statuten nicht ab; beim Notar zu erheben."
+      "beschreibung": "EasyGov fragt Statuten nicht ab; beim Notar zu erheben. Kanzlei-Spalte, keine Rechtswürdigung.",
+      "spalten": [
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "statutes_note"
+        }
+      ]
     },
     {
       "id": "gap-revision",
       "titel": "Revisionsstelle / Opting-out",
-      "beschreibung": "Weder GmbH- noch AG-HR-Strecke fragt Revisionsstelle oder Opting-out ab."
+      "beschreibung": "Weder GmbH- noch AG-HR-Strecke fragt Revisionsstelle oder Opting-out ab. Kanzlei-Spalten, keine Rechtswürdigung.",
+      "spalten": [
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "auditor_name"
+        },
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "opting_out"
+        }
+      ]
     },
     {
       "id": "gap-vinkulierung",
       "titel": "Vinkulierung, Nachschuss, Nebenleistung, Publikationsorgan",
-      "beschreibung": "Nicht in EasyGov; beim Notar zu erheben."
+      "beschreibung": "Nicht in EasyGov; beim Notar zu erheben. Kanzlei-Spalten, keine Rechtswürdigung.",
+      "spalten": [
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "transfer_restriction"
+        },
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "capital_call_duty"
+        },
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "accessory_duty"
+        },
+        {
+          "liste": "4_HR_Diverses",
+          "internal_name": "publication_organ"
+        }
+      ]
     },
     {
       "id": "gap-bank-liberierung",
       "titel": "Bank / Kapitaleinzahlung",
-      "beschreibung": "Keine Uploads, keine Bankbestätigung in EasyGov."
+      "beschreibung": "Keine Uploads, keine Bankbestätigung in EasyGov. Kanzlei-Spalten für Bank, Konto/IBAN und Datum.",
+      "spalten": [
+        {
+          "liste": "3_Kapital",
+          "internal_name": "capital_bank"
+        },
+        {
+          "liste": "3_Kapital",
+          "internal_name": "capital_account"
+        },
+        {
+          "liste": "3_Kapital",
+          "internal_name": "capital_paid_date"
+        }
+      ]
     },
     {
       "id": "gap-jp-gesellschafter-gmbh",
       "titel": "Juristische Person als GmbH/AG-Gesellschafter",
-      "beschreibung": "HR-Strecke erlaubt nur natürliche Personen als Gründer."
+      "beschreibung": "HR-Strecke erlaubt nur natürliche Personen als Gründer. Dieselbe Spalte person_type gilt auch für GmbH/AG.",
+      "spalten": [
+        {
+          "liste": "2_Personen",
+          "internal_name": "person_type"
+        }
+      ]
     },
     {
       "id": "gap-nennwert",
       "titel": "Separates Nennwertfeld",
-      "beschreibung": "Kein Nennwertfeld; implizit Kapital/Anzahl. Keine Stimmrechtsaktien, keine Partizipationsscheine."
+      "beschreibung": "Kein Nennwertfeld im Portal; implizit Kapital/Anzahl. Keine Stimmrechtsaktien, keine Partizipationsscheine. Kanzlei-Spalte par_value.",
+      "spalten": [
+        {
+          "liste": "3_Kapital",
+          "internal_name": "par_value"
+        }
+      ]
     },
     {
       "id": "gap-sachuebernahme",
       "titel": "Sachübernahme-Option",
-      "beschreibung": "In der Liberierungsart nicht sichtbar."
+      "beschreibung": "In der Liberierungsart im Portal nicht sichtbar. Werteliste um Sachübernahme ergänzt, keine Rechtswürdigung.",
+      "spalten": [
+        {
+          "liste": "3_Kapital",
+          "internal_name": "liberation_types"
+        }
+      ]
     },
     {
       "id": "gap-iban-mwst",
       "titel": "IBAN in der MWST-Anmeldung",
-      "beschreibung": "ESTV-Strecke ohne IBAN und ohne AHV im Kontakt-Schritt."
+      "beschreibung": "ESTV-Strecke ohne IBAN und ohne AHV im Kontakt-Schritt. Kanzlei-Spalte mwst_iban.",
+      "spalten": [
+        {
+          "liste": "5_MWST",
+          "internal_name": "mwst_iban"
+        }
+      ]
     },
     {
       "id": "gap-suva-zweig",
       "titel": "Suva-pflichtige Branche",
-      "beschreibung": "Suva-Zweig im UVG-Inventar nicht gesehen."
+      "beschreibung": "Suva-Zweig im UVG-Inventar nicht gesehen. Kanzlei-Spalte suva_branch (Freitext).",
+      "spalten": [
+        {
+          "liste": "7_UVG",
+          "internal_name": "suva_branch"
+        }
+      ]
     }
   ],
   "offen": [

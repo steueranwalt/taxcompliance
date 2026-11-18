@@ -8,7 +8,7 @@ SharePoint setzt «Erforderlich» nur bei unbedingter Pflicht, die für jeden Da
 
 ## Unbedingte Pflichtfelder (Portal, Tatsachen)
 
-120 Felder. Prozess-Checkboxen (Bestätigung, CAPTCHA) und reine Aktionen sind in der Rohfassung dokumentiert, erscheinen hier nur, soweit sie ein Datenfeld sind.
+119 Felder. Prozess-Checkboxen (Bestätigung, CAPTCHA) und reine Aktionen sind in der Rohfassung dokumentiert, erscheinen hier nur, soweit sie ein Datenfeld sind.
 
 | Bereich | Schritt | Label | Rechtsformen |
 |---|---|---|---|
@@ -37,7 +37,6 @@ SharePoint setzt «Erforderlich» nur bei unbedingter Pflicht, die für jeden Da
 | gruendung | Vertretungsverhältnis/Funktion | Funktion | GmbH, AG |
 | gruendung | Vertretungsverhältnis/Funktion | Zeichnungsberechtigung | GmbH, AG |
 | gruendung | Gesellschafter KmG | Haftung | KmG |
-| gruendung | Gesellschafter KmG | Art der Person | KmG |
 | gruendung | Geschäftsdomizil | Strasse | EU, GmbH, AG, KlG, KmG |
 | gruendung | Geschäftsdomizil | Postleitzahl | EU, GmbH, AG, KlG, KmG |
 | gruendung | Geschäftsdomizil | Ort | EU, GmbH, AG, KlG, KmG |
@@ -128,7 +127,7 @@ SharePoint setzt «Erforderlich» nur bei unbedingter Pflicht, die für jeden Da
 
 ## Bedingte Pflichtfelder
 
-73 Felder.
+74 Felder.
 
 | Bereich | Label | Bedingung | Rechtsformen |
 |---|---|---|---|
@@ -163,9 +162,10 @@ SharePoint setzt «Erforderlich» nur bei unbedingter Pflicht, die für jeden Da
 | gruendung | E-Mail | Zivilrechtlicher Wohnsitz = Ausland | EU, GmbH, AG, KlG, KmG |
 | gruendung | Kommanditsumme (in CHF) | Haftung = beschränkt | KmG |
 | gruendung | Wie erfolgt die Einlage | Haftung = beschränkt | KmG |
-| gruendung | Ist das Firmendomizil in der Schweiz? | Kommanditär = juristische Person | KmG |
-| gruendung | Rechtsform | Kommanditär = juristische Person | KmG |
-| gruendung | Unternehmensname oder UID | Kommanditär = juristische Person | KmG |
+| gruendung | Art der Person | KmG-Kommanditär immer; GmbH/AG wenn Gesellschafter eine juristische Person ist (Portal erfasst das nicht) | GmbH, AG, KmG |
+| gruendung | Ist das Firmendomizil in der Schweiz? | Personentyp = juristische Person (Portal: nur KmG-Kommanditär; GmbH/AG Kanzlei) | GmbH, AG, KmG |
+| gruendung | Rechtsform | Personentyp = juristische Person (Portal: nur KmG-Kommanditär; GmbH/AG Kanzlei) | GmbH, AG, KmG |
+| gruendung | Unternehmensname oder UID | Personentyp = juristische Person (Portal: nur KmG-Kommanditär; GmbH/AG Kanzlei) | GmbH, AG, KmG |
 | hr | Hauptsprache | Firma in weiteren Sprachen = Ja | EU, GmbH, AG, KlG, KmG |
 | hr | Sprache | Firma in weiteren Sprachen = Ja | EU, GmbH, AG, KlG, KmG |
 | hr | Übersetzte Unternehmensbezeichnung | Firma in weiteren Sprachen = Ja | EU, GmbH, AG, KlG, KmG |

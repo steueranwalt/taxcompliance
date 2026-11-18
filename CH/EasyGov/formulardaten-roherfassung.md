@@ -10,7 +10,7 @@ Vollständiger Feldkatalog der bei EasyGov.swiss und `mwstanmelden.estv.admin.ch
 
 Labels folgen dem Live-Inventar vom 15.11.2026. Keine Mandats- oder Testdaten.
 
-Anzahl Portal- und Kanzleifelder: **319**.
+Anzahl Portal- und Kanzleifelder: **333**.
 
 ## 1. Gründungsablauf EasyGov (Meldepflichten und Basisdaten)
 
@@ -164,15 +164,15 @@ Anzahl Portal- und Kanzleifelder: **319**.
 | `gruendung.kmg.haftung` | Haftung | choice | unbedingt | KmG | haftung_kmg |  |
 | `gruendung.kmg.kommanditsumme` | Kommanditsumme (in CHF) | number | bedingt | KmG | — | Haftung = beschränkt |
 | `gruendung.kmg.einlageart` | Wie erfolgt die Einlage | choice | bedingt | KmG | einlageart_kmg | Haftung = beschränkt |
-| `gruendung.kmg.personentyp` | Art der Person | choice | unbedingt | KmG | personentyp | Juristische Person nur als Kommanditär. KlG/GmbH/AG-HR: keine juristische Person als Gesellschafter erfassbar. |
+| `gruendung.kmg.personentyp` | Art der Person | choice | bedingt | GmbH, AG, KmG | personentyp | KmG-Kommanditär immer; GmbH/AG wenn Gesellschafter eine juristische Person ist (Portal erfasst das nicht) |
 
 ### basisdaten — Juristische Person KmG
 
 | ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
 |---|---|---|---|---|---|---|
-| `gruendung.kmg.jp_domizil_ch` | Ist das Firmendomizil in der Schweiz? | choice | bedingt | KmG | ja_nein | Kommanditär = juristische Person |
-| `gruendung.kmg.jp_rechtsform` | Rechtsform | choice | bedingt | KmG | rechtsformen_juristische_person | Kommanditär = juristische Person |
-| `gruendung.kmg.jp_suche` | Unternehmensname oder UID | text | bedingt | KmG | — | Kommanditär = juristische Person |
+| `gruendung.kmg.jp_domizil_ch` | Ist das Firmendomizil in der Schweiz? | choice | bedingt | GmbH, AG, KmG | ja_nein | Personentyp = juristische Person (Portal: nur KmG-Kommanditär; GmbH/AG Kanzlei) |
+| `gruendung.kmg.jp_rechtsform` | Rechtsform | choice | bedingt | GmbH, AG, KmG | rechtsformen_juristische_person | Personentyp = juristische Person (Portal: nur KmG-Kommanditär; GmbH/AG Kanzlei) |
+| `gruendung.kmg.jp_suche` | Unternehmensname oder UID | text | bedingt | GmbH, AG, KmG | — | Personentyp = juristische Person (Portal: nur KmG-Kommanditär; GmbH/AG Kanzlei) |
 
 ### basisdaten — Geschäftsdomizil
 
@@ -234,7 +234,7 @@ Anzahl Portal- und Kanzleifelder: **319**.
 
 | ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
 |---|---|---|---|---|---|---|
-| `system.min.case_id` | case_id | text | unbedingt | EU, GmbH, AG, KlG, KmG | — |  |
+| `system.min.case_id` | case_id | lookup | unbedingt | EU, GmbH, AG, KlG, KmG | — | Lookup auf 0_Fallsteuerung.case_id, analog den übrigen Folgelisten. |
 | `system.min.field_key` | field_key | text | unbedingt | EU, GmbH, AG, KlG, KmG | — |  |
 | `system.min.field_label` | field_label | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
 | `system.min.data_type` | data_type | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
@@ -259,13 +259,13 @@ Anzahl Portal- und Kanzleifelder: **319**.
 
 | ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
 |---|---|---|---|---|---|---|
-| `hr.kapg.gruender_typ` | Natürliche Person erfassen | aktion | unbedingt | GmbH, AG | — | Portalaktion. Keine juristische Person als Gesellschafter erfassbar. person_type in 2_Personen bleibt Choice. |
+| `hr.kapg.gruender_typ` | Natürliche Person erfassen | aktion | unbedingt | GmbH, AG | — | Portalaktion. EasyGov erfasst keine juristische Person als GmbH/AG-Gesellschafter. Kanzlei: person_type in 2_Personen. |
 
 ### hr-gmbh — 2 Kapital und Anteile GmbH
 
 | ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
 |---|---|---|---|---|---|---|
-| `hr.kapg.stammkapital` | Stammkapital | number | unbedingt | GmbH | — | Mindest-Stammkapital CHF 20'000, voll liberiert. Nennwert > 0 (unter CHF 100 möglich). Kein separates Nennwertfeld. |
+| `hr.kapg.stammkapital` | Stammkapital | number | unbedingt | GmbH | — | Mindest-Stammkapital CHF 20'000, voll liberiert. Nennwert > 0 (unter CHF 100 möglich). Separates Nennwertfeld par_value in 3_Kapital (nicht in EasyGov). |
 | `hr.gmbh.anzahl_stammanteile` | Anzahl Stammanteile total | number | unbedingt | GmbH | — | Jede/r Gesellschafter/in mindestens 1 Stammanteil. |
 | `hr.gmbh.anteile_pro_gruender` | Anzahl Stammanteile pro Gründerin/Gründer | number | unbedingt | GmbH | — |  |
 
@@ -274,7 +274,7 @@ Anzahl Portal- und Kanzleifelder: **319**.
 | ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
 |---|---|---|---|---|---|---|
 | `hr.kapg.waehrung` | Währung | choice | unbedingt | GmbH, AG | waehrungen | Fremdwährung zulässig wenn wesentlich; GmbH Gegenwert >= CHF 20'000. |
-| `hr.kapg.liberierungsart` | Liberierungsart | multichoice | unbedingt | GmbH, AG | liberierungsart | Checkboxen, kombinierbar. Keine Sachübernahme-Option sichtbar. |
+| `hr.kapg.liberierungsart` | Liberierungsart | multichoice | unbedingt | GmbH, AG | liberierungsart | Checkboxen, kombinierbar. Sachübernahme im Portal nicht sichtbar; Werteliste enthält den Wert für die Kanzlei-Erhebung. |
 | `hr.kapg.bemerkungen_kapital` | Bemerkungen zu Kapital und Stammanteilen / Aktien | note | optional | GmbH, AG | — |  |
 
 ### hr-ag — 2 Kapital und Aktien AG
@@ -286,7 +286,7 @@ Anzahl Portal- und Kanzleifelder: **319**.
 | `hr.ag.kapitalband_unten` | Kapitalband untere Grenze | number | optional | AG | — |  |
 | `hr.ag.kapitalband_oben` | Kapitalband obere Grenze | number | optional | AG | — |  |
 | `hr.ag.kapitalband_jahre` | Kapitalband Dauer | number | optional | AG | — | Maximal 5 Jahre. |
-| `hr.ag.namensaktien_total` | Anzahl Namensaktien | number | unbedingt | AG | — | Gesamt und je Aktionär. Kein Nennwertfeld, keine Stimmrechtsaktien, keine Partizipationsscheine. |
+| `hr.ag.namensaktien_total` | Anzahl Namensaktien | number | unbedingt | AG | — | Gesamt und je Aktionär. Keine Stimmrechtsaktien, keine Partizipationsscheine. Nennwert: Spalte par_value in 3_Kapital (nicht in EasyGov). |
 | `hr.ag.inhaberaktien_total` | Anzahl Inhaberaktien | number | unbedingt | AG | — |  |
 | `hr.ag.namensaktien_je` | Anzahl Namensaktien je Aktionär | number | unbedingt | AG | — |  |
 | `hr.ag.inhaberaktien_je` | Anzahl Inhaberaktien je Aktionär | number | unbedingt | AG | — |  |
@@ -384,6 +384,43 @@ Anzahl Portal- und Kanzleifelder: **319**.
 |---|---|---|---|---|---|---|
 | `system.unterlagen.typ` | Dokumenttyp | choice | unbedingt | EU, GmbH, AG, KlG, KmG | dokumenttypen |  |
 | `system.unterlagen.hinweis` | Hinweis | note | optional | EU, GmbH, AG, KlG, KmG | — |  |
+| `system.unterlagen.file_link` | Link zur Datei (falls extern abgelegt) | url | optional | EU, GmbH, AG, KlG, KmG | — | Hyperlink, analog DE/AO file_link. Nicht aus einer Forms-Upload-Frage; Flow oder Kanzlei. |
+
+### kanzlei — Notar / Gesellschaftsvertrag
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.hr.statuten` | Statuten / Gesellschaftsvertrag | note | nicht_erfasst | GmbH, AG | — | EasyGov fragt Statuten nicht ab. Wortlaut oder Hinweis der Kanzlei/des Notars, keine Rechtswürdigung. Datei weiterhin über 8_Unterlagen. |
+
+### kanzlei — Revision
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.hr.revisionsstelle` | Revisionsstelle (Name) | text | nicht_erfasst | GmbH, AG | — | Nicht in EasyGov. Name der Revisionsstelle, falls gewählt. |
+| `kanzlei.hr.opting_out` | Opting-out | choice | nicht_erfasst | GmbH, AG | ja_nein | Nicht in EasyGov. Ja/Nein-Tatsache, keine Prüfung der Zulässigkeit. |
+
+### kanzlei — Statutenangaben
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.hr.vinkulierung` | Vinkulierung | choice | nicht_erfasst | GmbH, AG | ja_nein | Nicht in EasyGov. Ob Vinkulierung vorgesehen ist; keine rechtliche Würdigung. |
+| `kanzlei.hr.nachschuss` | Nachschusspflicht | choice | nicht_erfasst | GmbH, AG | ja_nein | Nicht in EasyGov. Ob Nachschusspflicht vorgesehen ist. |
+| `kanzlei.hr.nebenleistung` | Nebenleistungspflicht | choice | nicht_erfasst | GmbH, AG | ja_nein | Nicht in EasyGov. Ob Nebenleistungspflicht vorgesehen ist. |
+| `kanzlei.hr.publikationsorgan` | Publikationsorgan | text | nicht_erfasst | GmbH, AG | — | Nicht in EasyGov. Bezeichnung des Publikationsorgans. |
+
+### kanzlei — Kapitaleinzahlung
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.kapital.bank` | Bank | text | nicht_erfasst | GmbH, AG | — | Nicht in EasyGov. Bank der Kapitaleinzahlung. |
+| `kanzlei.kapital.konto_iban` | Konto oder IBAN | text | nicht_erfasst | GmbH, AG | — | Nicht in EasyGov. Konto oder IBAN der Kapitaleinzahlung. |
+| `kanzlei.kapital.einzahlungsdatum` | Datum Kapitaleinzahlung | date | nicht_erfasst | GmbH, AG | — | Nicht in EasyGov. |
+
+### kanzlei — Kapital
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.kapital.nennwert` | Nennwert | number | nicht_erfasst | GmbH, AG | — | Nicht in EasyGov; dort implizit Kapital/Anzahl. Keine Stimmrechtsaktien, keine Partizipationsscheine. |
 
 ## 3. MWST-Anmeldung (ESTV)
 
@@ -460,7 +497,7 @@ Anzahl Portal- und Kanzleifelder: **319**.
 | `mwst.kontakt.vorname` | Vorname | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
 | `mwst.kontakt.name` | Name | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
 | `mwst.kontakt.email` | E-Mail | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
-| `mwst.kontakt.telefon` | Telefonnummer | text | unbedingt | EU, GmbH, AG, KlG, KmG | — | +41XXXXXXXXX. Kein IBAN-, kein AHV-Feld in diesem Schritt. |
+| `mwst.kontakt.telefon` | Telefonnummer | text | unbedingt | EU, GmbH, AG, KlG, KmG | — | +41XXXXXXXXX. EasyGov/ESTV ohne IBAN in diesem Schritt; Kanzlei-Spalte mwst_iban in 5_MWST. |
 
 ### estv-mwst — Zusammenfassung
 
@@ -468,6 +505,12 @@ Anzahl Portal- und Kanzleifelder: **319**.
 |---|---|---|---|---|---|---|
 | `mwst.abschluss.bestaetigung` | Bestätigung | boolean | unbedingt | EU, GmbH, AG, KlG, KmG | — |  |
 | `mwst.abschluss.captcha` | CAPTCHA | text | unbedingt | EU, GmbH, AG, KlG, KmG | — | 7 Zeichen. Kein PDF. Korrespondenz per Briefpost an Sitzadresse. |
+
+### kanzlei — Kontakt
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.mwst.iban` | MWST-IBAN | text | nicht_erfasst | EU, GmbH, AG, KlG, KmG | — | ESTV-Strecke ohne IBAN. Kanzlei-Erhebung. |
 
 ## 4. AHV-Anmeldung
 
@@ -616,7 +659,7 @@ Anzahl Portal- und Kanzleifelder: **319**.
 | `uvg.diverses.korr_postfach` | Korrespondenzadresse Postfach | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
 | `uvg.diverses.korr_ort` | Korrespondenzadresse Ort | text | optional | EU, GmbH, AG, KlG, KmG | — |  |
 | `uvg.diverses.bemerkungen` | Bemerkungen an Versicherung | note | optional | EU, GmbH, AG, KlG, KmG | — |  |
-| `uvg.diverses.zustaendige_versicherung` | Zuständige Versicherung | anzeige | optional | EU, GmbH, AG, KlG, KmG | — | EasyGov schätzt Suva/Privat aus der Branche. Suva-Zweig im Inventar nicht gesehen. |
+| `uvg.diverses.zustaendige_versicherung` | Zuständige Versicherung | anzeige | optional | EU, GmbH, AG, KlG, KmG | — | EasyGov schätzt Suva/Privat aus der Branche. Suva-Zweig: Spalte suva_branch in 7_UVG. |
 | `uvg.diverses.weiterfahren` | Wie weiterfahren? | choice | unbedingt | EU, GmbH, AG, KlG, KmG | uvg_weiterfahren |  |
 | `uvg.diverses.versicherer` | UVG-Versicherer | multichoice | unbedingt | EU, GmbH, AG, KlG, KmG | uvg_versicherer |  |
 
@@ -625,4 +668,10 @@ Anzahl Portal- und Kanzleifelder: **319**.
 | ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
 |---|---|---|---|---|---|---|
 | `uvg.abschluss.bestaetigung` | Bestätigung | boolean | unbedingt | EU, GmbH, AG, KlG, KmG | — | Fertigstellen = elektronischer Versand an gewählte Versicherer. |
+
+### kanzlei — Diverses
+
+| ID | Label | Typ | Pflicht | Rechtsformen | Werteliste | Bedingung / Hinweis |
+|---|---|---|---|---|---|---|
+| `kanzlei.uvg.suva_zweig` | Suva-Zweig | text | nicht_erfasst | EU, GmbH, AG, KlG, KmG | — | Suva-Zweig im EasyGov-Inventar nicht gesehen. Freitext, keine Werteliste. |
 

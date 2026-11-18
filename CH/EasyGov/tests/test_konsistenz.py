@@ -9,7 +9,9 @@ Prueft analog DE/AO/sharepoint-forms/Test-SteuerlicheErfassungListen.ps1
 die Soll-Definitionen (hier JSON statt AST-Parse der Add-Field-Aufrufe):
 eindeutige IDs, Pflichtstatus und Datentyp gesetzt, jede Wertelisten-Referenz
 existiert, interne SharePoint-Namen <= 32 Zeichen und [A-Za-z0-9_], keine
-Schreibvarianten-Dubletten, keine Required-Ergebnisfelder, keine Testdaten.
+Schreibvarianten-Dubletten, keine Required-Ergebnisfelder, keine Testdaten,
+Abdeckung der nicht_abgefragt-Luecken gegen Skriptspalten, CH_-Praefix ohne
+Kollision mit den DE/AO-Listen.
 """
 from __future__ import annotations
 
@@ -28,7 +30,44 @@ WL_DIR = ROOT / "wertelisten"
 WL_SCHEMA = WL_DIR / "wertelisten.schema.json"
 
 PFLICHT = {"unbedingt", "bedingt", "optional", "ergebnis", "system", "nicht_erfasst"}
-TYPEN = {"text", "note", "number", "date", "choice", "multichoice", "boolean", "lookup", "checkbox_group", "aktion", "anzeige", "datei"}
+TYPEN = {"text", "note", "number", "date", "choice", "multichoice", "boolean", "lookup", "checkbox_group", "aktion", "anzeige", "datei", "url"}
+LOGICAL_LISTS = {
+    "0_Fallsteuerung",
+    "1_Unternehmen",
+    "2_Personen",
+    "3_Kapital",
+    "3_Anteile",
+    "4_HR_Diverses",
+    "5_MWST",
+    "6_AHV",
+    "7_UVG",
+    "8_Unterlagen",
+    "Technische_Mindestfelder",
+    "Eingang_Fehler",
+}
+DE_AO_LISTEN = {
+    "0_Fallsteuerung",
+    "1_Allgemeiner_Stammblock",
+    "2_Unternehmens_Gruendungsmodul",
+    "3_Personen_und_Vertretung",
+    "4_Beteiligte_und_Quoten",
+    "5_Betriebsstaetten",
+    "6_Steuer_und_Umsatzsteuerprofil",
+    "7_Auslandsmitteilung_BZSt2",
+    "8_Unterlagen",
+    "9_Grundbesitz",
+    "Technische_Mindestfelder",
+    "Eingang_Fehler",
+}
+ANZEIGE_MAPPED = {
+    "resMunicipality",
+    "domMunicipality",
+    "hr_office",
+    "rev3m_total",
+    "rev3m_relevant",
+    "suggested_insurer",
+}
+LIST_PREFIX = "CH_"
 RF = {"EU", "GmbH", "AG", "KlG", "KmG"}
 ROLES = {"Tatsache", "Ergebnis", "System"}
 BEREICH = {"gruendung", "hr", "mwst", "ahv", "uvg"}
@@ -178,6 +217,63 @@ def test_matrix() -> None:
         err("Matrix: zu wenige Zeilen")
 
 
+def derived_script_columns(felder: list[dict]) -> dict[tuple[str, str], dict]:
+    """Dieselbe Ableitung wie New-EasyGovGruendungListen.ps1 (logische Listennamen)."""
+    cols: dict[tuple[str, str], dict] = {}
+    for f in felder:
+        if f.get("datentyp") == "aktion":
+            continue
+        splist = f.get("sharepoint_liste")
+        spname = f.get("sharepoint_internal_name")
+        if not splist or not spname:
+            continue
+        cols[(splist, spname)] = f
+    for logical in LOGICAL_LISTS:
+        if logical in {"0_Fallsteuerung", "Eingang_Fehler"}:
+            continue
+        cols.setdefault((logical, "case_id"), {"datentyp": "lookup", "id": "script.case_id"})
+    return cols
+
+
+def test_sharepoint_coverage(felder: list[dict]) -> None:
+    cols = derived_script_columns(felder)
+    for name in ANZEIGE_MAPPED:
+        if not any(spname == name for (_, spname) in cols):
+            err(f"anzeige-Feld mit Mapping fehlt als Skriptspalte: {name}")
+    if ("8_Unterlagen", "file_link") not in cols:
+        err("8_Unterlagen/file_link fehlt im Katalog")
+    if ("3_Anteile", "person_label") not in cols:
+        err("3_Anteile/person_label fehlt im Katalog")
+    else:
+        if cols[("3_Anteile", "person_label")].get("datentyp") != "lookup":
+            err("3_Anteile/person_label: Katalog-Datentyp muss lookup sein (Skript legt SharePoint-Lookup an)")
+    if cols.get(("Technische_Mindestfelder", "case_id"), {}).get("datentyp") != "lookup":
+        err("Technische_Mindestfelder/case_id: Katalog-Datentyp muss lookup sein (Skript legt SharePoint-Lookup an)")
+
+    for splist, spname in cols:
+        if splist not in LOGICAL_LISTS:
+            err(f"unbekannte logische Liste {splist}/{spname}")
+        resolved = splist if splist.startswith(LIST_PREFIX) else f"{LIST_PREFIX}{splist}"
+        if not resolved.startswith("CH_"):
+            err(f"aufgeloester Listentitel ohne CH_-Praefix: {resolved}")
+        if resolved in DE_AO_LISTEN:
+            err(f"Kollision mit DE/AO-Liste: {resolved}")
+
+    luecken = load_json(LUECKEN_PATH)
+    if not isinstance(luecken, dict):
+        return
+    for gap in luecken.get("nicht_abgefragt") or []:
+        gid = gap.get("id") or "?"
+        spalten = gap.get("spalten") or []
+        if not spalten:
+            err(f"luecken.json {gid}: spalten fehlen")
+            continue
+        for col in spalten:
+            key = (col.get("liste"), col.get("internal_name"))
+            if key not in cols:
+                err(f"luecken.json {gid}: {key[0]}/{key[1]} nicht in Skriptspalten")
+
+
 def test_luecken() -> None:
     data = load_json(LUECKEN_PATH)
     if not isinstance(data, dict):
@@ -188,6 +284,12 @@ def test_luecken() -> None:
         ids = [x.get("id") for x in data.get(key) or []]
         if len(ids) != len(set(ids)):
             err(f"luecken.json: doppelte IDs in {key}")
+    for gap in data.get("nicht_abgefragt") or []:
+        if not gap.get("spalten"):
+            err(f"luecken.json {gap.get('id')}: spalten fehlen")
+        for col in gap.get("spalten") or []:
+            if not col.get("liste") or not col.get("internal_name"):
+                err(f"luecken.json {gap.get('id')}: Spalteneintrag unvollstaendig")
 
 
 def test_no_leaks_or_eszett() -> None:
@@ -219,6 +321,7 @@ def main() -> int:
     data = load_json(FELDER_PATH)
     if isinstance(data, dict):
         test_felder(data, wertelisten)
+        test_sharepoint_coverage(data.get("felder") or [])
     test_matrix()
     test_luecken()
     test_no_leaks_or_eszett()

@@ -53,4 +53,4 @@ python3 CH/EasyGov/tests/test_konsistenz.py
 pwsh CH/EasyGov/sharepoint-forms/Test-EasyGovGruendungListen.ps1
 ```
 
-Der Python-Test ist die CI-/Lokal-Prüfung (ohne SharePoint). Das PowerShell-Prüfskript ruft ihn auf und kann zusätzlich eine Zielsite lesen.
+Der Python-Test ist die CI-/Lokal-Prüfung (ohne SharePoint), inkl. Abdeckung der Kanzlei-Spalten aus `luecken.json`. Das PowerShell-Prüfskript ruft ihn auf und kann zusätzlich eine Zielsite lesen. Die Listen heissen auf SharePoint `CH_0_Fallsteuerung` usw.; Trockenlauf: `pwsh CH/EasyGov/sharepoint-forms/New-EasyGovGruendungListen.ps1 -WhatIf`.

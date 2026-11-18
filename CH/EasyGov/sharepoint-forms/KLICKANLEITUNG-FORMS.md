@@ -2,9 +2,9 @@
 
 Ergänzt [`README.md`](README.md). Die Klickmechanik in [forms.office.com](https://forms.office.com) ist identisch mit [`DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md`](../../../DE/AO/sharepoint-forms/KLICKANLEITUNG-FORMS.md) Abschnitte A–D (Formular anlegen, Frage hinzufügen, Branching, Freigabe). Hier nur die EasyGov-Fragenlisten.
 
-Titelpräfix: «EasyGov Gründung CH».
+Titelpräfix: «EasyGov Gründung CH». Ziel-Listen auf der Site `steueranwaltskanzlei` tragen das Präfix `CH_` (`CH_0_Fallsteuerung` … `CH_8_Unterlagen`). Die DE/AO-Listen ohne Präfix nicht verwenden.
 
-## Formular 0 — Fallsteuerung (Kanzlei)
+## Formular 0 — Fallsteuerung (Kanzlei, Liste `CH_0_Fallsteuerung`)
 
 | # | Frage | Typ | Optionen | Pflicht/Bedingt | Branching |
 |---|---|---|---|---|---|
@@ -25,4 +25,6 @@ Spalten und Labels aus `felder.json` (gruppiert nach `sharepoint_liste`). Pflich
 
 Wiederholbare Personen und Anteile: das Forms-Formular nimmt *einen* Datensatz; weitere über denselben Link mit gleicher Fall-ID oder direkt in der SharePoint-Liste.
 
-Datei-Upload nur in Formular 8; EasyGov selbst lädt in der Gründung nichts hoch. Papierwege (KlG/KmG, EU ohne QES) als Dokumenttyp merken, Original bleibt postalisch.
+Datei-Upload nur in Formular 8; EasyGov selbst lädt in der Gründung nichts hoch. Papierwege (KlG/KmG, EU ohne QES) als Dokumenttyp merken, Original bleibt postalisch. Liegt die Datei ausserhalb von Forms, den Hyperlink in `CH_8_Unterlagen.file_link` setzen (keine Forms-Frage).
+
+Kanzlei-Spalten, die EasyGov nicht fragt (Statuten, Revisionsstelle, Opting-out, Vinkulierung, Nachschuss, Nebenleistung, Publikationsorgan, Bank/Kapitaleinzahlung, Nennwert, MWST-IBAN, Suva-Zweig, juristische Person als GmbH/AG-Gesellschafter, Sachübernahme als Liberierungsart): in den `CH_`-Listen erfassen, nicht als rechtliche Würdigung an Mandanten.
