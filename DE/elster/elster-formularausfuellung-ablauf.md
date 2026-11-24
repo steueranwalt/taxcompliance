@@ -58,6 +58,10 @@ Der Ordner **ELSTER-Entwickler** liefert die **Infrastruktur** (ElsterXML, Daten
 2. Ablegen in den Postausgang der gewählten Kanzlei (HH bzw. ZH).
 3. Metatags setzen (mindestens: Mandat, Projekt, Formular-ID, Datum, Transfer-Ticket falls sichtbar).
 
+## Portal-Praxis (ESt, EÜR, USt)
+
+Beobachtungen aus der Mein-ELSTER-Oberfläche (Speichern, Prüffehler, Freitextgrenzen, Formularmuster ESt 1 C / ESt 1 D / EÜR / USt, Zeilenverschiebungen je VZ) stehen in [`praxis/ausfuellhinweise-portal.md`](praxis/ausfuellhinweise-portal.md). Die harten Regeln dieses Dokuments bleiben vorrangig.
+
 ## Was absichtlich nicht automatisiert wird ohne Freigabe
 
 - Jeder `send-Auth` / Portal-Absende-Klick
