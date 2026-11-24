@@ -11,6 +11,7 @@
 - [ELSTER-Taxonomien und Referenzkataloge](DE/elster-taxonomien-kataloge.md) — DIVA, Fehlerliste, Bescheidnummern, Prüfziffern, Finanzamtsdaten
 - [`DE/elster/`](DE/elster/README.md) — eine Seite je Paket/Formular/Katalog (Zweck, Daten, Taxonomie, Quellen, Gaps), Rohinventar `DE/elster/inventar.json`, explizite ERiC-/Portal-Lücken
 - [ELSTER-Formularausfüllung: Betriebsablauf (Kanzlei-Bot)](DE/elster/elster-formularausfuellung-ablauf.md) — Formularvorschlag → Datenerfassung → ELSTER-Anmeldung HH/ZH → Absenden nur mit Freigabe → Übermittlungsprotokoll; Formularliste [`DE/elster/erfassungsformulare.json`](DE/elster/erfassungsformulare.json), Verfahren/Datenarten-Katalog [`DE/elster/katalog-verfahren-datenarten.json`](DE/elster/katalog-verfahren-datenarten.json)
+- [ELSTER-Portal: Ausfüllhinweise aus der Praxis](DE/elster/praxis/ausfuellhinweise-portal.md) — Speichern und Prüfen, Freitextgrenzen, typische Prüffehler, Hinweise zu ESt 1 C / Anlage S, ESt 1 D / FG bzw. FG-S, EÜR, USt 2 A / UN; Muster CH-Ansässigkeit mit Inlandstätigkeit
 
 ### Abgabenordnung (AO)
 
@@ -82,7 +83,7 @@ _noch keine Dokumente_
 ## Grenzüberschreitend DE–CH (`DE-CH/`)
 
 ### Doppelbesteuerungsabkommen DE–CH
-_noch keine Dokumente_
+- Praxis-Formularmuster (ESt 1 D / ESt 1 C, Art. 14 DBA DE–CH, Kostenaufteilung) in [ELSTER-Portal: Ausfüllhinweise](DE/elster/praxis/ausfuellhinweise-portal.md) Abschnitt 9; fachliche DBA-Seiten stehen noch aus
 
 ### Wegzug / Zuzug
 _noch keine Dokumente_

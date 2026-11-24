@@ -88,6 +88,7 @@ Damit ein Agent aus dem Repo heraus Formulare vorschlagen, Pflichtfelder lesen, 
 | Artefakt | Zweck |
 |---|---|
 | [`elster-formularausfuellung-ablauf.md`](elster-formularausfuellung-ablauf.md) | Betriebsablauf: harte Regeln (keine fiktiven Daten, Absenden nur mit Freigabe, Zertifikat-/Passwort-Handling, Übermittlungsprotokoll-Ablage) und die feste Schrittfolge Auftrag → Formularvorschlag → Datenerfassung → ELSTER-Anmeldung → Eintragen → Freigabe → Absenden → Protokoll |
+| [`praxis/ausfuellhinweise-portal.md`](praxis/ausfuellhinweise-portal.md) | Portal-Praxis: Speichern und Prüfen in Mein ELSTER, Freitext (999 Zeichen, kein Gedankenstrich), typische Prüffehler, Formularhinweise ESt 1 C / Anlage S, ESt 1 D / Anlage FG bzw. FG-S, EÜR, USt 2 A / Anlage UN; Muster für im Ausland ansässige Selbständige mit Inlandstätigkeit |
 | [`erfassungsformulare.json`](erfassungsformulare.json) | Vorschlagsliste der vom Bot bedienbaren Formulare (Erfassung, BZSt2, Einspruch, LStB) mit Verweisen auf die Pflichtfeldkataloge in [`../AO/`](../AO/README.md) bzw. hier im Ordner |
 | [`katalog-verfahren-datenarten.json`](katalog-verfahren-datenarten.json) | Maschinenlesbarer Katalog aller 80 Verfahren und 854 Datenarten aus `headerbasis_verfahren.xsd` / `headerbasis_datenarten.xsd` (ElsterXML V11) plus dem offene-Schnittstelle-Ausschnitt (`Verzeichnis_der_Datenarten.csv`); dient der Prüfung, ob ein Verfahren/Datenart-Bezug in `erfassungsformulare.json` tatsächlich belegt ist |
 
